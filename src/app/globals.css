@@ -250,17 +250,8 @@ TODO: Fix that latter to have reference by the package names
   --font-size-overline--line-height: 1rem;
 
   /* ═══ Design System: Z-Index Scale ═══ */
-  --z-index-base: 0;
-  --z-index-sticky: 10;
-  --z-index-dropdown: 20;
-  --z-index-overlay: 30;
-  --z-index-modal: 40;
   --z-index-popover: 45;
   --z-index-modal-elevated: 55;
-  --z-index-toast: 50;
-  --z-index-tooltip: 60;
-  --z-index-banner: 70;
-  --z-index-top: 100;
 
   /* ═══ Design System: Shadow Scale ═══
      Tuned to ink #101828. Dark mode overrides in .dark below.
@@ -308,7 +299,6 @@ TODO: Fix that latter to have reference by the package names
   /* Brand yellow — mid stop of the OM brand gradient (lime -> yellow -> violet), theme-invariant. */
   --brand-yellow: #EEFB63;
   /* Foreground for text/icons placed on the brand-lime surface — dark, theme-invariant (the lime stays light in both themes). */
-  --brand-lime-foreground: #1f2a12;
   /* Focus ring tokens (Figma dual-shadow spec — opt-in via .focus-ring-fancy) */
   --focus-ring-inner: rgba(255, 255, 255, 1);
   --focus-ring-outer: rgba(153, 160, 174, 0.16);
@@ -318,7 +308,6 @@ TODO: Fix that latter to have reference by the package names
   --brand-apple: #000000;
   --brand-github: #181717;
   --brand-x: #000000;
-  --brand-google-stroke: #DADCE0;
   --brand-facebook: #1877F2;
   --brand-dropbox: #0061FF;
   --brand-linkedin: #0A66C2;
@@ -331,7 +320,6 @@ TODO: Fix that latter to have reference by the package names
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
   --brand-violet: #BC9AFF;
-  --brand-violet-soft: oklch(0.95 0.03 293);
   --brand-violet-foreground: #0C0C0C;
   --primary-hover: oklch(0.145 0 0);
   /* Accent indigo — used for selection controls (checkbox, radio, switch) */
@@ -414,12 +402,6 @@ TODO: Fix that latter to have reference by the package names
   --chart-orange: oklch(0.705 0.213 47.604);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 
   /* ═══ Design System: Semantic Status Tokens — Light Mode ═══
      Token values match the Tailwind v4 default palette so the
@@ -546,7 +528,6 @@ TODO: Fix that latter to have reference by the package names
   --primary: oklch(0.922 0 0);
   --primary-foreground: oklch(0.205 0 0);
   --brand-violet: #BC9AFF;
-  --brand-violet-soft: oklch(0.3 0.06 293);
   --brand-violet-foreground: #0C0C0C;
   --primary-hover: oklch(0.85 0 0);
   /* Accent indigo — slightly lighter in dark mode for contrast */
@@ -609,12 +590,6 @@ TODO: Fix that latter to have reference by the package names
   --chart-orange: oklch(0.792 0.184 56.043);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
 
   /* ═══ Design System: Semantic Status Tokens — Dark Mode ═══
      Dark-mode counterparts mirror the Tailwind v4 dark palette
@@ -1086,18 +1061,13 @@ body[data-demo-feedback-fab="visible"] main {
   --baseSolidHover: var(--foreground);
   --baseText: var(--foreground);
   --baseTextContrast: var(--foreground);
-  --accentBase: var(--background);
-  --accentBgSubtle: var(--muted);
   --accentBg: var(--muted);
-  --accentBgHover: var(--muted);
   --accentBgActive: var(--muted);
   --accentLine: var(--border);
   --accentBorder: var(--border);
-  --accentBorderHover: var(--input);
   --accentSolid: var(--primary);
   --accentSolidHover: var(--primary);
   --accentText: var(--primary);
-  --accentTextContrast: var(--primary);
 }
 .om-mdx-editor [role="toolbar"] {
   border-bottom: 1px solid var(--border);

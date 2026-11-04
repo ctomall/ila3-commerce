@@ -48,7 +48,9 @@
     "brand:assets": "node ./scripts/build-brand-assets.mjs",
     "modules:tiers": "node ./scripts/report-module-tiers.mjs",
     "tokens:audit": "node ./scripts/audit-design-tokens.mjs",
-    "tokens:check": "node ./scripts/check-token-layers.mjs"
+    "tokens:check": "node ./scripts/check-token-layers.mjs",
+    "tokens:prune": "node ./scripts/prune-dead-tokens.mjs",
+    "tokens:dynamic": "node ./scripts/check-dynamic-token-usage.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

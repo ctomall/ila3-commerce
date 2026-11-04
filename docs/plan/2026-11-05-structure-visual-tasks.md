@@ -73,6 +73,25 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.27 轮次进展（Round 21，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T10** 第 2 阶段 | ✅ 完成 | 删除 **23 个死令牌 / 30 行**（globals.css 1155 → 1125）；构建通过 |
+| 视觉回归 | ✅ 零差异 | 登录页 + 客户页的计算样式逐项对比 `diffs: []` |
+| 动态引用检查 | ✅ 新增 | `yarn tokens:dynamic` 命中 0（仅检查器自身） |
+
+**本轮事故（如实记录）**
+
+| 项 | 内容 |
+|---|---|
+| 现象 | 第一次按「产物零引用」删了 187 个令牌，构建报 `Cannot apply unknown utility class border-border`，**服务中断约 6 分钟** |
+| 根因 | Tailwind v4 的主题令牌（`--color-*`、`--radius-*`）通过 `@apply` / 工具类消费，**构建前不产生 `var()`**，被误判为死令牌 |
+| 恢复 | `git checkout -- src/app/globals.css` → 重建 → 服务恢复 |
+| 修正 | 清理脚本加入主题命名空间保护，最终安全删除 23 个 |
+
+---
+
 ### 1.26 轮次进展（Round 20，2026-11-05）
 
 | 任务 | 状态 | 证据 |
