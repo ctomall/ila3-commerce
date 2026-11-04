@@ -119,6 +119,27 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
       "marker": "/* [patched:empty-state-art] */",
       "reason": "DataTable default empty state ignored the illustration slot."
+    },
+    {
+      "id": "list-load-error-companies",
+      "script": "scripts/patches/apply-list-load-error.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
+      "marker": "/* [patched:list-load-error] */",
+      "reason": "A failed list fetch was swallowed and rendered as an empty table; the page now passes the error to DataTable."
+    },
+    {
+      "id": "list-load-error-people",
+      "script": "scripts/patches/apply-list-load-error.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
+      "marker": "/* [patched:list-load-error] */",
+      "reason": "A failed list fetch was swallowed and rendered as an empty table; the page now passes the error to DataTable."
+    },
+    {
+      "id": "list-error-visual",
+      "script": "scripts/patches/apply-list-error-visual.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
+      "marker": "/* [patched:list-error-visual] */",
+      "reason": "Only live once pages pass `error` to DataTable (apply-list-load-error); renders an alert block with illustration and localized title."
     }
   ]
 }

@@ -13510,5 +13510,7 @@
   "ui.states.error.title": "加载失败",
   "ui.states.error.retry": "重试",
   "modules.directory.emptyHint": "调整搜索关键词或筛选条件后重试。",
-  "settings.home.noResultsHint": "试试更短的关键词，或从左侧菜单浏览。"
+  "settings.home.noResultsHint": "试试更短的关键词，或从左侧菜单浏览。",
+  "ui.dataTable.error.title": "加载失败",
+  "ui.dataTable.error.hint": "请刷新页面重试；若持续失败，请联系管理员。"
 }

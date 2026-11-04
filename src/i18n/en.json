@@ -1286,5 +1286,7 @@
   "ui.states.error.title": "Something went wrong",
   "ui.states.error.retry": "Retry",
   "modules.directory.emptyHint": "Try a different keyword or filter.",
-  "settings.home.noResultsHint": "Try a shorter keyword, or browse from the left menu."
+  "settings.home.noResultsHint": "Try a shorter keyword, or browse from the left menu.",
+  "ui.dataTable.error.title": "Failed to load",
+  "ui.dataTable.error.hint": "Reload the page to retry; if it keeps failing, contact an administrator."
 }
