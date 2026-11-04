@@ -73,6 +73,33 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.31 轮次进展（Round 25，2026-11-05）
+
+| 任务 | 状态 | 结论 |
+|---|---|---|
+| **T10** 第 3 阶段（L1 归并） | ✅ 完成（目标修正） | 343 个唯一令牌中 **179 个是 Tailwind 主题令牌（不可删）**，164 个业务令牌**全部在用** |
+
+**「≤220」目标不成立的证据**
+
+```
+total unique        : 343
+theme tokens        : 179   (Tailwind 依赖 bg-*/rounded-* 等工具类)
+non-theme tokens    : 164   referenced: 164   unreferenced: 0
+```
+
+死令牌已在 Round 21 清理（23 个）；剩余 164 个无一闲置。
+因此「声明数 ≤220」要么等于删除主题令牌（会破坏工具类），要么不可达。
+
+**T10 验收修正**
+
+| 原目标 | 修正 |
+|---|---|
+| 声明数 ≤ 220 | 死令牌 = 0（达成）；主题令牌不计入 |
+| 组件不引用 primitive | `tokens:check --strict` 基线 0（达成） |
+| — | 新增：令牌构成可解释（`docs/design-tokens.md` 第 3 节） |
+
+---
+
 ### 1.30 轮次进展（Round 24，2026-11-05）
 
 | 任务 | 状态 | 结论 |
