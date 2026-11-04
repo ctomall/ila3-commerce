@@ -73,6 +73,27 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.8 轮次进展（Round 1，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T17** 字典 CRLF 清洗 | ✅ 完成并上线 | `scripts/normalize-i18n.mjs` 幂等；清洗前 2 184 / 13 502 条含 `\r`，清洗后 0；构建通过；`/login` 响应体 `\r` 计数 0 |
+| **T5** 状态枚举语义化 | 🟡 内核完成，接线待定 | `src/lib/status-label.ts` + 7 个单测通过；但**渲染层接线受阻**（见下） |
+
+**T5 接线阻塞点（实测）**
+
+1. `custom_field_defs.config_json.options` 存的是裸字符串（`["healthy","monitor","at_risk"]`），
+   列表单元格直接渲染原值。
+2. `DataTable` 支持列级 `cell` 渲染函数，但注入列走的是**追加**语义
+   （`DataTable.tsx` 无按 `accessorKey` 去重），直接注入会**多出一列**而不是替换。
+3. 因此 T5 只剩两条可行路径，需在下一轮二选一：
+   - **A（推荐）**：把列定义改由应用层提供（覆盖 `customers.companies.list` 的列构造），
+     或提交上游 issue 让 `applyCustomFieldVisibility` 支持 `meta.cell`；
+   - **B**：登记为受管补丁（`scripts/patches/`），在 `customFieldColumns.js` 里补
+     `cell` 渲染 + 选项标签映射，纳入 T16 的补丁清单与 CI 校验。
+
+---
+
 ### 1.7 T5 侦察结论（2026-11-05，已完成定位）
 
 | 发现 | 证据 | 对方案的影响 |
