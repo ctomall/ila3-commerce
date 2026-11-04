@@ -73,6 +73,40 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.15 轮次进展（Round 8，2026-11-05）
+
+| 任务 | 状态 | 结论 |
+|---|---|---|
+| **T8 分组** | ❌ 未达成，已撤回无效补丁 | 设置区仍为 **12 组**（目标 ≤8） |
+| **T16 补丁清单** | ✅ 13 个真实补丁 | `all 13 patch(es) present`（无效补丁已从清单移除） |
+
+**两次尝试都没生效，原因值得记录**
+
+| 尝试 | 假设 | 结果 |
+|---|---|---|
+| 1 | 分组由 `ui/dist/backend/utils/nav.js` 的 `buildContextSections` 组装 | 改完重建，DOM 仍 12 组 |
+| 2 | 按渲染标签合并（`item.group`）而非 `groupKey` | 仍 12 组 |
+
+**已定位的真实链路（下一轮直接从这里下刀）**
+
+```
+服务端组装分组  →  core/dist/modules/auth/lib/backendChrome.js
+                   （含 settings.sections.* 顺序表：system/auth/customer_accounts/...）
+        ↓ props.sections
+ui/dist/backend/settings/SettingsNavigation.js   （只负责渲染，不组装）
+```
+
+即：设置分组是**服务端**生成的，前端 `SettingsNavigation` 只拿到结果。
+改前端组装函数当然无效——这是本轮最大的判断失误。
+
+**处置**
+
+- 撤回 `nav.js` 注入，删除 `apply-settings-groups.mjs`，从 manifest 移除该条目；
+- 保留 `all 13 patch(es) present` 的真实性：**校验通过必须等价于“补丁真的生效”**，
+  否则清单会变成自我安慰。
+
+---
+
 ### 1.14 轮次进展（Round 7，2026-11-05）
 
 | 任务 | 状态 | 证据 |
