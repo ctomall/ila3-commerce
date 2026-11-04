@@ -73,6 +73,30 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.21 轮次进展（Round 15，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T15** 升级窗口 ≤60s | ✅ 完成 | 实测停机 **10.8 秒**（目标 ≤60s）；升级 `df815fac → 3e358769` 成功，健康检查通过 |
+| 升级期间可用性 | ✅ | 构建阶段服务持续返回 200（`build (staging)` 时实测 `/login` 200） |
+
+**做法：先构建、后停机**
+
+1. `next.config.ts` 支持 `OM_DIST_DIR` 覆盖 `distDir`；
+2. 升级时 `yarn build` 输出到 `.mercato/next-staging`，**服务继续用旧产物对外服务**；
+3. 停机窗口只剩：`stop` → 目录重命名（active→prev，staging→active）→ `start` → 健康检查；
+4. `yarn install` 仅在 `yarn.lock` 变化时执行；
+5. 失败回滚不再重建，而是**换回 `next-prev` 目录**并重启（秒级）；
+6. 停机时长写入 `state.json` 的 `downtimeMs`。
+
+**代价与边界**
+
+- 总升级耗时仍约 6 分钟（构建），但**不影响对外可用性**；
+- 磁盘上会同时存在 `next`（2.3G）与 `next-prev`（6.1G），下次升级开始时清理上一代，最多两代共存；
+- 依赖变更（`yarn.lock` 变化）才跑 `yarn install`，此时用旧流程的语义仍成立。
+
+---
+
 ### 1.20 轮次进展（Round 14，2026-11-05）
 
 | 任务 | 状态 | 证据 |

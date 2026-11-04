@@ -50,7 +50,9 @@
     ".mercato/**/*.ts",
     ".next/dev/types/**/*.ts",
     ".mercato/next/types/**/*.ts",
-    ".mercato/next/dev/types/**/*.ts"
+    ".mercato/next/dev/types/**/*.ts",
+    ".mercato/next-staging/types/**/*.ts",
+    ".mercato/next-staging/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
