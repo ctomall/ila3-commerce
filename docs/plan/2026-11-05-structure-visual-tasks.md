@@ -73,6 +73,32 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.17 轮次进展（Round 10–11，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T8 分组** | ✅ 完成并上线 | 设置侧栏 **12 组 → 8 组**：系统(4) / 身份与权限(8) / 客户与门户(2) / 数据与集成(8) / 模块配置(25) / 组织与财务(3) / 开发者与定制(4) / 安全(1)，共 55 个链接 |
+| **T8 总验收** | ✅ | 导航项 41/41 有 `aria-label`；分组 **8 ≤ 8** |
+| **T16** | ✅ 14 个补丁 | `all 14 patch(es) present` |
+
+**四次尝试才成功，根因逐层剥开**
+
+| 尝试 | 落点 | 失败原因 |
+|---|---|---|
+| 1 | `ui/.../utils/nav.js` `buildContextSections` | 不在链路上 |
+| 2 | 同上，改按中文标签合并 | 不在链路上 |
+| 3 | `core/.../backendChrome.js` `serializeSectionGroups`，按中文标签 | 序列化时 label 仍是**英文默认名**，中文由客户端按 `labelKey` 翻译 |
+| 4 | 同上，改按 **labelKey** | ✅ 接口返回合并后的 8 组 |
+
+**关键证据（不再靠猜）**
+
+- SSR HTML 中 `"settingsSections":[]` —— 服务端传空，说明侧栏是**客户端**拉取；
+- 浏览器网络面板只有 `/api/auth/admin/nav`；
+- 该接口返回 `settingsSections`（8 组）+ `groups` + `grantedFeatures` 等；
+- 因此正确落点是 `resolveBackendChromePayload` 里的 `serializeSectionGroups`，且必须按 `labelKey` 合并。
+
+---
+
 ### 1.16 轮次进展（Round 9，2026-11-05）
 
 | 任务 | 状态 | 证据 |

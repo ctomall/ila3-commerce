@@ -1276,5 +1276,10 @@
   "sync_akeneo.setup.credentials.step2": "Copy the Akeneo base URL, client id, and client secret into the Integration credentials tab in ILA3 Commerce.",
   "sync_akeneo.setup.docs.note1": "Akeneo authentication uses client id, client secret, username, and password. ILA3 Commerce exchanges those for access/refresh tokens automatically.",
   "sync_akeneo.setup.docs.note3": "Simple Akeneo products still create a default ILA3 Commerce variant. Variant Akeneo products flatten the full Akeneo product-model tree into one configurable product plus child variants.",
-  "sync_akeneo.setup.docs.note4": "If you want channel offers and prices, create matching Sales Channels and Catalog Price Kinds in ILA3 Commerce first, then reference their codes in the mapping blocks below."
+  "sync_akeneo.setup.docs.note4": "If you want channel offers and prices, create matching Sales Channels and Catalog Price Kinds in ILA3 Commerce first, then reference their codes in the mapping blocks below.",
+  "settings.sections.access": "Identity & Access",
+  "settings.sections.portal": "Customer Portal",
+  "settings.sections.data": "Data & Integrations",
+  "settings.sections.org": "Organization & Finance",
+  "settings.sections.dev": "Developers & Customization"
 }

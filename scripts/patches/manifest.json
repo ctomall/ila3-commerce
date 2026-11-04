@@ -91,6 +91,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
       "marker": "/* [patched:column-priority] */",
       "reason": "Deals list opened with 16 columns; secondary columns are demoted to the chooser."
+    },
+    {
+      "id": "settings-groups",
+      "script": "scripts/patches/apply-settings-groups.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
+      "marker": "/* [patched:settings-groups] */",
+      "reason": "Settings rail sections are serialized server-side; merged 12 -> 8 by labelKey (labels are still default English at that point)."
     }
   ]
 }
