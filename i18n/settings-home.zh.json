@@ -1,0 +1,7 @@
+{
+  "settings.sections.ai": "AI",
+  "settings.home.description": "所有设置集中在这里，可搜索、可快速回到最近访问的页面。",
+  "settings.home.searchPlaceholder": "搜索设置页…",
+  "settings.home.recent": "最近访问",
+  "settings.home.noResults": "没有匹配的设置页。"
+}

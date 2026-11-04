@@ -1,0 +1,380 @@
+2280	Failed to generate document number.
+2281	This change can no longer be undone because the order was changed afterwards.
+2282	This change can no longer be undone because the quote was changed afterwards.
+2283	Company (optional)
+2284	Loading addresses…
+2285	Full name
+2286	Region/state
+2287	Save this address to the customer
+2288	Select an address or define a new one.
+2289	Sales channel
+2290	No channels found.
+2291	Optional. Only for orders.
+2292	Loading channels…
+2293	Select a channel
+2294	Selected channel: {{id}}
+2295	Channel only applies to orders.
+2296	Currency saved.
+2297	Currency code is required
+2298	Failed to save currency.
+2299	Select currency
+2300	New company
+2301	New person
+2302	Create customer
+2303	No customers found.
+2304	Start typing to filter.
+2305	Loading customers…
+2306	Search customers…
+2307	Company created.
+2308	Add a customer without leaving this form.
+2309	Failed to create customer.
+2310	Customer created.
+2311	Selected customer: {{id}}
+2312	Document details
+2313	Customer email
+2314	Selected customer
+2315	Email used for the document
+2316	Failed to load customers.
+2317	Document id missing after create.
+2318	Could not generate a document number.
+2319	Failed to create document.
+2320	Please select which kind of sales document you want to create. When creating Quotes - it's kind of Shopping cart or Request for negotiation and could be converted to regular order later
+2321	After creation you will add items, prices, and fulfillment details.
+2322	Format applies to orders and uses the configured counter.
+2323	Generating…
+2324	Sales document created.
+2325	Create sales document
+2326	Changed fields: {fields}
+2327	No history entries yet.
+2328	Failed to load history.
+2329	Customer contact
+2330	Customer details
+2331	Delivery window
+2332	Discount amount
+2333	Discount percent
+2334	Discount total
+2335	Due at
+2336	Exchange rate
+2337	Fulfillment status
+2338	Gross grand total
+2339	Net grand total
+2340	Internal notes
+2341	Line item count
+2342	Outstanding amount
+2343	Paid total
+2344	Placed at
+2345	Promotion code
+2346	Quantity unit
+2347	Refunded total
+2348	Gross shipping
+2349	Net shipping
+2350	Gross subtotal
+2351	Net subtotal
+2352	Surcharge total
+2353	Tax details
+2354	Gross unit price
+2355	Net unit price
+2356	Valid until
+2357	Status changes
+2358	base
+2359	The saved line data is kept and the line is shown as a custom line. Switch to Catalog item to replace it with an existing product.
+2360	Deleted catalog item
+2361	This catalog item was deleted
+2362	You cannot add a new item to a fulfilled order. Change the order status first.
+2363	An order must contain at least one line item.
+2364	Name is required for custom lines.
+2365	Enter the quantity as a number, for example {{example}}.
+2366	The quantity cannot be lowered until this order's shipments have been read. Reopen the order to try again.
+2367	Enter the unit price as a number, for example {{example}}.
+2368	No unit conversion found for this product.
+2369	Product is missing a default base unit.
+2370	A conversion for this unit already exists.
+2371	Conversion factor must be a positive number.
+2372	Result exceeds the allowed decimal precision.
+2373	Unit price reference configuration is invalid.
+2374	The specified unit code was not found.
+2375	Catalog item
+2376	Custom line
+2377	Use catalog products or create a freeform line with your own price.
+2378	Line type
+2379	Manual unit price mode. Price will not auto-convert until you select a catalog price.
+2380	Catalog price basis is base unit, but conversion for selected unit is missing.
+2381	Catalog price basis: {{baseAmount}} / {{baseUnit}}. Converted for {{unit}}: {{baseAmount}} × {{factor}} = {{convertedAmount}}.
+2382	Unit
+2383	e.g. pc
+2384	Select unit
+2385	Pricing is locked until this order's shipments have been read. Reopen the order to try again — you can still edit the name and raise the quantity.
+2386	Pricing is locked on this line because it already has shipped items. You can still edit the name and quantity.
+2387	−{{value}}
+2388	{{value}}%
+2389	{{value}} per 1 {{unit}}
+2390	Normalized quantity
+2391	Select unit and quantity to preview normalization.
+2392	{{quantity}} {{unit}} → {{normalized}} {{baseUnit}}
+2393	Missing conversion to base unit.
+2394	Failed to load documents.
+2395	Search channels
+2396	(No channel)
+2397	Customer id
+2398	Max items
+2399	Min items
+2400	Max total (gross)
+2401	Min total (gross)
+2402	Max total (net)
+2403	Min total (net)
+2404	Search orders…
+2405	Search quotes…
+2406	Failed to delete document.
+2407	Delete order
+2408	Delete this sales order? Shipments, payments, addresses, comments, and items will be removed.
+2409	Delete quote
+2410	Delete this sales quote? Addresses, comments, and items will be removed.
+2411	No orders yet.
+2412	No quotes yet.
+2413	Sales order deleted.
+2414	Sales quote deleted.
+2415	Add payment
+2416	Enter the amount as a number.
+2417	Enter a positive amount.
+2418	Payment recorded.
+2419	Payment deleted.
+2420	Edit payment
+2421	Failed to delete payment.
+2422	Failed to load payments.
+2423	Failed to save payment.
+2424	Payment details
+2425	Loading payments…
+2426	Method
+2427	Search payment method
+2428	Selected method: {{id}}
+2429	No payment methods
+2430	Received at
+2431	Reference
+2432	External reference or note
+2433	Select an organization and tenant before deleting payments.
+2434	Shipment status
+2435	Select shipment status
+2436	Tracking information
+2437	Change order/quote status
+2438	Change order/quote item status
+2439	Select new order/quote status
+2440	Select item status
+2441	Invalid tag format.
+2442	Tag is required.
+2443	Quotes, orders, fulfillment, invoicing, and payments connected to the product catalog.
+2444	Sales Management
+2445	Channels
+2446	Orders
+2447	Payment Methods
+2448	Quotes
+2449	Shipping Methods
+2450	Tax Rates
+2451	Sales order {orderNumber} has been created{total}
+2452	New Sales Order
+2453	Payment of {amount} received for order #{orderNumber}
+2454	Payment Received
+2455	Sales quote {quoteNumber} has been created{total}
+2456	New Sales Quote
+2457	Quote #{quoteNumber} expires in {daysUntilExpiry} days ({expiresAt})
+2458	Quote Expiring Soon
+2459	Assigned to you
+2460	Pending review
+2461	View Order
+2462	View Quote
+2463	Add sales order line status
+2464	Delete sales order line status
+2465	Update sales order line status
+2466	Add sales order status
+2467	Delete sales order status
+2468	Update sales order status
+2469	Invoices
+2470	Line Items
+2471	Add at least one line item before creating the order.
+2472	API key {name}
+2473	Unknown user
+2474	unset
+2475	Status changed from {from} to {to} by {actor}.
+2476	Payment currency does not match the order currency.
+2477	Payment not found.
+2478	Order is required for this payment.
+2479	The customer accepted quote {quoteNumber}. An order has been created: {orderNumber}.
+2480	View order
+2481	Open Mercato
+2482	Quote {quoteNumber} accepted
+2483	Quote {quoteNumber} accepted → Order {orderNumber}
+2484	This quote has expired.
+2485	Failed to accept quote.
+2486	Cross-site quote acceptance is not allowed.
+2487	This quote cannot be accepted in its current status.
+2488	Quote not found.
+2489	View quote
+2490	Quote {quoteNumber}
+2491	Quote {quoteNumber} is ready for review
+2492	Total: {amount} {currency}
+2493	Valid until: {date}
+2494	Exchange rate is not available on quotes.
+2495	Fulfillment status is not available on quotes.
+2496	Internal notes are not available on quotes.
+2497	Payment status is not available on quotes.
+2498	Accept quote
+2499	Order created: {{orderNumber}}
+2500	Quote accepted
+2501	Please contact the seller to request an updated quote.
+2502	Failed to load quote.
+2503	Item
+2504	Loading quote…
+2505	No validity date
+2506	per 1 {{unit}}
+2507	Qty: {{quantity}}
+2508	Valid until {{date}}
+2509	Send to customer
+2510	Canceled quotes cannot be sent.
+2511	Email will be sent to:
+2512	Failed to send quote.
+2513	Customer email is required to send a quote.
+2514	Send quote
+2515	Quote sent.
+2516	Send quote to customer
+2517	Valid for (days)
+2518	Delete this return?
+2519	This reverses the returned quantities and the related credit adjustments.
+2520	Lines
+2521	Return created.
+2522	Edit return
+2523	No items available to return.
+2524	Create a return to generate credit adjustments for returned items.
+2525	No returns yet.
+2526	Failed to load return.
+2527	Failed to create return.
+2528	Failed to delete return.
+2529	Select at least one line to return.
+2530	Failed to load returns.
+2531	Cannot return more than available quantity.
+2532	Return quantity must be a whole number.
+2533	Failed to update return.
+2534	Order line not found.
+2535	Loading returns...
+2536	Return not found.
+2537	Optional
+2538	Return does not belong to this order.
+2539	Order not found.
+2540	Decrease quantity
+2541	Increase quantity
+2542	Cannot return more than the remaining quantity.
+2543	Cannot return more than the shipped quantity. Ship the items before recording a return.
+2544	Returned at
+2545	Return updated.
+2546	Credit memo
+2547	Credit memo line
+2548	Document tag
+2549	Invoice
+2550	Invoice line
+2551	Order adjustment
+2552	Order line
+2553	Payment allocation
+2554	Quote adjustment
+2555	Quote line
+2556	Shipment item
+2557	Tax rate
+2558	Sales Channels
+2559	Delivery Windows
+2560	Failed to load sales settings
+2561	Failed to save sales settings
+2562	Add shipment status
+2563	Delete shipment status
+2564	Update shipment status
+2565	Cannot modify shipment: order is fully returned.
+2566	Shipment does not belong to this order.
+2567	Add at least one line to ship.
+2568	Shipment not found
+2569	Cannot modify shipment: order payment is completed.
+2570	Cannot ship more than the remaining quantity.
+2571	Move deal to "{{stage}}"?
+2572	Current
+2573	No orders found in this period
+2574	Failed to load orders
+2575	Date Period
+2576	Last 24 hours
+2577	Number of Orders
+2578	No quotes found in this period
+2579	Failed to load quotes
+2580	Number of Quotes
+2581	Delete category
+2582	Update category
+2583	Delete offer
+2584	Update offer
+2585	Create option schema
+2586	Delete option schema
+2587	Update option schema
+2588	Create price kind
+2589	Delete price kind
+2590	Update price kind
+2591	Create price
+2592	Delete price
+2593	Update price
+2594	Create product unit conversion
+2595	Delete product unit conversion
+2596	Update product unit conversion
+2597	Create product
+2598	Delete product
+2599	Update product
+2600	Create variant
+2601	Delete variant
+2602	Update variant
+2603	Failed to delete products.
+2604	Delete {count} products matching the current filters? This cannot be undone.
+2605	Delete filtered products?
+2606	No products match the current filters.
+2607	Select at least one product to delete.
+2608	Delete {count} selected products? This cannot be undone.
+2609	Delete selected products?
+2610	Category created
+2611	Category archived
+2612	Category updated
+2613	Back to categories
+2614	Failed to delete category
+2615	Category identifier is required.
+2616	Failed to load category
+2617	Provide the category name.
+2618	Category not found
+2619	e.g., Footwear
+2620	Lowercase identifier for URLs or imports.
+2621	Loading category...
+2622	Path: {{path}}
+2623	Path
+2624	Archive category "{{name}}"?
+2625	Failed to load categories
+2626	—
+2627	Search categories
+2628	Root level
+2629	inactive
+2630	Loading categories…
+2631	Draft copy, normalize attributes, and propose price changes for the current selection.
+2632	Merchandising Assistant
+2633	Filtered by category
+2634	{count} products in view
+2635	{count}+ products in view
+2636	{count} products selected
+2637	{count} tags
+2638	Catalog
+2639	Ask for descriptions, attributes, titles, or price ideas...
+2640	Read-only demo. Proposes descriptions, attributes, titles, and price adjustments for the current selection. No writes are applied in this phase.
+2641	Working with {count} selected products. Ask for descriptions, attribute extraction, title suggestions, or pricing analysis.
+2642	Acting on {count} products
+2643	Catalog merchandising assistant
+2644	Select products for targeted actions, or explore your catalog:
+2645	Ready to work with your {count} selected products. Try one of these:
+2646	Analyze attribute coverage
+2647	Show me an overview of my product catalog
+2648	Draft product descriptions for selected items
+2649	Extract attributes from descriptions
+2650	Find products with missing descriptions
+2651	Suggest price adjustments
+2652	Show pricing distribution
+2653	Show catalog overview
+2654	Generate title variants for SEO
+2655	Open AI merchandising assistant
+2656	Manage reusable products, variants, and pricing for sales documents.
+2657	Product Catalog
+2658	{productName}{sku, select, other { ({sku})}} is running low on stock ({currentStock} remaining, threshold: {threshold})
+2659	Low Stock Alert

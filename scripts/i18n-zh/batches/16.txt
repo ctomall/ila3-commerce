@@ -1,0 +1,4 @@
+4900	beta
+4901	Can write
+4902	Claims Assistant
+4903	configured

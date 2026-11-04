@@ -1,0 +1,323 @@
+3420	continue
+3421	to import
+3422	Step 2 of 3 · Map CSV columns to fields
+3423	Step 3 of 3 · Review and import
+3424	Step 1 of 3 · Upload your file
+3425	{total} rows · {valid} valid · {errors} errors · {warnings} warnings · {skipped} skipped
+3426	Choose CSV file or drop here
+3427	Encoding
+3428	UTF-8 (auto-detected)
+3429	{rows} rows · {size} · detected
+3430	Format
+3431	CSV · comma-separated
+3432	First row is column header
+3433	On — skip first row when importing
+3434	The quantity column is added to whatever stock already exists at that warehouse/location — it is not a target balance.
+3435	Reconcile to exact balance
+3436	Existing stock at each location is overwritten to match the file exactly — including reducing it. Use this for a full stocktake or opening-balance import. Leave off to add quantities to existing stock instead.
+3437	The sku column must match an existing catalog product variant in your organization. Warehouse and location codes must already exist in WMS.
+3438	Catalog variant not found
+3439	Duplicate of row {row}
+3440	Duplicate row in file
+3441	Insufficient available stock for negative adjustment
+3442	Location not found
+3443	Location is required
+3444	Lot not found
+3445	Will overwrite an existing balance
+3446	Quantity must be zero or greater
+3447	Quantity is required
+3448	Multiple catalog variants share this SKU
+3449	SKU not found in catalog
+3450	SKU is required
+3451	Warehouse not found
+3452	Warehouse is required
+3453	Transfer available stock between locations within the same warehouse.
+3454	Move stock
+3455	Move inventory
+3456	Put away to final bin
+3457	Quantity exceeds available stock at the source location.
+3458	Failed to load available quantity.
+3459	Move quantity must be greater than zero.
+3460	Destination must differ from the source location.
+3461	Failed to move inventory.
+3462	Inventory moved
+3463	From location
+3464	Select source location
+3465	To location
+3466	Select destination location
+3467	{used} / {capacity} units used · {remaining} remaining
+3468	This move would exceed the destination capacity by {quantity} unit(s).
+3469	Loading destination capacity…
+3470	No capacity limit set for this location.
+3471	0 units (empty bin)
+3472	Loading destination…
+3473	Destination current stock
+3474	units already here
+3475	Refreshing availability…
+3476	Source availability
+3477	Consolidation
+3478	Replenishment
+3479	Transfer
+3480	Performed at
+3481	Reference type
+3482	Immutable movement history for receipts, transfers, adjustments, and cycle counts.
+3483	Movement rows are created by receipts, reservations, moves, and reconciliation actions.
+3484	No inventory movements
+3485	Search movement ledger
+3486	Inventory movement ledger
+3487	Select an organization and sign in before posting inventory changes.
+3488	Receive inbound stock, reserve or move stock, post adjustments, or run a cycle count.
+3489	Reserve
+3490	Inventory operations
+3491	Record inbound stock as a receipt movement
+3492	Lot number is required for this variant.
+3493	Quantity must be greater than zero.
+3494	Serial number is required for this variant.
+3495	Failed to receive inventory.
+3496	Inventory received
+3497	Select or create lot (optional)
+3498	Enter lot number
+3499	Optional notes or reference number
+3500	Quantity received
+3501	Receipt type
+3502	Enter serial number
+3503	to receive
+3504	Receiving…
+3505	Manual receipt
+3506	Purchase order
+3507	QC release
+3508	RMA / return
+3509	Sales return
+3510	Quality control
+3511	RMA
+3512	Return reserved quantity to available stock for this bucket.
+3513	to confirm
+3514	Release reservation
+3515	Balance integrity error — run "mercato wms verify-balances --repair" to diagnose and fix drift before retrying.
+3516	Reservation context is missing. Close the dialog and try again from the reservations table.
+3517	Failed to release reservation.
+3518	Reservation released
+3519	Optional — additional context
+3520	Manual release
+3521	Order cancelled
+3522	This action cannot be undone — the reserved quantity will be released immediately.
+3523	Fulfilled
+3524	Released
+3525	Release
+3526	Source type
+3527	Active and historical reservation records created by manual API calls or sales lifecycle automation.
+3528	Reservations show stock committed to orders, transfers, or manual holds.
+3529	No reservations
+3530	Active only
+3531	Show all
+3532	Search reservations
+3533	Inventory reservations
+3534	Commit stock from available inventory. The system allocates using the configured rotation strategy.
+3535	Failed to reserve inventory.
+3536	Not enough available stock to fulfil this reservation.
+3537	Select a lot for this variant.
+3538	Enter a positive quantity.
+3539	Enter a serial number for this variant.
+3540	Select a variant.
+3541	Select a warehouse.
+3542	Lot (optional)
+3543	Any lot (system selects)…
+3544	Select lot…
+3545	Enter serial number…
+3546	Reservation type
+3547	Search SKU or name…
+3548	Select warehouse…
+3549	Manual hold
+3550	Reserving…
+3551	Reservation created successfully.
+3552	Reserve inventory
+3553	Adjust stock
+3554	Back to locations
+3555	No recent movements for this location.
+3556	Reconcile
+3557	Failed to load items in location.
+3558	Invalid location identifier.
+3559	Failed to load location view.
+3560	Failed to load location.
+3561	Failed to load lots.
+3562	Failed to load recent activity.
+3563	Location not found.
+3564	Last counted {when}
+3565	Never counted
+3566	Zone {code}
+3567	Adjust selected ({count})
+3568	Cycle count zone
+3569	Variant name
+3570	Try another filter or post inventory through receipts or adjustments.
+3571	No items in this view
+3572	All items
+3573	Picking
+3574	Sellable
+3575	Showing {shown} of {total} items
+3576	View all items →
+3577	Items in this location
+3578	Lots with on-hand quantity
+3579	View items
+3580	Active lots
+3581	Near limit
+3582	Within capacity
+3583	On hand vs location capacity
+3584	Capacity used
+3585	Recent
+3586	Due soon
+3587	Most recent cycle count
+3588	Start cycle count
+3589	{days}d ago
+3590	Last counted
+3591	{count} units
+3592	Reserved and allocated units
+3593	Pending picks
+3594	Distinct variants with stock
+3595	SKUs occupied
+3596	Loading location view…
+3597	Run common inventory actions without leaving this location view
+3598	Open ledger
+3599	Back to lots
+3600	No recent movements for this lot.
+3601	Adjusted {quantity}× {lot}
+3602	Allocated {quantity}× {lot}
+3603	{type} {quantity}× {lot}
+3604	Moved {quantity}× {lot}
+3605	Received {quantity}× {lot}
+3606	Cycle count of {lot}
+3607	Update the quality/hold state for this lot. The change is recorded immediately.
+3608	Change lot status
+3609	Failed to update lot status.
+3610	Lot status updated
+3611	Optional reason for the status change
+3612	New status
+3613	Update status
+3614	Last move
+3615	No locations in this view
+3616	All locations
+3617	Open ledger for this lot →
+3618	Showing {shown} of {total} locations
+3619	{days} days ago
+3620	{time} today
+3621	Yesterday
+3622	Where this lot lives
+3623	Failed to load lot locations.
+3624	Invalid lot identifier.
+3625	Failed to load lot view.
+3626	Failed to load lot.
+3627	Lot not found.
+3628	Failed to load inventory profile.
+3629	Failed to load SKU.
+3630	{days} days remaining
+3631	Exp {date}
+3632	Received {date}
+3633	Within window
+3634	Until expiration date
+3635	View SKU profile
+3636	Days to expiry
+3637	Aged stock
+3638	Fresh lot
+3639	Since lot was created
+3640	Lot age
+3641	{days}d
+3642	Physical quantity for this lot
+3643	View locations
+3644	Total on hand
+3645	Lot hold and QC state
+3646	Change status
+3647	Note: {notes}
+3648	Quality status
+3649	{count} units held
+3650	Committed from this lot
+3651	Loading lot view…
+3652	Run common inventory actions without leaving this lot view
+3653	On hold
+3654	Quarantine
+3655	Expires
+3656	Lot number
+3657	Browse lot and batch records with expiry context.
+3658	Lots expiring within the next 30 days in the selected warehouse scope.
+3659	Lots past their expiry date with on-hand stock in the selected warehouse scope.
+3660	Adjust filters or create lots through inventory operations.
+3661	No lots found
+3662	Loading lots…
+3663	Search lots
+3664	Inventory lots
+3665	Lots expiring soon
+3666	Past-due lots
+3667	Back to inventory
+3668	No recent movements for this SKU.
+3669	All bins
+3670	View all locations →
+3671	Stock distribution
+3672	Failed to load stock distribution.
+3673	Invalid SKU identifier.
+3674	Failed to load SKU view.
+3675	SKU not found.
+3676	SKU since {date}
+3677	Ready to allocate
+3678	Short runway
+3679	Based on last {days} days outbound
+3680	Days of supply
+3681	Total physical quantity
+3682	View distribution
+3683	Safety {count}
+3684	From inventory profile
+3685	Edit profile
+3686	Committed to orders
+3687	Loading SKU view…
+3688	Run common inventory actions without leaving this SKU view
+3689	You don't have permission to adjust or move inventory.
+3690	You don't have permission to run cycle counts.
+3691	You don't have permission to import inventory.
+3692	You don't have permission to manage inventory profiles.
+3693	You don't have permission to manage warehouse locations.
+3694	You don't have permission to manage inventory reservations.
+3695	You don't have permission to manage warehouses.
+3696	You don't have permission to manage warehouse zones.
+3697	You don't have permission to receive inbound inventory.
+3698	Low stock alert — available: {availableQuantity}, reorder point: {reorderPoint}, safety stock: {safetyStock}
+3699	Reorder
+3700	View Inventory
+3701	View SKU
+3702	Order {orderNumber} could not be fully reserved — {shortfallSku} short by {shortfallQuantity} ({shortfallCount} line(s)).
+3703	Lines with shortfall
+3704	Short {quantity}
+3705	View inventory
+3706	View Reservations
+3707	Reservation Shortfall
+3708	Product-scoped
+3709	Variant-scoped
+3710	Inactive warehouses cannot be marked as primary.
+3711	Another warehouse was just set as primary for this organization. Please retry.
+3712	Provide a default UOM for the WMS inventory profile.
+3713	Use a non-negative quantity.
+3714	Select a WMS rotation strategy.
+3715	Configure WMS-owned tracking rules and replenishment thresholds for this catalog record.
+3716	Manage inventory with WMS
+3717	FEFO
+3718	FIFO
+3719	LIFO
+3720	avail.
+3721	Warehouse Stock
+3722	…
+3723	reserved
+3724	Re-run reservation
+3725	Open reservations
+3726	Could not update warehouse assignment.
+3727	Warehouse assignment saved.
+3728	Assigned warehouse
+3729	Live reservation and availability summary for this sales order.
+3730	No WMS stock summary is available for this order yet.
+3731	Explicit assignment overrides reservation-derived warehouse context.
+3732	Variant availability
+3733	Could not re-run reservation.
+3734	Reservation re-run triggered. Stock context will refresh shortly.
+3735	Reservation records
+3736	Active reservations
+3737	Fully reserved
+3738	Partially reserved
+3739	Unreserved
+3740	WMS stock context
+3741	Warehouse assignment cleared.
+3742	Select a warehouse

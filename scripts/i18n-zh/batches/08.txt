@@ -1,0 +1,380 @@
+2660	Add price kind
+2661	Delete price kind "{{code}}"?
+2662	Configure reusable price kinds that control pricing columns and tax display.
+2663	Define a reusable price kind for product pricing.
+2664	Update labels or tax behavior for this price kind.
+2665	Edit price kind
+2666	Failed to delete price kind.
+2667	Failed to load price kinds.
+2668	Code and title are required.
+2669	Failed to save price kind.
+2670	e.g. regular
+2671	Unable to add currency.
+2672	e.g. US Dollar
+2673	Unable to load currencies.
+2674	Currency (optional)
+2675	Display mode
+2676	Mark as promotion
+2677	e.g. Regular price
+2678	Price kind created.
+2679	Price kind deleted.
+2680	Price kind updated.
+2681	Search by code or title…
+2682	No price kinds yet.
+2683	Promotion
+2684	Price kinds
+2685	Price rule created
+2686	Price rule deleted
+2687	Price rule updated
+2688	Back to price rules
+2689	Failed to delete price rule
+2690	Price rule identifier is required.
+2691	Failed to load price rule
+2692	Price rule not found
+2693	Choose a product or a variant.
+2694	Customer group ID
+2695	Raw customer-group identifier — no customer-group directory yet.
+2696	Ends at
+2697	Maximum quantity
+2698	Leave empty for “and above”
+2699	Minimum quantity
+2700	Price kind
+2701	Starts at
+2702	Unit price (gross)
+2703	Unit price (net)
+2704	User group ID
+2705	User ID
+2706	Advanced scope
+2707	Quantity tier
+2708	Validity window
+2709	Loading price rule...
+2710	Delete this price rule?
+2711	No price rules yet — add one to price this product beyond its base price.
+2712	Failed to load price rules
+2713	{{min}}+
+2714	{{min}}–{{max}}
+2715	Search price rules
+2716	Price rules
+2717	From {{date}}
+2718	{{from}} – {{until}}
+2719	Until {{date}}
+2720	Select a channel…
+2721	Select a currency…
+2722	Select a price kind…
+2723	Search products…
+2724	Maximum quantity must be greater than or equal to the minimum quantity.
+2725	End date must be after the start date.
+2726	Price Lists
+2727	Classification codes used by KSeF/JPK invoices, customs declarations, and marketplace feeds.
+2728	Compliance codes (PL/EU)
+2729	Order quantity constraints and quote-only selling for B2B.
+2730	Commercial terms
+2731	Alcohol
+2732	Energy drink
+2733	Fuel
+2734	Tobacco
+2735	Minimum buyer age
+2736	Available from
+2737	Available until
+2738	Canonical URL
+2739	CN code (Combined Nomenclature)
+2740	Contains lithium battery
+2741	Country of origin (ISO code)
+2742	End of life
+2743	Excise category
+2744	GTU codes (JPK_V7)
+2745	Hazmat class (ADR)
+2746	Packing group
+2747	HS code (customs tariff)
+2748	Excise good
+2749	Quote only (price on request)
+2750	Launch date
+2751	Maximum order quantity
+2752	Minimum order quantity
+2753	Quantity increment
+2754	PKWiU code
+2755	Requires prescription
+2756	Requires shipping
+2757	SEO description
+2758	SEO title
+2759	Tax classification code
+2760	UN number
+2761	Launch, end-of-life, and selling windows plus shipping requirements.
+2762	Availability & lifecycle
+2763	PL
+2764	UN1234
+2765	Age, excise, and dangerous-goods attributes enforced by storefront, POS, and carriers.
+2766	Restrictions & safety
+2767	Storefront metadata. Title and description are translatable per locale.
+2768	SEO
+2769	Compliance & commerce
+2770	Use markdown
+2771	Use plain text
+2772	Drag and drop images here or click to upload.
+2773	Media
+2774	Provide a currency for all price kinds.
+2775	Product id missing after create.
+2776	Product identifier missing after create.
+2777	Prices must be zero or greater.
+2778	Select an organization before creating products.
+2779	Provide a product title.
+2780	Failed to create variant.
+2781	Primary currency
+2782	Handle is used for URLs and must be unique.
+2783	Manage subtitle, handle, and currency for storefronts.
+2784	Handle
+2785	Product meta
+2786	Add custom option
+2787	Add choice
+2788	Choices
+2789	No custom options yet.
+2790	Allow multiple
+2791	No choices yet.
+2792	Save as template
+2793	Reuse this option set across future products.
+2794	Save option schema
+2795	Using {{name}}
+2796	Used internally, e.g. fashion-defaults
+2797	Provide a valid template code.
+2798	Add at least one option before saving.
+2799	Start from a template or build your own option set.
+2800	Option schema
+2801	Unable to load option schemas.
+2802	Provide a template name.
+2803	Select schema
+2804	Unable to save option schema.
+2805	Option schema saved.
+2806	Select an organization before saving schemas.
+2807	Add option
+2808	No options yet. Add your first option to generate variants.
+2809	e.g., Color
+2810	Product options
+2811	Type a value and press Enter
+2812	Values
+2813	Assign products to one or more taxonomy nodes.
+2814	Selected channels will receive default offers for this product.
+2815	Pick channels
+2816	Assign categories, sales channels, and tags.
+2817	Describe products with shared labels to build quick filters.
+2818	Add tag and press Enter
+2819	Categorize
+2820	Describe the product...
+2821	e.g., summer-sneaker
+2822	e.g., PROD-001
+2823	Optional subtitle
+2824	e.g., Summer sneaker
+2825	Provide a currency to save pricing.
+2826	No prices yet.
+2827	Price entries
+2828	Gross price
+2829	Sale
+2830	Tier
+2831	Max qty
+2832	Min qty
+2833	Net price
+2834	Unable to load units.
+2835	Use primary currency
+2836	Select value
+2837	Description ({{count}} chars)
+2838	Example widget powered by the injection system.
+2839	Good
+2840	Keep titles 10–60 chars and descriptions 50+ chars.
+2841	Add a product description (50+ characters).
+2842	Add a descriptive product title.
+2843	Description is too short for good SEO (min 50 characters).
+2844	Title is too long (max 60 characters recommended).
+2845	Title is too short (min 10 characters).
+2846	Learn how to build your own
+2847	Missing
+2848	Ready
+2849	SEO Optimization
+2850	Title ({{count}} chars)
+2851	Too long
+2852	Too short
+2853	SEO helper: {{issues}}
+2854	SEO helper: {{count}} issues found. {{issues}}
+2855	Provide a description to help search engines understand this product.
+2856	Title is too long for optimal SEO (max 60 characters).
+2857	Title is too short for good SEO (min 10 characters).
+2858	Add a product description for better SEO.
+2859	Description is too short (min 50 characters).
+2860	Unique product identifier. Letters, numbers, hyphens, underscores, periods.
+2861	Continue
+2862	General data
+2863	Organize
+2864	Review
+2865	No subproducts attached yet.
+2866	Unable to load products
+2867	No products found
+2868	Relation
+2869	Customer must pick this item
+2870	Search products
+2871	Type to search catalog products
+2872	Selected subproducts
+2873	Product created.
+2874	Attributes
+2875	Product sections
+2876	Subproducts
+2877	Define tax classes under Sales → Configuration.
+2878	Applied to new prices unless overridden per variant.
+2879	Manage tax classes
+2880	Untitled tax rate
+2881	Add variant
+2882	Default variant
+2883	Variants are available for configurable, virtual, or downloadable products.
+2884	No variants yet. Add one to start.
+2885	Generate from options
+2886	e.g., Blue / L
+2887	Define select-type custom options to auto-generate combinations.
+2888	Allow backorder
+2889	Currency missing
+2890	Default option value
+2891	Default option
+2892	Inventory tracking will be available soon.
+2893	Has inventory kit
+2894	Set as default
+2895	Managed inventory
+2896	Configure price kinds in Catalog settings to add price columns.
+2897	Price {{title}}
+2898	e.g., SKU-001
+2899	Variant title
+2900	Yes, this is a product with variants
+2901	Use product tax class ({{label}})
+2902	No tax class
+2903	Back to products
+2904	Dimensions & weight
+2905	Depth
+2906	Height
+2907	Size unit
+2908	Width
+2909	Product identifier is missing.
+2910	Failed to load product details.
+2911	Product not found.
+2912	Fix highlighted fields.
+2913	Loading product
+2914	Hide metadata
+2915	No metadata. Add your first entry.
+2916	Show metadata
+2917	Attach structured key/value pairs for integrations.
+2918	Remove entry
+2919	Failed to remove sales channel offer.
+2920	This product has variants without an option schema. Options are optional.
+2921	Delete schema
+2922	Failed to delete schema.
+2923	Schema deleted.
+2924	Option schemas
+2925	Edit schema
+2926	No saved schemas yet.
+2927	Open schema library
+2928	Schema name
+2929	e.g., Color + Size set
+2930	Provide a schema name.
+2931	Save as schema
+2932	Schema saved.
+2933	Product updated.
+2934	Edit product
+2935	Delete variant "{{name}}"?
+2936	Deleting…
+2937	Generate variants
+2938	All option combinations already exist.
+2939	Failed to generate variants.
+2940	Missing variants generated.
+2941	No variants defined yet.
+2942	Weight unit
+2943	Weight
+2944	Handle already in use.
+2945	Catalog product not found.
+2946	SKU already in use.
+2947	Tax class not found.
+2948	Product type
+2949	Failed to load tags
+2950	Product created
+2951	Product deleted
+2952	Handle: 
+2953	your-handle
+2954	Subtitle
+2955	Default unit
+2956	Delete this product?
+2957	Failed to delete product
+2958	Failed to load products
+2959	Products
+2960	Choose files
+2961	Default preview
+2962	No media uploaded yet.
+2963	Failed to delete media.
+2964	Only image files are supported.
+2965	Upload failed.
+2966	Uploading…
+2967	Bundle
+2968	Downloadable
+2969	Grouped
+2970	Simple
+2971	Virtual
+2972	Base quantity for reference
+2973	Enable EU unit price display
+2974	Base quantity is required when unit price display is enabled.
+2975	Reference unit is required when unit price display is enabled.
+2976	Show calculated price per selected reference unit. In most cases set quantity to 1.
+2977	Show calculated price per {{quantity}} {{unit}}. For most products use 1 (for example: 1 kg, 1 l, 1 m²).
+2978	1 kg
+2979	1 l
+2980	1 m²
+2981	1 m³
+2982	1 pc
+2983	Reference unit
+2984	Select reference unit
+2985	Add conversion
+2986	Base unit
+2987	Use arrows to reorder conversion priority.
+2988	1 {{fromUnit}} = {{factor}} {{baseUnit}}
+2989	Sales unit
+2990	Product conversions
+2991	Default sales quantity
+2992	Used to prefill quantity in quote/order lines. Value is interpreted in Default sales unit.
+2993	Default line quantity (in sales unit)
+2994	Default line: {{quantity}} {{salesUnit}}.
+2995	Default line: {{quantity}} {{salesUnit}} (= {{normalized}} {{baseUnit}}).
+2996	Default sales unit
+2997	Set base/sales units and packaging conversions.
+2998	No conversions configured yet.
+2999	Base unit is required when default sales unit is set.
+3000	Base unit is required when conversions are configured.
+3001	Active conversion for default sales unit is required when it differs from base unit.
+3002	Duplicate conversion unit is not allowed.
+3003	Failed to load units. Please try refreshing the page.
+3004	Failed to synchronize product conversions.
+3005	Loading units...
+3006	Move conversion down
+3007	Move conversion up
+3008	Remove conversion
+3009	Rounding mode
+3010	Down
+3011	Half up
+3012	Up
+3013	Rounding scale
+3014	Units of measure
+3015	To base factor
+3016	Available until cannot be before available from.
+3017	Base unit is required when a default sales unit is set.
+3018	Canonical URL must start with http:// or https://.
+3019	Country of origin must be a two-letter ISO code.
+3020	Handle must include lowercase letters, digits, hyphen, or underscore.
+3021	Enter a valid number.
+3022	End of life cannot be before the launch date.
+3023	Maximum order quantity cannot be lower than the minimum.
+3024	SKU may include letters, numbers, hyphen, underscore, or period.
+3025	UN number must be four digits (e.g. UN1234).
+3026	Product thumbnail set from variant "{name}".
+3027	Edit variant
+3028	No variant media uploaded yet.
+3029	Variant media
+3030	Channel Offer
+3031	Option Schema
+3032	Price Kind
+3033	Unit Conversion
+3034	Excl. tax
+3035	Incl. tax
+3036	Settings saved.
+3037	Controls whether the EU unit price presentation feature is available on the product form.
+3038	Failed to load catalog settings.
+3039	Failed to save catalog settings.

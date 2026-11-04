@@ -1,0 +1,380 @@
+0	Todo
+1	Mark done
+2	Could not mark activity as done
+3	Activity marked done
+4	Log call
+5	Compose email
+6	New meeting
+7	New task
+8	Add new
+9	events
+10	event
+11	{count} {countLabel} · {duration}
+12	{hours}h {minutes}m
+13	{hours}h
+14	{minutes}m
+15	{month} {year}
+16	Next month
+17	Next days
+18	Previous month
+19	Previous days
+20	Weekend
+21	Nothing scheduled for this day.
+22	{count} overdue
+23	Date is required
+24	Enter a valid email address for a guest participant (e.g. guest@example.org)
+25	A participant needs either a user record or an email address
+26	Enter a valid phone number with country code (e.g. +1 212 555 1234)
+27	Phone number is required for Call activities
+28	Time is required
+29	Clear filters
+30	Date range
+31	Failed to load activities.
+32	See all {count} activities
+33	Showing {visible} of {total} activities
+34	{year}
+35	What happened?
+36	Failed to save activity
+37	Hide week preview
+38	Cmd+Enter to save
+39	{{type}} saved
+40	Scheduled for
+41	Show week preview
+42	Description is required
+43	Select an activity type
+44	to
+45	with
+46	Try broadening the date range or removing some filters.
+47	Failed to load activity history
+48	Sort order
+49	Search by title, note, or author
+50	Sort: newest
+51	Sort: Name A-Z
+52	Sort: Name Z-A
+53	Activity history
+54	Action items
+55	Bulletize
+56	Expand
+57	Lead score
+58	Replay
+59	Sentiment
+60	Show email
+61	Summarize
+62	Transcription
+63	Translate
+64	Coming soon
+65	AI:
+66	Explore people, companies, deals, and activities.
+67	CRM Assistant
+68	{count} deals in view
+69	{count} contacts in view
+70	{count} deals selected
+71	{count} contacts selected
+72	Ask about this deal, the stage, pipeline...
+73	Ask about this deal. With the per-tenant mutation-policy override enabled, the assistant can also propose a stage change that you confirm before anything is saved.
+74	Customers AI assistant — deal
+75	Open AI assistant for this deal
+76	Ask AI
+77	Customers
+78	AI assistants
+79	Ask about people, companies, deals...
+80	Read-only assistant. Ask about people, companies, deals, and activities scoped to this list.
+81	Working with {count} selected contacts. Ask about their details, deals, companies, and activities.
+82	Working with {count} selected companies. Ask about their deals, contacts, and activities.
+83	Working with {count} selected deals. Ask about their stage, value, and close dates.
+84	Dock to side
+85	Acting on {count} selected
+86	Customers AI assistant
+87	Ask me anything about your customers, companies, and deals:
+88	Ask me anything about your companies, deals, and activities:
+89	Ask about deals, pipeline, or close dates:
+90	Ready to explore your {count} selected contacts:
+91	Ready to explore your {count} selected companies:
+92	Ready to explore your {count} selected deals:
+93	Activity overview
+94	Selected deals at risk
+95	Companies on selected deals
+96	Companies missing contacts
+97	Deals at risk of slipping
+98	Deals closing this month
+99	Show deals for selected companies
+100	Find related companies
+101	Show deals for selected people
+102	List people at selected companies
+103	Show recent deals
+104	Search for a company
+105	Search for a deal
+106	Search for a contact
+107	Summarize selected contacts
+108	Summarize selected companies
+109	Summarize selected deals
+110	List top companies
+111	Top companies by deal value
+112	Top deals by value
+113	Total open deal value
+114	Open AI assistant for people
+115	Open AI assistant for companies
+116	Open AI assistant for deals
+117	Choose an AI assistant
+118	Insufficient permissions to load assignable staff.
+119	Unable to load team members. Check your permissions and try again.
+120	Create activity
+121	Delete activity
+122	Update activity
+123	Create address
+124	Delete address
+125	Update address
+126	Create note
+127	Delete note
+128	Update note
+129	Create company
+130	Delete company
+131	Update company
+132	Create deal
+133	Delete deal
+134	Update deal
+135	Add customer dictionary entry
+136	Delete customer dictionary entry
+137	Update customer dictionary entry
+138	Create entity role
+139	Delete entity role
+140	Update entity role
+141	Cancel interaction
+142	Complete interaction
+143	Create interaction
+144	Delete interaction
+145	Update interaction
+146	Assign label
+147	Create label
+148	Unassign label
+149	Create person
+150	Delete person
+151	Update person
+152	Link person to company
+153	Unlink person from company
+154	Update person-company link
+155	Assign tag
+156	Create tag
+157	Delete tag
+158	Unassign tag
+159	Update tag
+160	Create customer task
+161	Link todo
+162	Unlink todo
+163	{count} events
+164	{count} event
+165	Tomorrow
+166	All day
+167	Failed to cancel event
+168	Event cancelled
+169	{count} Conflicted
+170	1 day later
+171	{days} days later
+172	Join Meeting
+173	Event actions
+174	See Conflict
+175	FRI
+176	MON
+177	SAT
+178	SUN
+179	THU
+180	TUE
+181	WED
+182	Invite {email} as a guest
+183	Add staff or customer…
+184	Add recipient…
+185	Assign to a team member…
+186	Calendar conflict
+187	Overlaps with: {items}
+188	Due
+189	Ends
+190	Logged
+191	Starts
+192	When
+193	{name} · Deal
+194	No deal
+195	Add details…
+196	Failed to save event
+197	Guest
+198	Add a location or link…
+199	Multi-day event · {count} days
+200	No results
+201	Participants
+202	Phone / link
+203	Add a phone number or link…
+204	Use {name}’s number
+205	Medium
+206	Related to
+207	Search people or companies…
+208	Remove {name}
+209	Clear related record
+210	After
+211	F
+212	M
+213	S
+214	T
+215	W
+216	Daily
+217	Does not repeat
+218	Weekly
+219	Repeat
+220	Never
+221	On date
+222	times
+223	All types
+224	Showing {shown} of {total} — keep typing to narrow
+225	Search types…
+226	Add a resource…
+227	Save event
+228	Event saved
+229	Saving…
+230	Searching…
+231	Edit event
+232	Add a title…
+233	Event type
+234	Assign this task to a team member
+235	End must be after start
+236	Select a person or company to link this event
+237	Title is required
+238	Nothing scheduled in this period
+239	Nothing scheduled this day
+240	Plan a meeting, event or task to fill your week.
+241	Nothing scheduled this month
+242	Nothing scheduled this week
+243	Failed to load calendar events.
+244	Timezone: {timezone}
+245	1 conflict
+246	{count} conflicts
+247	+{count} more
+248	Next day
+249	Non-working day
+250	on {platform}
+251	Previous day
+252	Venue: {name}
+253	Upcoming
+254	{date}
+255	Loading calendar…
+256	en
+257	Next week
+258	Showing first {count} items for this range.
+259	1 attendee
+260	{count} attendees
+261	You don't have permission to edit events
+262	Join
+263	Meet
+264	Slack
+265	Teams
+266	Zoom
+267	Google Meet
+268	Microsoft Teams
+269	Previous week
+270	Activity Types
+271	The activity types your calendar surfaces when creating an event. Seeded from your workspace dictionary.
+272	Add a category…
+273	Add a type…
+274	AI summaries
+275	Conflict scope
+276	All meetings
+277	Choose whose overlaps the calendar flags as conflicts.
+278	My meetings
+279	Conflict warnings
+280	Event Categories
+281	Your own grouping labels (e.g. Team Meeting, Sales Call). Offered when creating an event.
+282	(max. {count})
+283	Remove {tag}
+284	Calendar settings saved
+285	Show CRM activities on calendar
+286	Show weekends
+287	Customise your calendar module.
+288	Customization
+289	Agenda
+290	Navigate the calendar faster with these keys.
+291	Month
+292	Keyboard shortcuts
+293	Week
+294	Events
+295	Meetings
+296	All owners
+297	All statuses
+298	Canceled
+299	Planned
+300	Date range preset
+301	Custom range
+302	Next 30 days
+303	Next 7 days
+304	This month
+305	Search events…
+306	Calendar settings
+307	Day
+308	Calendar view
+309	Assign
+310	All actions
+311	All fields
+312	All users
+313	What changed
+314	No changes recorded in this period.
+315	No changes in this period
+316	Failed to load change log
+317	Export CSV
+318	Failed to export change log
+319	No matching options
+320	{{count}} selected
+321	TODAY
+322	YESTERDAY
+323	active
+324	status, stage, role
+325	Critical fields
+326	last {{days}} days
+327	All changes
+328	vs yesterday
+329	Last 30 days
+330	Last 7 days
+331	Last 90 days
+332	Loading changes...
+333	Newer
+334	Older
+335	Showing {{shown}} of {{total}} entries
+336	Showing {{shown}} of {{total}} entries · last {{days}} days
+337	API
+338	UI
+339	Change log
+340	Cannot delete company: {{blockers}}. Please unlink or reassign first.
+341	linked deals ({{count}})
+342	persons whose primary company is this one ({{count}})
+343	linked persons ({{count}})
+344	Add deal
+345	Back to companies
+346	Edit email
+347	Edit phone
+348	History
+349	Edit tags
+350	Send message
+351	ACTIVE DEAL
+352	Loading activities…
+353	Failed to save address.
+354	Payment terms
+355	Copied to clipboard
+356	Created {{date}}
+357	Provide a currency code.
+358	Failed to add currency.
+359	Currency code is required.
+360	Failed to load currency dictionary.
+361	Failed to save currency option.
+362	Failed to load currencies.
+363	Enter a valid amount.
+364	Loading currencies…
+365	Manage currencies
+366	Select currency…
+367	Press Enter to save
+368	Currency added.
+369	Loading deals…
+370	Delete company?
+371	Failed to delete company.
+372	employees
+373	No addresses recorded.
+374	No notes yet.
+375	No deals linked to this company.
+376	No tasks linked to this company.
+377	No activities logged yet
+378	No addresses yet
+379	Create a deal

@@ -1,0 +1,380 @@
+380	No deals yet
+381	Create a note
+382	Keep everyone in the loop
+383	Build the account team
+384	Create task
+385	Plan what happens next
+386	Failed to load company.
+387	Company not found.
+388	Annual revenue
+389	Enter amount
+390	Brand name
+391	Add brand name
+392	Describe the company
+393	Domain
+394	Use a plain domain like example.com.
+395	example.com
+396	Industry
+397	Legal name
+398	Add legal name
+399	Company size
+400	Add size bucket
+401	Website
+402	Use a full URL like https://example.com.
+403	https://example.com
+404	Upload and manage files linked to this company.
+405	Account Manager
+406	{count} employees
+407	more
+408	Not assigned
+409	At Risk
+410	Healthy
+411	Last contact
+412	Relationship health
+413	Watchful
+414	Add industry
+415	Shows the nearest planned interaction. Create a task with a due date to populate this.
+416	Available when unified interactions are enabled. Create tasks with a due date to see the next planned interaction.
+417	Primary phone
+418	Use a three-letter currency code (e.g. USD).
+419	Enter a non-negative number.
+420	Enter a valid email address.
+421	Unable to update company.
+422	Phone number is too short.
+423	Use a valid http(s) address.
+424	LAST CONTACT
+425	Loading company…
+426	in {days} days
+427	No upcoming interactions scheduled
+428	{days} days overdue
+429	Proposal
+430	Next Step
+431	today
+432	Scheduled interaction
+433	Not provided
+434	Unable to determine current company.
+435	Write a note about this company…
+436	Add person
+437	No people linked to this company yet.
+438	Filters
+439	People linked to this company appear here and can be created, linked, opened, or unlinked without leaving the page.
+440	Link existing person
+441	Clear visible
+442	Link person
+443	Link selected
+444	Search for one or more existing people and attach them to this company without leaving the page.
+445	No matching people found.
+446	Failed to link person to company.
+447	Failed to load people.
+448	Load more people
+449	Searching people…
+450	Search people by name or email
+451	Select {{name}}
+452	Select visible
+453	Selected
+454	Choose one or more people to link.
+455	Start typing to search for an existing person.
+456	Linking…
+457	Person linked to company.
+458	{{count}} people linked to company.
+459	Linked on {{date}}
+460	Loading people…
+461	No people match your search.
+462	Open person
+463	Page {{page}} of {{total}}
+464	Unlink
+465	Failed to unlink person from company.
+466	Person unlinked from company.
+467	Search by name, role, email...
+468	Employees and decision makers on the client side
+469	Sort: Recently linked
+470	{{days}} days ago
+471	{{months}} mo. ago
+472	1 day ago
+473	{{weeks}} wk. ago
+474	ROLE OF {{name}} IN THIS COMPANY
+475	Loading…
+476	Company details
+477	Activity log
+478	Analysis
+479	Company data
+480	Files
+481	Company detail sections
+482	Add task
+483	This task will be linked to {{name}}
+484	companies
+485	Enter a valid amount (up to two decimals).
+486	Add lifecycle stage
+487	Add source
+488	Enter a new industry name
+489	Enter a new lifecycle stage name
+490	Enter a new source name
+491	Enter a new status name
+492	Company name is required.
+493	Enter company name
+494	Failed to create company
+495	Business profile
+496	Classification
+497	Custom attributes
+498	Identity
+499	Company profile
+500	Select an industry
+501	Select a lifecycle stage
+502	Add email
+503	name@example.com
+504	Add phone
+505	+00 000 000 000
+506	Select a source
+507	Select a status
+508	Create Company
+509	Company created
+510	Company updated.
+511	Failed to delete {count} companies
+512	{count} companies could not be deleted: {message}
+513	Delete {count} companies
+514	{deleted} of {total} companies deleted; {failed} failed
+515	{count} companies selected for deletion
+516	Delete selected companies
+517	{count} companies deleted
+518	Delete {count} companies?
+519	Are you sure you want to delete {{name}}? This action cannot be undone.
+520	Unable to delete company.
+521	this company
+522	Company deleted.
+523	Unable to load companies list
+524	Exports every company field, including hidden custom fields.
+525	Exports the current list with filters and visible columns.
+526	info@example.com
+527	Inactive > 60 days
+528	My accounts
+529	Recently created
+530	Choose how address forms and displays should be structured across the customer module.
+531	Failed to load address settings
+532	Failed to update address settings
+533	Collect address line 1 and 2, then postal code, city, region, and country.
+534	Address lines first
+535	Loading current preference…
+536	Collect street, building and flat numbers before postal code, city, region, and country.
+537	Street-first (European)
+538	Address format updated
+539	Customer address format
+540	Saving preference…
+541	Delete "{{value}}"?
+542	Manage the dictionaries used by the customers module.
+543	Edit entry
+544	Type an emoji or pick one of the suggestions.
+545	Search icons or emojis…
+546	No entries yet.
+547	Failed to delete dictionary entry.
+548	Failed to load dictionary entries.
+549	Failed to save dictionary entry.
+550	An entry with this value already exists.
+551	Color must be a valid hex value like #3366ff.
+552	Icon must be a short name or emoji.
+553	Please provide a value.
+554	This role type is assigned to {{count}} records. Remove or replace those assignments before deleting it.
+555	This role type is assigned to {{count}} records. Remove or replace those assignments before changing its value.
+556	Inherited entries can only be edited from the parent organization.
+557	Inherited
+558	Inherited entries are managed at the parent organization.
+559	Managed in parent organization
+560	Role type is in use
+561	In use on {{count}} records
+562	Search entries…
+563	Define the activity types used for customer interactions.
+564	Activity types
+565	Define the address type options available for addresses.
+566	Address types
+567	Manage the statuses available for deals.
+568	Deal statuses
+569	Manage the industries used by companies.
+570	Industries
+571	Manage the statuses available for tasks and logged interactions.
+572	Interaction statuses
+573	Configure job titles with their appearance.
+574	Job titles
+575	Configure lifecycle stages to track customer progress.
+576	Lifecycle stages
+577	Manage the ownership roles available in People tab assignments.
+578	Role types
+579	Define the stages used in your deal pipeline.
+580	Pipeline stages
+581	Capture how customers were acquired.
+582	Sources
+583	Define the statuses available for customer records.
+584	Statuses
+585	Dictionary entry deleted.
+586	Dictionary entry saved.
+587	Customers dictionaries
+588	Choose how customer dictionary values are ordered in dropdowns and settings.
+589	Failed to load dictionary sorting settings.
+590	Failed to save dictionary sorting settings.
+591	Loading dictionary sorting settings…
+592	Dictionary sorting settings saved.
+593	Dictionary sorting
+594	This pipeline and all its stages will be permanently removed. Deals assigned to it will lose their pipeline assignment.
+595	This stage will be permanently removed. Deals assigned to it will lose their stage assignment.
+596	Seed interaction statuses
+597	Seeding interaction statuses…
+598	Seed the interaction-statuses dictionary so CRM tasks and logged interactions can use the configurable status list.
+599	Interaction statuses are ready.
+600	Canada
+601	Germany
+602	Spain
+603	France
+604	United Kingdom
+605	Italy
+606	Poland
+607	United States
+608	Analyze stalled deals, propose stage moves...
+609	Multi-step deal health analyzer. Surfaces stalled deals and proposes stage transitions for approval.
+610	Analyzing {count} selected deals for pipeline health and stage move proposals.
+611	Acting on {count} deals
+612	Deal Analyzer
+613	Analyze deal pipeline health and propose stage moves:
+614	Ready to analyze your {count} selected deals:
+615	Analyze selected deals
+616	Analyze stalled deals
+617	Deal health overview
+618	Propose stage moves for selected deals
+619	Show at-risk pipeline
+620	Open Deal Analyzer AI agent
+621	Search companies by name or domain…
+622	Search people by name or email…
+623	Back to deals
+624	Failed to create deal.
+625	Pick a date
+626	Expected close date
+627	Probability
+628	· stage {position} of {total}
+629	Deal title
+630	Deal value
+631	Stages depend on the selected pipeline
+632	0 – 100%, used for weighted pipeline value
+633	Short, descriptive name shown on pipeline cards
+634	Potential revenue from this opportunity
+635	Link people and companies to this deal
+636	Associations
+637	No custom fields defined for deals yet.
+638	Loading custom fields…
+639	Manage fields
+640	{count} fields defined for this tenant
+641	Core opportunity info
+642	Use the company name + short deliverable format in the title (e.g. "Copperleaf — Q3 Renewal")
+643	Set probability based on pipeline stage: Qual 10-25%, Proposal 30-50%, Negotiation 50-75%, Contract 75-90%
+644	Link primary decision maker as first person — they get default email CC on activities
+645	Tips for better deals
+646	Move stage
+647	Activities on a deal still need a customer record for timeline ownership.
+648	Link a person or company first
+649	Pick the person or company that should own new deal activities and follow-ups.
+650	Choose customer record
+651	Select a person or company
+652	Select the customer record that should receive new deal activities before logging or scheduling anything.
+653	Choose a person or company to continue
+654	Add an activity
+655	No activities yet
+656	Failed to mark deal as lost.
+657	Failed to mark deal as won.
+658	Close deal — choose outcome
+659	Manage linked companies
+660	No additional details
+661	Search linked companies…
+662	{{count}} companies linked
+663	1 company linked
+664	Failed to update linked companies.
+665	Custom data
+666	Delete this deal? This action cannot be undone.
+667	Delete deal?
+668	Failed to delete deal.
+669	Deal deleted.
+670	Edit assignments
+671	Failed to load deal.
+672	Deal not found.
+673	Expected close
+674	Pipeline stage
+675	Upload and manage files linked to this deal.
+676	Deal settings
+677	Edit deal details
+678	Expected close {{date}}
+679	Created {{created}} · Expected close {{expected}}
+680	Highlights
+681	Link {{entity}}
+682	Link an existing {{entity}} to this deal
+683	Manage linked {{entity}}
+684	No linked records yet.
+685	Loading linked records…
+686	Manage links
+687	No matching records found.
+688	No linked records match the current search.
+689	No linked records selected.
+690	Search all {{entity}}…
+691	Search results
+692	MATCHING {{entity}}
+693	Selected {{entity}}
+694	{{count}} linked {{entity}}
+695	Loading deal…
+696	Mark as Lost
+697	Lost this week
+698	Revisit closed deal
+699	Revisit {{title}}
+700	What's next
+701	Loss notes (optional)
+702	Additional context about the loss...
+703	Even great teams miss a shot sometimes
+704	Lost · reason: {{reason}}
+705	Not this round
+706	Back to pipeline
+707	Loss reason
+708	No description available.
+709	Choose the closest reason from the dictionary.
+710	Loss reasons could not be loaded.
+711	Loading loss reasons...
+712	Select loss reason
+713	Please select a loss reason
+714	No loss reasons are configured.
+715	Sales cycle
+716	Set reminder for Q3
+717	Mark deal as Lost?
+718	This action sets the stage to 'Lost' and cannot be undone without 'sales.reopen' permission
+719	This action closes the deal
+720	Deal id is required.
+721	No companies linked to this deal yet.
+722	No people linked to this deal yet.
+723	No pipeline
+724	No status
+725	Add a note
+726	Loading notes…
+727	Manage linked people
+728	Search linked people…
+729	{{count}} people linked
+730	1 person linked
+731	Failed to update linked people.
+732	Pipeline closed — deal lost.
+733	Pipeline closed — deal won.
+734	Pipeline progress
+735	Pipeline progress — {{name}}
+736	Stage {{current}} of {{total}}: {{label}}
+737	current
+738	{{date}} · {{state}}
+739	Current pipeline
+740	no current stage
+741	Stage {{current}} of {{total}}
+742	Failed to update deal.
+743	Deal updated.
+744	Move the deal forward without opening the form.
+745	Update pipeline stage
+746	Failed to update deal stage.
+747	Deal stage updated.
+748	{{status}} · {{pipeline}}
+749	Changelog
+750	Deal detail sections
+751	Keep editing
+752	Discard changes
+753	You have unsaved edits in this deal. Save them first or continue to discard them.
+754	Discard unsaved changes?
+755	Untitled deal
+756	Deals this week
+757	Pipeline
+758	View sales report
+759	Quarter rank

@@ -1,0 +1,49 @@
+4400	Webhook
+4401	AI
+4402	CPU
+4403	events
+4404	approved
+4405	Approved
+4406	Canceled
+4407	Fulfilled
+4408	On hold
+4409	Pending Approval
+4410	rejected
+4411	Allocated
+4412	Delivered
+4413	pending
+4414	Picking
+4415	Returned
+4416	Shipped
+4417	In transit
+4418	Authorized
+4419	Captured
+4420	failed
+4421	Received
+4422	Refunded
+4423	Discount
+4424	Return
+4425	custom
+4426	Custom
+4427	Shipping
+4428	Tax
+4429	Surcharge
+4430	Stripe
+4431	USD
+4432	Sale
+4433	Budget holder
+4434	Decision maker
+4435	active
+4436	Archived
+4437	inactive
+4438	event
+4439	LinkedIn
+4440	customer
+4441	done
+4442	Planned
+4443	Waiting / blocked
+4444	Billing
+4445	Units of measure
+4446	PL
+4447	sales.orders.update
+4448	Raiffeisen Bank Poland

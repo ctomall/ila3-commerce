@@ -1,0 +1,204 @@
+4600	Connect external services, manage credentials, and monitor integration health.
+4601	Enabled date
+4602	Health
+4603	Ascending
+4604	Descending
+4605	Akeneo PIM
+4606	Unconfigured
+4607	Excel / CSV Import
+4608	Upload CSV files, preview mappings, and run file-based imports through Data Sync.
+4609	Gmail
+4610	Accept card payments, Apple Pay, Google Pay, and bank transfers via Stripe.
+4611	Compose message
+4612	Custom Attributes
+4613	Portal users
+4614	No users linked
+4615	Pending work
+4616	No open work is linked to this record.
+4617	Related documents
+4618	Failed to load related documents.
+4619	Account status
+4620	Shows customer portal account status on CRM person detail
+4621	No account linked
+4622	Invite to Portal
+4623	Stalled
+4624	No accessible documents are related to this record.
+4625	EUDR compliance overview
+4626	Product mappings in scope
+4627	Active plots
+4628	Evidence completeness
+4629	Incomplete evidence submissions
+4630	Nothing needs attention.
+4631	Risk reviews due
+4632	Amendment window closing
+4633	Plots with warnings
+4634	Annual report
+4635	Reporting year
+4636	No statements were submitted in this year.
+4637	Capacity
+4638	Focus
+4639	New request
+4640	No leave requests yet.
+4641	Non-billable
+4642	Today’s entries
+4643	All entries
+4644	Nothing logged today yet.
+4645	My projects
+4646	Recent tasks
+4647	Create Rule
+4648	Rule ID
+4649	Rule Name
+4650	Set ID
+4651	Set Name
+4652	Executed At
+4653	Rule
+4654	Result
+4655	Execution Time
+4656	Workflow Definitions
+4657	Create Workflow
+4658	Workflow Name
+4659	Created At
+4660	Runs (7d)
+4661	Success (7d)
+4662	p95 duration (7d)
+4663	Task SLA (7d)
+4664	Code-defined
+4665	Workflow Instances
+4666	Top-level
+4667	All (flat)
+4668	Workflow ID
+4669	Current Step
+4670	Timing
+4671	Retries
+4672	Claim Next
+4673	Work Item
+4674	Assignment
+4675	Due Date
+4676	Nothing is assigned to you
+4677	Workflow Events
+4678	Occurred At
+4679	Workflow
+4680	Instance
+4681	Event Data
+4682	Folders
+4683	New folder
+4684	All documents
+4685	No folders yet.
+4686	New from template
+4687	Create document
+4688	Folder
+4689	Shared with
+4690	No documents found.
+4691	File
+4692	Assignments
+4693	Partition
+4694	Download
+4695	No text extracted
+4696	Confidence
+4697	Forward emails to start
+4698	Connect FCM
+4699	Connect APNs
+4700	Connect Expo
+4701	External ID
+4702	Pull calls
+4703	No phone calls yet. Calls appear here once they are ingested from a provider.
+4704	Warehouse Operator
+4705	Warehouse Supervisor
+4706	Last Used
+4707	Device ID
+4708	Platform
+4709	App version
+4710	OS version
+4711	Push provider
+4712	Search for a user to review and edit their notification channel preferences.
+4713	Verified
+4714	Last Login
+4715	Viewer
+4716	Portal Admin
+4717	Self-assignable
+4718	UTC
+4719	Portal Access
+4720	Portal URL pattern:
+4721	Open Portal
+4722	Manage Organizations
+4723	Demo Credentials
+4724	Manage customer users
+4725	Manage customer roles
+4726	Portal documentation
+4727	Symbol
+4728	Decimals
+4729	Updated At
+4730	US Dollar
+4731	Currency Pair
+4732	Date & Time
+4733	Set the logo used in the backend sidebar for the currently selected organization.
+4734	Current organization
+4735	Upload logo
+4736	PNG, JPG, or WebP works best. Uploaded files are stored as organization attachments.
+4737	Logo URL
+4738	Use an external image URL or leave empty to fall back to the default Open Mercato logo.
+4739	Keep the aspect ratio
+4740	When disabled, the sidebar crops the logo into the standard icon shape.
+4741	Boolean
+4742	String
+4743	JSON
+4744	Feature Toggle Overrides
+4745	Override State
+4746	Download JSON
+4747	Manage webhook endpoints for receiving platform events.
+4748	URL
+4749	Last Delivery
+4750	Run once or keep it recurring
+4751	Start or schedule a sync
+4752	Run once now
+4753	Batch Size
+4754	Run as full sync
+4755	Ignore the saved cursor and process the entire source again for this run.
+4756	Manual runs show progress immediately and land on the run detail page after launch.
+4757	Recurring schedule
+4758	One-time only
+4759	Schedule type
+4760	Interval
+4761	Example: `1h`, `6h`, or `24h` for repeating intervals.
+4762	Run scheduled jobs as full sync
+4763	When enabled, every recurring run starts from the beginning instead of the saved cursor.
+4764	Schedule enabled
+4765	Pause the recurring job without deleting the schedule definition.
+4766	No recurring schedule saved for this target yet.
+4767	Remove schedule
+4768	Sync Runs
+4769	Create Payment Link
+4770	Payment ID
+4771	Session ID
+4772	Updated at
+4773	Push deliveries
+4774	Attempts
+4775	No push deliveries yet
+4776	Action Log
+4777	Access Log
+4778	Undoable only
+4779	Controls
+4780	Hub
+4781	Usage (30 days)
+4782	No activity in the last 30 days
+4783	State
+4784	Credentials
+4785	Akeneo sync settings
+4786	Sync schedules
+4787	Delivery processing is enabled
+4788	Failed delivery notifications
+4789	Notify admin users when a webhook delivery finally fails after retries are exhausted.
+4790	Configured webhooks
+4791	No webhooks have been configured yet. Create one to start sending or receiving events.
+4792	No credentials configured yet
+4793	Payment Gateways
+4794	Stripe settings
+4795	Operator configuration
+4796	Save draft
+4797	Internal messages are sent to selected system users.
+4798	Normal
+4799	Urgent
+4800	Drag and drop files here or click to upload.
+4801	No attachments found.
+4802	Also send via email
+4803	Recipients will receive an email copy with a secure link.

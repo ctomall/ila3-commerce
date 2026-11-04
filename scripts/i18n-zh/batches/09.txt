@@ -1,0 +1,380 @@
+3040	Unit price presentation
+3041	When off, the EU unit price settings are hidden from every product form. Turn this off for manufacturers or other tenants that do not sell to consumers.
+3042	Enable EU unit price presentation
+3043	Snapshot at {time}
+3044	Catalog overview
+3045	Box (piece)
+3046	Centiliter (volume)
+3047	Centimeter (length)
+3048	Square Centimeter (area)
+3049	Day (time)
+3050	Dozen (piece)
+3051	Foot (length)
+3052	Square Foot (area)
+3053	Gram (weight)
+3054	Gigabyte (digital)
+3055	Hour (time)
+3056	Inch (length)
+3057	Kilogram (weight)
+3058	Kilometer (length)
+3059	Kilowatt Hour (energy)
+3060	Liter (volume)
+3061	Pound (weight)
+3062	License (digital)
+3063	Meter (length)
+3064	Square Meter (area)
+3065	Cubic Meter (volume)
+3066	Megabyte (digital)
+3067	Milligram (weight)
+3068	Minute (time)
+3069	Milliliter (volume)
+3070	Millimeter (length)
+3071	Month (time)
+3072	Ounce (weight)
+3073	Pair (piece)
+3074	Piece (piece)
+3075	Package (piece)
+3076	Roll (piece)
+3077	Seat (digital)
+3078	Second (time)
+3079	Set (piece)
+3080	Terabyte (digital)
+3081	Unit (piece)
+3082	Week (time)
+3083	Year (time)
+3084	Another variant already uses this identifier.
+3085	Back to product variants
+3086	Barcode
+3087	EAN, UPC, etc.
+3088	Variant created.
+3089	Create variant for {{title}}
+3090	Failed to delete variant.
+3091	Variant deleted.
+3092	cm
+3093	Edit variant • {{title}}
+3094	Variant id missing after create.
+3095	Provide a valid non-negative price.
+3096	Failed to load variant.
+3097	Provide the variant name.
+3098	Variant not found.
+3099	Variant identifier is missing.
+3100	Typed barcodes are validated and kept unique per organization.
+3101	Identifier type (GTIN)
+3102	Untyped
+3103	ASIN
+3104	EAN-13
+3105	EAN-8
+3106	ISBN
+3107	MPN
+3108	UPC-A
+3109	Inactive variants stay hidden
+3110	Used in storefronts
+3111	Loading form...
+3112	e.g., Blue / Small
+3113	Option values
+3114	No currency configured
+3115	No price kinds configured yet.
+3116	Populate list prices per price kind.
+3117	No tax override
+3118	Unique identifier
+3119	Variant updated.
+3120	kg
+3121	A barcode value is required when an identifier type is set.
+3122	The barcode does not match the selected identifier type.
+3123	Optimize product titles and descriptions before publishing.
+3124	Product SEO Helper
+3125	Inventory lot
+3126	Inventory profile
+3127	Receive inventory
+3128	Assign warehouse to order
+3129	Re-run reservation for order
+3130	Remove warehouse assignment from order
+3131	Add location
+3132	Add profile
+3133	Add warehouse
+3134	Add zone
+3135	Phase-1 operational configuration for warehouses, storage locations, and inventory tracking policies.
+3136	Capacity units
+3137	Archive location "{code}"?
+3138	Maintain aisle/bin/dock level topology buckets that hold operational inventory.
+3139	Create location
+3140	Edit location
+3141	Create locations to define the buckets used by balances, reservations, and movement ledger rows.
+3142	No locations
+3143	Failed to archive location.
+3144	Failed to load locations.
+3145	Failed to save location.
+3146	Location created
+3147	Location archived
+3148	Location updated
+3149	Capacity weight
+3150	Search locations
+3151	Locations
+3152	Aisle
+3153	Bin
+3154	Dock
+3155	Rack
+3156	Slot
+3157	Staging
+3158	Zone
+3159	All variants
+3160	Reorder point
+3161	Safety stock
+3162	Strategy
+3163	UOM
+3164	Archive inventory profile "{id}"?
+3165	Configure tracking strategy, reorder thresholds, and lot/serial behavior per product scope.
+3166	Create inventory profile
+3167	Edit inventory profile
+3168	Create profiles to control reservation strategy, lot/serial tracking, and low-stock thresholds.
+3169	No inventory profiles
+3170	Failed to archive inventory profile.
+3171	Failed to load inventory profiles.
+3172	Failed to save inventory profile.
+3173	Inventory profile created
+3174	Inventory profile archived
+3175	Inventory profile updated
+3176	Rotation strategy
+3177	Track expiration
+3178	Track lots
+3179	Track serials
+3180	Default UOM
+3181	Inventory profiles
+3182	FEFO is required when expiration tracking is enabled.
+3183	WMS configuration
+3184	View all →
+3185	Archive warehouse "{name}"?
+3186	Manage the high-level warehouse nodes used by WMS reservations and inventory movements.
+3187	Create warehouse
+3188	Edit warehouse
+3189	Create the first warehouse to expose topology and inventory assignment in WMS.
+3190	No warehouses
+3191	Failed to archive warehouse.
+3192	Failed to load warehouses.
+3193	Failed to save warehouse.
+3194	Warehouse created
+3195	Warehouse archived
+3196	Warehouse updated
+3197	Primary warehouse
+3198	Search timezone
+3199	Search warehouses
+3200	Warehouses
+3201	Archive zone "{name}"?
+3202	Group locations into functional zones (e.g. receiving, pick face, bulk) to drive routing and priority.
+3203	Create zone
+3204	Edit zone
+3205	Zones group locations into functional areas to drive picking priority and routing rules.
+3206	No zones
+3207	Failed to archive zone.
+3208	Failed to load zones.
+3209	Failed to save zone.
+3210	Zone created
+3211	Zone archived
+3212	Zone updated
+3213	Search zones
+3214	Zones
+3215	Open movement
+3216	Recent activity
+3217	Adjusted {quantity}× {sku}
+3218	Allocated {quantity}× {sku}
+3219	{type} {quantity}× {sku}
+3220	Moved {quantity}× {sku}
+3221	Received {quantity}× {sku}
+3222	Inventory reconciled — {sku}
+3223	Adjust
+3224	Reconciled
+3225	Allocate
+3226	Putaway
+3227	Receive
+3228	Ship
+3229	Failed to load dashboard.
+3230	{quantity} available
+3231	Open lot
+3232	Add locations
+3233	Receive first stock
+3234	Create a warehouse, add storage locations, then receive your first stock to start tracking inventory.
+3235	Your warehouse is set up — add at least one storage location before you can receive stock.
+3236	Add storage locations
+3237	{count} aging
+3238	{count} lots
+3239	{count} active
+3240	+{count} since yesterday
+3241	Stable
+3242	{count} critical
+3243	{count} vs yesterday
+3244	+{count} vs yesterday
+3245	Loading dashboard…
+3246	Open inventory console
+3247	Live activity for today · auto-refresh 60s · last update {time}
+3248	Live activity for today · auto-refresh 60s
+3249	No movement trends yet.
+3250	Append a signed delta to the ledger
+3251	to save
+3252	Save adjustment
+3253	Inventory delta must be non-zero.
+3254	Failed to resolve inventory lot.
+3255	Failed to load balance preview.
+3256	Failed to adjust inventory.
+3257	Select a warehouse first.
+3258	Inventory adjusted
+3259	Adjustment
+3260	Select location
+3261	Select lot (optional)
+3262	Optional — context for auditors
+3263	Select reason
+3264	Serial number
+3265	Use when the variant profile tracks serials.
+3266	Optional — for serial-tracked variants
+3267	Search variant or SKU
+3268	Select warehouse
+3269	Below reorder
+3270	Refreshing balance…
+3271	On hand
+3272	Balance preview
+3273	Correction
+3274	Damaged
+3275	Found stock
+3276	Shrinkage
+3277	Failed to allocate reservation.
+3278	Reservation allocated
+3279	Allocated
+3280	Reserved
+3281	Current on-hand, reserved, allocated, and available quantities by bucket.
+3282	Balances appear after receipts, adjustments, or moves create inventory buckets.
+3283	Import CSV
+3284	Receive stock
+3285	No balance buckets
+3286	View lot
+3287	Search balances
+3288	Inventory balances
+3289	All SKUs
+3290	Multiple lots found at this location — select a lot to continue.
+3291	Enable auto-adjust to commit a variance.
+3292	Failed to load system on-hand.
+3293	Counted quantity is below the {committed} units reserved or allocated here. Release the affected reservations before posting this count.
+3294	Complete setup and select a count location.
+3295	Failed to estimate count scope.
+3296	Failed to post cycle count.
+3297	Selected zone does not belong to this warehouse.
+3298	Cycle count posted ({delta})
+3299	Only the current user can be assigned without user-directory access.
+3300	Select assignee
+3301	Auto-adjust on commit
+3302	Yes — writes a cycle-count movement on commit
+3303	No — ledger unchanged on commit
+3304	No ledger write required — counts match.
+3305	Optional — defects, packaging notes
+3306	Counted
+3307	Currently scanning
+3308	Decrease expected SKUs
+3309	Expected SKUs
+3310	Estimating scope…
+3311	From bin
+3312	Start bin
+3313	Increase expected SKUs
+3314	Required for variances — auditor context
+3315	Immediate start
+3316	Pick date and time
+3317	Optional — pre-count instructions
+3318	To bin
+3319	End bin
+3320	Variant / SKU
+3321	Select a variant to begin scanning
+3322	Select zone
+3323	Select warehouse first
+3324	{warehouse} · {expectedSkus} SKUs · {binCount} bins in scope
+3325	Select a warehouse to choose a zone.
+3326	Functional zone within {warehouse}
+3327	{delta} net · 1 ledger write
+3328	No movement · ledger unchanged
+3329	Commit summary
+3330	Matches
+3331	No match
+3332	Within tolerance
+3333	Counts match the ledger. Posting will not create a movement.
+3334	Match
+3335	System {system} · Counted {counted}
+3336	System on-hand
+3337	Total counted
+3338	{counted} units · {location} · {variant}
+3339	Adjustment delta
+3340	Variance
+3341	Counted {counted} vs expected {expected} · {delta}
+3342	Variances
+3343	Finish session ({count})
+3344	Close session
+3345	Confirm finish
+3346	{count} line(s) already committed — click to close without losing them
+3347	{remaining} item(s) still in scope — confirm to finish early.
+3348	{posted} / {expected} SKUs counted
+3349	All {total} items counted — session complete
+3350	No items found in range — enter location manually.
+3351	Failed to load scope — enter location manually.
+3352	Item {current} of {total}
+3353	Loading count scope…
+3354	to continue
+3355	Review variances
+3356	Step 2 of 3 · Scan and tally items
+3357	Step 2 of 3 · {count} line(s) posted — count next SKU
+3358	to commit
+3359	Commit & count next
+3360	Step 3 of 3 · Review variances and commit
+3361	to start
+3362	Start counting
+3363	Step 1 of 3 · Set scope and expectations
+3364	Failed to load balances.
+3365	Failed to load movements.
+3366	Failed to load reservations.
+3367	Apply import
+3368	Importing…
+3369	Auto-map
+3370	Choose different file
+3371	Choose CSV file
+3372	Import {count} rows
+3373	Download template
+3374	Validate
+3375	Validating…
+3376	View details →
+3377	Delta
+3378	Issues
+3379	Row
+3380	CSV import inventory receipt
+3381	CSV import opening balance
+3382	Upload receipt rows, validate, then add the quantities to the WMS ledger.
+3383	Import failed.
+3384	CSV file is required.
+3385	Choose a CSV file first.
+3386	Select organization scope before importing.
+3387	Validation failed.
+3388	Import finished ({applied} applied, {skipped} skipped).
+3389	Import finished with errors ({applied} applied, {skipped} skipped, {failed} failed).
+3390	CSV validated — review rows before applying.
+3391	Fix validation errors before applying.
+3392	CSV column
+3393	catalog_variant_id
+3394	location_code
+3395	location_id
+3396	lot_id
+3397	lot_number
+3398	quantity
+3399	serial_number
+3400	sku
+3401	warehouse_code
+3402	warehouse_id
+3403	— skip column
+3404	Mapped
+3405	{mapped} of {total} columns mapped · {rows} rows detected
+3406	Target field
+3407	Row {row}: {issue}
+3408	{count} rows will be skipped on import
+3409	Row {row}: {location} — {current} → {quantity} ({delta})
+3410	{count} rows will change existing stock levels
+3411	No preview rows available.
+3412	Preview · first 3 rows
+3413	Skip duplicates
+3414	Duplicate rows in the CSV file will be skipped instead of failing validation
+3415	Columns mapped
+3416	Validation issues
+3417	Rows to import
+3418	Write to ledger
+3419	Each row creates an audit entry in the WMS ledger

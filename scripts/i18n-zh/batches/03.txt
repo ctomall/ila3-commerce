@@ -1,0 +1,380 @@
+760	You are a sales machine!
+761	Closed successfully
+762	Failed to save deal.
+763	deals
+764	No companies linked yet.
+765	Failed to load companies.
+766	Searching companies…
+767	No companies match your search.
+768	Search companies…
+769	Currency dictionary is not configured yet.
+770	Add pipeline stage
+771	Add deal status
+772	Name the pipeline stage
+773	Name the deal status
+774	No people linked yet.
+775	Search people…
+776	Select a pipeline stage
+777	Select a deal status
+778	What happened? Markdown supported.
+779	Log a call
+780	Deal: {title}
+781	Send email
+782	Failed to save activity.
+783	Link a company to this deal before logging activities here.
+784	Phone number
+785	Add a title or body before saving.
+786	Add a subject or body before saving.
+787	Activity saved.
+788	Short summary (optional)
+789	Amber
+790	Blue
+791	Violet
+792	Red
+793	Gray
+794	Green
+795	No color
+796	Pink
+797	Pipeline: {pipeline}
+798	Failed to add stage.
+799	Stage name
+800	e.g. Discovery
+801	Stage name is required.
+802	Position in pipeline
+803	After {label}
+804	At the end (default)
+805	Choose where the new stage appears on the kanban. Existing stages after the chosen position shift one step to the right.
+806	At the start
+807	Add stage
+808	Stage added.
+809	New stage
+810	Scroll to next stage
+811	Scroll to previous stage
+812	Breakdown
+813	{count} deals
+814	PIPELINE
+815	partial
+816	Missing FX rates for {currencies} — excluded from total
+817	Bulk actions
+818	Change owner
+819	Reassign {count} deals
+820	No staff members found.
+821	Failed to start bulk owner update.
+822	Pick a staff member who will own all selected deals.
+823	{count} deals queued for owner reassignment
+824	Reassign selected deals to a new owner
+825	Bulk owner update started ({count} deals).
+826	Search by name or email…
+827	Change owner for {count} deals
+828	Change stage
+829	Move {count} deals
+830	Failed to start bulk stage update.
+831	{count} deals queued for stage update
+832	Move selected deals to a new stage
+833	Bulk stage update started ({count} deals).
+834	Change stage for {count} deals
+835	{count} deals could not be deleted: {message}
+836	{count} deals queued for deletion
+837	Delete selected deals
+838	{count} deals deleted.
+839	Delete {count} deals?
+840	{count} more selected
+841	selected
+842	Total {value}
+843	Link a company to this deal before logging activities.
+844	Deal actions
+845	{count} more companies
+846	{count} open activities
+847	Probability: {value}
+848	deal card
+849	Select deal
+850	in {days}d
+851	No value
+852	OVERDUE
+853	STUCK
+854	{feature} arrives in the next iteration.
+855	Customize view
+856	New deal
+857	Quick deal
+858	BASE
+859	Native total
+860	NBP mid rate · {date}
+861	({count} deals)
+862	Lane breakdown
+863	All currencies
+864	Apply filter
+865	NBP mid conversion rate · {date}
+866	{label} · {count} deals · {total} {currency}
+867	Filter kanban by currency
+868	Configure card fields
+869	Show / hide / reorder
+870	Manage pipeline stages
+871	Edit names, colors, required fields
+872	Reset to default
+873	Clear filters and restore columns
+874	Reset column widths
+875	Restore the default width on {count} resized column(s)
+876	No columns have been resized yet
+877	+ More
+878	All ({count})
+879	Any
+880	Filter by {label}
+881	Filter · Expected close
+882	From {date}
+883	More filters
+884	{count} selected
+885	No matches
+886	All pipelines
+887	{count} pipelines
+888	No pipeline filter
+889	1 selected · {name}
+890	Filter · Pipeline
+891	Next 90 days
+892	This quarter
+893	Search…
+894	Loading statuses…
+895	Filter · Status
+896	Filter · {label}
+897	Until {date}
+898	Showing {visible} of {total} deals in {pipeline} pipeline
+899	Drag cards between lanes to update stage
+900	Load more deals in {stage}
+901	Showing {visible} of {total}
+902	Quickly add a deal to {stage}
+903	({count})
+904	No FX rate to {base} — excluded from the converted total
+905	Missing FX rates for {currencies} — excluded from total. Configure exchange rates to see the full converted value.
+906	Total (partial)
+907	Per-currency breakdown
+908	Show per-currency breakdown ({count} currencies)
+909	No deals in this stage yet.
+910	Show more ({remaining})
+911	Drag to resize column. Double-click to reset width.
+912	Delete deal “{title}”?
+913	Failed to duplicate deal.
+914	Deal duplicated.
+915	{title} (copy)
+916	Failed to update deal status.
+917	Deal marked as lost.
+918	Mark as Won
+919	Deal marked as won.
+920	Move stage…
+921	Open deal
+922	Pick a company or add new…
+923	Pipeline: {pipeline} · Stage: {stage}
+924	Short context, decision makers or next steps. Markdown supported.
+925	More details (probability, close date, description)
+926	Deal added to {stage}.
+927	e.g. Q3 Expansion — Lighting Package
+928	Title is required.
+929	Search deals…
+930	Default: {label}
+931	Sort
+932	Close date (soonest)
+933	Created (newest)
+934	Owner (A → Z)
+935	Probability (high to low)
+936	Updated (newest)
+937	Updated (oldest)
+938	Value (high to low)
+939	Value (low to high)
+940	Sort by
+941	Deals views
+942	Failed to delete {count} deals
+943	Delete {count} deals
+944	{deleted} of {total} deals deleted; {failed} failed
+945	{count} deals selected for deletion
+946	{count} deals deleted
+947	Reassign owner for {count} deals
+948	Unable to load deals list
+949	{deals} across {pipelines}
+950	avg deal {value}
+951	Approximate; deals in {currencies} without a rate are excluded.
+952	Approximate; no base currency is configured.
+953	Compared to previous period
+954	No comparable change
+955	Couldn't load deal metrics
+956	{count} active deals
+957	{count} active deal
+958	{count} deals closed this quarter
+959	{count} deal closed this quarter
+960	{count} need attention
+961	{count} needs attention
+962	{count} owners
+963	{count} owner
+964	{count} pipeline
+965	from {value}% last quarter
+966	{owners} · {attention}
+967	Updating metrics
+968	Unknown owner
+969	Unnamed company
+970	Unnamed person
+971	Deals map
+972	Loading map…
+973	Stages
+974	Failed to load deals for the map.
+975	{count} located
+976	Add latitude and longitude to company or person addresses to plot their deals here.
+977	No deals on the map yet
+978	Click a deal or a map pin to preview it.
+979	No address coordinates
+980	Sort deals panel
+981	List order
+982	Closest first
+983	Deals with location
+984	Close preview
+985	Close {date}
+986	{value}%
+987	Showing first {count} of {total} located deals — refine filters to narrow the map.
+988	Deals: {count}
+989	Showing the first {count} deals. Refine your filters to see more.
+990	Failed to load deals.
+991	Manage stages
+992	No date
+993	No pipeline selected. Create a pipeline in settings.
+994	N/A
+995	Define pipeline stages to start tracking deals.
+996	Created (newest first)
+997	Expected close (soonest first)
+998	Track deals by pipeline stage and drag them between lanes to update progress.
+999	Sales Pipeline
+1000	No stage
+1001	Moving to "No stage" is not supported.
+1002	Closing this month
+1003	My deals
+1004	Profile fields save with the main Save button. Tags save automatically. The related sections below save independently inside their own tabs and panels.
+1005	+ Cc
+1006	Add Cc recipients
+1007	Write your message...
+1008	Cc
+1009	cc@example.com
+1010	Connect your mailbox
+1011	Select account
+1012	Send
+1013	Send as
+1014	Email sent
+1015	Email subject
+1016	recipient@example.com
+1017	Visibility
+1018	Private to me
+1019	Visible to teammates
+1020	Share with team
+1021	Your colleagues will be able to read your email history with this person, including messages already received. You can stop sharing at any time.
+1022	Share this conversation?
+1023	Could not update sharing
+1024	Conversation shared with your team
+1025	Conversation is private again
+1026	Only you can read your email with this person.
+1027	Colleagues can read your email history with this person.
+1028	Share this conversation with my team
+1029	Shared an email conversation with the team
+1030	Stopped sharing an email conversation with the team
+1031	Shared by {{names}}
+1032	Shared by a teammate
+1033	Delivery failed — not sent
+1034	Visibility update failed
+1035	Send failed
+1036	Sync
+1037	Failed to sync mailbox
+1038	Sync triggered — new replies will appear in a few seconds.
+1039	Syncing...
+1040	Check your mailbox for new replies
+1041	Failed to load emails
+1042	Email actions
+1043	Forward
+1044	Reply all
+1045	Make private
+1046	Email made private
+1047	Share with teammates
+1048	Email shared with teammates
+1049	Access denied
+1050	Activity id is required
+1051	Address id is required
+1052	Failed to assign tag
+1053	Failed to load assignable staff
+1054	Authentication required
+1055	Failed to enqueue bulk job
+1056	Comment id is required
+1057	Company not found
+1058	Failed to load linked people
+1059	Company id is required
+1060	Organization and tenant context required
+1061	Customer label tables are missing. Run yarn db:migrate.
+1062	Customer not found
+1063	Failed to load linked companies
+1064	Deal is not closed
+1065	Deal not found
+1066	Deal id is required
+1067	Entity not found
+1068	Failed to assign label
+1069	Failed to assign role
+1070	Failed to delete role
+1071	Failed to load roles
+1072	Failed to update role
+1073	Interaction id is required
+1074	Internal server error
+1075	Invalid date/time
+1076	Invalid payload
+1077	Invalid query parameters
+1078	Failed to load kind settings
+1079	A label with this slug already exists
+1080	Label not found
+1081	Failed to load labels
+1082	Failed to load dictionary entries
+1083	Organization not accessible
+1084	Person-company link not found
+1085	Person not found
+1086	Person profile not found
+1087	Person id is required
+1088	Primary person must be linked to the deal
+1089	profile must be an object
+1090	Unsupported profile field: {{field}}
+1091	Role not found
+1092	Failed to save customer record.
+1093	Tag id is required
+1094	Tenant context is required
+1095	Failed to create todo
+1096	Customer reference is required
+1097	Failed to link todo
+1098	Todo link id is required
+1099	Failed to load customer tasks
+1100	Customer is not accessible in this organization
+1101	Failed to unlink todo
+1102	Failed to unassign tag
+1103	Validation failed
+1104	Bank / IBAN
+1105	Current user
+1106	Cancel this interaction?
+1107	Failed to cancel interaction.
+1108	Interaction canceled.
+1109	Failed to complete interaction.
+1110	Interaction completed.
+1111	Failed to create interaction.
+1112	Interaction created.
+1113	Invalid cursor.
+1114	Delete this interaction?
+1115	Failed to delete interaction.
+1116	Interaction deleted.
+1117	No interactions yet.
+1118	Assigned to
+1119	This legacy adapter has been disabled. Use /api/customers/interactions instead.
+1120	Interactions
+1121	Failed to load interactions.
+1122	Waiting / blocked
+1123	Failed to update interaction.
+1124	Interaction updated.
+1125	Save links
+1126	Add new company
+1127	Link company
+1128	Search for existing companies, update the primary relationship, and link them without leaving the page.
+1129	Link an existing company to this person
+1130	Link an existing company to {{name}}
+1131	Link companies
+1132	No matching companies found.
+1133	Search all companies…
+1134	MATCHING COMPANIES
+1135	No companies selected.
+1136	Add new deal
+1137	Link deal
+1138	Search for existing deals to link to this record.
+1139	Link an existing deal to this record

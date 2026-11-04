@@ -1,0 +1,12 @@
+4900	Screen user input for unsafe content before the model runs. Applies only when the resolved provider supports moderation.
+4901	Read-only surface in Phase 2. Editing the per-tool toggle and mutation policy lands in Step 5.4 / Phase 3.
+4902	Contact us
+4903	Talk to Open Mercato team
+4904	Terms of Service
+4905	Privacy Policy
+4906	Do not show this popup automatically
+4907	Meilisearch is required for API endpoint discovery. Endpoints are indexed automatically when the MCP server starts.
+4908	Pick an assistant. Use ↑/↓ to navigate, Enter to launch, Esc to close.
+4909	Configure an AI provider to use assistants
+4910	Untick to forbid the runtime from using a provider for this tenant. Tick all to inherit the env allowlist.
+4911	Inputs blocked by the content safety filter. Category flags and scores only — no prompt content is stored.

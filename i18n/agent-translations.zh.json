@@ -1,0 +1,20 @@
+{
+  "agents.directory.agent.catalog.catalog_assistant.label": "商品目录助手",
+  "agents.directory.agent.catalog.catalog_assistant.desc": "只读助手：浏览商品、分类、变体、价格、报价、商品媒体、标签、选项模板与单位换算。",
+  "agents.directory.agent.catalog.merchandising_assistant.label": "商品运营助手",
+  "agents.directory.agent.catalog.merchandising_assistant.desc": "商品运营助手：为商品列表当前选择生成商品描述、属性提取、标题变体与价格调整建议；所有写入都需要审批卡片确认。",
+  "agents.directory.agent.customers.account_assistant.label": "客户账号助手",
+  "agents.directory.agent.customers.account_assistant.desc": "客户助手：浏览人员、公司、商机、活动、任务、地址、标签与设置；可移动商机阶段，所有写入都需要审批确认。",
+  "agents.directory.agent.customers.deal_analyzer.label": "商机分析器",
+  "agents.directory.agent.customers.deal_analyzer.desc": "多步骤 CRM 智能体：分析商机、发现停滞机会，并提议阶段流转供运营人员审批。",
+  "agents.directory.agent.customers.deal_analyzer_tool_loop.label": "商机分析器（ToolLoop）",
+  "agents.directory.agent.customers.deal_analyzer_tool_loop.desc": "与 customers.deal_analyzer 相同，但通过 ToolLoopAgent 引擎调度，用于变更门禁验证场景。",
+  "agents.directory.agent.eudr.compliance_assistant.label": "EUDR 合规助手",
+  "agents.directory.agent.eudr.compliance_assistant.desc": "只读助手：检查 EUDR 运营准备度，包括商品范围、证据缺口、声明就绪度、国家风险与截止日期。",
+  "agents.directory.agent.staff.time_tracking_assistant.label": "工时助手",
+  "agents.directory.agent.staff.time_tracking_assistant.desc": "记录工时、启动计时器、汇总已记录内容并找出漏记日期；所有写入都需要审批确认。",
+  "agents.directory.agent.warranty_claims.claims_assistant.label": "保修理赔助手",
+  "agents.directory.agent.warranty_claims.claims_assistant.desc": "保修与 RMA 助手：分诊理赔、校验权益、汇总历史，并为运营人员起草客户回复。",
+  "agents.directory.agent.workflows.workflow_author.label": "工作流编写助手",
+  "agents.directory.agent.workflows.workflow_author.desc": "把自然语言需求转换为草稿工作流定义，基于本安装真实的活动、命令、函数与事件目录；只提议，不发布。"
+}

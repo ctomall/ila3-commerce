@@ -1,0 +1,380 @@
+1520	Hide stages
+1521	Are you sure you want to delete this pipeline? This cannot be undone.
+1522	Delete pipeline
+1523	Are you sure you want to delete this stage?
+1524	Delete stage
+1525	Manage sales pipelines and their stages.
+1526	Create pipeline
+1527	Edit pipeline
+1528	No pipelines yet. Create one to get started.
+1529	Failed to create pipeline
+1530	Failed to delete pipeline
+1531	Failed to load pipelines
+1532	Failed to reorder stages
+1533	Failed to create stage
+1534	Failed to delete stage
+1535	Failed to update stage
+1536	Failed to load stages
+1537	Failed to update pipeline
+1538	Pipeline created
+1539	Pipeline deleted
+1540	Stage created
+1541	Stage deleted
+1542	Stage updated
+1543	Pipeline updated
+1544	Set as default pipeline
+1545	e.g. New Business
+1546	Loading pipelines…
+1547	Edit stage
+1548	Pick icon
+1549	e.g. lucide:star
+1550	Search icons…
+1551	No icons found
+1552	No appearance set
+1553	No stages yet.
+1554	Move down
+1555	Move up
+1556	Sales Pipelines
+1557	Add role
+1558	Search staff...
+1559	Role assigned
+1560	Assigned {{count}} days ago
+1561	Assigned today
+1562	Assigned yesterday
+1563	Assigning...
+1564	Change user
+1565	Choose person
+1566	Configure role types
+1567	Assign role
+1568	Change
+1569	Conflict: {{roles}}
+1570	One person per role. The assignment can be changed at any time.
+1571	One person per role · can be changed at any time
+1572	Loading more...
+1573	Manage role types
+1574	All available role types are already assigned.
+1575	No matching team members found.
+1576	Assignment preview
+1577	Role type
+1578	Search by name, e-mail or team...
+1579	Dictionary
+1580	Select person
+1581	Confirm
+1582	Multi-role assignment for {{name}}
+1583	No team
+1584	Select a team member
+1585	Showing {{shown}} of {{total}} team members
+1586	Email unavailable
+1587	No roles assigned yet. Click below to assign a person.
+1588	Roles at {{name}}
+1589	My roles with {{name}}
+1590	Failed to load role assignments.
+1591	Loading roles...
+1592	More actions
+1593	Create role types in Customers config before assigning owners here.
+1594	No role types configured
+1595	Phone unavailable
+1596	Remove role
+1597	Remove this role assignment?
+1598	Failed to remove role assignment.
+1599	Search team member...
+1600	Select role type...
+1601	Who is responsible for this relationship on your side
+1602	Who is responsible for this company on your side
+1603	Who owns the relationship on your side
+1604	Failed to update role assignment.
+1605	Assign to
+1606	Add link
+1607	Add participant
+1608	Add all visible
+1609	Inbound
+1610	Outbound
+1611	Bad number
+1612	Busy
+1613	Connected
+1614	No answer
+1615	Voicemail
+1616	Outcome
+1617	+1 555 000 0000
+1618	Log a call you just had or schedule one
+1619	Call notes
+1620	Overlaps with: {{items}}
+1621	Connections
+1622	On timeline: {{name}}
+1623	Add details...
+1624	Discard
+1625	You have unsaved edits in this activity. Save them first or continue to discard them.
+1626	Due date
+1627	Due time
+1628	Compose and send a tracked email
+1629	Failed to schedule activity
+1630	Estimate
+1631	Invite others
+1632	Modify
+1633	See list
+1634	Guest permissions:
+1635	Linked entities
+1636	Add location or meeting link...
+1637	Block time on the calendar with attendees
+1638	Save note
+1639	Write down a note about this interaction
+1640	Repeats
+1641	After {{count}} occurrences
+1642	Recurrence
+1643	Reminder
+1644	1 day before
+1645	{days} days before
+1646	1 hour before
+1647	{hours} hours before
+1648	{minutes} min before
+1649	Remove link
+1650	Remove participant
+1651	accepted
+1652	declined
+1653	Responses:
+1654	pending
+1655	Activity scheduled
+1656	Search...
+1657	Search team members...
+1658	Searching...
+1659	Subject...
+1660	Capture something to follow up on
+1661	Schedule activity
+1662	Activity title...
+1663	Public
+1664	Team only
+1665	Activity: {{type}}
+1666	update
+1667	Customer note
+1668	Customer task
+1669	Open company
+1670	Open todo
+1671	View customer
+1672	New category
+1673	Category name...
+1674	Enter a category name first.
+1675	Add new value
+1676	REQUIRED
+1677	SYSTEM
+1678	Multi
+1679	Single
+1680	Create category
+1681	Failed to create category.
+1682	Category created.
+1683	Use this category to group and manage additional CRM values for your team.
+1684	Custom category
+1685	default when creating new records
+1686	Optional tenant-specific tags for people, companies, and linked deals.
+1687	Pipeline-aligned lifecycle values shared across CRM detail pages.
+1688	Quarter-based renewal helpers displayed in CRM detail cards and pipeline summaries.
+1689	Acquisition source labels used in Zone 1 forms and CRM summary badges.
+1690	Single-select values visible on the hero area of person, company, and deal cards.
+1691	Hot, warm, and cold style indicators used in the person and company header badges.
+1692	Drag to reorder
+1693	New dictionary value
+1694	Existing dictionary value
+1695	No icon
+1696	Failed to load tag dictionaries.
+1697	No tag categories found. Configure dictionaries in Settings.
+1698	No entries match the current search.
+1699	Add lightweight CRM-specific labels here when the built-in status dictionaries are not enough.
+1700	Use lifecycle stages to keep person and company headers visually consistent across CRM detail views.
+1701	Keep quarter naming consistent so renewal filters remain readable across the CRM.
+1702	These values are reused by customer forms and reporting filters.
+1703	Status is required on customer cards. Existing rows can be edited, but this category should remain available tenant-wide.
+1704	Temperature values affect the visual emphasis of CRM header badges and deal context chips.
+1705	Custom tags
+1706	Shared lifecycle values
+1707	Renewal planning
+1708	Source dictionary
+1709	System category
+1710	Sales temperature
+1711	Manage tag dictionaries...
+1712	Failed to save tag dictionaries.
+1713	Tag dictionaries updated.
+1714	Scroll categories left
+1715	Scroll categories right
+1716	Search values...
+1717	Select a category
+1718	Tag dictionaries for the entire tenant
+1719	Changes apply to the entire tenant and are visible immediately.
+1720	Manage tags
+1721	Each entry must have both a label and a slug before saving.
+1722	Mine
+1723	Low Activity
+1724	High Interest
+1725	Hot Client
+1726	Engaged
+1727	by {{name}}
+1728	tomorrow
+1729	yesterday
+1730	No activities match the current filters.
+1731	All Activities
+1732	From date
+1733	To date
+1734	filtered: {{types}} · {{count}} results
+1735	Search interaction history
+1736	See all {{count}} activities
+1737	Interaction history with {{name}}
+1738	Interaction history
+1739	Pin
+1740	Pinned
+1741	Failed to cancel activity
+1742	Activity canceled
+1743	Activity completed
+1744	Failed to complete activity
+1745	overdue
+1746	overdue {{days}} days
+1747	since yesterday
+1748	due today
+1749	Reschedule
+1750	Planned activities
+1751	Unpin
+1752	Open customer
+1753	Linked at
+1754	Failed to load customer tasks.
+1755	Exports every linked task field, including hidden attributes.
+1756	Completion status
+1757	Tasks refreshed
+1758	No tasks match your filters.
+1759	Customer related tasks
+1760	Shipment
+1761	Sales
+1762	Return adjustment amountGross exceeds the remaining grand total. Reduce the amount or remove existing returns first.
+1763	Return adjustment amountNet exceeds the remaining grand total. Reduce the amount or remove existing returns first.
+1764	Create sales channel
+1765	Delete sales channel
+1766	Update sales channel
+1767	Create credit memo
+1768	Delete credit memo
+1769	Update credit memo
+1770	Create delivery window
+1771	Delete delivery window
+1772	Update delivery window
+1773	Add document address
+1774	Remove document address
+1775	Update document address
+1776	Create invoice
+1777	Delete invoice
+1778	Update invoice
+1779	Delete order adjustment
+1780	Update order adjustment
+1781	Create sales order
+1782	Delete sales order
+1783	Delete order line
+1784	Update order line
+1785	Update sales order
+1786	Create payment method
+1787	Delete payment method
+1788	Update payment method
+1789	Create payment
+1790	Delete payment
+1791	Update payment
+1792	Delete quote adjustment
+1793	Update quote adjustment
+1794	Convert quote to order
+1795	Create sales quote
+1796	Delete sales quote
+1797	Delete quote line
+1798	Update quote line
+1799	Update sales quote
+1800	Create return
+1801	Delete return
+1802	Update return
+1803	Create shipment
+1804	Delete shipment
+1805	Update shipment
+1806	Create shipping method
+1807	Delete shipping method
+1808	Update shipping method
+1809	Create tax rate
+1810	Delete tax rate
+1811	Update tax rate
+1812	Back to channels
+1813	Sales channels are disabled for this tenant. Enable the "Sales Channels" feature toggle to manage them.
+1814	Contact email
+1815	Contact phone
+1816	Create channel
+1817	Channel created.
+1818	Failed to create channel.
+1819	Failed to delete channel.
+1820	Failed to load channel.
+1821	Channel not found.
+1822	Failed to save channel.
+1823	Loading channel…
+1824	Channel deleted.
+1825	Channel updated.
+1826	Channel name
+1827	State / region
+1828	Status entry ID
+1829	Offers
+1830	Website URL
+1831	Back to offers
+1832	Add offer
+1833	Failed to delete offer.
+1834	This product already has an offer in this channel.
+1835	Failed to load offers.
+1836	Failed to load offer.
+1837	Offer not found.
+1838	Each price kind can only be overridden once.
+1839	Select a price kind for each price override.
+1840	Failed to remove price override.
+1841	Choose a channel and product.
+1842	Failed to save offer.
+1843	Sales channels
+1844	Failed to load channels
+1845	Filter by channels…
+1846	Select channel
+1847	Create offer
+1848	Default media
+1849	Content
+1850	Price overrides
+1851	Loading offer…
+1852	Select a product to load its media.
+1853	Default media override
+1854	Choose the thumbnail that should represent this offer in the channel.
+1855	Use product default
+1856	Search the catalog and pick the product you want to customize for this channel.
+1857	Already has an offer for this channel.
+1858	View offer
+1859	Base price
+1860	No price
+1861	No products match your search.
+1862	Type at least 2 characters or paste a product ID.
+1863	Search by name or paste the product id to find catalog items.
+1864	Searching products…
+1865	Search by title, SKU, or ID…
+1866	Selected product ID: {{id}}
+1867	Select a product to preview its media, price, and variants.
+1868	Product summary
+1869	Untitled product
+1870	No variants available for this product.
+1871	Variants
+1872	Offers for {{name}}
+1873	Review product overrides across every sales channel.
+1874	Offer deleted.
+1875	Offer saved.
+1876	Add price
+1877	Each price kind already has an override.
+1878	Shown to shoppers when no override is configured.
+1879	Original product price
+1880	No price found
+1881	No overrides yet.
+1882	Using {price} from the product until you add overrides.
+1883	Excluding tax
+1884	Provide overrides for price kinds when this offer is active.
+1885	Including tax
+1886	Define a price kind before adding overrides.
+1887	Overrides take precedence over the original product price.
+1888	Select price kind
+1889	Override product presentation and pricing per channel.
+1890	Original product price {{price}}
+1891	No offers for this channel yet.
+1892	No offers available yet.
+1893	Unlinked product
+1894	No overrides
+1895	Prices
+1896	Search offers…
+1897	No channels yet.
+1898	Failed to load channels.
+1899	Search channels…

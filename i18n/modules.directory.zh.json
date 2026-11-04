@@ -1,0 +1,22 @@
+{
+  "modules.directory.navTitle": "模块应用",
+  "modules.directory.title": "模块应用",
+  "modules.directory.subtitle": "当前部署中已启用的全部模块，以及它们的版本、说明、页面数量与设置/入口链接。列表由当前构建产物生成。",
+  "modules.directory.stat.total": "已启用模块",
+  "modules.directory.stat.withConfig": "含设置页",
+  "modules.directory.stat.pages": "后台页面",
+  "modules.directory.listTitle": "模块列表",
+  "modules.directory.listSummary": "显示 {{shown}} / {{total}} 个模块",
+  "modules.directory.search": "搜索模块…",
+  "modules.directory.column.module": "模块",
+  "modules.directory.column.version": "版本",
+  "modules.directory.column.description": "说明",
+  "modules.directory.column.pages": "页面",
+  "modules.directory.column.actions": "操作",
+  "modules.directory.configPages": "{{count}} 个设置页",
+  "modules.directory.configure": "设置",
+  "modules.directory.open": "打开",
+  "modules.directory.noDescription": "暂无说明",
+  "modules.directory.empty": "没有匹配的模块。",
+  "modules.directory.footnote": "模块在 src/modules.ts 中启用/停用；本页为只读视图，变更后需重新构建。"
+}

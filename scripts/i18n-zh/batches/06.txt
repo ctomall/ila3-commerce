@@ -1,0 +1,380 @@
+1900	Add adjustment kind
+1901	Delete adjustment kind "{{code}}"?
+1902	Manage reusable adjustment kinds for taxes, surcharges, shipping, and discounts.
+1903	Define a reusable adjustment kind shown in document adjustment dialogs.
+1904	Create adjustment kind
+1905	Update the code, label, or appearance for this adjustment kind.
+1906	Edit adjustment kind
+1907	Failed to delete adjustment kind.
+1908	Failed to load adjustment kinds.
+1909	Code is required.
+1910	Failed to save adjustment kind.
+1911	e.g. discount
+1912	e.g. Discount
+1913	Loading adjustment kinds…
+1914	Adjustment kind created.
+1915	Adjustment kind deleted.
+1916	Adjustment kind updated.
+1917	Search by code or label…
+1918	No adjustment kinds yet.
+1919	Adjustment kinds
+1920	Refreshing…
+1921	Reset changes
+1922	Save settings
+1923	Control numbering for sales orders and quotes.
+1924	Failed to load numbering settings.
+1925	Failed to save numbering settings.
+1926	Numbering settings saved.
+1927	Order number format
+1928	Example: ORDER/{yyyy}/{seq:5}
+1929	Next order sequence
+1930	Quote number format
+1931	Example: QUOTE/{yy}/{mm}/{seq:4}
+1932	Next quote sequence
+1933	Applied on the next generated number for this type.
+1934	Resets the quote counter for the next document.
+1935	Document numbers
+1936	Combine tokens to shape your identifiers, e.g. ORDER/{yyyy}/{seq:5}.
+1937	Available tokens
+1938	Addresses can be changed at
+1939	Allow at any status
+1940	Allowed at any status
+1941	Customer can be changed at
+1942	Control when customers and addresses can be changed on an order.
+1943	Failed to load order editing settings.
+1944	Failed to save order editing settings.
+1945	Changing the customer clears assigned addresses to avoid mixing contact data.
+1946	Select statuses that allow this change
+1947	Order editing settings saved.
+1948	Order editing guards
+1949	Add payment method
+1950	Delete "{{name}}"?
+1951	Configure payment providers and any checkout fees.
+1952	Failed to delete payment method.
+1953	Failed to load payment methods.
+1954	Failed to save payment method.
+1955	Edit payment method
+1956	No configurable settings.
+1957	Provider settings
+1958	Choose a provider to configure settings.
+1959	Terms
+1960	Payment method deleted.
+1961	Payment method saved.
+1962	No payment methods yet.
+1963	Search payment methods…
+1964	Payment methods
+1965	Add shipping method
+1966	Manage carriers, providers, and default shipping prices.
+1967	Failed to delete shipping method.
+1968	Failed to load shipping methods.
+1969	Failed to save shipping method.
+1970	Add rate
+1971	Amount (gross)
+1972	Amount (net)
+1973	Always include the base rate
+1974	Base rate (gross)
+1975	Base rate (net)
+1976	Edit shipping method
+1977	Transit days
+1978	Max
+1979	Metric
+1980	Min
+1981	Rates
+1982	Service level
+1983	Shipping method deleted.
+1984	Shipping method saved.
+1985	No shipping methods yet.
+1986	Base rate
+1987	Search shipping methods…
+1988	Shipping methods
+1989	Delete status "{{value}}"?
+1990	Pick a highlight color for this status.
+1991	Edit status
+1992	No statuses yet.
+1993	Failed to delete status.
+1994	Failed to load status entries.
+1995	Failed to save status.
+1996	Configure the status values available for order lines.
+1997	Order line statuses
+1998	Configure the status values available for sales orders.
+1999	Order statuses
+2000	Configure the status values available for payments.
+2001	Payment statuses
+2002	Search statuses…
+2003	Configure the status values available for shipments.
+2004	Shipment statuses
+2005	Status deleted.
+2006	Status saved.
+2007	Add tax rate
+2008	Delete tax rate "{{name}}"?
+2009	Maintain VAT classes applied to catalog pricing.
+2010	Failed to delete tax rate.
+2011	Failed to load tax rates.
+2012	Failed to save tax rate.
+2013	Lowercase letters, numbers, and dashes.
+2014	Country code
+2015	Edit tax rate
+2016	Default tax class
+2017	Preselect this class for new catalog products.
+2018	Rate (%)
+2019	Region code
+2020	Tax rate deleted.
+2021	Tax rate saved.
+2022	No tax rates yet.
+2023	Search tax rates…
+2024	Tax rates
+2025	Failed to delete record.
+2026	Record identifier is required.
+2027	Failed to load records.
+2028	Failed to save record.
+2029	Tenant context is required.
+2030	Create record
+2031	Edit record
+2032	Search records
+2033	Add adjustment
+2034	Gross amount
+2035	Calculation mode
+2036	Net amount
+2037	Calculator key
+2038	PROMO10
+2039	Adjustment added.
+2040	Adjustment removed.
+2041	Edit adjustment
+2042	No adjustments yet.
+2043	Provide at least one amount.
+2044	Currency is required.
+2045	Failed to delete adjustment.
+2046	Failed to load adjustments.
+2047	Enter a percentage rate.
+2048	Return adjustments must use a non-zero amount. Create the return through the Returns tab instead.
+2049	Failed to save adjustment.
+2050	Organization and tenant are required.
+2051	Custom
+2052	Discount
+2053	Return
+2054	Shipping
+2055	Surcharge
+2056	Tax
+2057	Select adjustment kind…
+2058	e.g. Shipping fee
+2059	Label is required.
+2060	Loading adjustments…
+2061	Fixed amount
+2062	Percentage
+2063	Position
+2064	Search adjustments
+2065	Add discounts, surcharges, taxes, or shipping fees.
+2066	No tax classes available
+2067	Manage
+2068	No tax class selected
+2069	Adjustments
+2070	Adjustment updated.
+2071	Additional addresses
+2072	Assign extra customer addresses to this document.
+2073	Addresses cannot be changed for the current status.
+2074	Remove address
+2075	This will permanently remove this address from the document. This cannot be undone. Continue?
+2076	Failed to remove address.
+2077	No additional addresses yet.
+2078	Add address line 1 to continue.
+2079	Failed to load addresses.
+2080	Loading document addresses…
+2081	Add a new address
+2082	Address unassigned.
+2083	Save address
+2084	Failed to update addresses.
+2085	Select an address to add.
+2086	Update addresses
+2087	Back to Sales
+2088	Create a new document
+2089	Back to orders
+2090	Back to quotes
+2091	Selected channel could not be found.
+2092	Add comment
+2093	Failed to convert quote.
+2094	Order already exists for this quote.
+2095	Quote converted to order.
+2096	Convert to order
+2097	Currency code must be 3 letters.
+2098	Currency cannot be changed after adding items or payments.
+2099	Define custom fields first.
+2100	Loading custom data…
+2101	Not linked
+2102	Customer cannot be changed for the current status.
+2103	Change the customer? Existing shipping and billing addresses will be unassigned.
+2104	Change customer
+2105	Customer reference
+2106	Customer PO or note
+2107	Edit customer snapshot
+2108	Edit the snapshot stored on this document.
+2109	Customer type
+2110	No customer assigned
+2111	Select customer
+2112	Enter a valid date in YYYY-MM-DD format.
+2113	Delete this document? This cannot be undone.
+2114	Could not delete document.
+2115	Delete document
+2116	Document deleted.
+2117	Edit details
+2118	Line item editing will be available soon.
+2119	Add discounts, fees, or taxes to this document.
+2120	Notes from teammates will appear here.
+2121	No comments yet.
+2122	Nothing to show here yet.
+2123	Add products to this document to calculate totals.
+2124	No items yet.
+2125	Track received payments to keep outstanding balances up to date.
+2126	No payments yet.
+2127	Open the source order to manage returns.
+2128	Returns are only available on orders.
+2129	Add shipments for this document to let the user track the order.
+2130	No shipments yet.
+2131	Document not found or inaccessible.
+2132	Expected delivery
+2133	Add expected delivery date
+2134	External reference
+2135	Add external reference
+2136	Generate number
+2137	Unable to update document.
+2138	Add item
+2139	Add line
+2140	Line added.
+2141	Delete this line item?
+2142	Line removed.
+2143	Edit line
+2144	Failed to delete line.
+2145	You cannot delete a line that has shipped items.
+2146	Failed to load items.
+2147	You cannot change the price or unit of a line that has shipped items.
+2148	Select a product to continue.
+2149	Quantity must be greater than 0.
+2150	You cannot lower the quantity below the {{shipped}} already shipped.
+2151	Failed to save line.
+2152	Unit price must be greater than 0.
+2153	Select a variant to continue.
+2154	Loading items…
+2155	Optional line name
+2156	Gross
+2157	Net
+2158	Customer group
+2159	Scheduled
+2160	User group
+2161	Select price
+2162	Search product
+2163	Selected {{id}}
+2164	Select status
+2165	Add products and prices to this document.
+2166	gross
+2167	net
+2168	Qty
+2169	{{shipped}} / {{total}} shipped
+2170	Unit price
+2171	Line updated.
+2172	Search variant
+2173	Loading document…
+2174	Document not found.
+2175	Document number
+2176	Document number cannot be edited.
+2177	No number yet
+2178	Could not generate number.
+2179	New number generated.
+2180	Document number is required.
+2181	Sales order
+2182	No payment methods found.
+2183	Payment method
+2184	Loading payment methods…
+2185	Select payment method
+2186	Selected payment method: {{id}}
+2187	Selected payment method could not be found.
+2188	Payments are work in progress.
+2189	Sales quote
+2190	Try again
+2191	Saving number will land soon.
+2192	Add shipment
+2193	Add note to comments
+2194	Add shipping cost adjustment for this shipment
+2195	Create a shipping adjustment using this carrier’s calculated cost.
+2196	Ship to
+2197	Document address
+2198	Add an address to this document before creating a shipment.
+2199	Search address
+2200	Address snapshot saved.
+2201	Attach address snapshot
+2202	{{count}} available
+2203	Shipment {{number}} updated: {{summary}}
+2204	Notes: {{notes}}
+2205	Delete this shipment?
+2206	Shipment created.
+2207	Shipment deleted.
+2208	Delivered date
+2209	Delivered on {{date}}
+2210	Edit shipment
+2211	Select an address to ship to.
+2212	Failed to delete shipment.
+2213	Ship at least one line item.
+2214	Failed to load shipments.
+2215	Shipment number is required.
+2216	Quantity exceeds remaining available.
+2217	Failed to save shipment.
+2218	Select a shipping method.
+2219	Shipment {{id}}
+2220	Items to ship
+2221	Loading shipments…
+2222	No order lines available.
+2223	Shipment number
+2224	Shipment {{number}}
+2225	Save (⌘/Ctrl+Enter)
+2226	Shipment address
+2227	Shipped date
+2228	Shipped on {{date}}
+2229	Failed to add shipping cost adjustment.
+2230	Shipping cost
+2231	Organization and tenant are required to add a shipping adjustment.
+2232	Shipping method
+2233	Avg {{price}}
+2234	Min {{price}}
+2235	Select method
+2236	Status pending
+2237	Track packages and fulfillment for this order.
+2238	Shipments
+2239	Tracking
+2240	Tracking numbers
+2241	One per line or comma separated
+2242	Shipment updated.
+2243	No shipping methods found.
+2244	Loading shipping methods…
+2245	Select shipping method
+2246	Selected shipping method: {{id}}
+2247	Selected shipping method could not be found.
+2248	Status value is required.
+2249	Failed to load statuses.
+2250	Display label
+2251	Manage statuses
+2252	e.g. confirmed
+2253	Selected status could not be found.
+2254	Payments
+2255	Returns
+2256	No tags yet. Add labels to keep documents organized.
+2257	Timestamps
+2258	Discounts
+2259	Grand total (gross)
+2260	Grand total (net)
+2261	Hide details
+2262	Outstanding
+2263	Paid
+2264	Refunded
+2265	Shipping (gross)
+2266	Shipping (net)
+2267	Show details
+2268	Showing all totals
+2269	Showing key totals · {count} more
+2270	Subtotal (gross)
+2271	Subtotal (net)
+2272	Surcharges
+2273	Tax total
+2274	Totals
+2275	Failed to update document.
+2276	Document updated.
+2277	Add discounts, fees, or taxes to refine totals.
+2278	You do not have access to generate numbers.
+2279	Document number operation is not allowed.

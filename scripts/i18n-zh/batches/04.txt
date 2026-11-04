@@ -1,0 +1,380 @@
+1140	Link deals
+1141	This deal has no other linked entities. If you unlink it later, it will become unreachable.
+1142	Deal without company
+1143	No matching deals found.
+1144	Search all deals…
+1145	MATCHING DEALS
+1146	No deals selected.
+1147	Dismiss warning
+1148	Next page
+1149	Previous page
+1150	Add new person
+1151	Company will be filled in automatically
+1152	Search for existing people and attach them to this record without leaving the page.
+1153	Link an existing contact to this company
+1154	Link an existing contact to {{name}}
+1155	Link people
+1156	Budget holder
+1157	Decision maker
+1158	Stakeholder
+1159	Search all people…
+1160	MATCHING CONTACTS
+1161	No people selected.
+1162	Select an entry on the left to see details here.
+1163	Loading details…
+1164	Choose which linked record should be treated as primary.
+1165	Set primary
+1166	{{count}} results
+1167	Link settings
+1168	Not found
+1169	{dealTitle} has been marked as lost
+1170	Deal Lost
+1171	{dealTitle} has been marked as won{dealValue, select, other { ({dealValue})}}
+1172	Deal Won
+1173	customer
+1174	Linked {{date}}
+1175	Toggle star
+1176	auto
+1177	auto-linked to company
+1178	Display name preview
+1179	Edit name
+1180	Failed to create person
+1181	Job title
+1182	Personal data
+1183	Position & company
+1184	Fields marked * are required
+1185	Person created and linked to company
+1186	{{count}} key people
+1187	Decision Makers
+1188	Send invitation
+1189	Cannot delete person: {{blockers}}. Please unlink or reassign first.
+1190	Back to people
+1191	Link task
+1192	Manage addresses
+1193	Add activity
+1194	Describe the interaction
+1195	Delete this activity? You can restore it using version history.
+1196	Failed to delete activity.
+1197	Activity deleted.
+1198	Edit activity
+1199	Select a related customer before saving.
+1200	Assign to customer
+1201	Occurred / will occur at
+1202	FILTER:
+1203	Activity details
+1204	Enter a valid date and time
+1205	Load more activities
+1206	Logged by {{user}}
+1207	No date provided
+1208	Save activity (⌘/Ctrl + Enter)
+1209	Add a subject (optional)
+1210	Activity saved
+1211	Activity type is required
+1212	Update activity (⌘/Ctrl + Enter)
+1213	Activity updated
+1214	Search and choose an ISO country code.
+1215	Select country
+1216	No matches found
+1217	Search country
+1218	Address removed
+1219	Edit address
+1220	Failed to save address
+1221	Building number
+1222	Company name
+1223	Flat / apartment
+1224	Latitude
+1225	Longitude
+1226	Set as primary
+1227	Region / State
+1228	Street
+1229	Additional address details
+1230	Tax number
+1231	EU VAT
+1232	Tax ID
+1233	Tax id type
+1234	Address type
+1235	Failed to load address configuration
+1236	Loading address preferences…
+1237	Address line 1 is required
+1238	Address-line layout is active.
+1239	Save address ⌘⏎ / Ctrl+Enter
+1240	Street-first layout is active.
+1241	Address saved
+1242	Add type
+1243	Create a new address type for reuse.
+1244	Add address type
+1245	Please enter a name
+1246	Failed to load address types
+1247	Failed to save address type
+1248	Billing
+1249	Loading address types…
+1250	Manage address types
+1251	Select a type
+1252	Enter a new address type name.
+1253	Failed to save address type.
+1254	Update address ⌘⏎ / Ctrl+Enter
+1255	Updating…
+1256	{{field}} must be between {{min}} and {{max}}
+1257	Check {{field}}
+1258	Invalid value for {{field}}
+1259	Enter {{field}}
+1260	{{field}} is too long (max {{max}} characters)
+1261	Anonymous
+1262	Files linked to this record.
+1263	Failed to link company.
+1264	Company linked.
+1265	This company is already linked.
+1266	Search for one or more companies, update the primary relationship, and remove links without leaving the page.
+1267	Load more companies
+1268	Loading companies…
+1269	Linked companies updated.
+1270	No linked companies match your search.
+1271	Failed to update the primary company.
+1272	Primary company updated.
+1273	Failed to remove company.
+1274	Company removed.
+1275	Removing…
+1276	{{count}} companies
+1277	Selected companies
+1278	Sort: Recently active
+1279	Link one or more companies and choose the primary relationship for this person.
+1280	{{count}} linked companies
+1281	Unlink {{company}} from {{person}}?
+1282	Unlink company
+1283	Failed to unlink company.
+1284	Company unlinked.
+1285	{{company}}
+1286	No company assigned
+1287	Unable to load company information.
+1288	Unknown company
+1289	Define the first one
+1290	Closing…
+1291	Currency must be a 3-letter code
+1292	Delete this deal? You can restore it using version history.
+1293	Description is too long
+1294	Open deal details
+1295	Edit deal
+1296	Enter a valid close date
+1297	Probability (%)
+1298	Deal details
+1299	Failed to link deal.
+1300	Link existing deal
+1301	Deal linked.
+1302	Load more deals
+1303	Mark lost
+1304	Select a valid pipeline.
+1305	Select a valid pipeline stage.
+1306	Pipeline stage is too long
+1307	Probability must be between 0 and 100
+1308	Remove this deal from this record? The deal itself will not be deleted.
+1309	Failed to remove deal from this record.
+1310	Deal removed from this record.
+1311	Save deal (⌘/Ctrl + Enter)
+1312	Status is too long
+1313	Deal created
+1314	Title is too long
+1315	Unlink this deal from this company?
+1316	Unlink this deal from this person?
+1317	The deal will remain available from its own detail page.
+1318	Failed to unlink deal.
+1319	Deal unlinked.
+1320	Unlinking…
+1321	Update deal (⌘/Ctrl + Enter)
+1322	Enter a valid amount
+1323	Delete person?
+1324	Failed to delete person.
+1325	No activity yet
+1326	No notes yet
+1327	No company linked to this person.
+1328	No tags yet
+1329	No tasks linked
+1330	Schedule the first activity
+1331	No activity yet.
+1332	Let's add the first address
+1333	No addresses defined yet.
+1334	Create the first deal
+1335	No deals tracked yet.
+1336	Write the first note
+1337	Add the first task
+1338	No tasks linked yet.
+1339	Unable to load person details
+1340	Department
+1341	LinkedIn
+1342	Seniority
+1343	Twitter
+1344	Upload and manage files linked to this person.
+1345	at
+1346	PRIMARY
+1347	Checking for matching records...
+1348	This email is already assigned to {{name}}.
+1349	Enter a valid email address
+1350	Something went wrong
+1351	Enter a LinkedIn profile or page URL
+1352	Pick a color to highlight the next interaction.
+1353	Highlight color
+1354	Type an emoji or choose a suggestion
+1355	Interaction name
+1356	Reference ID
+1357	Phone number must include at least 3 characters
+1358	This field is required
+1359	Save ⌘⏎ / Ctrl+Enter
+1360	Enter a Twitter profile URL
+1361	Enter a valid URL
+1362	Loading person
+1363	Add note ⌘⏎ / Ctrl+Enter
+1364	Pick an accent color for this note.
+1365	Note color
+1366	Edit appearance
+1367	Failed to update appearance
+1368	No appearance
+1369	Reset
+1370	Save appearance
+1371	Save appearance ⌘⏎ / Ctrl+Enter
+1372	Saving appearance…
+1373	Hide appearance
+1374	Customize appearance
+1375	Appearance updated
+1376	Delete this note? You can restore it using version history.
+1377	Failed to delete note
+1378	Note deleted
+1379	Edit note
+1380	Loading editor…
+1381	Unable to determine current person.
+1382	Failed to save note
+1383	Failed to load notes.
+1384	Load more notes
+1385	Switch to plain text
+1386	Switch to Markdown
+1387	Write a note about this person…
+1388	Save note ⌘⏎ / Ctrl+Enter
+1389	Note saved
+1390	Unknown author
+1391	Failed to update note
+1392	Note updated
+1393	You
+1394	Emails
+1395	Person detail sections
+1396	Failed to assign tag.
+1397	Tags save automatically after each change.
+1398	Loading tags…
+1399	Failed to remove tag.
+1400	Cancel task
+1401	Failed to cancel task
+1402	Task canceled
+1403	Task marked as done
+1404	Task created
+1405	Remove task
+1406	This task will be removed from every view it appears in. This action cannot be undone.
+1407	Remove task?
+1408	Failed to remove task
+1409	Task removed
+1410	Edit task
+1411	Due {{date}}
+1412	Failed to create task
+1413	Add context, outcome, or follow-up notes
+1414	Mark as done
+1415	0-100
+1416	Choose a date and time
+1417	Task title
+1418	Task attributes
+1419	Task details
+1420	Save task (⌘/Ctrl + Enter)
+1421	Update task (⌘/Ctrl + Enter)
+1422	Tips
+1423	Tasks save independently from the main customer form. Use clear titles like "Follow up call" or "Send pricing deck".
+1424	Loading tasks…
+1425	Open task
+1426	Enter a whole-number priority between 0 and 100.
+1427	Priority {{priority}}
+1428	Task reopened
+1429	Save task
+1430	High severity
+1431	Low severity
+1432	Medium severity
+1433	Failed to update task status
+1434	Untitled task
+1435	Failed to update task
+1436	Task updated
+1437	Go to all tasks
+1438	Collapse form panel
+1439	Expand form panel
+1440	people
+1441	Select address type
+1442	Add company
+1443	Acme Corporation
+1444	Select a company
+1445	Enter a new company name
+1446	Add activity type
+1447	Add job title
+1448	Add dictionary entry
+1449	Failed to save option
+1450	Failed to load options
+1451	Loading options…
+1452	Manage dictionaries
+1453	Select a value
+1454	Enter a name
+1455	Enter a new activity type name
+1456	Enter a new address type name
+1457	Enter a new job title
+1458	⌘/Ctrl + Enter
+1459	Display name is required
+1460	Enter display name
+1461	Reset to first & last name
+1462	Name will appear here
+1463	Checking for existing customers…
+1464	Company & role
+1465	My roles
+1466	Social & links
+1467	Select a job title
+1468	https://www.linkedin.com/in/example
+1469	Checking for matching phone numbers…
+1470	This phone number is already assigned to {{name}}.
+1471	Preferred name
+1472	Enter a valid email address (e.g. name@example.com)
+1473	Company information
+1474	Contact information
+1475	Create Person
+1476	Person created
+1477	X / Twitter
+1478	https://x.com/example
+1479	Person updated.
+1480	Enter a valid URL (e.g. https://example.com)
+1481	Failed to delete {count} people
+1482	{count} people could not be deleted: {message}
+1483	Delete {count} people
+1484	{deleted} of {total} people deleted; {failed} failed
+1485	{count} people selected for deletion
+1486	Delete selected people
+1487	{count} people deleted
+1488	Delete {count} people?
+1489	Unable to delete person.
+1490	this person
+1491	Person deleted.
+1492	Unable to load people list
+1493	Exports every customer field, including hidden custom fields.
+1494	Zone selector
+1495	Hot leads
+1496	My contacts
+1497	Recently active
+1498	Stale > 30 days
+1499	Deal status
+1500	Labels
+1501	Lifecycle
+1502	Renewal quarter
+1503	Temperature
+1504	Failed to create label
+1505	Custom CRM category: {{name}}.
+1506	The industry used to classify this company.
+1507	The role or title used for this person.
+1508	Quick labels you can create inline for this record.
+1509	Shared CRM tags that can be assigned to many records.
+1510	No items have been added for this category yet.
+1511	No options are configured for this category yet.
+1512	No options match the current search.
+1513	New label
+1514	Label name...
+1515	New tag
+1516	Failed to save tags
+1517	Search {{category}}...
+1518	Tag settings
+1519	Add pipeline

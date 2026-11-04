@@ -1,0 +1,1622 @@
+[
+ {
+  "from": "Currencies",
+  "to": "货币\r"
+ },
+ {
+  "from": "Units of measure",
+  "to": "计量单位\r"
+ },
+ {
+  "from": "Sales order statuses",
+  "to": "销售订单状态\r"
+ },
+ {
+  "from": "Sales order line statuses",
+  "to": "销售订单行状态\r"
+ },
+ {
+  "from": "Shipment statuses",
+  "to": "发货状态\r"
+ },
+ {
+  "from": "Payment statuses",
+  "to": "付款状态\r"
+ },
+ {
+  "from": "Deal loss reasons",
+  "to": "商机失单原因\r"
+ },
+ {
+  "from": "Sales adjustment kinds",
+  "to": "销售调整类型\r"
+ },
+ {
+  "from": "Warranty claim fault codes",
+  "to": "保修故障代码\r"
+ },
+ {
+  "from": "Warranty claim reasons",
+  "to": "保修原因\r"
+ },
+ {
+  "from": "Warranty claim rejection reasons",
+  "to": "保修拒绝原因\r"
+ },
+ {
+  "from": "Staff unavailability reasons",
+  "to": "员工不可用原因\r"
+ },
+ {
+  "from": "Resource unavailability reasons",
+  "to": "资源不可用原因\r"
+ },
+ {
+  "from": "Schedule unavailability reasons",
+  "to": "排班不可用原因\r"
+ },
+ {
+  "from": "Resource address types",
+  "to": "资源地址类型\r"
+ },
+ {
+  "from": "Staff address types",
+  "to": "员工地址类型\r"
+ },
+ {
+  "from": "Resource capacity units",
+  "to": "资源容量单位\r"
+ },
+ {
+  "from": "Resource activity types",
+  "to": "资源活动类型\r"
+ },
+ {
+  "from": "Staff activity types",
+  "to": "员工活动类型\r"
+ },
+ {
+  "from": "EUR – Euro",
+  "to": "EUR – 欧元\r"
+ },
+ {
+  "from": "USD – US Dollar",
+  "to": "USD – 美元\r"
+ },
+ {
+  "from": "GBP – British Pound",
+  "to": "GBP – 英镑\r"
+ },
+ {
+  "from": "PLN – Polish Zloty",
+  "to": "PLN – 波兰兹罗提\r"
+ },
+ {
+  "from": "AED – United Arab Emirates Dirham",
+  "to": "AED – 阿联酋迪拉姆\r"
+ },
+ {
+  "from": "AFN – Afghan Afghani",
+  "to": "AFN – 阿富汗尼\r"
+ },
+ {
+  "from": "ALL – Albanian Lek",
+  "to": "ALL – 阿尔巴尼亚列克\r"
+ },
+ {
+  "from": "AMD – Armenian Dram",
+  "to": "AMD – 亚美尼亚德拉姆\r"
+ },
+ {
+  "from": "ANG – Netherlands Antillean Guilder",
+  "to": "ANG – 荷属安的列斯盾\r"
+ },
+ {
+  "from": "AOA – Angolan Kwanza",
+  "to": "AOA – 安哥拉宽扎\r"
+ },
+ {
+  "from": "ARS – Argentine Peso",
+  "to": "ARS – 阿根廷比索\r"
+ },
+ {
+  "from": "AUD – Australian Dollar",
+  "to": "AUD – 澳元\r"
+ },
+ {
+  "from": "AWG – Aruban Florin",
+  "to": "AWG – 阿鲁巴弗罗林\r"
+ },
+ {
+  "from": "AZN – Azerbaijani Manat",
+  "to": "AZN – 阿塞拜疆马纳特\r"
+ },
+ {
+  "from": "BAM – Bosnia-Herzegovina Convertible Mark",
+  "to": "BAM – 波黑可兑换马克\r"
+ },
+ {
+  "from": "BBD – Barbadian Dollar",
+  "to": "BBD – 巴巴多斯元\r"
+ },
+ {
+  "from": "BDT – Bangladeshi Taka",
+  "to": "BDT – 孟加拉塔卡\r"
+ },
+ {
+  "from": "BGN – Bulgarian Lev",
+  "to": "BGN – 保加利亚列弗\r"
+ },
+ {
+  "from": "BHD – Bahraini Dinar",
+  "to": "BHD – 巴林第纳尔\r"
+ },
+ {
+  "from": "BIF – Burundian Franc",
+  "to": "BIF – 布隆迪法郎\r"
+ },
+ {
+  "from": "BMD – Bermudan Dollar",
+  "to": "BMD – 百慕大元\r"
+ },
+ {
+  "from": "BND – Brunei Dollar",
+  "to": "BND – 文莱元\r"
+ },
+ {
+  "from": "BOB – Bolivian Boliviano",
+  "to": "BOB – 玻利维亚诺\r"
+ },
+ {
+  "from": "BRL – Brazilian Real",
+  "to": "BRL – 巴西雷亚尔\r"
+ },
+ {
+  "from": "BSD – Bahamian Dollar",
+  "to": "BSD – 巴哈马元\r"
+ },
+ {
+  "from": "BTN – Bhutanese Ngultrum",
+  "to": "BTN – 不丹努尔特鲁姆\r"
+ },
+ {
+  "from": "BWP – Botswanan Pula",
+  "to": "BWP – 博茨瓦纳普拉\r"
+ },
+ {
+  "from": "BYN – Belarusian Ruble",
+  "to": "BYN – 白俄罗斯卢布\r"
+ },
+ {
+  "from": "BZD – Belize Dollar",
+  "to": "BZD – 伯利兹元\r"
+ },
+ {
+  "from": "CAD – Canadian Dollar",
+  "to": "CAD – 加拿大元\r"
+ },
+ {
+  "from": "CDF – Congolese Franc",
+  "to": "CDF – 刚果法郎\r"
+ },
+ {
+  "from": "CHF – Swiss Franc",
+  "to": "CHF – 瑞士法郎\r"
+ },
+ {
+  "from": "CLP – Chilean Peso",
+  "to": "CLP – 智利比索\r"
+ },
+ {
+  "from": "CNY – Chinese Yuan",
+  "to": "CNY – 人民币\r"
+ },
+ {
+  "from": "COP – Colombian Peso",
+  "to": "COP – 哥伦比亚比索\r"
+ },
+ {
+  "from": "CRC – Costa Rican Colón",
+  "to": "CRC – 哥斯达黎加科朗\r"
+ },
+ {
+  "from": "CUC – Cuban Convertible Peso",
+  "to": "CUC – 古巴可兑换比索\r"
+ },
+ {
+  "from": "CUP – Cuban Peso",
+  "to": "CUP – 古巴比索\r"
+ },
+ {
+  "from": "CVE – Cape Verdean Escudo",
+  "to": "CVE – 佛得角埃斯库多\r"
+ },
+ {
+  "from": "CZK – Czech Koruna",
+  "to": "CZK – 捷克克朗\r"
+ },
+ {
+  "from": "DJF – Djiboutian Franc",
+  "to": "DJF – 吉布提法郎\r"
+ },
+ {
+  "from": "DKK – Danish Krone",
+  "to": "DKK – 丹麦克朗\r"
+ },
+ {
+  "from": "DOP – Dominican Peso",
+  "to": "DOP – 多米尼加比索\r"
+ },
+ {
+  "from": "DZD – Algerian Dinar",
+  "to": "DZD – 阿尔及利亚第纳尔\r"
+ },
+ {
+  "from": "EGP – Egyptian Pound",
+  "to": "EGP – 埃及镑\r"
+ },
+ {
+  "from": "ERN – Eritrean Nakfa",
+  "to": "ERN – 厄立特里亚纳克法\r"
+ },
+ {
+  "from": "ETB – Ethiopian Birr",
+  "to": "ETB – 埃塞俄比亚比尔\r"
+ },
+ {
+  "from": "FJD – Fijian Dollar",
+  "to": "FJD – 斐济元\r"
+ },
+ {
+  "from": "FKP – Falkland Islands Pound",
+  "to": "FKP – 福克兰群岛镑\r"
+ },
+ {
+  "from": "GEL – Georgian Lari",
+  "to": "GEL – 格鲁吉亚拉里\r"
+ },
+ {
+  "from": "GHS – Ghanaian Cedi",
+  "to": "GHS – 加纳塞地\r"
+ },
+ {
+  "from": "GIP – Gibraltar Pound",
+  "to": "GIP – 直布罗陀镑\r"
+ },
+ {
+  "from": "GMD – Gambian Dalasi",
+  "to": "GMD – 冈比亚达拉西\r"
+ },
+ {
+  "from": "GNF – Guinean Franc",
+  "to": "GNF – 几内亚法郎\r"
+ },
+ {
+  "from": "GTQ – Guatemalan Quetzal",
+  "to": "GTQ – 危地马拉格查尔\r"
+ },
+ {
+  "from": "GYD – Guyanaese Dollar",
+  "to": "GYD – 圭亚那元\r"
+ },
+ {
+  "from": "HKD – Hong Kong Dollar",
+  "to": "HKD – 港元\r"
+ },
+ {
+  "from": "HNL – Honduran Lempira",
+  "to": "HNL – 洪都拉斯伦皮拉\r"
+ },
+ {
+  "from": "HRK – Croatian Kuna",
+  "to": "HRK – 克罗地亚库纳\r"
+ },
+ {
+  "from": "HTG – Haitian Gourde",
+  "to": "HTG – 海地古德\r"
+ },
+ {
+  "from": "HUF – Hungarian Forint",
+  "to": "HUF – 匈牙利福林\r"
+ },
+ {
+  "from": "IDR – Indonesian Rupiah",
+  "to": "IDR – 印尼盾\r"
+ },
+ {
+  "from": "ILS – Israeli New Shekel",
+  "to": "ILS – 以色列新谢克尔\r"
+ },
+ {
+  "from": "INR – Indian Rupee",
+  "to": "INR – 印度卢比\r"
+ },
+ {
+  "from": "IQD – Iraqi Dinar",
+  "to": "IQD – 伊拉克第纳尔\r"
+ },
+ {
+  "from": "IRR – Iranian Rial",
+  "to": "IRR – 伊朗里亚尔\r"
+ },
+ {
+  "from": "ISK – Icelandic Króna",
+  "to": "ISK – 冰岛克朗\r"
+ },
+ {
+  "from": "JMD – Jamaican Dollar",
+  "to": "JMD – 牙买加元\r"
+ },
+ {
+  "from": "JOD – Jordanian Dinar",
+  "to": "JOD – 约旦第纳尔\r"
+ },
+ {
+  "from": "JPY – Japanese Yen",
+  "to": "JPY – 日元\r"
+ },
+ {
+  "from": "KES – Kenyan Shilling",
+  "to": "KES – 肯尼亚先令\r"
+ },
+ {
+  "from": "KGS – Kyrgyz Som",
+  "to": "KGS – 吉尔吉斯斯坦索姆\r"
+ },
+ {
+  "from": "KHR – Cambodian Riel",
+  "to": "KHR – 柬埔寨瑞尔\r"
+ },
+ {
+  "from": "KMF – Comorian Franc",
+  "to": "KMF – 科摩罗法郎\r"
+ },
+ {
+  "from": "KPW – North Korean Won",
+  "to": "KPW – 朝鲜元\r"
+ },
+ {
+  "from": "KRW – South Korean Won",
+  "to": "KRW – 韩元\r"
+ },
+ {
+  "from": "KWD – Kuwaiti Dinar",
+  "to": "KWD – 科威特第纳尔\r"
+ },
+ {
+  "from": "KYD – Cayman Islands Dollar",
+  "to": "KYD – 开曼群岛元\r"
+ },
+ {
+  "from": "KZT – Kazakhstani Tenge",
+  "to": "KZT – 哈萨克斯坦坚戈\r"
+ },
+ {
+  "from": "LAK – Laotian Kip",
+  "to": "LAK – 老挝基普\r"
+ },
+ {
+  "from": "LBP – Lebanese Pound",
+  "to": "LBP – 黎巴嫩镑\r"
+ },
+ {
+  "from": "LKR – Sri Lankan Rupee",
+  "to": "LKR – 斯里兰卡卢比\r"
+ },
+ {
+  "from": "LRD – Liberian Dollar",
+  "to": "LRD – 利比里亚元\r"
+ },
+ {
+  "from": "LSL – Lesotho Loti",
+  "to": "LSL – 莱索托洛蒂\r"
+ },
+ {
+  "from": "LYD – Libyan Dinar",
+  "to": "LYD – 利比亚第纳尔\r"
+ },
+ {
+  "from": "MAD – Moroccan Dirham",
+  "to": "MAD – 摩洛哥迪拉姆\r"
+ },
+ {
+  "from": "MDL – Moldovan Leu",
+  "to": "MDL – 摩尔多瓦列伊\r"
+ },
+ {
+  "from": "MGA – Malagasy Ariary",
+  "to": "MGA – 马达加斯加阿里亚里\r"
+ },
+ {
+  "from": "MKD – Macedonian Denar",
+  "to": "MKD – 马其顿第纳尔\r"
+ },
+ {
+  "from": "MMK – Myanmar Kyat",
+  "to": "MMK – 缅甸元\r"
+ },
+ {
+  "from": "MNT – Mongolian Tugrik",
+  "to": "MNT – 蒙古图格里克\r"
+ },
+ {
+  "from": "MOP – Macanese Pataca",
+  "to": "MOP – 澳门元\r"
+ },
+ {
+  "from": "MRU – Mauritanian Ouguiya",
+  "to": "MRU – 毛里塔尼亚乌吉亚\r"
+ },
+ {
+  "from": "MUR – Mauritian Rupee",
+  "to": "MUR – 毛里求斯卢比\r"
+ },
+ {
+  "from": "MVR – Maldivian Rufiyaa",
+  "to": "MVR – 马尔代夫拉菲亚\r"
+ },
+ {
+  "from": "MWK – Malawian Kwacha",
+  "to": "MWK – 马拉维克瓦查\r"
+ },
+ {
+  "from": "MXN – Mexican Peso",
+  "to": "MXN – 墨西哥比索\r"
+ },
+ {
+  "from": "MYR – Malaysian Ringgit",
+  "to": "MYR – 马来西亚林吉特\r"
+ },
+ {
+  "from": "MZN – Mozambican Metical",
+  "to": "MZN – 莫桑比克梅蒂卡尔\r"
+ },
+ {
+  "from": "NAD – Namibian Dollar",
+  "to": "NAD – 纳米比亚元\r"
+ },
+ {
+  "from": "NGN – Nigerian Naira",
+  "to": "NGN – 尼日利亚奈拉\r"
+ },
+ {
+  "from": "NIO – Nicaraguan Córdoba",
+  "to": "NIO – 尼加拉瓜科多巴\r"
+ },
+ {
+  "from": "NOK – Norwegian Krone",
+  "to": "NOK – 挪威克朗\r"
+ },
+ {
+  "from": "NPR – Nepalese Rupee",
+  "to": "NPR – 尼泊尔卢比\r"
+ },
+ {
+  "from": "NZD – New Zealand Dollar",
+  "to": "NZD – 新西兰元\r"
+ },
+ {
+  "from": "OMR – Omani Rial",
+  "to": "OMR – 阿曼里亚尔\r"
+ },
+ {
+  "from": "PAB – Panamanian Balboa",
+  "to": "PAB – 巴拿马巴波亚\r"
+ },
+ {
+  "from": "PEN – Peruvian Sol",
+  "to": "PEN – 秘鲁索尔\r"
+ },
+ {
+  "from": "PGK – Papua New Guinean Kina",
+  "to": "PGK – 巴布亚新几内亚基那\r"
+ },
+ {
+  "from": "PHP – Philippine Peso",
+  "to": "PHP – 菲律宾比索\r"
+ },
+ {
+  "from": "PKR – Pakistani Rupee",
+  "to": "PKR – 巴基斯坦卢比\r"
+ },
+ {
+  "from": "PYG – Paraguayan Guarani",
+  "to": "PYG – 巴拉圭瓜拉尼\r"
+ },
+ {
+  "from": "QAR – Qatari Riyal",
+  "to": "QAR – 卡塔尔里亚尔\r"
+ },
+ {
+  "from": "RON – Romanian Leu",
+  "to": "RON – 罗马尼亚列伊\r"
+ },
+ {
+  "from": "RSD – Serbian Dinar",
+  "to": "RSD – 塞尔维亚第纳尔\r"
+ },
+ {
+  "from": "RUB – Russian Ruble",
+  "to": "RUB – 俄罗斯卢布\r"
+ },
+ {
+  "from": "RWF – Rwandan Franc",
+  "to": "RWF – 卢旺达法郎\r"
+ },
+ {
+  "from": "SAR – Saudi Riyal",
+  "to": "SAR – 沙特里亚尔\r"
+ },
+ {
+  "from": "SBD – Solomon Islands Dollar",
+  "to": "SBD – 所罗门群岛元\r"
+ },
+ {
+  "from": "SCR – Seychellois Rupee",
+  "to": "SCR – 塞舌尔卢比\r"
+ },
+ {
+  "from": "SDG – Sudanese Pound",
+  "to": "SDG – 苏丹镑\r"
+ },
+ {
+  "from": "SEK – Swedish Krona",
+  "to": "SEK – 瑞典克朗\r"
+ },
+ {
+  "from": "SGD – Singapore Dollar",
+  "to": "SGD – 新加坡元\r"
+ },
+ {
+  "from": "SHP – St. Helena Pound",
+  "to": "SHP – 圣赫勒拿镑\r"
+ },
+ {
+  "from": "SLE – Sierra Leonean Leone",
+  "to": "SLE – 塞拉利昂利昂\r"
+ },
+ {
+  "from": "SLL – Sierra Leonean Leone (1964—2022)",
+  "to": "SLL – 塞拉利昂利昂（1964—2022）\r"
+ },
+ {
+  "from": "SOS – Somali Shilling",
+  "to": "SOS – 索马里先令\r"
+ },
+ {
+  "from": "SRD – Surinamese Dollar",
+  "to": "SRD – 苏里南元\r"
+ },
+ {
+  "from": "SSP – South Sudanese Pound",
+  "to": "SSP – 南苏丹镑\r"
+ },
+ {
+  "from": "STN – São Tomé & Príncipe Dobra",
+  "to": "STN – 圣多美和普林西比多布拉\r"
+ },
+ {
+  "from": "SVC – Salvadoran Colón",
+  "to": "SVC – 萨尔瓦多科朗\r"
+ },
+ {
+  "from": "SYP – Syrian Pound",
+  "to": "SYP – 叙利亚镑\r"
+ },
+ {
+  "from": "SZL – Swazi Lilangeni",
+  "to": "SZL – 斯威士兰里兰吉尼\r"
+ },
+ {
+  "from": "THB – Thai Baht",
+  "to": "THB – 泰铢\r"
+ },
+ {
+  "from": "TJS – Tajikistani Somoni",
+  "to": "TJS – 塔吉克斯坦索莫尼\r"
+ },
+ {
+  "from": "TMT – Turkmenistani Manat",
+  "to": "TMT – 土库曼斯坦马纳特\r"
+ },
+ {
+  "from": "TND – Tunisian Dinar",
+  "to": "TND – 突尼斯第纳尔\r"
+ },
+ {
+  "from": "TOP – Tongan Paʻanga",
+  "to": "TOP – 汤加潘加\r"
+ },
+ {
+  "from": "TRY – Turkish Lira",
+  "to": "TRY – 土耳其里拉\r"
+ },
+ {
+  "from": "TTD – Trinidad & Tobago Dollar",
+  "to": "TTD – 特立尼达和多巴哥元\r"
+ },
+ {
+  "from": "TWD – New Taiwan Dollar",
+  "to": "TWD – 新台币\r"
+ },
+ {
+  "from": "TZS – Tanzanian Shilling",
+  "to": "TZS – 坦桑尼亚先令\r"
+ },
+ {
+  "from": "UAH – Ukrainian Hryvnia",
+  "to": "UAH – 乌克兰格里夫纳\r"
+ },
+ {
+  "from": "UGX – Ugandan Shilling",
+  "to": "UGX – 乌干达先令\r"
+ },
+ {
+  "from": "UYU – Uruguayan Peso",
+  "to": "UYU – 乌拉圭比索\r"
+ },
+ {
+  "from": "UZS – Uzbekistani Som",
+  "to": "UZS – 乌兹别克斯坦苏姆\r"
+ },
+ {
+  "from": "VES – Venezuelan Bolívar",
+  "to": "VES – 委内瑞拉玻利瓦尔\r"
+ },
+ {
+  "from": "VND – Vietnamese Dong",
+  "to": "VND – 越南盾\r"
+ },
+ {
+  "from": "VUV – Vanuatu Vatu",
+  "to": "VUV – 瓦努阿图瓦图\r"
+ },
+ {
+  "from": "WST – Samoan Tala",
+  "to": "WST – 萨摩亚塔拉\r"
+ },
+ {
+  "from": "XAF – Central African CFA Franc",
+  "to": "XAF – 中非法郎\r"
+ },
+ {
+  "from": "XCD – East Caribbean Dollar",
+  "to": "XCD – 东加勒比元\r"
+ },
+ {
+  "from": "XCG – Caribbean guilder",
+  "to": "XCG – 加勒比盾\r"
+ },
+ {
+  "from": "XDR – Special Drawing Rights",
+  "to": "XDR – 特别提款权\r"
+ },
+ {
+  "from": "XOF – West African CFA Franc",
+  "to": "XOF – 西非法郎\r"
+ },
+ {
+  "from": "XPF – CFP Franc",
+  "to": "XPF – 太平洋法郎\r"
+ },
+ {
+  "from": "XSU – Sucre",
+  "to": "XSU – 苏克雷\r"
+ },
+ {
+  "from": "YER – Yemeni Rial",
+  "to": "YER – 也门里亚尔\r"
+ },
+ {
+  "from": "ZAR – South African Rand",
+  "to": "ZAR – 南非兰特\r"
+ },
+ {
+  "from": "ZMW – Zambian Kwacha",
+  "to": "ZMW – 赞比亚克瓦查\r"
+ },
+ {
+  "from": "ZWG – Zimbabwean Gold",
+  "to": "ZWG – 津巴布韦金\r"
+ },
+ {
+  "from": "ZWL – Zimbabwean Dollar (2009–2024)",
+  "to": "ZWL – 津巴布韦元（2009—2024）\r"
+ },
+ {
+  "from": "Piece (piece)",
+  "to": "件\r"
+ },
+ {
+  "from": "Set (piece)",
+  "to": "套\r"
+ },
+ {
+  "from": "Package (piece)",
+  "to": "包\r"
+ },
+ {
+  "from": "Box (piece)",
+  "to": "箱\r"
+ },
+ {
+  "from": "Roll (piece)",
+  "to": "卷\r"
+ },
+ {
+  "from": "Pair (piece)",
+  "to": "双\r"
+ },
+ {
+  "from": "Dozen (piece)",
+  "to": "打\r"
+ },
+ {
+  "from": "Unit (piece)",
+  "to": "个\r"
+ },
+ {
+  "from": "Gram (weight)",
+  "to": "克（重量）\r"
+ },
+ {
+  "from": "Kilogram (weight)",
+  "to": "千克（重量）\r"
+ },
+ {
+  "from": "Milligram (weight)",
+  "to": "毫克（重量）\r"
+ },
+ {
+  "from": "Pound (weight)",
+  "to": "磅（重量）\r"
+ },
+ {
+  "from": "Ounce (weight)",
+  "to": "盎司（重量）\r"
+ },
+ {
+  "from": "Milliliter (volume)",
+  "to": "毫升（容积）\r"
+ },
+ {
+  "from": "Liter (volume)",
+  "to": "升（容积）\r"
+ },
+ {
+  "from": "Centiliter (volume)",
+  "to": "厘升（容积）\r"
+ },
+ {
+  "from": "Cubic Meter (volume)",
+  "to": "立方米（容积）\r"
+ },
+ {
+  "from": "Millimeter (length)",
+  "to": "毫米（长度）\r"
+ },
+ {
+  "from": "Centimeter (length)",
+  "to": "厘米（长度）\r"
+ },
+ {
+  "from": "Meter (length)",
+  "to": "米（长度）\r"
+ },
+ {
+  "from": "Kilometer (length)",
+  "to": "千米（长度）\r"
+ },
+ {
+  "from": "Inch (length)",
+  "to": "英寸（长度）\r"
+ },
+ {
+  "from": "Foot (length)",
+  "to": "英尺（长度）\r"
+ },
+ {
+  "from": "Square Meter (area)",
+  "to": "平方米（面积）\r"
+ },
+ {
+  "from": "Square Centimeter (area)",
+  "to": "平方厘米（面积）\r"
+ },
+ {
+  "from": "Square Foot (area)",
+  "to": "平方英尺（面积）\r"
+ },
+ {
+  "from": "Gigabyte (digital)",
+  "to": "吉字节（数字）\r"
+ },
+ {
+  "from": "Megabyte (digital)",
+  "to": "兆字节（数字）\r"
+ },
+ {
+  "from": "Terabyte (digital)",
+  "to": "太字节（数字）\r"
+ },
+ {
+  "from": "License (digital)",
+  "to": "授权（数字）\r"
+ },
+ {
+  "from": "Seat (digital)",
+  "to": "席位（数字）\r"
+ },
+ {
+  "from": "Second (time)",
+  "to": "秒（时间）\r"
+ },
+ {
+  "from": "Minute (time)",
+  "to": "分钟（时间）\r"
+ },
+ {
+  "from": "Hour (time)",
+  "to": "小时（时间）\r"
+ },
+ {
+  "from": "Day (time)",
+  "to": "天（时间）\r"
+ },
+ {
+  "from": "Week (time)",
+  "to": "周（时间）\r"
+ },
+ {
+  "from": "Month (time)",
+  "to": "月（时间）\r"
+ },
+ {
+  "from": "Year (time)",
+  "to": "年（时间）\r"
+ },
+ {
+  "from": "Kilowatt Hour (energy)",
+  "to": "千瓦时（能量）\r"
+ },
+ {
+  "from": "Draft",
+  "to": "草稿\r"
+ },
+ {
+  "from": "Pending Approval",
+  "to": "待审批\r"
+ },
+ {
+  "from": "Approved",
+  "to": "已批准\r"
+ },
+ {
+  "from": "Rejected",
+  "to": "已拒绝\r"
+ },
+ {
+  "from": "Sent",
+  "to": "已发送\r"
+ },
+ {
+  "from": "Confirmed",
+  "to": "已确认\r"
+ },
+ {
+  "from": "In fulfillment",
+  "to": "履约中\r"
+ },
+ {
+  "from": "Fulfilled",
+  "to": "已履约\r"
+ },
+ {
+  "from": "On hold",
+  "to": "已挂起\r"
+ },
+ {
+  "from": "Canceled",
+  "to": "已取消\r"
+ },
+ {
+  "from": "Pending",
+  "to": "待处理\r"
+ },
+ {
+  "from": "Allocated",
+  "to": "已分配\r"
+ },
+ {
+  "from": "Picking",
+  "to": "拣货中\r"
+ },
+ {
+  "from": "Packed",
+  "to": "已打包\r"
+ },
+ {
+  "from": "Shipped",
+  "to": "已发货\r"
+ },
+ {
+  "from": "Delivered",
+  "to": "已送达\r"
+ },
+ {
+  "from": "Backordered",
+  "to": "缺货待补\r"
+ },
+ {
+  "from": "Returned",
+  "to": "已退货\r"
+ },
+ {
+  "from": "Canceled",
+  "to": "已取消\r"
+ },
+ {
+  "from": "Pending",
+  "to": "待处理\r"
+ },
+ {
+  "from": "Packed",
+  "to": "已打包\r"
+ },
+ {
+  "from": "Shipped",
+  "to": "已发货\r"
+ },
+ {
+  "from": "In transit",
+  "to": "运输中\r"
+ },
+ {
+  "from": "Delivered",
+  "to": "已送达\r"
+ },
+ {
+  "from": "Canceled",
+  "to": "已取消\r"
+ },
+ {
+  "from": "Returned",
+  "to": "已退货\r"
+ },
+ {
+  "from": "Pending",
+  "to": "待处理\r"
+ },
+ {
+  "from": "Authorized",
+  "to": "已授权\r"
+ },
+ {
+  "from": "Captured",
+  "to": "已扣款\r"
+ },
+ {
+  "from": "Received",
+  "to": "已收款\r"
+ },
+ {
+  "from": "Refunded",
+  "to": "已退款\r"
+ },
+ {
+  "from": "Failed",
+  "to": "失败\r"
+ },
+ {
+  "from": "Canceled",
+  "to": "已取消\r"
+ },
+ {
+  "from": "Lost to competitor",
+  "to": "被竞争对手拿下\r"
+ },
+ {
+  "from": "No budget",
+  "to": "无预算\r"
+ },
+ {
+  "from": "No decision made",
+  "to": "未做决策\r"
+ },
+ {
+  "from": "Bad timing",
+  "to": "时机不合适\r"
+ },
+ {
+  "from": "Other",
+  "to": "其他\r"
+ },
+ {
+  "from": "Discount",
+  "to": "折扣\r"
+ },
+ {
+  "from": "Tax",
+  "to": "税费\r"
+ },
+ {
+  "from": "Shipping",
+  "to": "运费\r"
+ },
+ {
+  "from": "Surcharge",
+  "to": "附加费\r"
+ },
+ {
+  "from": "Return",
+  "to": "退货\r"
+ },
+ {
+  "from": "Custom",
+  "to": "自定义\r"
+ },
+ {
+  "from": "Defective",
+  "to": "存在缺陷\r"
+ },
+ {
+  "from": "Damaged in transit",
+  "to": "运输中损坏\r"
+ },
+ {
+  "from": "Wrong item",
+  "to": "货物错误\r"
+ },
+ {
+  "from": "Worn",
+  "to": "磨损\r"
+ },
+ {
+  "from": "Dead on arrival",
+  "to": "开箱即损\r"
+ },
+ {
+  "from": "Warranty defect",
+  "to": "保修缺陷\r"
+ },
+ {
+  "from": "Customer remorse",
+  "to": "客户改变主意\r"
+ },
+ {
+  "from": "Wrong order",
+  "to": "订单错误\r"
+ },
+ {
+  "from": "Core exchange",
+  "to": "以旧换新\r"
+ },
+ {
+  "from": "Vendor recall",
+  "to": "供应商召回\r"
+ },
+ {
+  "from": "Out of warranty",
+  "to": "已过保修期\r"
+ },
+ {
+  "from": "No proof of purchase",
+  "to": "无购买凭证\r"
+ },
+ {
+  "from": "Physical abuse",
+  "to": "人为损坏\r"
+ },
+ {
+  "from": "Not our product",
+  "to": "非我方产品\r"
+ },
+ {
+  "from": "Duplicate claim",
+  "to": "重复工单\r"
+ },
+ {
+  "from": "Sick off",
+  "to": "病假\r"
+ },
+ {
+  "from": "Holidays",
+  "to": "休假\r"
+ },
+ {
+  "from": "Work from home",
+  "to": "居家办公\r"
+ },
+ {
+  "from": "Unspecified",
+  "to": "未指定\r"
+ },
+ {
+  "from": "In use",
+  "to": "使用中\r"
+ },
+ {
+  "from": "Maintenance",
+  "to": "维护中\r"
+ },
+ {
+  "from": "Failure",
+  "to": "故障\r"
+ },
+ {
+  "from": "Unspecified",
+  "to": "未指定\r"
+ },
+ {
+  "from": "Main address",
+  "to": "主要地址\r"
+ },
+ {
+  "from": "Alternative address",
+  "to": "备用地址\r"
+ },
+ {
+  "from": "Current address",
+  "to": "当前地址\r"
+ },
+ {
+  "from": "Home address",
+  "to": "家庭住址\r"
+ },
+ {
+  "from": "Mailing address",
+  "to": "邮寄地址\r"
+ },
+ {
+  "from": "Job address",
+  "to": "工作地址\r"
+ },
+ {
+  "from": "Spots",
+  "to": "点位\r"
+ },
+ {
+  "from": "Units",
+  "to": "单位\r"
+ },
+ {
+  "from": "Quantity",
+  "to": "数量\r"
+ },
+ {
+  "from": "Planned maintenance",
+  "to": "计划维护\r"
+ },
+ {
+  "from": "Undergoing maintenance",
+  "to": "维护中\r"
+ },
+ {
+  "from": "Maintenance completed",
+  "to": "维护完成\r"
+ },
+ {
+  "from": "Inspection scheduled",
+  "to": "已安排检查\r"
+ },
+ {
+  "from": "Calibration",
+  "to": "校准\r"
+ },
+ {
+  "from": "Out of service",
+  "to": "停用\r"
+ },
+ {
+  "from": "Back in service",
+  "to": "恢复使用\r"
+ },
+ {
+  "from": "Onboarding",
+  "to": "入职\r"
+ },
+ {
+  "from": "Training",
+  "to": "培训\r"
+ },
+ {
+  "from": "Performance review",
+  "to": "绩效评估\r"
+ },
+ {
+  "from": "Certification",
+  "to": "资格认证\r"
+ },
+ {
+  "from": "Time off",
+  "to": "休假\r"
+ },
+ {
+  "from": "Shift change",
+  "to": "换班\r"
+ },
+ {
+  "from": "Role change",
+  "to": "角色变更\r"
+ },
+ {
+  "from": "Active",
+  "to": "启用\r"
+ },
+ {
+  "from": "Inactive",
+  "to": "停用\r"
+ },
+ {
+  "from": "Pending",
+  "to": "待处理\r"
+ },
+ {
+  "from": "Archived",
+  "to": "已归档\r"
+ },
+ {
+  "from": "Lead",
+  "to": "线索\r"
+ },
+ {
+  "from": "Prospect",
+  "to": "潜在客户\r"
+ },
+ {
+  "from": "Customer",
+  "to": "客户\r"
+ },
+ {
+  "from": "Subscriber",
+  "to": "订阅用户\r"
+ },
+ {
+  "from": "Churned",
+  "to": "已流失\r"
+ },
+ {
+  "from": "Other",
+  "to": "其他\r"
+ },
+ {
+  "from": "LinkedIn",
+  "to": "LinkedIn\r"
+ },
+ {
+  "from": "Email",
+  "to": "邮件\r"
+ },
+ {
+  "from": "Web form",
+  "to": "网页表单\r"
+ },
+ {
+  "from": "Referral",
+  "to": "推荐\r"
+ },
+ {
+  "from": "Customer referral",
+  "to": "客户推荐\r"
+ },
+ {
+  "from": "Partner referral",
+  "to": "合作伙伴推荐\r"
+ },
+ {
+  "from": "Conference / Event",
+  "to": "会议 / 活动\r"
+ },
+ {
+  "from": "Cold outreach",
+  "to": "陌生拜访\r"
+ },
+ {
+  "from": "Facebook",
+  "to": "Facebook\r"
+ },
+ {
+  "from": "Typeform",
+  "to": "Typeform\r"
+ },
+ {
+  "from": "Other",
+  "to": "其他\r"
+ },
+ {
+  "from": "Office",
+  "to": "办公\r"
+ },
+ {
+  "from": "Work",
+  "to": "工作\r"
+ },
+ {
+  "from": "Billing",
+  "to": "账单\r"
+ },
+ {
+  "from": "Shipping",
+  "to": "收货\r"
+ },
+ {
+  "from": "Home",
+  "to": "家庭\r"
+ },
+ {
+  "from": "Call",
+  "to": "通话\r"
+ },
+ {
+  "from": "Email",
+  "to": "邮件\r"
+ },
+ {
+  "from": "Event",
+  "to": "事件\r"
+ },
+ {
+  "from": "Meeting",
+  "to": "会议\r"
+ },
+ {
+  "from": "Note",
+  "to": "备注\r"
+ },
+ {
+  "from": "Task",
+  "to": "任务\r"
+ },
+ {
+  "from": "Planned",
+  "to": "已计划\r"
+ },
+ {
+  "from": "In progress",
+  "to": "进行中\r"
+ },
+ {
+  "from": "Waiting / blocked",
+  "to": "等待中 / 阻塞\r"
+ },
+ {
+  "from": "Done",
+  "to": "完成\r"
+ },
+ {
+  "from": "Canceled",
+  "to": "已取消\r"
+ },
+ {
+  "from": "Director of Operations",
+  "to": "运营总监\r"
+ },
+ {
+  "from": "VP of Partnerships",
+  "to": "合作副总裁\r"
+ },
+ {
+  "from": "Founder & Principal",
+  "to": "创始人兼负责人\r"
+ },
+ {
+  "from": "Senior Project Manager",
+  "to": "高级项目经理\r"
+ },
+ {
+  "from": "Chief Revenue Officer",
+  "to": "首席营收官\r"
+ },
+ {
+  "from": "Director of Retail Partnerships",
+  "to": "零售合作总监\r"
+ },
+ {
+  "from": "Open",
+  "to": "未关闭\r"
+ },
+ {
+  "from": "Closed",
+  "to": "已关闭\r"
+ },
+ {
+  "from": "Win",
+  "to": "赢单\r"
+ },
+ {
+  "from": "Lost",
+  "to": "输单\r"
+ },
+ {
+  "from": "In progress",
+  "to": "进行中\r"
+ },
+ {
+  "from": "Opportunity",
+  "to": "商机\r"
+ },
+ {
+  "from": "Marketing Qualified Lead",
+  "to": "市场认可线索（MQL）\r"
+ },
+ {
+  "from": "Sales Qualified Lead",
+  "to": "销售认可线索（SQL）\r"
+ },
+ {
+  "from": "Offering",
+  "to": "方案报价\r"
+ },
+ {
+  "from": "Negotiations",
+  "to": "谈判\r"
+ },
+ {
+  "from": "Win",
+  "to": "赢单\r"
+ },
+ {
+  "from": "Lost",
+  "to": "输单\r"
+ },
+ {
+  "from": "Stalled",
+  "to": "停滞\r"
+ },
+ {
+  "from": "Renewable Energy",
+  "to": "可再生能源\r"
+ },
+ {
+  "from": "Software",
+  "to": "软件\r"
+ },
+ {
+  "from": "Interior Design",
+  "to": "室内设计\r"
+ },
+ {
+  "from": "SaaS",
+  "to": "SaaS\r"
+ },
+ {
+  "from": "E-commerce",
+  "to": "电子商务\r"
+ },
+ {
+  "from": "Healthcare",
+  "to": "医疗健康\r"
+ },
+ {
+  "from": "Manufacturing",
+  "to": "制造业\r"
+ },
+ {
+  "from": "Logistics",
+  "to": "物流\r"
+ },
+ {
+  "from": "Financial Services",
+  "to": "金融服务\r"
+ },
+ {
+  "from": "Retail",
+  "to": "零售\r"
+ },
+ {
+  "from": "Hospitality",
+  "to": "酒店与餐饮\r"
+ },
+ {
+  "from": "Energy",
+  "to": "能源\r"
+ },
+ {
+  "from": "Media",
+  "to": "媒体\r"
+ },
+ {
+  "from": "Hot",
+  "to": "热\r"
+ },
+ {
+  "from": "High",
+  "to": "高\r"
+ },
+ {
+  "from": "Medium",
+  "to": "中\r"
+ },
+ {
+  "from": "Low",
+  "to": "低\r"
+ },
+ {
+  "from": "Cold",
+  "to": "冷\r"
+ },
+ {
+  "from": "Q1 2026",
+  "to": "2026 年第一季度\r"
+ },
+ {
+  "from": "Q2 2026",
+  "to": "2026 年第二季度\r"
+ },
+ {
+  "from": "Q3 2026",
+  "to": "2026 年第三季度\r"
+ },
+ {
+  "from": "Q4 2026",
+  "to": "2026 年第四季度\r"
+ },
+ {
+  "from": "Q1 2027",
+  "to": "2027 年第一季度\r"
+ },
+ {
+  "from": "Q2 2027",
+  "to": "2027 年第二季度\r"
+ },
+ {
+  "from": "Q3 2027",
+  "to": "2027 年第三季度\r"
+ },
+ {
+  "from": "Q4 2027",
+  "to": "2027 年第四季度\r"
+ },
+ {
+  "from": "Q1 2028",
+  "to": "2028 年第一季度\r"
+ },
+ {
+  "from": "Q2 2028",
+  "to": "2028 年第二季度\r"
+ },
+ {
+  "from": "Q3 2028",
+  "to": "2028 年第三季度\r"
+ },
+ {
+  "from": "Q4 2028",
+  "to": "2028 年第四季度\r"
+ },
+ {
+  "from": "Decision maker",
+  "to": "决策人\r"
+ },
+ {
+  "from": "Influencer",
+  "to": "影响者\r"
+ },
+ {
+  "from": "Budget holder",
+  "to": "预算负责人\r"
+ },
+ {
+  "from": "Technical evaluator",
+  "to": "技术评估人\r"
+ },
+ {
+  "from": "Primary contact",
+  "to": "主要联系人\r"
+ },
+ {
+  "from": "End user",
+  "to": "最终用户\r"
+ },
+ {
+  "from": "Sales Owner",
+  "to": "销售负责人\r"
+ },
+ {
+  "from": "Service Owner",
+  "to": "服务负责人\r"
+ },
+ {
+  "from": "Account Manager",
+  "to": "客户经理\r"
+ }
+]

@@ -1,0 +1,10 @@
+{
+  "modules.directory.filter.all": "全部",
+  "modules.directory.filter.config": "含设置页",
+  "modules.directory.filter.empty": "无页面",
+  "modules.directory.detail": "详情",
+  "modules.directory.detail.pages": "共 {{count}} 个页面",
+  "modules.directory.detail.noPages": "该模块没有后台页面。",
+  "modules.directory.detail.settings": "设置",
+  "modules.directory.detail.hidden": "隐藏"
+}

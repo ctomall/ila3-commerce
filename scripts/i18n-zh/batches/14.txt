@@ -1,0 +1,405 @@
+D0	Currencies
+D1	Units of measure
+D2	Sales order statuses
+D3	Sales order line statuses
+D4	Shipment statuses
+D5	Payment statuses
+D6	Deal loss reasons
+D7	Sales adjustment kinds
+D8	Warranty claim fault codes
+D9	Warranty claim reasons
+D10	Warranty claim rejection reasons
+D11	Staff unavailability reasons
+D12	Resource unavailability reasons
+D13	Schedule unavailability reasons
+D14	Resource address types
+D15	Staff address types
+D16	Resource capacity units
+D17	Resource activity types
+D18	Staff activity types
+E0	EUR – Euro
+E1	USD – US Dollar
+E2	GBP – British Pound
+E3	PLN – Polish Zloty
+E4	AED – United Arab Emirates Dirham
+E5	AFN – Afghan Afghani
+E6	ALL – Albanian Lek
+E7	AMD – Armenian Dram
+E8	ANG – Netherlands Antillean Guilder
+E9	AOA – Angolan Kwanza
+E10	ARS – Argentine Peso
+E11	AUD – Australian Dollar
+E12	AWG – Aruban Florin
+E13	AZN – Azerbaijani Manat
+E14	BAM – Bosnia-Herzegovina Convertible Mark
+E15	BBD – Barbadian Dollar
+E16	BDT – Bangladeshi Taka
+E17	BGN – Bulgarian Lev
+E18	BHD – Bahraini Dinar
+E19	BIF – Burundian Franc
+E20	BMD – Bermudan Dollar
+E21	BND – Brunei Dollar
+E22	BOB – Bolivian Boliviano
+E23	BRL – Brazilian Real
+E24	BSD – Bahamian Dollar
+E25	BTN – Bhutanese Ngultrum
+E26	BWP – Botswanan Pula
+E27	BYN – Belarusian Ruble
+E28	BZD – Belize Dollar
+E29	CAD – Canadian Dollar
+E30	CDF – Congolese Franc
+E31	CHF – Swiss Franc
+E32	CLP – Chilean Peso
+E33	CNY – Chinese Yuan
+E34	COP – Colombian Peso
+E35	CRC – Costa Rican Colón
+E36	CUC – Cuban Convertible Peso
+E37	CUP – Cuban Peso
+E38	CVE – Cape Verdean Escudo
+E39	CZK – Czech Koruna
+E40	DJF – Djiboutian Franc
+E41	DKK – Danish Krone
+E42	DOP – Dominican Peso
+E43	DZD – Algerian Dinar
+E44	EGP – Egyptian Pound
+E45	ERN – Eritrean Nakfa
+E46	ETB – Ethiopian Birr
+E47	FJD – Fijian Dollar
+E48	FKP – Falkland Islands Pound
+E49	GEL – Georgian Lari
+E50	GHS – Ghanaian Cedi
+E51	GIP – Gibraltar Pound
+E52	GMD – Gambian Dalasi
+E53	GNF – Guinean Franc
+E54	GTQ – Guatemalan Quetzal
+E55	GYD – Guyanaese Dollar
+E56	HKD – Hong Kong Dollar
+E57	HNL – Honduran Lempira
+E58	HRK – Croatian Kuna
+E59	HTG – Haitian Gourde
+E60	HUF – Hungarian Forint
+E61	IDR – Indonesian Rupiah
+E62	ILS – Israeli New Shekel
+E63	INR – Indian Rupee
+E64	IQD – Iraqi Dinar
+E65	IRR – Iranian Rial
+E66	ISK – Icelandic Króna
+E67	JMD – Jamaican Dollar
+E68	JOD – Jordanian Dinar
+E69	JPY – Japanese Yen
+E70	KES – Kenyan Shilling
+E71	KGS – Kyrgyz Som
+E72	KHR – Cambodian Riel
+E73	KMF – Comorian Franc
+E74	KPW – North Korean Won
+E75	KRW – South Korean Won
+E76	KWD – Kuwaiti Dinar
+E77	KYD – Cayman Islands Dollar
+E78	KZT – Kazakhstani Tenge
+E79	LAK – Laotian Kip
+E80	LBP – Lebanese Pound
+E81	LKR – Sri Lankan Rupee
+E82	LRD – Liberian Dollar
+E83	LSL – Lesotho Loti
+E84	LYD – Libyan Dinar
+E85	MAD – Moroccan Dirham
+E86	MDL – Moldovan Leu
+E87	MGA – Malagasy Ariary
+E88	MKD – Macedonian Denar
+E89	MMK – Myanmar Kyat
+E90	MNT – Mongolian Tugrik
+E91	MOP – Macanese Pataca
+E92	MRU – Mauritanian Ouguiya
+E93	MUR – Mauritian Rupee
+E94	MVR – Maldivian Rufiyaa
+E95	MWK – Malawian Kwacha
+E96	MXN – Mexican Peso
+E97	MYR – Malaysian Ringgit
+E98	MZN – Mozambican Metical
+E99	NAD – Namibian Dollar
+E100	NGN – Nigerian Naira
+E101	NIO – Nicaraguan Córdoba
+E102	NOK – Norwegian Krone
+E103	NPR – Nepalese Rupee
+E104	NZD – New Zealand Dollar
+E105	OMR – Omani Rial
+E106	PAB – Panamanian Balboa
+E107	PEN – Peruvian Sol
+E108	PGK – Papua New Guinean Kina
+E109	PHP – Philippine Peso
+E110	PKR – Pakistani Rupee
+E111	PYG – Paraguayan Guarani
+E112	QAR – Qatari Riyal
+E113	RON – Romanian Leu
+E114	RSD – Serbian Dinar
+E115	RUB – Russian Ruble
+E116	RWF – Rwandan Franc
+E117	SAR – Saudi Riyal
+E118	SBD – Solomon Islands Dollar
+E119	SCR – Seychellois Rupee
+E120	SDG – Sudanese Pound
+E121	SEK – Swedish Krona
+E122	SGD – Singapore Dollar
+E123	SHP – St. Helena Pound
+E124	SLE – Sierra Leonean Leone
+E125	SLL – Sierra Leonean Leone (1964—2022)
+E126	SOS – Somali Shilling
+E127	SRD – Surinamese Dollar
+E128	SSP – South Sudanese Pound
+E129	STN – São Tomé & Príncipe Dobra
+E130	SVC – Salvadoran Colón
+E131	SYP – Syrian Pound
+E132	SZL – Swazi Lilangeni
+E133	THB – Thai Baht
+E134	TJS – Tajikistani Somoni
+E135	TMT – Turkmenistani Manat
+E136	TND – Tunisian Dinar
+E137	TOP – Tongan Paʻanga
+E138	TRY – Turkish Lira
+E139	TTD – Trinidad & Tobago Dollar
+E140	TWD – New Taiwan Dollar
+E141	TZS – Tanzanian Shilling
+E142	UAH – Ukrainian Hryvnia
+E143	UGX – Ugandan Shilling
+E144	UYU – Uruguayan Peso
+E145	UZS – Uzbekistani Som
+E146	VES – Venezuelan Bolívar
+E147	VND – Vietnamese Dong
+E148	VUV – Vanuatu Vatu
+E149	WST – Samoan Tala
+E150	XAF – Central African CFA Franc
+E151	XCD – East Caribbean Dollar
+E152	XCG – Caribbean guilder
+E153	XDR – Special Drawing Rights
+E154	XOF – West African CFA Franc
+E155	XPF – CFP Franc
+E156	XSU – Sucre
+E157	YER – Yemeni Rial
+E158	ZAR – South African Rand
+E159	ZMW – Zambian Kwacha
+E160	ZWG – Zimbabwean Gold
+E161	ZWL – Zimbabwean Dollar (2009–2024)
+E162	Piece (piece)
+E163	Set (piece)
+E164	Package (piece)
+E165	Box (piece)
+E166	Roll (piece)
+E167	Pair (piece)
+E168	Dozen (piece)
+E169	Unit (piece)
+E170	Gram (weight)
+E171	Kilogram (weight)
+E172	Milligram (weight)
+E173	Pound (weight)
+E174	Ounce (weight)
+E175	Milliliter (volume)
+E176	Liter (volume)
+E177	Centiliter (volume)
+E178	Cubic Meter (volume)
+E179	Millimeter (length)
+E180	Centimeter (length)
+E181	Meter (length)
+E182	Kilometer (length)
+E183	Inch (length)
+E184	Foot (length)
+E185	Square Meter (area)
+E186	Square Centimeter (area)
+E187	Square Foot (area)
+E188	Gigabyte (digital)
+E189	Megabyte (digital)
+E190	Terabyte (digital)
+E191	License (digital)
+E192	Seat (digital)
+E193	Second (time)
+E194	Minute (time)
+E195	Hour (time)
+E196	Day (time)
+E197	Week (time)
+E198	Month (time)
+E199	Year (time)
+E200	Kilowatt Hour (energy)
+E201	Draft
+E202	Pending Approval
+E203	Approved
+E204	Rejected
+E205	Sent
+E206	Confirmed
+E207	In fulfillment
+E208	Fulfilled
+E209	On hold
+E210	Canceled
+E211	Pending
+E212	Allocated
+E213	Picking
+E214	Packed
+E215	Shipped
+E216	Delivered
+E217	Backordered
+E218	Returned
+E219	Canceled
+E220	Pending
+E221	Packed
+E222	Shipped
+E223	In transit
+E224	Delivered
+E225	Canceled
+E226	Returned
+E227	Pending
+E228	Authorized
+E229	Captured
+E230	Received
+E231	Refunded
+E232	Failed
+E233	Canceled
+E234	Lost to competitor
+E235	No budget
+E236	No decision made
+E237	Bad timing
+E238	Other
+E239	Discount
+E240	Tax
+E241	Shipping
+E242	Surcharge
+E243	Return
+E244	Custom
+E245	Defective
+E246	Damaged in transit
+E247	Wrong item
+E248	Worn
+E249	Dead on arrival
+E250	Warranty defect
+E251	Customer remorse
+E252	Wrong order
+E253	Core exchange
+E254	Vendor recall
+E255	Out of warranty
+E256	No proof of purchase
+E257	Physical abuse
+E258	Not our product
+E259	Duplicate claim
+E260	Sick off
+E261	Holidays
+E262	Work from home
+E263	Unspecified
+E264	In use
+E265	Maintenance
+E266	Failure
+E267	Unspecified
+E268	Main address
+E269	Alternative address
+E270	Current address
+E271	Home address
+E272	Mailing address
+E273	Job address
+E274	Spots
+E275	Units
+E276	Quantity
+E277	Planned maintenance
+E278	Undergoing maintenance
+E279	Maintenance completed
+E280	Inspection scheduled
+E281	Calibration
+E282	Out of service
+E283	Back in service
+E284	Onboarding
+E285	Training
+E286	Performance review
+E287	Certification
+E288	Time off
+E289	Shift change
+E290	Role change
+C0	Active
+C1	Inactive
+C2	Pending
+C3	Archived
+C4	Lead
+C5	Prospect
+C6	Customer
+C7	Subscriber
+C8	Churned
+C9	Other
+C10	LinkedIn
+C11	Email
+C12	Web form
+C13	Referral
+C14	Customer referral
+C15	Partner referral
+C16	Conference / Event
+C17	Cold outreach
+C18	Facebook
+C19	Typeform
+C20	Other
+C21	Office
+C22	Work
+C23	Billing
+C24	Shipping
+C25	Home
+C26	Call
+C27	Email
+C28	Event
+C29	Meeting
+C30	Note
+C31	Task
+C32	Planned
+C33	In progress
+C34	Waiting / blocked
+C35	Done
+C36	Canceled
+C37	Director of Operations
+C38	VP of Partnerships
+C39	Founder & Principal
+C40	Senior Project Manager
+C41	Chief Revenue Officer
+C42	Director of Retail Partnerships
+C43	Open
+C44	Closed
+C45	Win
+C46	Lost
+C47	In progress
+C48	Opportunity
+C49	Marketing Qualified Lead
+C50	Sales Qualified Lead
+C51	Offering
+C52	Negotiations
+C53	Win
+C54	Lost
+C55	Stalled
+C56	Renewable Energy
+C57	Software
+C58	Interior Design
+C59	SaaS
+C60	E-commerce
+C61	Healthcare
+C62	Manufacturing
+C63	Logistics
+C64	Financial Services
+C65	Retail
+C66	Hospitality
+C67	Energy
+C68	Media
+C69	Hot
+C70	High
+C71	Medium
+C72	Low
+C73	Cold
+C74	Q1 2026
+C75	Q2 2026
+C76	Q3 2026
+C77	Q4 2026
+C78	Q1 2027
+C79	Q2 2027
+C80	Q3 2027
+C81	Q4 2027
+C82	Q1 2028
+C83	Q2 2028
+C84	Q3 2028
+C85	Q4 2028
+C86	Decision maker
+C87	Influencer
+C88	Budget holder
+C89	Technical evaluator
+C90	Primary contact
+C91	End user
+C92	Sales Owner
+C93	Service Owner
+C94	Account Manager
