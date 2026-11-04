@@ -100,7 +100,7 @@ export default function SystemUpdatePageClient() {
     const result = await apiCall('/api/system_update/run', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ref: refInput.trim() || undefined }),
+      body: JSON.stringify({ ref: refInput.trim() || undefined, confirm: payload?.repo?.shortCommit ?? '' }),
     })
     setBusy(false)
     if (!result.ok) {

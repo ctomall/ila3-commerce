@@ -5,6 +5,7 @@ import {
   isSuperAdmin,
   isUpdateUnitRunning,
   normalizeRef,
+  readRepoInfo,
   readState,
   requestSelfUpdate,
 } from '../../lib/update'
@@ -48,9 +49,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'cross-origin request rejected' }, { status: 403 })
   }
 
-  let body: { ref?: unknown; force?: unknown } = {}
+  let body: { ref?: unknown; force?: unknown; confirm?: unknown } = {}
   try {
-    body = (await req.json()) as { ref?: unknown; force?: unknown }
+    body = (await req.json()) as { ref?: unknown; force?: unknown; confirm?: unknown }
   } catch {
     body = {}
   }
@@ -59,6 +60,22 @@ export async function POST(req: NextRequest) {
   const ref = rawRef ? normalizeRef(rawRef) : null
   if (rawRef && !ref) {
     return NextResponse.json({ error: 'invalid ref' }, { status: 400 })
+  }
+
+  // Explicit confirmation: the caller must echo the commit it believes is
+  // deployed. This makes an accidental click, a replayed request or a stale tab
+  // fail instead of restarting production.
+  const repo = await readRepoInfo()
+  const expected = repo.shortCommit ?? ''
+  const provided = typeof body.confirm === 'string' ? body.confirm.trim().toLowerCase() : ''
+  if (!expected || provided !== expected.toLowerCase()) {
+    return NextResponse.json(
+      {
+        error: 'confirmation required',
+        detail: `send {"confirm":"${expected}"} — the short commit currently deployed`,
+      },
+      { status: 409 },
+    )
   }
 
   const current = await readState()
@@ -70,6 +87,10 @@ export async function POST(req: NextRequest) {
   }
 
   const actor = typeof auth.email === 'string' && auth.email ? auth.email : String(auth.sub ?? 'unknown')
+  const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+  console.log(
+    `[system_update] upgrade requested actor=${actor} ip=${ip} from=${expected} ref=${ref ?? 'origin/HEAD'} force=${body.force === true}`,
+  )
   try {
     await requestSelfUpdate({ ref, force: body.force === true, actor })
   } catch (error) {
