@@ -73,6 +73,30 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.12 轮次进展（Round 5，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T1** `/login` 与 `/backend` 壳分离 | ✅ 完成并上线 | `/login` HTML **105 KB**（原 1 546 KB）／内联键 **813**（原 21 438） |
+| **回归** `/backend` 未受影响 | ✅ | 1 605 KB / 22 379 键（与改前同量级）；登录接口 `POST /api/auth/login` → 200 |
+| 页面文案完整性 | ✅ | 可见文本：`ILA3 Commerce 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私`（无 key 泄漏） |
+
+**实现方式（低风险）**
+
+1. `src/proxy.ts` 早已注入 `x-next-url`（含 pathname）；
+2. 新增 `src/lib/i18n/auth-dict.ts`：`isAuthRoute()` + `trimDictionaryForAuthRoute()`，
+   只保留 `auth / common / ui / appShell / errors / validation` 六个命名空间；
+3. `src/app/layout.tsx` 按请求路径决定是否裁剪，**其它路由完全不裁剪**；
+4. 3 个单测覆盖（路由判定、命名空间保留、前缀误伤如 `authn.*`）。
+
+**为什么不是“把字典搬走”（T2 的做法）**
+
+T2 需要客户端懒加载 + 首帧兜底，回归面覆盖所有模块页；T1 只影响匿名壳，
+`/backend` 一行不改，是收益/风险比最高的一刀。T2 仍保留为后续项，
+用于进一步压缩后台页（当前 1.6 MB）。
+
+---
+
 ### 1.11 轮次进展（Round 4，2026-11-05）
 
 | 任务 | 状态 | 证据 |

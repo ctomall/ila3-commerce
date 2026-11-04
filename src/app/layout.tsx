@@ -3,6 +3,8 @@ import './globals.css'
 import '@/lib/i18n/register-dictionary-loader'
 import { AppProviders } from '@/components/AppProviders'
 import { BRAND } from '@/lib/branding'
+import { isAuthRoute, trimDictionaryForAuthRoute } from '@/lib/i18n/auth-dict'
+import { headers } from 'next/headers'
 
 import { THEME_INIT_SCRIPT } from '@open-mercato/ui/theme/theme-init-script'
 import { detectLocale, loadDictionary, resolveSupportedLocalesForRequest } from '@open-mercato/shared/lib/i18n/server'
@@ -29,6 +31,10 @@ export default async function RootLayout({
   const supportedLocales = await resolveSupportedLocalesForRequest()
   const locale = await detectLocale({ supportedLocales })
   const dict = await loadDictionary(locale)
+  // The unauthenticated shell does not need every module namespace; trimming
+  // it here keeps /login's RSC payload small without touching /backend.
+  const requestPath = (await headers()).get('x-next-url')
+  const dictForRequest = isAuthRoute(requestPath) ? trimDictionaryForAuthRoute(dict) : dict
   const localeLocked = resolveForcedLocale(process.env) !== null
   const demoModeEnabled = process.env.DEMO_MODE !== 'false'
   const noticeBarsEnabled = process.env.OM_INTEGRATION_TEST !== 'true'
@@ -42,7 +48,7 @@ export default async function RootLayout({
       </head>
       <body className="antialiased" suppressHydrationWarning data-gramm="false">
         <script id="om-theme-init" dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
-        <AppProviders locale={locale} dict={dict} localeLocked={localeLocked} supportedLocales={supportedLocales} demoModeEnabled={demoModeEnabled} noticeBarsEnabled={noticeBarsEnabled}>
+        <AppProviders locale={locale} dict={dictForRequest} localeLocked={localeLocked} supportedLocales={supportedLocales} demoModeEnabled={demoModeEnabled} noticeBarsEnabled={noticeBarsEnabled}>
           {devRuntime.enabled ? <DevRuntimeReporter /> : null}
           {devRuntime.bannerEnabled ? <DevRuntimeDiagnosticsBanner /> : null}
           {children}
