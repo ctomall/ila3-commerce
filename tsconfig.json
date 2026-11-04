@@ -52,7 +52,11 @@
     ".mercato/next/types/**/*.ts",
     ".mercato/next/dev/types/**/*.ts",
     ".mercato/next-staging/types/**/*.ts",
-    ".mercato/next-staging/dev/types/**/*.ts"
+    ".mercato/next-staging/dev/types/**/*.ts",
+    ".mercato/next-tier-core/types/**/*.ts",
+    ".mercato/next-tier-core/dev/types/**/*.ts",
+    ".mercato/next-tier-all/types/**/*.ts",
+    ".mercato/next-tier-all/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
