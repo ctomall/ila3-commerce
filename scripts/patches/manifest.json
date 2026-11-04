@@ -77,6 +77,20 @@
       "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
       "marker": "/* [patched:cf-label-deals] */",
       "reason": "Deals list builds its custom-field cell inline and stringifies raw option codes."
+    },
+    {
+      "id": "column-priority",
+      "script": "scripts/patches/apply-column-priority.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
+      "marker": "/* [patched:column-priority] */",
+      "reason": "Default view showed ~10 columns and overflowed at 1280px; secondary columns are demoted to the chooser."
+    },
+    {
+      "id": "column-priority-deals",
+      "script": "scripts/patches/apply-column-priority.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
+      "marker": "/* [patched:column-priority] */",
+      "reason": "Deals list opened with 16 columns; secondary columns are demoted to the chooser."
     }
   ]
 }
