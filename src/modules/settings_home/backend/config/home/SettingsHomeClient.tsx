@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Search, Settings2, Sparkles } from 'lucide-react'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
+import { EmptyState } from '@/components/states/EmptyState'
 import { Input } from '@open-mercato/ui/primitives/input'
 
 export type SettingsCard = {
@@ -178,9 +179,10 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
       ) : null}
 
       {isSearching && visibleGroups.length === 0 ? (
-        <p className="rounded-lg border border-dashed px-4 py-10 text-center text-sm text-muted-foreground">
-          {t('settings.home.noResults', 'No settings page matches the search.')}
-        </p>
+        <EmptyState
+          title={t('settings.home.noResults', 'No settings page matches the search.')}
+          description={t('settings.home.noResultsHint', '试试更短的关键词，或从左侧菜单浏览。')}
+        />
       ) : (
         visibleGroups.map((group) => (
           <section key={group.key} className="flex flex-col gap-2" data-settings-group={group.key}>

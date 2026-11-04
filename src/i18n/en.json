@@ -1284,5 +1284,7 @@
   "settings.sections.dev": "Developers & Customization",
   "ui.states.empty.title": "Nothing here yet",
   "ui.states.error.title": "Something went wrong",
-  "ui.states.error.retry": "Retry"
+  "ui.states.error.retry": "Retry",
+  "modules.directory.emptyHint": "Try a different keyword or filter.",
+  "settings.home.noResultsHint": "Try a shorter keyword, or browse from the left menu."
 }

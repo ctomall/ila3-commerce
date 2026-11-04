@@ -4,6 +4,7 @@ import * as React from 'react'
 import Link from 'next/link'
 import { Boxes, ExternalLink, Info, Search, Settings2 } from 'lucide-react'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
+import { EmptyState } from '@/components/states/EmptyState'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
 import {
@@ -240,9 +241,10 @@ export default function ModuleDirectoryClient({ modules }: { modules: ModuleDire
         </div>
 
         {filtered.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-muted-foreground">
-            {t('modules.directory.empty', 'No modules match the search.')}
-          </div>
+          <EmptyState
+            title={t('modules.directory.empty', 'No modules match the search.')}
+            description={t('modules.directory.emptyHint', '调整搜索关键词或筛选条件后重试。')}
+          />
         ) : null}
       </div>
 
