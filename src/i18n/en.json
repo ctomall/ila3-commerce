@@ -1281,5 +1281,8 @@
   "settings.sections.portal": "Customer Portal",
   "settings.sections.data": "Data & Integrations",
   "settings.sections.org": "Organization & Finance",
-  "settings.sections.dev": "Developers & Customization"
+  "settings.sections.dev": "Developers & Customization",
+  "ui.states.empty.title": "Nothing here yet",
+  "ui.states.error.title": "Something went wrong",
+  "ui.states.error.retry": "Retry"
 }

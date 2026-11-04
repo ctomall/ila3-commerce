@@ -98,6 +98,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
       "marker": "/* [patched:settings-groups] */",
       "reason": "Settings rail sections are serialized server-side; merged 12 -> 8 by labelKey (labels are still default English at that point)."
+    },
+    {
+      "id": "empty-state-art",
+      "script": "scripts/patches/apply-empty-state-art.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/filters/ListEmptyState.js",
+      "marker": "/* [patched:empty-state-art] */",
+      "reason": "ListEmptyState never passed the illustration slot the shared EmptyState primitive supports, so every empty list was plain text."
     }
   ]
 }

@@ -13505,5 +13505,8 @@
   "settings.sections.portal": "客户与门户",
   "settings.sections.data": "数据与集成",
   "settings.sections.org": "组织与财务",
-  "settings.sections.dev": "开发者与定制"
+  "settings.sections.dev": "开发者与定制",
+  "ui.states.empty.title": "暂无数据",
+  "ui.states.error.title": "加载失败",
+  "ui.states.error.retry": "重试"
 }

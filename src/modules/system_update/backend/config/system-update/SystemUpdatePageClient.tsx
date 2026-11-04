@@ -5,6 +5,7 @@ import { AlertTriangle, CheckCircle2, GitBranch, Loader2, RefreshCw, RotateCcw, 
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { apiCall } from '@open-mercato/ui/backend/utils/apiCall'
 import { Badge } from '@open-mercato/ui/primitives/badge'
+import { ErrorState } from '@/components/states/ErrorState'
 import { Button } from '@open-mercato/ui/primitives/button'
 import { Input } from '@open-mercato/ui/primitives/input'
 import { Label } from '@open-mercato/ui/primitives/label'
@@ -147,9 +148,18 @@ export default function SystemUpdatePageClient() {
       ) : null}
 
       {error ? (
-        <div className="flex items-start gap-2 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-900">
-          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
-          <span>{error}</span>
+        <ErrorState
+          title={t('system_update.error.load', '无法加载升级状态')}
+          detail={error}
+          onRetry={() => void load()}
+        />
+      ) : null}
+
+      {!payload && !error ? (
+        <div aria-busy="true" role="status" className="space-y-3 rounded-lg border p-4">
+          <div className="h-3 w-40 animate-pulse rounded bg-muted" />
+          <div className="h-3 w-full animate-pulse rounded bg-muted/70" />
+          <div className="h-3 w-2/3 animate-pulse rounded bg-muted/70" />
         </div>
       ) : null}
 
