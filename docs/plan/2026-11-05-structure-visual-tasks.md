@@ -73,6 +73,33 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.22 轮次进展（Round 16，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T12** VI 资产包 | ✅ 完成（2 项明确未做） | 8 个资产全部 200；`<head>` 含 16/32 PNG + SVG + apple-touch + OG 标签 |
+| OG 绝对地址 | ✅ | `og:image = https://mercato.ila3.top/brand/og-512.png`（补 `metadataBase` 后） |
+
+**资产清单**（`public/brand/`，源文件 SVG + 脚本渲染 PNG）
+
+| 文件 | 用途 |
+|---|---|
+| `logo-mark.svg` | 主标记（16–512px 通用） |
+| `logo-mono.svg` | 单色变体（`currentColor`） |
+| `logo-wordmark.svg` | 横排组合标 |
+| `favicon-16.png` / `favicon-32.png` | 标签页图标 |
+| `apple-touch-icon-180.png` | iOS 主屏 |
+| `og-512.png` | 社交分享预览 |
+
+生成：`yarn brand:assets`（sharp 渲染，PNG 提交进仓库，构建不依赖该步）。
+
+**明确未做的两项**（不虚报）
+
+1. **空状态插图** —— 计划随 T11 三态组件一起提供；
+2. **登录页主视觉大图** —— 上游登录页是单卡片布局，注入大图需改包内组件，本轮未动。
+
+---
+
 ### 1.21 轮次进展（Round 15，2026-11-05）
 
 | 任务 | 状态 | 证据 |

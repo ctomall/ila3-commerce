@@ -14,6 +14,8 @@ import { DevRuntimeDiagnosticsBanner } from '@open-mercato/ui/backend/dev/DevRun
 import { DevRuntimeReporter } from '@open-mercato/ui/backend/dev/DevRuntimeReporter'
 
 export const metadata: Metadata = {
+  // Without this, relative icon/OG URLs resolve to localhost in the emitted tags.
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL?.trim() || 'https://mercato.ila3.top'),
   title: BRAND.name,
   description: BRAND.description,
   icons: {
