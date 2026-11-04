@@ -44,7 +44,8 @@
     "brand:patch": "node ./scripts/apply-brand-patch.mjs",
     "patches:verify": "node ./scripts/verify-patches.mjs",
     "patches:apply": "node ./scripts/verify-patches.mjs --apply",
-    "cf:labels": "node ./scripts/migrate-custom-field-option-labels.mjs"
+    "cf:labels": "node ./scripts/migrate-custom-field-option-labels.mjs",
+    "brand:assets": "node ./scripts/build-brand-assets.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="ILA3 Commerce">
+  <path d="M18 44V20h7v24h-7z" fill="currentColor"/>
+  <path d="M30 44V20h7v17h11v7H30z" fill="currentColor"/>
+  <circle cx="47" cy="22" r="4" fill="currentColor"/>
+</svg>

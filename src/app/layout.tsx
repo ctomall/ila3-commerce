@@ -17,7 +17,17 @@ export const metadata: Metadata = {
   title: BRAND.name,
   description: BRAND.description,
   icons: {
-    icon: BRAND.icon,
+    icon: [
+      { url: '/brand/favicon-16.png', sizes: '16x16', type: 'image/png' },
+      { url: '/brand/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { url: BRAND.icon, type: 'image/svg+xml' },
+    ],
+    apple: [{ url: '/brand/apple-touch-icon-180.png', sizes: '180x180', type: 'image/png' }],
+  },
+  openGraph: {
+    title: BRAND.name,
+    description: BRAND.description,
+    images: [{ url: '/brand/og-512.png', width: 512, height: 512, alt: BRAND.name }],
   },
 }
 
