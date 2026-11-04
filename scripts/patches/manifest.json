@@ -21,6 +21,41 @@
       "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
       "marker": "/* [patched:cf-label] */",
       "reason": "Same list pattern as companies."
+    },
+    {
+      "id": "dashboard-date-locale-deals",
+      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
+      "marker": "/* [patched:dashboard-locale] */",
+      "reason": "formatDate falls back to the runtime locale, so a zh UI rendered en-US dates."
+    },
+    {
+      "id": "dashboard-date-locale-customers",
+      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
+      "marker": "/* [patched:dashboard-locale] */",
+      "reason": "Same formatter in the new-customers widget."
+    },
+    {
+      "id": "dashboard-deal-status",
+      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
+      "marker": "/* [patched:dashboard-status] */",
+      "reason": "Renders item.status verbatim; routes it through the existing quickDeal.status dictionary keys."
+    },
+    {
+      "id": "dashboard-locale-init-deals",
+      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
+      "marker": "/* [patched:dashboard-locale-init] */",
+      "reason": "The widget seeds its date locale from navigator.language, so a zh UI rendered en-US dates."
+    },
+    {
+      "id": "dashboard-locale-init-customers",
+      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
+      "marker": "/* [patched:dashboard-locale-init] */",
+      "reason": "The widget seeds its date locale from navigator.language, so a zh UI rendered en-US dates."
     }
   ]
 }

@@ -73,6 +73,30 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.10 轮次进展（Round 3，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T5（第二半）** 商机状态 | ✅ 完成并上线 | Dashboard DOM：`rawStatus: []`，渲染「进行中 / 未关闭 / 输单 / 已成交」 |
+| **T6** 日期本地化 | ✅ 完成并上线 | Dashboard DOM：`englishDates: []`，日期为 `2026年11月3日 15:10` |
+| **T7** 英文残留 | ✅ 主屏归零（待全站抽查） | 客户列表：`englishChrome: []`、`Not set`→「未设置」、`Yes/No`→「是/否」 |
+| **T16** 补丁管线 | ✅ 扩展至 8 个补丁 | 构建日志 `all 8 patch(es) present` |
+
+**根因（这是本轮最关键的发现）**
+
+界面英文残留的**主因不是缺翻译**，而是**界面语言根本没有被设为中文**：
+
+- 这些 key 在 `zh.json` 里全都有（`打开操作`、`每页`、`未设置`、`是/否`）；
+- 页面默认按 `Accept-Language`/浏览器语言返回 `en`，中文只存在于**数据层**（客户名、字典项）；
+- 设置 `OM_FORCE_LOCALE=zh` 后，`<html lang="zh">`，绝大多数英文一次性消失。
+
+**日期为何仍不中文（第二层根因）**
+
+Dashboard 小组件用 `setLocale(navigator.language)` 取语言，浏览器是 `en-US`，
+于是界面中文、日期英文。补丁改为优先 `document.documentElement.lang`。
+
+---
+
 ### 1.9 轮次进展（Round 2，2026-11-05）
 
 | 任务 | 状态 | 证据 |
