@@ -73,6 +73,33 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.16 轮次进展（Round 9，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T14** 页脚品牌化 | 🟡 部分完成 | DOM：`ILA3 Commerce · v0.9.0`（原「版本 0.9.0」）；构建号（SHA）未加 |
+| **T8 分组** | ❌ 第三次未生效，已撤回 | 设置区仍 12 组 |
+
+**T8 的第三次尝试（服务端）也没生效**
+
+| 尝试 | 落点 | 结果 |
+|---|---|---|
+| 1 | `ui/.../utils/nav.js` `buildContextSections` | 12 组 |
+| 2 | 同上改为按标签合并 | 12 组 |
+| 3 | `core/.../auth/lib/backendChrome.js` `serializeSectionGroups` | 12 组 |
+
+已确认的事实：
+
+- `SettingsNavigation` / `SettingsPageWrapper` 在 `@open-mercato/core|ui` 的 dist 中**没有被任何模块 import**，
+  说明设置侧栏不是由这两个文件承载，或者由应用侧另有组合；
+- 主侧栏数据来自 `/api/auth/admin/nav`（实测返回 `customers.nav.group` 等），但其中**不含**设置分组标签；
+- 因此设置分组的来源仍未定位，**需要一次运行时追踪**（在 `buildContextSections` /
+  `serializeSectionGroups` 里埋计数，看哪个真正被调用），而不是继续猜文件。
+
+**处置**：撤回第 3 个无效补丁，manifest 回到 **13 个全部真实生效**。
+
+---
+
 ### 1.15 轮次进展（Round 8，2026-11-05）
 
 | 任务 | 状态 | 结论 |

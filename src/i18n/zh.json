@@ -935,7 +935,7 @@
   "appShell.skipToMainContent": "跳到主要内容",
   "appShell.toggleSidebar": "切换侧边栏",
   "appShell.userFallback": "用户",
-  "appShell.version": "版本 {{version}}",
+  "appShell.version": "ILA3 Commerce · v{{version}}",
   "attachments.library.actions.delete": "删除",
   "attachments.library.actions.open": "未关闭",
   "attachments.library.actions.refresh": "刷新",

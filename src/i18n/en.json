@@ -109,7 +109,7 @@
   "appShell.skipToMainContent": "Skip to main content",
   "appShell.toggleSidebar": "Toggle sidebar",
   "appShell.userFallback": "User",
-  "appShell.version": "Version {{version}}",
+  "appShell.version": "ILA3 Commerce · v{{version}}",
   "audit_logs.banner.undo_failed": "Failed to undo",
   "auth.email": "Email",
   "auth.manageAuthSettings": "Manage authentication settings.",
