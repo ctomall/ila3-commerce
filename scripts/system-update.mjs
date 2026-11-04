@@ -29,6 +29,9 @@ const REQUEST_FILE = path.join(STATE_DIR, 'request.json')
 const LOG_FILE = path.join(STATE_DIR, 'update.log')
 const HEALTH_URL = `http://127.0.0.1:${process.env.PORT?.trim() || '3000'}/login`
 const SERVICE = 'mercato.service'
+const ACTIVE_DIST = path.join(APP_DIR, '.mercato', 'next')
+const STAGING_DIST = path.join(APP_DIR, '.mercato', 'next-staging')
+const PREV_DIST = path.join(APP_DIR, '.mercato', 'next-prev')
 
 fs.mkdirSync(STATE_DIR, { recursive: true })
 
@@ -116,6 +119,29 @@ function restartService(action) {
   run('sudo', ['-n', 'systemctl', action, SERVICE])
 }
 
+function hasChanges(file, from, to) {
+  try {
+    const out = spawnSync('git', ['diff', '--name-only', from, to, '--', file], { cwd: APP_DIR, encoding: 'utf8' })
+    return Boolean(out.stdout && out.stdout.trim())
+  } catch {
+    return true
+  }
+}
+
+/** Atomic-ish swap of the built artifact: active -> prev, staging -> active. */
+function swapDirs() {
+  fs.rmSync(PREV_DIST, { recursive: true, force: true })
+  if (fs.existsSync(ACTIVE_DIST)) fs.renameSync(ACTIVE_DIST, PREV_DIST)
+  fs.renameSync(STAGING_DIST, ACTIVE_DIST)
+}
+
+/** Undo swapDirs(): active -> discarded, prev -> active. */
+function swapDirsBack() {
+  fs.rmSync(STAGING_DIST, { recursive: true, force: true })
+  if (fs.existsSync(ACTIVE_DIST)) fs.renameSync(ACTIVE_DIST, STAGING_DIST)
+  if (fs.existsSync(PREV_DIST)) fs.renameSync(PREV_DIST, ACTIVE_DIST)
+}
+
 function buildArtifacts(label) {
   step(`${label}: yarn install`)
   run('yarn', ['install'])
@@ -172,12 +198,24 @@ async function main() {
   step(`tag ${tag}`)
   run('git', ['tag', '-f', tag, state.fromCommit])
 
-  // 3. stop, update, build, start
-  step(`stop ${SERVICE}`)
-  restartService('stop')
-
+  // 3. update sources and build into a STAGING dir while the service keeps serving.
+  //    Downtime is then only stop -> rename -> start.
+  step('git reset (sources)')
   run('git', ['reset', '--hard', state.toCommit])
-  buildArtifacts('build')
+
+  if (hasChanges('yarn.lock', state.fromCommit, state.toCommit)) {
+    step('yarn install (dependencies changed)')
+    run('yarn', ['install'])
+  }
+
+  step('build (staging)')
+  run('yarn', ['build'], { env: { ...process.env, OM_DIST_DIR: '.mercato/next-staging' } })
+
+  step(`stop ${SERVICE}`)
+  const stoppedAt = Date.now()
+  restartService('stop')
+  step('swap build directories')
+  swapDirs()
 
   step(`start ${SERVICE}`)
   restartService('start')
@@ -186,6 +224,7 @@ async function main() {
   const healthy = await waitForHealth()
   if (!healthy) throw new Error('health check did not pass within 180s')
 
+  state.downtimeMs = Date.now() - stoppedAt
   state.status = 'succeeded'
   state.step = 'done'
   state.message = `${state.fromCommit.slice(0, 8)} -> ${state.toCommit.slice(0, 8)} (tag ${tag})`
@@ -206,11 +245,10 @@ async function rollback(reason) {
   }
   try {
     log(`rollback start -> ${previous}`)
-    step('rollback: git reset')
+    step('rollback: restore previous build')
+    restartService('stop')
+    swapDirsBack()
     run('git', ['reset', '--hard', previous])
-    step('rollback: rebuild')
-    buildArtifacts('rollback build')
-    step('rollback: restart')
     restartService('start')
     const healthy = await waitForHealth(120_000)
     state.status = 'rolled-back'

@@ -37,7 +37,9 @@ const contentSecurityPolicy = [
 ].join('; ')
 
 const nextConfig: NextConfig & { agentRules?: boolean } = {
-  distDir: '.mercato/next',
+  // OM_DIST_DIR lets the self-update build into a staging directory while the
+  // running server keeps serving from the active one; the switch is a rename.
+  distDir: process.env.OM_DIST_DIR?.trim() || '.mercato/next',
   // Mirror apps/mercato: scaffolded apps ship their own AGENTS.md/CLAUDE.md
   // from the template, so let Next 16.3+ leave them alone rather than
   // appending its managed agent-rules block on every `next dev`.
