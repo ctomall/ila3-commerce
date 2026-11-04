@@ -7,6 +7,7 @@
 //   See `.ai/specs/implemented/2026-05-04-modules-ts-unified-overrides.md` and
 //   `apps/docs/docs/framework/modules/overrides.mdx`.
 import { parseBooleanWithDefault } from '@open-mercato/shared/lib/boolean'
+import { applyModuleTier, normalizeTier } from './lib/module-tiers'
 import type { ModuleOverrides } from '@open-mercato/shared/modules/overrides'
 import { officialModuleEntries } from './official-modules.generated'
 
@@ -286,4 +287,15 @@ if (enterpriseModulesEnabled && enterpriseAgentsEnabled) {
   // brand-new module (see apps/mercato/src/modules/agent_examples/README.md).
   // It imports the orchestrator SDK, so it is only enabled alongside it.
   enabledModules.push({ id: 'agent_examples', from: '@app' })
+}
+
+
+// Module tiers (see src/lib/module-tiers.ts). Filtered IN PLACE: consumers hold
+// this array reference from module init, so it must not be re-exported later
+// (that created a temporal-dead-zone during route collection).
+const activeTier = normalizeTier(process.env.OM_MODULE_TIER)
+if (activeTier !== 'all') {
+  const kept = applyModuleTier(enabledModules, activeTier)
+  enabledModules.length = 0
+  enabledModules.push(...kept)
 }

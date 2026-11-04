@@ -73,6 +73,35 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.25 轮次进展（Round 19，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T3** 模块套餐化 | 🟡 机制完成，线上仍为 `all` | `OM_MODULE_TIER` 支持 core/business/extension/all；5 个单测通过；默认零行为变化（导航 41/41 不变） |
+| 套餐量化 | ✅ | core：27 启用 / 52 禁用 / 约 4 695 个 zh 键不再加载；business：51/28 |
+
+**新增**
+
+- `src/lib/module-tiers.ts`：套餐归属（core=商业主干，extension=集成/渠道/AI/示例）+ 包含关系 + 归一化
+- `src/modules.ts`：末尾**原地过滤**（保持数组引用与导出位置不变）
+- `scripts/report-module-tiers.mjs` + `yarn modules:tiers`：输出各套餐启用/禁用模块数与字典影响
+
+**为什么线上不切换**
+
+套餐会改变产品功能边界（关掉 extension 就没有多渠道、AI、集成）。
+这属于**产品决策**，不是技术决策，因此本轮只交付机制与量化，默认 `all`。
+
+**本轮事故（如实记录）**
+
+| 项 | 内容 |
+|---|---|
+| 现象 | 构建报 `Can't resolve '@/.mercato/generated/entities/organization'`，服务反复重启失败，**约 10 分钟不可用** |
+| 根因 | 我把 `export const enabledModules` 从原位置移到文件末尾，导致路由收集阶段读到 TDZ/顺序异常，模块表为空 |
+| 修复 | 恢复原导出位置，改为末尾 `enabledModules.length = 0; push(...)` 原地过滤 |
+| 恢复 | 先用 `next-prev` 产物回滚启动（T15 的产物保留在这里救了一次场），再重建 |
+
+---
+
 ### 1.24 轮次进展（Round 18，2026-11-05）
 
 | 任务 | 状态 | 证据 |
