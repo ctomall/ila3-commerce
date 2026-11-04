@@ -14,7 +14,7 @@
     "dev:verbose": "node ./scripts/dev.mjs --verbose",
     "dev:fix-wsl-watchers": "node ./scripts/fix-wsl-inotify.mjs",
     "dev:reset": "node ./scripts/dev-reset.mjs",
-    "build": "node ./scripts/verify-patches.mjs --apply && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
+    "build": "node ./scripts/verify-patches.mjs --apply && node ./scripts/check-token-layers.mjs --strict && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
     "mercato": "node ./scripts/mercato-cli.mjs",
     "start": "yarn mercato server start",
     "documents:collab": "node ./node_modules/@open-mercato/documents/dist/server/documents-collab-server.js",
@@ -46,7 +46,9 @@
     "patches:apply": "node ./scripts/verify-patches.mjs --apply",
     "cf:labels": "node ./scripts/migrate-custom-field-option-labels.mjs",
     "brand:assets": "node ./scripts/build-brand-assets.mjs",
-    "modules:tiers": "node ./scripts/report-module-tiers.mjs"
+    "modules:tiers": "node ./scripts/report-module-tiers.mjs",
+    "tokens:audit": "node ./scripts/audit-design-tokens.mjs",
+    "tokens:check": "node ./scripts/check-token-layers.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",
