@@ -39,7 +39,7 @@
 
 | ID | 任务 | 改动点 | 验收 | 依赖 | 估时 |
 |---|---|---|---|---|---|
-| **T5** | 状态枚举语义化 | 新增 `src/lib/status-label.ts` + `docs/glossary.zh.md`；改列表/看板/详情渲染 | DOM 扫描无 `in_progress\|open\|lost\|win\|healthy\|monitor` 裸值；未知枚举显示 `—` 并上报 | — | 1.5 d |
+| **T5** | 状态枚举语义化 | 用 `registerComponentOverrides`（`@open-mercato/shared/modules/overrides`）覆盖列表/看板状态单元格，**不改 `node_modules`**；新增 `src/lib/status-label.ts` + `docs/glossary.zh.md` | DOM 扫描无 `in_progress\|open\|lost\|win\|healthy\|monitor` 裸值；未知枚举显示 `—` 并上报 | — | 1.5 d |
 | **T6** | 日期/数字/货币本地化 | 统一 `Intl.*` 封装，替换零散 `toLocaleString` | 中文界面无 `Nov 3, 2026`/`3:10 PM` 形态 | T5 | 0.5 d |
 | **T7** | 英文残余文案收口 | 列表底栏、空状态、按钮、页脚（`Showing 1 to 3 of 3 results in 549ms`、`20 per page`、`No customer tasks yet.`） | 抽查 18 业务页 + 26 设置页，英文残留清单归零 | T5 | 1 d |
 
@@ -71,6 +71,15 @@
 |---|---|---|---|---|---|
 | **T15** | 升级原子化 | CI 预构建产物 + 软链/容器 tag 切换 | 升级窗口 ≤ 60 s（现 2–7 min） | — | 5 d |
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
+| **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
+
+### 1.7 T5 侦察结论（2026-11-05，已完成定位）
+
+| 发现 | 证据 | 对方案的影响 |
+|---|---|---|
+| 中文翻译**已存在**，只是没用上 | `customers.companies.detail.health.healthy = "良好"`、`atRisk = "有风险"` | T5 是**接线问题**，不是翻译问题；工作量集中在渲染层 |
+| 框架提供受支持的覆盖点 | `registerComponentOverrides`（`@open-mercato/shared/modules/overrides`）+ `ComponentOverrideProvider` | 可在应用层覆盖状态单元格，**无需再给 `node_modules` 打补丁** |
+| 字典存在 CRLF 污染 | 13 502 个中文值中 **2 184 个**以 `\r` 结尾（如 `"最大步数\r"`） | 新增 T17 清洗；不清理会持续影响渲染与文本比对 |
 
 ---
 
