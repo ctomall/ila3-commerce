@@ -56,6 +56,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
       "marker": "/* [patched:dashboard-locale-init] */",
       "reason": "The widget seeds its date locale from navigator.language, so a zh UI rendered en-US dates."
+    },
+    {
+      "id": "nav-aria-labels",
+      "script": "scripts/patches/apply-nav-aria-labels.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:nav-aria] */",
+      "reason": "Collapsed nav rail renders icon-only links with the label in title (tooltip only), leaving no accessible name."
     }
   ]
 }
