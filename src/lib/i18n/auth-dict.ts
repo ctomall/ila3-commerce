@@ -35,3 +35,70 @@ export function trimDictionaryForAuthRoute(dict: Dict): Dict {
   }
   return trimmed
 }
+
+// ---------------------------------------------------------------------------
+// Backend routes
+// ---------------------------------------------------------------------------
+
+/**
+ * Namespaces every backend screen needs: the frame, generic copy, and the
+ * settings/labels shared by the app shell (menus, table chrome, dialogs).
+ */
+const SHELL_NAMESPACES = ['ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'errors', 'validation']
+
+/**
+ * Per-area extra namespaces for `/backend/<area>...`.
+ *
+ * Deliberately conservative: an area missing from this map keeps the full
+ * dictionary. A wrong entry shows English fallback copy, which is why every
+ * addition is verified with the DOM residue scan before shipping.
+ */
+const AREA_NAMESPACES: Record<string, string[]> = {
+  customers: ['customers', 'sales'],
+  sales: ['sales', 'customers'],
+  catalog: ['catalog', 'currencies', 'sales'],
+  wms: ['wms', 'catalog'],
+  checkout: ['checkout', 'sales', 'catalog'],
+  staff: ['staff', 'resources'],
+  workflows: ['workflows', 'business_rules'],
+  integrations: ['integrations'],
+  messages: ['messages'],
+  documents: ['documents', 'attachments'],
+}
+
+/** Extract the first segment after /backend. */
+export function backendArea(pathname: string): string | null {
+  if (!pathname.startsWith('/backend')) return null
+  const rest = pathname.slice('/backend'.length)
+  const segment = rest.split('/').filter(Boolean)[0]
+  return segment ?? 'dashboard'
+}
+
+/**
+ * Namespaces a backend route needs, or `null` when the route must keep the full
+ * dictionary (settings/config screens fan out across every module's copy).
+ */
+export function namespacesForBackendRoute(pathname: string): string[] | null {
+  const area = backendArea(pathname)
+  if (!area) return null
+  if (area === 'config' || area === 'settings' || area === 'profile') return null
+  const extra = AREA_NAMESPACES[area]
+  if (!extra) return null
+  return [...SHELL_NAMESPACES, ...extra]
+}
+
+export function trimDictionaryToNamespaces(dict: Dict, namespaces: string[]): Dict {
+  const allowed = new Set(namespaces)
+  const trimmed: Dict = {}
+  for (const [key, value] of Object.entries(dict)) {
+    const dot = key.indexOf('.')
+    const namespace = dot === -1 ? key : key.slice(0, dot)
+    if (allowed.has(namespace)) trimmed[key] = value
+  }
+  return trimmed
+}
+
+/** Namespaces the auth shell keeps (kept here so both trims share one list). */
+export function authNamespaces(): string[] {
+  return [...AUTH_NAMESPACES]
+}

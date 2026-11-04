@@ -73,6 +73,39 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.19 轮次进展（Round 13，2026-11-05）
+
+| 任务 | 状态 | 结论 |
+|---|---|---|
+| **T2** 后台字典外置 | ❌ 本轮未达成，已撤回 | 按路由裁剪**在 layout 层生效**，但 HTML 载荷不变 |
+| **T1** 回归 | ✅ 未受影响 | `/login` 仍 **104 KB / 813 键** |
+
+**本轮做了什么（可验证）**
+
+1. `auth-dict.ts` 新增 `namespacesForBackendRoute()` / `trimDictionaryToNamespaces()`，
+   按 `/backend/<area>` 映射命名空间（customers→customers+sales，config/settings→保持全量）；
+2. 8 个单测通过；接入 root layout；
+3. 运行时埋点实测：
+
+```
+I18N_TRIM_DEBUG   {"path":"/backend/customers/companies","full":23081,
+                   "ns":["ui","common","appShell","auth","modules","settings","errors","validation","customers","sales"]}
+I18N_TRIM_RESULT  6014        ← layout 传给 AppProviders 的字典确实被裁到 6014
+```
+
+**但同一请求返回的 HTML 里仍有 22 384 个内联键。**
+
+**结论：全量字典不是只从 `dict` prop 进入客户端**，还有第二条序列化路径
+（最可能是模块注册表把各模块 `translations` 一并序列化，或客户端 bootstrap 自行加载）。
+
+**处置**
+
+- 撤回 layout 的后端裁剪与调试日志（无收益的改动不留）；`/login` 裁剪保留；
+- 保留 `namespacesForBackendRoute` 等函数与测试（下一轮仍在同一位置继续）；
+- T2 的下一刀必须落在**模块注册/客户端 bootstrap 的翻译序列化**上，而不是 layout 的 prop。
+
+---
+
 ### 1.18 轮次进展（Round 12，2026-11-05）
 
 | 任务 | 状态 | 证据 |
