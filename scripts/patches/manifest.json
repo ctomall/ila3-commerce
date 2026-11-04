@@ -1,0 +1,26 @@
+{
+  "$comment": "Managed patches against prebuilt dependencies. Applied before build and asserted by scripts/verify-patches.mjs, so a yarn install cannot silently drop them.",
+  "patches": [
+    {
+      "id": "brand-login-asset",
+      "script": "scripts/apply-brand-patch.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/auth/frontend/login.js",
+      "marker": "/brand.svg",
+      "reason": "Upstream login page hardcodes /open-mercato.svg; the product must not ship the original brand asset path."
+    },
+    {
+      "id": "cf-label-companies",
+      "script": "scripts/patches/apply-custom-field-cell-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
+      "marker": "/* [patched:cf-label] */",
+      "reason": "Select custom-field cells stringify the raw code; the page builds customColumns inline and its cell closure never receives the field definition."
+    },
+    {
+      "id": "cf-label-people",
+      "script": "scripts/patches/apply-custom-field-cell-labels.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
+      "marker": "/* [patched:cf-label] */",
+      "reason": "Same list pattern as companies."
+    }
+  ]
+}

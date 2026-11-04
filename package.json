@@ -14,7 +14,7 @@
     "dev:verbose": "node ./scripts/dev.mjs --verbose",
     "dev:fix-wsl-watchers": "node ./scripts/fix-wsl-inotify.mjs",
     "dev:reset": "node ./scripts/dev-reset.mjs",
-    "build": "node ./scripts/apply-brand-patch.mjs && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
+    "build": "node ./scripts/verify-patches.mjs --apply && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
     "mercato": "node ./scripts/mercato-cli.mjs",
     "start": "yarn mercato server start",
     "documents:collab": "node ./node_modules/@open-mercato/documents/dist/server/documents-collab-server.js",
@@ -41,7 +41,10 @@
     "reinstall": "yarn mercato init --reinstall",
     "preinstall": "node -e \"const v = process.versions.node.split('.').map(Number); if (v[0] < 24) { console.error('Node >= 24 required'); process.exit(1); }\"",
     "i18n:zh:merge": "node scripts/i18n-zh/merge.mjs",
-    "brand:patch": "node ./scripts/apply-brand-patch.mjs"
+    "brand:patch": "node ./scripts/apply-brand-patch.mjs",
+    "patches:verify": "node ./scripts/verify-patches.mjs",
+    "patches:apply": "node ./scripts/verify-patches.mjs --apply",
+    "cf:labels": "node ./scripts/migrate-custom-field-option-labels.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

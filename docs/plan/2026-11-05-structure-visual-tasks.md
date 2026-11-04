@@ -73,6 +73,27 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.9 轮次进展（Round 2，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T5（第一半）** 关系健康度枚举 | ✅ 完成并上线 | DOM 扫描 `rawEnums: []`；单元格渲染「良好 / 需关注」；截图 `shots/07-status-labels-applied.png` |
+| **T16** 补丁清单与 CI 校验 | ✅ 骨架完成 | `scripts/patches/manifest.json` + `verify-patches.mjs`；`yarn build` 前置 `--apply`，构建日志输出 `all 3 patch(es) present` |
+| **T5（第二半）** 商机状态 `open/win/lost/in_progress` | ⏳ 待做 | 与自定义字段链路不同（实体字段/看板），需单独定位 |
+
+**本轮定位到的真实渲染链路（三次假设被打回，最终以 DOM 为准）**
+
+1. 先假设走 `applyCustomFieldVisibility` → 打了两处补丁仍无效；
+2. 又怀疑浏览器缓存（`immutable`）→ 清缓存后仍无效；
+3. 读页面源码才发现：客户列表在 `page.js` 内联构建 `customColumns`，
+   且 `cell` 用的是本地 `renderCustomFieldCell(value)`，**闭包拿不到字段定义**；
+4. 最终补丁：把 `def` 传入单元格并映射 `options[].label`。
+
+> 结论：这类“看起来该在框架层”的问题，实际落在某个页面的内联实现里。
+> 以后定位同类问题，先读**页面**再读框架。
+
+---
+
 ### 1.8 轮次进展（Round 1，2026-11-05）
 
 | 任务 | 状态 | 证据 |
