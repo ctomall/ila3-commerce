@@ -73,6 +73,29 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.20 轮次进展（Round 14，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T2** 后台字典瘦身 | ✅ 完成（模块页） | 客户 **2 095 → 904 KB**（22 384 → 5 426 键）；销售 2 069 → 878 KB；仓储 **1 896 → 541 KB**（2 895 键） |
+| 回归 | ✅ 无英文回退 | 5 个裁剪页 DOM 扫描 `hits: []`，中文正常 |
+| `/login` | ✅ 未受影响 | 104 KB / 813 键 |
+
+**真相：字典被序列化了两次**
+
+RSC 载荷里存在两个 `I18nProvider`：
+
+1. 根布局 `src/app/layout.tsx`（包住全站）
+2. 后端布局 `src/app/(backend)/backend/layout.tsx`（自带一份，注释写明"因为要在 root 之上再挂 provider"）
+
+Round 13 我只裁了根布局，随后又误判"无效"把它回退——实际是**另一个 provider 又把全量塞了回来**。
+本轮两处同时裁剪后才真正生效。
+
+**保留全量的路由**：`/backend/config/**`、`/backend/settings`、`/backend/profile`
+——设置页会跨模块引用文案，裁剪收益低于回归风险。
+
+---
+
 ### 1.19 轮次进展（Round 13，2026-11-05）
 
 | 任务 | 状态 | 结论 |

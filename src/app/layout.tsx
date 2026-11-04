@@ -3,7 +3,7 @@ import './globals.css'
 import '@/lib/i18n/register-dictionary-loader'
 import { AppProviders } from '@/components/AppProviders'
 import { BRAND } from '@/lib/branding'
-import { isAuthRoute, trimDictionaryForAuthRoute } from '@/lib/i18n/auth-dict'
+import { isAuthRoute, namespacesForBackendRoute, trimDictionaryForAuthRoute, trimDictionaryToNamespaces } from '@/lib/i18n/auth-dict'
 import { headers } from 'next/headers'
 
 import { THEME_INIT_SCRIPT } from '@open-mercato/ui/theme/theme-init-script'
@@ -34,7 +34,14 @@ export default async function RootLayout({
   // The unauthenticated shell does not need every module namespace; trimming
   // it here keeps /login's RSC payload small without touching /backend.
   const requestPath = (await headers()).get('x-next-url')
-  const dictForRequest = isAuthRoute(requestPath) ? trimDictionaryForAuthRoute(dict) : dict
+  // Both this provider and the nested (backend) one serialize their dict into
+  // the RSC payload, so both must be trimmed or the full dictionary still ships.
+  const backendNamespaces = requestPath ? namespacesForBackendRoute(requestPath) : null
+  const dictForRequest = isAuthRoute(requestPath)
+    ? trimDictionaryForAuthRoute(dict)
+    : backendNamespaces
+      ? trimDictionaryToNamespaces(dict, backendNamespaces)
+      : dict
   const localeLocked = resolveForcedLocale(process.env) !== null
   const demoModeEnabled = process.env.DEMO_MODE !== 'false'
   const noticeBarsEnabled = process.env.OM_INTEGRATION_TEST !== 'true'

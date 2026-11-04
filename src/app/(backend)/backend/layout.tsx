@@ -4,6 +4,7 @@ import { findRouteManifestMatch } from '@open-mercato/shared/modules/registry'
 import { getAuthFromCookies } from '@open-mercato/shared/lib/auth/server'
 import { AppShell } from '@open-mercato/ui/backend/AppShell'
 import { resolveSupportedLocalesForRequest, resolveTranslations } from '@open-mercato/shared/lib/i18n/server'
+import { namespacesForBackendRoute, trimDictionaryToNamespaces } from '@/lib/i18n/auth-dict'
 import { resolveForcedLocale } from '@open-mercato/shared/lib/i18n/locale'
 import { I18nProvider } from '@open-mercato/shared/lib/i18n/context'
 import { authorizeFeatures } from '@open-mercato/shared/security/featurePolicy'
@@ -64,7 +65,13 @@ export default async function BackendLayout({
   // to resolve the served set itself: detecting against the process-wide set would
   // let the admin subtree render a locale the root layout already rejected.
   const supportedLocales = await resolveSupportedLocalesForRequest()
-  const { translate, locale, dict } = await resolveTranslations({ supportedLocales })
+  const { translate, locale, dict: fullDict } = await resolveTranslations({ supportedLocales })
+  // This nested provider used to hand the client the entire merged dictionary
+  // (~23k keys) on every backend page. Module pages only need their own
+  // namespace plus the shell; settings/config screens keep the full dictionary.
+  const requestPath = (await headers()).get('x-next-url')
+  const backendNamespaces = requestPath ? namespacesForBackendRoute(requestPath) : null
+  const dict = backendNamespaces ? trimDictionaryToNamespaces(fullDict, backendNamespaces) : fullDict
   const embeddingConfigured = Boolean(
     process.env.OPENAI_API_KEY ||
     process.env.GOOGLE_GENERATIVE_AI_API_KEY ||
