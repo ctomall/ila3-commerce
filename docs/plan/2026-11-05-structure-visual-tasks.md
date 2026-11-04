@@ -73,6 +73,30 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.13 轮次进展（Round 6，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T7（数据层英文）** | ✅ 完成 | 客户/商机列表 DOM `english: []`；表头「竞争风险 / 实施复杂度 / 预估席位数 / 需要法务审核」 |
+| **T7（10 页抽查）** | ✅ 0 命中 | 10 个业务页固定词表扫描，`hits: []` |
+| **T16** 补丁清单 | ✅ 11 个 | `all 11 patch(es) present` |
+
+**关键结论：剩下的英文不在 UI 代码里，而在种子数据**
+
+| 现象 | 真实来源 | 处理 |
+|---|---|---|
+| 表头 `Relationship health` | 包内 `customFieldDefaults.js` 的 `label`，**API 合并时代码优先于数据库** | 受管补丁把同一份中文映射注入包内定义 |
+| 选项值 `complex` / `medium` | 同上，`options` 是裸字符串 | 补丁生成 `{value,label}`，值不变 |
+| 数据库里改标签不生效 | 代码定义覆盖 DB 行 | 数据迁移（136 行）+ 代码补丁，**双管齐下** |
+
+**新增资产**
+
+- `src/lib/custom-field-zh.ts`：92 个字段标签 + 75 个选项值的中文映射（单一数据源）
+- `scripts/migrate-custom-field-zh.mjs`：幂等数据迁移（含 `.mercato` 备份，可回滚）
+- 补丁 `cf-zh-defaults`、`cf-label-deals`（deals 页是内联 cell，与 companies 结构不同）
+
+---
+
 ### 1.12 轮次进展（Round 5，2026-11-05）
 
 | 任务 | 状态 | 证据 |

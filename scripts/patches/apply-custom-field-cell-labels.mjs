@@ -35,6 +35,18 @@ const renderCustomFieldCellForDef = (value, def) => {
 };
 `
 
+const DEALS_TARGET = 'node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js'
+const DEALS_MARKER = '/* [patched:cf-label-deals] */'
+const DEALS_OLD = `        const stringValue = typeof value === "string" ? value.trim() : String(value);
+        if (!stringValue) return noValue;
+        return /* @__PURE__ */ jsx("span", { className: "text-sm", children: stringValue });`
+const DEALS_NEW = `        const stringValue = typeof value === "string" ? value.trim() : String(value);
+        if (!stringValue) return noValue;
+        const __cfOptions = Array.isArray(def && def.options) ? def.options : [];
+        const __cfHit = __cfOptions.find((option) => String(option && option.value != null ? option.value : option) === stringValue);
+        const __cfLabel = __cfHit && typeof __cfHit === "object" ? __cfHit.label ?? __cfHit.value : void 0;
+        return /* @__PURE__ */ jsx("span", { className: "text-sm", children: __cfLabel ?? stringValue }); ${DEALS_MARKER}`
+
 const TARGETS = [
   'node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js',
   'node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js',
@@ -79,6 +91,20 @@ for (const target of TARGETS) {
   fs.writeFileSync(file, source)
   patched++
   console.log(`[patch:cf-label] patched ${path.basename(path.dirname(target))}/page.js`)
+}
+
+// deals/page.js builds its custom-field cell inline instead of via a named helper.
+{
+  const file = path.resolve(root, DEALS_TARGET)
+  if (fs.existsSync(file)) {
+    const source = fs.readFileSync(file, 'utf8')
+    if (source.includes(DEALS_MARKER)) already++
+    else if (source.includes(DEALS_OLD)) {
+      fs.writeFileSync(file, source.replace(DEALS_OLD, DEALS_NEW))
+      patched++
+      console.log('[patch:cf-label] patched deals/page.js')
+    } else skipped++
+  } else skipped++
 }
 
 console.log(`[patch:cf-label] done: patched=${patched} already=${already} skipped=${skipped}`)
