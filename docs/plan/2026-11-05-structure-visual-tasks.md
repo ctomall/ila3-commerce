@@ -73,6 +73,27 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.24 轮次进展（Round 18，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| 空状态插图 DOM 验证 | ✅ | 空列表（交易记录）与搜索无结果两处 DOM 均检出 `img[src="/brand/state-empty.svg"]` |
+| **T16** | ✅ 17 个补丁 | `all 17 patch(es) present` |
+
+**补齐了三个空状态渲染器**
+
+| 渲染器 | 覆盖场景 | 处理 |
+|---|---|---|
+| `filters/ListEmptyState.js` | 页面自定义空状态（带新建入口） | 传入 `illustration` |
+| `filters/SearchEmptyResults.js` | 搜索无结果 | 图标圆圈替换为插图 |
+| `backend/DataTable.js`（默认分支） | 通用「暂无结果」 | 传入 `illustration` |
+
+**验证过程中的一个坑**：先看到页面仍显示旧构建号 `563d7c3`，误以为补丁无效；
+清浏览器缓存后构建号变为 `7f5cba0`、插图同时出现——说明是 **`immutable` chunk 缓存**，
+不是补丁问题。以后验证前端补丁必须先清缓存。
+
+---
+
 ### 1.23 轮次进展（Round 17，2026-11-05）
 
 | 任务 | 状态 | 证据 |

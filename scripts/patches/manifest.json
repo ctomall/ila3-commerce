@@ -105,6 +105,20 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/filters/ListEmptyState.js",
       "marker": "/* [patched:empty-state-art] */",
       "reason": "ListEmptyState never passed the illustration slot the shared EmptyState primitive supports, so every empty list was plain text."
+    },
+    {
+      "id": "empty-state-art-search",
+      "script": "scripts/patches/apply-empty-state-art.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/filters/SearchEmptyResults.js",
+      "marker": "/* [patched:empty-state-art] */",
+      "reason": "Search no-results state rendered an icon circle instead of the brand illustration."
+    },
+    {
+      "id": "empty-state-art-default",
+      "script": "scripts/patches/apply-empty-state-art.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
+      "marker": "/* [patched:empty-state-art] */",
+      "reason": "DataTable default empty state ignored the illustration slot."
     }
   ]
 }
