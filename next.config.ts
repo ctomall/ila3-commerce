@@ -103,6 +103,16 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
   // list minimal — anything added here is inlined into the client bundle.
   env: {
     OM_SEARCH_MIN_LEN: process.env.OM_SEARCH_MIN_LEN,
+    // Commit the deployment was built from; surfaced in the footer version line.
+    NEXT_PUBLIC_BUILD_SHA: (() => {
+      try {
+        return require('node:child_process')
+          .execSync('git rev-parse --short HEAD', { cwd: __dirname, encoding: 'utf8' })
+          .trim()
+      } catch {
+        return ''
+      }
+    })(),
   },
   async headers() {
     const originHeaderName = (process.env.CUSTOMER_DOMAIN_ORIGIN_HEADER ?? 'X-Open-Mercato-Origin').trim()

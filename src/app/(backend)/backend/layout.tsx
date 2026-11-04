@@ -9,6 +9,10 @@ import { I18nProvider } from '@open-mercato/shared/lib/i18n/context'
 import { authorizeFeatures } from '@open-mercato/shared/security/featurePolicy'
 import { profilePathPrefixes } from '@open-mercato/core/modules/auth/lib/profile-sections'
 import { APP_VERSION } from '@open-mercato/shared/lib/version'
+
+// Footer shows the exact build, not just the package version.
+const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA?.trim() || ''
+const DISPLAY_VERSION = BUILD_SHA ? `${APP_VERSION} (${BUILD_SHA})` : APP_VERSION
 import { parseBooleanWithDefault } from '@open-mercato/shared/lib/boolean'
 import { PageInjectionBoundary } from '@open-mercato/ui/backend/injection/PageInjectionBoundary'
 import { BrowserTelemetry } from '@open-mercato/telemetry/browser'
@@ -134,7 +138,7 @@ export default async function BackendLayout({
           />
         )}
         adminNavApi="/api/auth/admin/nav"
-        version={APP_VERSION}
+        version={DISPLAY_VERSION}
         hideFooter={hideBackendFooter}
         settingsPathPrefixes={collectStaticSettingsPathPrefixes()}
         settingsSections={[]}

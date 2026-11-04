@@ -73,6 +73,27 @@
 | **T16** | 补丁治理 | `scripts/patches-manifest.json` + `postinstall` 断言 | 重新 `yarn install` 后补丁自动校验通过 | — | 1 d |
 | **T17** | 字典 CRLF 清洗 | `scripts/normalize-i18n.mjs`（幂等）；清洗 `src/i18n/*.json` | 字典中含 `\r` 的值 = 0；`yarn build` 通过；页面抽查无异常空白 | T5 | 0.5 d |
 
+### 1.18 轮次进展（Round 12，2026-11-05）
+
+| 任务 | 状态 | 证据 |
+|---|---|---|
+| **T14** 页脚品牌化 | ✅ 完成 | DOM：`ILA3 Commerce · v0.9.0 (7f5dcfe)`，构建号由 `next.config.ts` 在构建时注入 |
+| **T13** 暗色视觉基线 | ✅ 完成（基础对比度） | 6 个页面暗色截图存 `docs/visual-baseline/`；正文对比度 **18.97:1**（阈值 4.5） |
+
+**T14 实现**
+
+`next.config.ts` 的 `env` 里用 `git rev-parse --short HEAD` 注入
+`NEXT_PUBLIC_BUILD_SHA`，`(backend)/backend/layout.tsx` 把它拼到 `APP_VERSION` 后面。
+好处是**每次构建自动带版本指纹**，不用手填。
+
+**T13 口径说明**
+
+- 截图覆盖：登录 / 工作台 / 客户 / 商机 / 设置 / 系统升级 六页；
+- 对比度测量的是**正文基准色**（body 前景/背景），18.97:1；
+- 逐组件的对比度（按钮、徽标、禁用态）尚未逐个测量，属后续细化项。
+
+---
+
 ### 1.17 轮次进展（Round 10–11，2026-11-05）
 
 | 任务 | 状态 | 证据 |
