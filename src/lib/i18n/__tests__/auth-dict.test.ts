@@ -97,3 +97,22 @@ describe('shell chrome survives the backend trim', () => {
     }
   })
 })
+
+describe('large shell namespaces keep only their chrome keys', () => {
+  // ai_assistant and search are big; shipping them whole cost ~172 KB per page.
+  const dict = {
+    'search.dialog.actions.openGlobalSearch': '打开全局搜索',
+    'search.results.empty': '无结果',
+    'ai_assistant.launcher.triggerAriaLabel': '打开 AI 助手',
+    'ai_assistant.panel.title': 'AI 助手',
+  }
+
+  it('keeps the launcher and dialog labels, drops the rest', () => {
+    const ns = namespacesForBackendRoute('/backend/customers/companies') as string[]
+    const out = trimDictionaryToNamespaces(dict, ns)
+    expect(out['search.dialog.actions.openGlobalSearch']).toBeDefined()
+    expect(out['ai_assistant.launcher.triggerAriaLabel']).toBeDefined()
+    expect(out['search.results.empty']).toBeUndefined()
+    expect(out['ai_assistant.panel.title']).toBeUndefined()
+  })
+})

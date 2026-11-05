@@ -54,6 +54,19 @@ const SHELL_NAMESPACES = [
 ]
 
 /**
+ * Shell namespaces that are far too large to ship whole.
+ *
+ * `ai_assistant` and `search` are 38 KB and 16 KB of dictionary each, serialized
+ * twice (root + backend provider), so allowing them wholesale added ~172 KB to
+ * every trimmed page for a handful of aria-labels. Only the keys the shell
+ * chrome renders are kept.
+ */
+const SHELL_KEY_ALLOWLIST: Record<string, string[]> = {
+  search: ['search.dialog.actions.'],
+  ai_assistant: ['ai_assistant.launcher.'],
+}
+
+/**
  * Per-area extra namespaces for `/backend/<area>...`.
  *
  * Deliberately conservative: an area missing from this map keeps the full
@@ -100,7 +113,10 @@ export function trimDictionaryToNamespaces(dict: Dict, namespaces: string[]): Di
   for (const [key, value] of Object.entries(dict)) {
     const dot = key.indexOf('.')
     const namespace = dot === -1 ? key : key.slice(0, dot)
-    if (allowed.has(namespace)) trimmed[key] = value
+    if (!allowed.has(namespace)) continue
+    const prefixes = SHELL_KEY_ALLOWLIST[namespace]
+    if (prefixes && !prefixes.some((prefix) => key.startsWith(prefix))) continue
+    trimmed[key] = value
   }
   return trimmed
 }

@@ -132,3 +132,22 @@
 - 不加渐变、光晕、玻璃拟态、装饰插图；
 - 不为"好看"增加动效；动效只用于反馈（≤150ms）；
 - 不重命名任何令牌与类名。
+
+## P1 执行结果（2026-11-06，已上线并实测）
+
+| 项 | 改造前 | 改造后 | 验证方式 |
+|---|---|---|---|
+| Cookie 文案（裁剪路由） | `/backend/customers/companies`：`notices.` = **0**，页面英文 | `notices.` = **20**，中文 | curl HTML key 计数 + 浏览器 DOM 三路由 |
+| 可访问名称 | `Open AI assistant` / `Open global search` / `Notifications` / `organizationSwitcher` | 打开 AI 助手 / 打开全局搜索 / 通知 / 组织: Acme Corp | DOM `aria-label` 抓取 |
+| 键盘焦点 | 链接 `outline: auto 1px`；按钮 `none`；搜索框无环 | 全部 `solid 2px` + `offset 2px` | `Tab` 5 次逐项读计算样式 |
+| 页面体积 | companies 931 490 B / products 625 798 B | companies **970 092 B** / products **664 400 B**（+38.6 KB，+4.1%） | curl 实测 |
+| `/login` | 108 KB / 823 键 | 108 KB / 823 键（未变） | curl 实测 |
+| 44 页回归 | — | 44/44 中文、0 个 404、0 个报错 | 浏览器逐页扫描 |
+
+**为什么体积 +38.6 KB**：外壳（通知铃、组织切换器）用到的命名空间必须随裁剪页保留。
+`ai_assistant`(38 KB) 与 `search`(16 KB) 整包放行会带来 **+172 KB**，因此改用**按 key 白名单**
+（只放行 `ai_assistant.launcher.*` 与 `search.dialog.actions.*`），代价降到 38.6 KB。
+已实测 AI 面板与搜索弹窗打开后无裸 key 泄漏。
+
+**两处残留判定为非缺陷**：`/backend/config/customers` 的 `in_progress` 是字典编辑页的「值」列；
+`/backend/config/ai-assistant/agents` 的 `search.hybrid_search` 是工具标识符，同页已显示中文「混合搜索」。
