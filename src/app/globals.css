@@ -1161,3 +1161,22 @@ summary:focus-visible,
 [data-sidebar-group="true"] {
   padding-bottom: 4px !important;
 }
+
+/* Tabular figures in tables
+   Document numbers, quantities and money are compared down a column; proportional
+   figures make rows shift by a pixel or two and slow the read. Scoped to tables
+   so paragraphs keep their normal figures. */
+table th,
+table td {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Page title
+   The title and the body both rendered at 16px, so the page name read as another
+   label. One step up (20px) separates identity from content without changing the
+   layout height. Scoped to the title's own class pair so the login headline and
+   dialog titles keep their sizes. */
+h1.text-base.font-semibold {
+  font-size: 20px;
+  line-height: 1.4;
+}
