@@ -1180,3 +1180,12 @@ h1.text-base.font-semibold {
   font-size: 20px;
   line-height: 1.4;
 }
+
+/* Wide-tracked labels
+   The checklist calls for sentence-case labels without wide tracking. These
+   labels are Chinese, so `uppercase` does nothing, but `tracking-wider` still
+   loosens them and makes short group names read as decorations. Only the class
+   pair is targeted, so Latin uppercase elsewhere keeps its spacing. */
+.uppercase.tracking-wider {
+  letter-spacing: 0;
+}

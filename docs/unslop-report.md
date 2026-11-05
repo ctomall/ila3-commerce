@@ -88,3 +88,15 @@ node scripts/check-token-layers.mjs      # 组件层非语义令牌 0
 curl -s -o /dev/null -w '%{size_download}\n' http://127.0.0.1:3000/login   # ≈108KB
 ```
 浏览器侧：`Tab` 遍历看焦点环、`/backend` 看工作台密度、`/backend/customers/companies` 看行高与表头。
+
+## 补齐与新增发现（Round 9）
+
+| 项 | 结果 |
+|---|---|
+| 宽字距标签 | ✅ 已修：`.uppercase.tracking-wider` 的 `letter-spacing` 由 `0.05em` → **`normal`**（实测 8/8 全为 normal） |
+| 表格功能冒烟 | ✅ 点「名称」表头排序后行序改变（Harborview ↔ Copperleaf 互换）；「筛选」面板正常打开（1 个浮层 + 条件文案） |
+| **`aria-sort` 缺失** | ⚠️ **新发现**：6 个可排序列头、`[aria-sort]` 命中 **0**。屏幕阅读器无法得知当前排序方向 |
+
+**为何没修 `aria-sort`**：`aria-sort` 必须加在 `th`（columnheader）上，而列头渲染在包的 `TableHead` 实例化处，
+需要把 `header.column.getIsSorted()` 传到该层；改动面大于本轮收益，且半修（加在 button 上）属无效标记。
+已列入待办：`TableHead` 增加 `aria-sort="ascending|descending|none"`。
