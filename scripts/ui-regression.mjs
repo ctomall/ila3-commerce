@@ -107,7 +107,22 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
     const s = document.querySelector('[data-testid="sidebar"]')
     return s ? { w: Math.round(s.getBoundingClientRect().width), h: Math.round(s.getBoundingClientRect().height) } : null
   })
-  console.log('@@DSH_RESULT@@' + JSON.stringify({ needsLogin: false, geometry, rings, sidebar }))
+  await page.goto('http://127.0.0.1:3000/backend/config/customers')
+  await new Promise((r) => setTimeout(r, 4000))
+  const settingsPage = await page.evaluate(() => {
+    const ths = Array.from(document.querySelectorAll('thead th'))
+    const sortable = ths.filter((h) => { const b = h.querySelector('button'); return b && (b.innerText || '').trim().length > 0 })
+    const tds = Array.from(document.querySelectorAll('td'))
+    const td = tds[0]
+    return {
+      sortable: sortable.length,
+      withAriaSort: sortable.filter((h) => h.getAttribute('aria-sort') !== null).length,
+      tdH: td ? Math.round(td.getBoundingClientRect().height) : null,
+      tabular: tds.filter((c) => getComputedStyle(c).fontVariantNumeric.includes('tabular')).length,
+      tds: tds.length,
+    }
+  })
+  console.log('@@DSH_RESULT@@' + JSON.stringify({ needsLogin: false, geometry, rings, sidebar, settingsPage }))
 }
 `
   try {
@@ -127,6 +142,14 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
       const solid = data.rings.filter((r) => r === 'solid 2px').length
       record('P1 focus ring 2px', solid === data.rings.length, `${solid}/${data.rings.length}`)
       record('P0 sidebar expanded', data.sidebar && data.sidebar.w >= 239, data.sidebar ? `${data.sidebar.w}px` : 'missing')
+      const sp = data.settingsPage
+      if (sp && sp.sortable > 0) {
+        record('settings aria-sort', sp.withAriaSort === sp.sortable, `${sp.withAriaSort}/${sp.sortable}`)
+        record('settings row height <= 41px', sp.tdH !== null && sp.tdH <= 41, `${sp.tdH}px`)
+        record('settings tabular figures', sp.tds > 0 && sp.tabular === sp.tds, `${sp.tabular}/${sp.tds}`)
+      } else {
+        record('settings page checks', false, 'no sortable table found')
+      }
     }
   } catch (e) {
     record('browser checks', false, String(e.message || e).slice(0, 60))
