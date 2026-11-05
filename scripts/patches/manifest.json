@@ -147,6 +147,13 @@
       "target": "node_modules/@open-mercato/ui/dist/primitives/table.js",
       "marker": "/* [patched:density-nav] */",
       "reason": "Table cells used py-2 on top of 32px row actions, leaving 49px rows; py-1 gives ~41px."
+    },
+    {
+      "id": "sidebar-active-group",
+      "script": "scripts/patches/apply-sidebar-active-group.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:sidebar-active-group] */",
+      "reason": "All 18 nav groups started expanded (2505px tall); only the group owning the current route opens, explicit toggles and search still win."
     }
   ]
 }
