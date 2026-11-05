@@ -32,6 +32,13 @@ const HELPER = `${MARKER}
 
 const EDITS = [
   {
+    // default is now `undefined` for closed groups, so `=== false` would write
+    // `false` on the first click and need a second click to open.
+    from: 'const toggleGroup = (groupId) => setOpenGroups((prev) => ({ ...prev, [groupId]: prev[groupId] === false }));',
+    to: 'const toggleGroup = (groupId) => setOpenGroups((prev) => ({ ...prev, [groupId]: prev[groupId] !== true }));',
+  },
+
+  {
     // sections renderer
     from: '        const open = openGroups[sectionKey] !== false;',
     to: `        const open = openGroups[sectionKey] !== void 0

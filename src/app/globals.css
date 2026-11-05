@@ -1144,3 +1144,20 @@ summary:focus-visible,
 .focus-ring-fancy:focus-visible {
   outline: none !important;
 }
+
+/* Dense sidebar group headers
+   18 top-level groups at 36px plus their padding is 784px, which pushes the
+   navigation past one screen even when every group is collapsed. The headers
+   only toggle, so they get a 28px height and 4px separation. Set here rather
+   than in the package: the header is a Button whose height comes from its own
+   class, and inline styles on it are ignored. */
+[data-sidebar-group="true"] > button[aria-expanded] {
+  height: 28px !important;
+  min-height: 28px !important;
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+[data-sidebar-group="true"] {
+  padding-bottom: 4px !important;
+}
