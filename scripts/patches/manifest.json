@@ -182,6 +182,13 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
       "marker": "/* [patched:aria-sort] */",
       "reason": "Sortable headers exposed no aria-sort, so assistive tech could not tell sort state; value derives from column.getIsSorted()."
+    },
+    {
+      "id": "settings-sidebar-expanded",
+      "script": "scripts/patches/apply-settings-sidebar-expanded.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:settings-sidebar] */",
+      "reason": "Entering settings forced a 79px icon rail with 40 unlabelled entries; keeping the user's preference reuses the labelled grouped sidebar."
     }
   ]
 }
