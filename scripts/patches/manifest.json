@@ -175,6 +175,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/next-interactions/widget.client.js",
       "marker": "/* [patched:dashboard-density] */",
       "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
+    },
+    {
+      "id": "aria-sort",
+      "script": "scripts/patches/apply-aria-sort.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
+      "marker": "/* [patched:aria-sort] */",
+      "reason": "Sortable headers exposed no aria-sort, so assistive tech could not tell sort state; value derives from column.getIsSorted()."
     }
   ]
 }

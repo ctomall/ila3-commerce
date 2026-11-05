@@ -100,3 +100,16 @@ curl -s -o /dev/null -w '%{size_download}\n' http://127.0.0.1:3000/login   # ≈
 **为何没修 `aria-sort`**：`aria-sort` 必须加在 `th`（columnheader）上，而列头渲染在包的 `TableHead` 实例化处，
 需要把 `header.column.getIsSorted()` 传到该层；改动面大于本轮收益，且半修（加在 button 上）属无效标记。
 已列入待办：`TableHead` 增加 `aria-sort="ascending|descending|none"`。
+
+## `aria-sort`（Round 10 已修）
+
+| 状态 | 6 个 `th` 的 `aria-sort` |
+|---|---|
+| 未排序 | `null`（勾选列）、`none`（4 个可排序列）、`null`（操作列） |
+| 点击「名称」升序 | **`ascending`** |
+| 再点一次 | **`descending`** |
+
+实现：值取自 TanStack 的 `header.column.getIsSorted()`，通过 `SortableHeaderCell` 的 `ariaSort` 属性传到 `TableHead`。
+**踩坑记录**：第一版补丁打在非 DnD 的 `TableHead` 分支上，实测 `aria-sort` 仍为 `null` ——
+因为该表启用了 dnd-kit（`th` 上有 `aria-roledescription`），走的是 `SortableHeaderCell`。
+第二版同时覆盖两条分支才生效。
