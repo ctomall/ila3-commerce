@@ -19,7 +19,7 @@ const AUTH_ROUTE_PREFIXES = ['/login', '/start', '/reset', '/forgot-password', '
  * `common`), the auth flow itself, plus generic error/validation copy.
  * Everything module-specific is dropped.
  */
-const AUTH_NAMESPACES = new Set(['auth', 'common', 'ui', 'appShell', 'errors', 'validation'])
+const AUTH_NAMESPACES = new Set(['auth', 'common', 'ui', 'appShell', 'notices', 'errors', 'validation'])
 
 export function isAuthRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
@@ -44,7 +44,7 @@ export function trimDictionaryForAuthRoute(dict: Dict): Dict {
  * Namespaces every backend screen needs: the frame, generic copy, and the
  * settings/labels shared by the app shell (menus, table chrome, dialogs).
  */
-const SHELL_NAMESPACES = ['ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'errors', 'validation']
+const SHELL_NAMESPACES = ['ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'notices', 'errors', 'validation']
 
 /**
  * Per-area extra namespaces for `/backend/<area>...`.

@@ -62,3 +62,26 @@ describe('backend route namespaces', () => {
     expect(out).toEqual({ 'ui.a': '1' })
   })
 })
+
+describe('consent copy survives every trim', () => {
+  // Regression: the cookie banner lives in the app shell, so whichever trim runs
+  // must keep `notices` or the banner falls back to English on trimmed routes.
+  const dict = {
+    'notices.cookies.description': '我们使用必要的 Cookie 记住你的偏好。',
+    'customers.companies.entityPlural': '公司',
+    'ui.ok': '好的',
+  }
+
+  it('keeps notices on auth routes', () => {
+    const out = trimDictionaryForAuthRoute(dict)
+    expect(out['notices.cookies.description']).toBeDefined()
+    expect(out['customers.companies.entityPlural']).toBeUndefined()
+  })
+
+  it('keeps notices on trimmed backend areas', () => {
+    const ns = namespacesForBackendRoute('/backend/customers/companies')
+    expect(ns).not.toBeNull()
+    const out = trimDictionaryToNamespaces(dict, ns as string[])
+    expect(out['notices.cookies.description']).toBeDefined()
+  })
+})

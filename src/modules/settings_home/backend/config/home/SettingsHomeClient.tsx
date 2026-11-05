@@ -131,7 +131,9 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
             <h3 className={compact ? 'truncate text-sm font-medium' : 'text-sm font-medium'}>
               {card.titleKey ? t(card.titleKey, card.title) : card.title}
             </h3>
-            <p className="mt-0.5 truncate font-mono text-[10px] text-muted-foreground">{card.path}</p>
+            {compact ? (
+              <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{groupLabel(card)}</p>
+            ) : null}
           </div>
         </div>
       </Link>
@@ -144,7 +146,7 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
         <div>
           <h1 className="text-2xl font-bold">{t('settings.page.title', 'Settings')}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t('settings.home.description', 'Search all settings, or browse the left menu. This page keeps recent visits and the unified AI entry points.')}
+            {t('settings.home.description', 'Search settings, or use the left menu. Recent visits and AI settings appear here.')}
           </p>
         </div>
         <div className="relative">
@@ -152,9 +154,9 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
           <Input
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder={t('settings.home.searchPlaceholder', 'Search settings…')}
+            placeholder={t('settings.home.searchPlaceholder', 'Search settings')}
             className="h-9 w-[280px] pl-9 text-sm"
-            aria-label={t('settings.home.searchPlaceholder', 'Search settings…')}
+            aria-label={t('settings.home.searchPlaceholder', 'Search settings')}
             data-settings-search=""
           />
         </div>
@@ -174,14 +176,14 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
 
       {!isSearching ? (
         <p className="rounded-lg border border-dashed bg-muted/30 px-4 py-3 text-sm text-muted-foreground" data-settings-hint="">
-          {t('settings.home.hint', 'Looking for another setting? Browse the left menu, or search above — matching pages appear here.')}
+          {t('settings.home.hint', 'Other settings are in the left menu. You can also search above.')}
         </p>
       ) : null}
 
       {isSearching && visibleGroups.length === 0 ? (
         <EmptyState
-          title={t('settings.home.noResults', 'No settings page matches the search.')}
-          description={t('settings.home.noResultsHint', '试试更短的关键词，或从左侧菜单浏览。')}
+          title={t('settings.home.noResults', 'No settings match your search.')}
+          description={t('settings.home.noResultsHint', 'Try a shorter keyword, or browse the left menu.')}
         />
       ) : (
         visibleGroups.map((group) => (

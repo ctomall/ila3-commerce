@@ -223,10 +223,9 @@ export default function AgentDirectoryClient() {
                     <tr key={agent.id} className="border-b last:border-0 hover:bg-muted/30" data-agent-row={agent.id}>
                       <td className="px-5 py-3">
                         <div className="flex flex-col gap-0.5">
-                          <span className="whitespace-nowrap font-medium">
+                          <span className="whitespace-nowrap font-medium" title={agent.id}>
                             {t(`agents.directory.agent.${agent.id}.label`, agent.label)}
                           </span>
-                          <span className="font-mono text-[10px] text-muted-foreground">{agent.id}</span>
                           {agent.description ? (
                             <span className="line-clamp-1 max-w-[360px] text-[11px] text-muted-foreground">
                               {t(`agents.directory.agent.${agent.id}.desc`, agent.description)}
