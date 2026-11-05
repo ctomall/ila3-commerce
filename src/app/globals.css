@@ -1123,3 +1123,24 @@ body[data-demo-feedback-fab="visible"] main {
     display: none !important;
   }
 }
+
+/* Keyboard focus baseline
+   One visible ring for every interactive element, so Tab never loses position.
+   Components that ship their own indicator (box-shadow rings, .focus-ring-fancy)
+   opt out explicitly instead of relying on `outline: none`. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible,
+[role='button']:focus-visible,
+[role='link']:focus-visible {
+  outline: 2px solid var(--ring) !important;
+  outline-offset: 2px !important;
+}
+
+.focus-ring-fancy:focus-visible {
+  outline: none !important;
+}

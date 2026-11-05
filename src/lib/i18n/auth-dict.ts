@@ -44,7 +44,14 @@ export function trimDictionaryForAuthRoute(dict: Dict): Dict {
  * Namespaces every backend screen needs: the frame, generic copy, and the
  * settings/labels shared by the app shell (menus, table chrome, dialogs).
  */
-const SHELL_NAMESPACES = ['ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'notices', 'errors', 'validation']
+// Namespaces the app shell itself renders, not just the page: the top bar
+// (search, AI launcher, notifications) and the org switcher live outside the
+// routed content, so trimming them away made their aria-labels fall back to the
+// key string on every trimmed route.
+const SHELL_NAMESPACES = [
+  'ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'notices', 'errors', 'validation',
+  'organizationSwitcher', 'notifications', 'portal', 'search', 'ai_assistant',
+]
 
 /**
  * Per-area extra namespaces for `/backend/<area>...`.

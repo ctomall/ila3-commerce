@@ -85,3 +85,15 @@ describe('consent copy survives every trim', () => {
     expect(out['notices.cookies.description']).toBeDefined()
   })
 })
+
+describe('shell chrome survives the backend trim', () => {
+  // The top bar and org switcher render outside the routed content; if their
+  // namespaces are trimmed away their accessible names fall back to raw keys.
+  it('keeps every namespace the shell chrome uses', () => {
+    const ns = namespacesForBackendRoute('/backend/customers/companies')
+    expect(ns).not.toBeNull()
+    for (const required of ['organizationSwitcher', 'notifications', 'portal', 'search', 'ai_assistant', 'notices']) {
+      expect(ns).toContain(required)
+    }
+  })
+})
