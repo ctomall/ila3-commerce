@@ -43,7 +43,7 @@ const EDITS = [
     from: '        const open = openGroups[sectionKey] !== false;',
     to: `        const open = openGroups[sectionKey] !== void 0
           ? openGroups[sectionKey] !== false
-          : routeOwnsGroup(section);`,
+          : (routeOwnsGroup(section) || (!sections.some(routeOwnsGroup) && sectionIndex === 0));`,
   },
   {
     // main groups renderer
@@ -52,7 +52,7 @@ const EDITS = [
               ? true
               : openGroups[groupId] !== void 0
                 ? openGroups[groupId] !== false
-                : routeOwnsGroup(g);`,
+                : (routeOwnsGroup(g) || (!mainGroups.some(routeOwnsGroup) && gi === 0));`,
   },
   {
     // define the helper once, right after the sections renderer opens
