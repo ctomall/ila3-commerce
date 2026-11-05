@@ -104,8 +104,13 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
   await page.goto('http://127.0.0.1:3000/backend/customers/companies')
   await new Promise((r) => setTimeout(r, 3500))
   const sidebar = await page.evaluate(() => {
-    const s = document.querySelector('[data-testid="sidebar"]')
-    return s ? { w: Math.round(s.getBoundingClientRect().width), h: Math.round(s.getBoundingClientRect().height) } : null
+    const inner = document.querySelector('[data-testid="sidebar"]')
+    const aside = inner ? inner.closest('aside') : null
+    return inner ? {
+      w: aside ? Math.round(aside.getBoundingClientRect().width) : Math.round(inner.getBoundingClientRect().width),
+      inner: Math.round(inner.getBoundingClientRect().width),
+      h: Math.round(inner.getBoundingClientRect().height),
+    } : null
   })
   await page.goto('http://127.0.0.1:3000/backend/config/customers')
   await new Promise((r) => setTimeout(r, 4000))
@@ -141,7 +146,7 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
       record('checklist no looping motion', g.animating === 0, `${g.animating}`)
       const solid = data.rings.filter((r) => r === 'solid 2px').length
       record('P1 focus ring 2px', solid === data.rings.length, `${solid}/${data.rings.length}`)
-      record('P0 sidebar expanded', data.sidebar && data.sidebar.w >= 239, data.sidebar ? `${data.sidebar.w}px` : 'missing')
+      record('P0 sidebar 240-280px', data.sidebar && data.sidebar.w >= 240 && data.sidebar.w <= 280, data.sidebar ? `aside ${data.sidebar.w}px / inner ${data.sidebar.inner}px` : 'missing')
       const sp = data.settingsPage
       if (sp && sp.sortable > 0) {
         record('settings aria-sort', sp.withAriaSort === sp.sortable, `${sp.withAriaSort}/${sp.sortable}`)
