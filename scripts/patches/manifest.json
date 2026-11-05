@@ -154,6 +154,27 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:sidebar-active-group] */",
       "reason": "All 18 nav groups started expanded (2505px tall); only the group owning the current route opens, explicit toggles and search still win."
+    },
+    {
+      "id": "dashboard-density-new-deals",
+      "script": "scripts/patches/apply-dashboard-density.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
+      "marker": "/* [patched:dashboard-density] */",
+      "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
+    },
+    {
+      "id": "dashboard-density-customer-todos",
+      "script": "scripts/patches/apply-dashboard-density.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/customer-todos/widget.client.js",
+      "marker": "/* [patched:dashboard-density] */",
+      "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
+    },
+    {
+      "id": "dashboard-density-next-interactions",
+      "script": "scripts/patches/apply-dashboard-density.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/next-interactions/widget.client.js",
+      "marker": "/* [patched:dashboard-density] */",
+      "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
     }
   ]
 }
