@@ -72,3 +72,20 @@ git push origin upstream/main:refs/heads/upstream-main
 3. 应用构建时由补丁 `source-built-datatable` 安装到 `node_modules`，因此 `npm ci` 后仍可复现。
 
 应用侧对应删除：`group-data-table-behaviour`（3 条 dist 编辑）。
+
+## 部署两条路径（A/B/C 改造后）
+
+| 路径 | 服务器是否需要构建 | 入口 |
+|---|---|---|
+| **一键在线升级（默认，保留）** | 需要（`yarn build` 到 staging） | `/backend/config/system-update` |
+| **CI 构建产物部署（新增，未启用）** | 不需要 | `yarn deploy:artifact`（需 `GITHUB_TOKEN`，`actions:read`） |
+
+CI 路径的组成：
+
+1. `.github/workflows/build-artifact.yml`：push 到 main 时构建，**上传前删除 `cache/`**（约 900 MB 而非 8 GB），保留 7 天；
+2. `scripts/deploy-artifact.mjs`：拉取最新 `next-build-*` 产物 → 解压校验 `BUILD_ID` → 换目录 → 重启；
+   默认 `--dry-run`，不接任何自动触发。
+
+**未启用原因**：需要在服务器上配置 `actions:read` token，且要先决定产物保留策略。
+在此之前一键升级仍是唯一线上路径；磁盘方面已由本轮的 `--strip-cache` 缓解
+（active/prev 各约 890 MB，实测释放 5.3 GB）。

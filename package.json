@@ -55,7 +55,8 @@
     "nav:check": "node scripts/nav-check.mjs",
     "patches:budget": "node scripts/check-patch-budget.mjs",
     "hooks:check": "node scripts/check-upstream-hooks.mjs",
-    "patches:repro": "node scripts/check-patch-reproducibility.mjs"
+    "patches:repro": "node scripts/check-patch-reproducibility.mjs",
+    "deploy:artifact": "node scripts/deploy-artifact.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

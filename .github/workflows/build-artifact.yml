@@ -1,0 +1,53 @@
+# Builds the production output in CI so the server never needs the toolchain.
+#
+# The server-side one-click upgrade still exists as a fallback; this workflow is the
+# path that makes upgrades pull + restart only. Artifact size matters: Next's incremental
+# cache is excluded, which keeps it around 900 MB instead of 8 GB.
+name: build-artifact
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: build-artifact-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: yarn
+
+      - name: Install
+        run: yarn install --immutable || yarn install
+
+      - name: Build (applies managed patches)
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+        run: yarn build
+
+      - name: Report build size
+        run: |
+          du -sh .mercato/next || true
+          du -sh .mercato/next/cache || true
+
+      - name: Drop build cache before upload
+        run: rm -rf .mercato/next/cache
+
+      - name: Upload build output
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-${{ github.sha }}
+          path: .mercato/next
+          retention-days: 7
+          compression-level: 0
