@@ -102,6 +102,30 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
     throw new Error('group catalog dropped an unlisted group')
   }
 
+  // Effect assertions: markers alone cannot catch a half-applied change such as
+  // aria-sort wired into one header path only.
+  const uiRoot2 = path.join(pkgRoot, 'ui', 'dist')
+  const dataTable2 = fs.readFileSync(path.join(uiRoot2, 'backend', 'DataTable.js'), 'utf8')
+  if (!dataTable2.includes('[patched:aria-sort]') || !dataTable2.includes('[patched:aria-sort-dnd]')) {
+    throw new Error('aria-sort markers missing')
+  }
+  const sortableSites2 = (dataTable2.match(/"aria-sort":/g) ?? []).length
+  if (sortableSites2 !== 2) throw new Error(`"aria-sort" emitted at ${sortableSites2} site(s), expected 2`)
+
+  const navRoute2 = fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'api', 'admin', 'nav.js'), 'utf8')
+  if (!navRoute2.includes('__navGroupsDigest')) throw new Error('nav cache key does not include the catalogue digest')
+
+  const appCss2 = fs.readFileSync(path.join(root, 'src', 'app', 'globals.css'), 'utf8')
+  if (!/table td\.py-2[\s\S]{0,80}padding-block:\s*4px/.test(appCss2)) {
+    throw new Error('table density CSS missing')
+  }
+
+  const appShell2 = fs.readFileSync(path.join(uiRoot2, 'backend', 'AppShell.js'), 'utf8')
+  for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
+    if (!appShell2.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
+  }
+  console.log('[repro] effects OK — aria-sort on 2 header paths, nav cache digest, density CSS, AppShell markers')
+
   console.log(
     `[repro] behaviour OK — ${rawSections.length} partitions -> ${mergedSections.length} sections, ` +
       `${members.length} groups -> ${mergedGroups.length} sections, unlisted groups preserved`,
