@@ -1,0 +1,92 @@
+{
+  "settings.sections.system": {
+    "id": "settings.sections.system",
+    "labelKey": "settings.sections.system",
+    "label": "系统",
+    "order": 1
+  },
+  "settings.sections.moduleConfigs": {
+    "id": "settings.sections.moduleConfigs",
+    "labelKey": "settings.sections.moduleConfigs",
+    "label": "模块配置",
+    "order": 5
+  },
+  "settings.sections.auth": {
+    "id": "settings.sections.access",
+    "labelKey": "settings.sections.access",
+    "label": "身份与权限",
+    "order": 2
+  },
+  "settings.sections.directory": {
+    "id": "settings.sections.access",
+    "labelKey": "settings.sections.access",
+    "label": "身份与权限",
+    "order": 2
+  },
+  "settings.sections.security": {
+    "id": "settings.sections.security",
+    "labelKey": "settings.sections.security",
+    "label": "安全",
+    "order": 9
+  },
+  "backend.nav.security": {
+    "id": "settings.sections.security",
+    "labelKey": "settings.sections.security",
+    "label": "安全",
+    "order": 9
+  },
+  "customer_accounts.settings.section": {
+    "id": "settings.sections.portal",
+    "labelKey": "settings.sections.portal",
+    "label": "客户与门户",
+    "order": 3
+  },
+  "settings.sections.dataDesigner": {
+    "id": "settings.sections.data",
+    "labelKey": "settings.sections.data",
+    "label": "数据与集成",
+    "order": 4
+  },
+  "backend.nav.externalSystems": {
+    "id": "settings.sections.data",
+    "labelKey": "settings.sections.data",
+    "label": "数据与集成",
+    "order": 4
+  },
+  "currencies.nav.group": {
+    "id": "settings.sections.org",
+    "labelKey": "settings.sections.org",
+    "label": "组织与财务",
+    "order": 6
+  },
+  "backend.nav.settings": {
+    "id": "settings.sections.org",
+    "labelKey": "settings.sections.org",
+    "label": "组织与财务",
+    "order": 6
+  },
+  "availability.nav.group": {
+    "id": "settings.sections.org",
+    "labelKey": "settings.sections.org",
+    "label": "组织与财务",
+    "order": 6
+  },
+  "settings.sections.featureToggles": {
+    "id": "settings.sections.dev",
+    "labelKey": "settings.sections.dev",
+    "label": "开发者与定制",
+    "order": 8
+  },
+  "backend.nav.developers": {
+    "id": "settings.sections.dev",
+    "labelKey": "settings.sections.dev",
+    "label": "开发者与定制",
+    "order": 8
+  },
+  "appShell.sidebarCustomizationGroup": {
+    "id": "settings.sections.dev",
+    "labelKey": "settings.sections.dev",
+    "label": "开发者与定制",
+    "order": 8
+  }
+}
