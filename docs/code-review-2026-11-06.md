@@ -164,3 +164,17 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
 | 未在目录中的分组必须保留 | ✅ |
 
 输出：`[repro] behaviour OK — 15 partitions -> 8 sections, 19 groups -> 7 sections, unlisted groups preserved`
+
+### 第 7 轮：S2 的"查询次数"从推断变为实测
+
+此前只验证了 `buildMappingIndexes` 的纯函数语义，没有证明"每页真的只发一次查询"。新增
+`mapping-query-count.test.ts`，用 `jest.mock` 替换底层 `findWithDecryption`，直接数调用：
+
+| 断言 | 结果 |
+|---|---|
+| 50 个 key → `findWithDecryption` 调用 **1 次** | ✅ |
+| 单条查询不退化（`findOneWithDecryption` 0 次） | ✅ |
+| `$or` 两支各覆盖 50 个 key | ✅ |
+| 重复 key 去重为 2 个 | ✅ |
+| 空输入 → **0 次查询** | ✅ |
+| 查询带 tenantId/organizationId 作用域 | ✅ |
