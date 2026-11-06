@@ -254,3 +254,22 @@
 
 补丁 `settings-sidebar-expanded`（第 27 个）：进入设置/个人资料路由时不再强制折叠，尊重用户自己的折叠偏好。
 设置页真正的导航是**页面自身的第二列菜单**（系统/身份与权限/…/安全，8 组），一直正常。
+
+## 左侧菜单是怎么生成的（2026-11-06 核实）
+
+结论：**条目是声明式渲染，分组默认顺序与两处外壳是硬编码**。
+
+| 层 | 来源 | 位置 | 性质 |
+|---|---|---|---|
+| 每个入口（公司/商机/订单…） | 页面元数据 `pageGroup`、`pageGroupKey`、`pageOrder`、`pagePriority`、`icon` | 各页面的 `page.meta.js`（如 `customers/backend/customers/companies/page.meta.js`） | **声明式**：新增页面只要写 meta 就会出现在对应分组 |
+| 分组成员 | 框架按 `entry.groupId` 聚合 | `@open-mercato/core/dist/modules/auth/lib/backendChrome.js` 的 `groupEntries()` | 自动聚合 |
+| 分组名称 | 页面 meta 的 `pageGroup` / `labelKey` | 同上 | 声明式（取第一个入口的值） |
+| **分组默认顺序** | `defaultGroupOrder = [ 'customers.nav.group', 'catalog.nav.group', … ]`（10 个 id） | `backendChrome.js` `resolveGroupOrder()` | **硬编码数组**，可被模块 `nav.groupOrder` 覆盖（`src/modules/example/references/module-overrides.reference.ts` 有说明） |
+| **设置分区合并** | `__SETTINGS_SECTION_MERGE`（15 个原分区 → 8 个中文组） | `backendChrome.js`（本项目 T8 补丁写入） | **硬编码映射表** |
+| 侧栏底部（用户中心/折叠） | 受管补丁写入的 JSX | `backend/AppShell.js`（`apply-sidebar-footer-inline.mjs`） | **硬编码组件** |
+
+**实践含义**
+
+- 加一个菜单入口：只改该页 `page.meta.js`，不要动 `AppShell`。
+- 调整分组顺序：优先用 `nav.groupOrder` 覆盖，不要改 `backendChrome.js`。
+- 改侧栏外壳（头像/折叠）：走 `scripts/patches/`，由 `verify-patches` 保证可复现。
