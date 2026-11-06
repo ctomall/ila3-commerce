@@ -191,32 +191,18 @@
       "reason": "Entering settings forced a 79px icon rail with 40 unlabelled entries; keeping the user's preference reuses the labelled grouped sidebar."
     },
     {
-      "id": "sidebar-expand-affordance",
-      "script": "scripts/patches/apply-sidebar-expand-affordance.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:expand-affordance] */",
-      "reason": "Collapsed rail exposed the expand control as a bare 28px glyph in the corner; it now renders a labelled 展开 button."
-    },
-    {
-      "id": "sidebar-footer",
-      "script": "scripts/patches/apply-sidebar-footer.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:sidebar-footer] */",
-      "reason": "User centre and collapse control pinned to the sidebar bottom: avatar links to the profile, email shows when expanded, and the bar stays fixed while nav scrolls."
-    },
-    {
-      "id": "sidebar-footer-inline",
-      "script": "scripts/patches/apply-sidebar-footer-inline.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:sidebar-footer-inline] */",
-      "reason": "A fixed footer covered nav rows at the viewport bottom mid-scroll; the footer now owns a row inside a column-flex aside so nothing can overlap."
-    },
-    {
       "id": "nav-groups",
       "script": "scripts/patches/apply-nav-groups.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
       "marker": "/* [patched:nav-groups] */",
       "reason": "Grouping now comes from scripts/patches/data/nav-groups.json: 23 page groups collapse into 8 sidebar sections without editing the package."
+    },
+    {
+      "id": "sidebar-footer-removed",
+      "script": "scripts/patches/apply-sidebar-footer-removed.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:sidebar-footer-injected] */",
+      "reason": "The sidebar footer now ships as an app injection widget (backend:sidebar:footer); this patch takes the package back to its original aside so only the injected footer renders."
     }
   ]
 }

@@ -140,3 +140,30 @@ issues            : 0
 
 客户与销售(10) / 商品与库存(7) / 履约与售后(2) / 人员与排程(9) / 财务与规则(6) /
 自动化与流程(4) / 内容与通信(6) = **44 个主菜单入口**（其余 9 个属设置/账户面，仍走各自分区）。
+
+## 第 3 步实施完成（2026-11-06）
+
+底栏从「改 `node_modules` 的补丁」迁成 **app 注入 widget**。
+
+| 项 | 内容 |
+|---|---|
+| 注入点 | `backend:sidebar:footer`（`spotIds.js` 官方提供） |
+| Widget | `src/modules/settings_home/widgets/injection/sidebar-footer/widget.tsx` |
+| 注入表 | `src/modules/settings_home/widgets/injection-table.ts` → `{ 'backend:sidebar:footer': [{ widgetId: 'settings_home.injection.sidebar-footer', priority: 100 }] }` |
+| 折叠状态 | `useSidebarCollapse()`（`AppShell` 导出，读 `HeaderContext`） |
+| 账号名 | 新增 `GET /api/settings_home/me`（`requireAuth`，只返回调用者自己的 email/name） |
+| 补丁变化 | 删除 3 个底栏相关补丁（`expand-affordance`/`sidebar-footer`/`sidebar-footer-inline`），新增 1 个 `sidebar-footer-removed`（把 aside 还原成原样，只留注入渲染） |
+| 补丁总数 | 31 → **29** |
+
+**实测**（1280×900，superadmin）：
+
+| 项 | 值 |
+|---|---|
+| 底栏渲染 | 注入成功，`x=12 y=835 w=215 h=45` |
+| 折叠往返（真实指针点击） | 侧栏 **240 ↔ 80**，底栏 **215 ↔ 63**，文字 `S superadmin@acme.com` ↔ `S` |
+| 重复按钮 | 切换按钮 **1 个**（无旧浮层残留） |
+| 导航与底栏重叠 | **0** |
+| 头像 | `href=/backend/profile`，`title` 带邮箱 |
+| 回归 | `ui-regression` 17/17、`nav-check` 0 issue |
+
+**注意**：注入 widget 首次渲染时邮箱为空（异步取 `/api/settings_home/me`），约 3–5 秒后填充；此前测得太早会看到 `?`。
