@@ -1194,8 +1194,16 @@ h1.text-base.font-semibold {
    The pinned sidebar footer (user centre + collapse control) sits 16px above the
    viewport bottom and is ~38px tall. Without extra padding the last navigation
    item ends at y=880 while the footer starts at 846, so the final entry is
-   covered and cannot be clicked. 60px of bottom padding keeps the last row above
-   the footer once scrolled to the end. */
+   covered and cannot be clicked. The footer now lives in the layout (see the
+   managed patch), so only a small optical padding remains. */
 [data-sidebar-scroll="true"] {
-  padding-bottom: 60px;
+  padding-bottom: 8px;
+}
+
+/* Scroll-hint clearance
+   The "jump to bottom" hint is absolutely pinned to the aside bottom, which now
+   belongs to the sidebar footer, so the chevron rendered on top of the avatar
+   row. Lift it by the footer height. */
+aside > .pointer-events-none.absolute.inset-x-0.bottom-0 {
+  bottom: 56px !important;
 }

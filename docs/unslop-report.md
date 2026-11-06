@@ -262,3 +262,23 @@ node scripts/ui-regression.mjs --static # 仅静态检查（无需浏览器）
 真实点击全部落空；改为内联 `zIndex: 60` 才可点。
 **遮挡**：固定底栏最初压住最后一项导航（最后项 bottom 880 vs 底栏 top 846），
 给 `[data-sidebar-scroll]` 加 `padding-bottom: 60px` 后最后项 bottom 820，不再重叠。
+
+### 底栏遮挡菜单（用户反馈，Round 21 修复）
+
+**症状**：截图显示固定底栏压住了「文档」等导航项。
+
+**根因**：底栏是 `position: fixed` 浮层。上一轮加的 `padding-bottom: 60px` 只保证"滚到底时最后一项不被压"，
+**中间滚动位置**下，任何恰好落在视口底部的菜单项仍会被浮层盖住 —— 治标不治本。
+
+**修复（受管补丁 `sidebar-footer-inline`）**：底栏移入 `aside`，`aside` 改为 `lg:flex lg:flex-col`，
+导航包一层 `flex min-h-0 flex-1`，底栏 `shrink-0` 占自己的行。
+
+| 验证 | 结果 |
+|---|---|
+| 底栏定位 | `position: static`（流内），y=839、高 45px |
+| 导航重叠（滚动 0 / 400 / 到底） | **0 / 0 / 0** |
+| 导航可视高度 | 900px 视口下 683px（自动让出底栏空间） |
+| 收起/展开 | 240 ↔ 80，底栏 239 ↔ 79，文字 `S superadmin@acme.com` ↔ `S` |
+| 滚动提示箭头 | 上移至 bottom 838 < 底栏 839，不再压住头像行 |
+
+顺带把上一轮的 `padding-bottom` 从 60px 降到 8px（不再需要为浮层让位）。

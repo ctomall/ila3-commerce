@@ -203,6 +203,13 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:sidebar-footer] */",
       "reason": "User centre and collapse control pinned to the sidebar bottom: avatar links to the profile, email shows when expanded, and the bar stays fixed while nav scrolls."
+    },
+    {
+      "id": "sidebar-footer-inline",
+      "script": "scripts/patches/apply-sidebar-footer-inline.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:sidebar-footer-inline] */",
+      "reason": "A fixed footer covered nav rows at the viewport bottom mid-scroll; the footer now owns a row inside a column-flex aside so nothing can overlap."
     }
   ]
 }
