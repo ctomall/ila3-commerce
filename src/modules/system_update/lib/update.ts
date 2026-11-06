@@ -29,6 +29,8 @@ export type UpdateState = {
   finishedAt?: string | null
   fromCommit?: string | null
   toCommit?: string | null
+  fromVersion?: string | null
+  toVersion?: string | null
   message?: string | null
   actor?: string | null
   logFile?: string
@@ -43,6 +45,12 @@ export type RepoInfo = {
   committedAt?: string
   remote?: string
   tags?: string[]
+  /** App version from package.json at the running commit. */
+  version?: string
+  /** Nearest release tag (vX.Y.Z) reachable from HEAD, plus the short commit. */
+  releaseLabel?: string
+  /** Upgradeable release tags, newest first. */
+  releaseTags?: string[]
   dirtyCount?: number
 }
 
@@ -94,6 +102,18 @@ export async function readRepoInfo(): Promise<RepoInfo> {
   const tags = await git(['tag', '--list', 'pre-update-*', '--sort=-creatordate'])
     .then((out) => out.split('\n').filter(Boolean).slice(0, 5))
     .catch(() => [])
+  // Version surface: the app version from package.json plus the release tags a person
+  // can actually upgrade to. `pre-update-*` tags are rollback markers, not releases.
+  const version = await fs
+    .readFile(path.join(APP_DIR, 'package.json'), 'utf8')
+    .then((raw) => String((JSON.parse(raw) as { version?: string }).version ?? ''))
+    .catch(() => '')
+  const releaseTags = await git(['tag', '--list', 'v*', '--sort=-v:refname'])
+    .then((out) => out.split('\n').filter(Boolean).slice(0, 12))
+    .catch(() => [])
+  const nearestTag = await git(['describe', '--tags', '--abbrev=0']).catch(() => '')
+  const releaseLabel = [nearestTag, commit ? commit.slice(0, 8) : ''].filter(Boolean).join(' ')
+
   return {
     isRepo: Boolean(commit),
     branch,
@@ -103,6 +123,9 @@ export async function readRepoInfo(): Promise<RepoInfo> {
     committedAt,
     remote,
     tags,
+    version,
+    releaseLabel,
+    releaseTags,
     dirtyCount: dirty ? dirty.split('\n').length : 0,
   }
 }

@@ -20,7 +20,7 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { spawnSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 
 const APP_DIR = process.env.ILA3_APP_DIR?.trim() || process.cwd()
 const STATE_DIR = path.join(APP_DIR, '.mercato', 'system-update')
@@ -135,6 +135,38 @@ function hasChanges(file, from, to) {
  * active and the rollback directory is what pushed this host to 71% disk. Dropping it
  * frees the space and only costs incremental rebuild time on the next upgrade.
  */
+
+/**
+ * Version of the app at a given commit, read from that commit's package.json so the
+ * upgrade records what actually shipped rather than whatever is on disk right now.
+ */
+function versionAt(commit) {
+  try {
+    const raw = execFileSync('git', ['show', `${commit}:package.json`], { cwd: APP_DIR, encoding: 'utf8' })
+    return JSON.parse(raw).version || null
+  } catch {
+    return null
+  }
+}
+
+function nearestTagAt(commit) {
+  try {
+    return execFileSync('git', ['describe', '--tags', '--abbrev=0', commit], { cwd: APP_DIR, encoding: 'utf8' }).trim() || null
+  } catch {
+    return null
+  }
+}
+
+function releaseLabelAt(commit) {
+  const version = versionAt(commit)
+  const tag = nearestTagAt(commit)
+  const short = commit.slice(0, 8)
+  if (tag && version) return `${tag} · v${version} · ${short}`
+  if (version) return `v${version} · ${short}`
+  if (tag) return `${tag} · ${short}`
+  return short
+}
+
 function stripBuildCache(dir) {
   const cacheDir = path.join(dir, 'cache')
   if (!fs.existsSync(cacheDir)) return 0
@@ -234,6 +266,7 @@ async function main() {
   const remote = git(['remote', 'get-url', 'origin'])
   log(`origin: ${remote}`)
   state.fromCommit = git(['rev-parse', 'HEAD'])
+  state.fromVersion = releaseLabelAt(state.fromCommit)
   persist()
 
   const dirty = git(['status', '--porcelain'])
@@ -248,6 +281,7 @@ async function main() {
   const branch = request.branch?.trim() || git(['rev-parse', '--abbrev-ref', 'HEAD'])
   const target = requestedRef || `origin/${branch}`
   state.toCommit = git(['rev-parse', target])
+  state.toVersion = releaseLabelAt(state.toCommit)
   persist()
   log(`target ${target} -> ${state.toCommit}`)
 
@@ -302,7 +336,7 @@ async function main() {
   state.downtimeMs = Date.now() - stoppedAt
   state.status = 'succeeded'
   state.step = 'done'
-  state.message = `${state.fromCommit.slice(0, 8)} -> ${state.toCommit.slice(0, 8)} (tag ${tag})`
+  state.message = `${state.fromVersion ?? state.fromCommit.slice(0, 8)} -> ${state.toVersion ?? state.toCommit.slice(0, 8)} (tag ${tag})`
   state.finishedAt = new Date().toISOString()
   persist()
   log(`self-update succeeded: ${state.message}`)

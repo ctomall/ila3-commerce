@@ -27,6 +27,8 @@ type UpdateState = {
   finishedAt?: string | null
   fromCommit?: string | null
   toCommit?: string | null
+  fromVersion?: string | null
+  toVersion?: string | null
   message?: string | null
   actor?: string | null
 }
@@ -40,6 +42,9 @@ type RepoInfo = {
   committedAt?: string
   remote?: string
   tags?: string[]
+  version?: string
+  releaseLabel?: string
+  releaseTags?: string[]
   dirtyCount?: number
 }
 
@@ -181,6 +186,12 @@ export default function SystemUpdatePageClient() {
               <dd className="font-mono">{repo?.branch || '—'}</dd>
             </div>
             <div className="flex justify-between gap-3">
+              <dt className="text-muted-foreground">{t('system_update.current.version', 'Version')}</dt>
+              <dd className="max-w-[60%] truncate text-right font-mono" title={repo?.releaseLabel || repo?.version || ''}>
+                {repo?.releaseLabel || (repo?.version ? `v${repo.version}` : '—')}
+              </dd>
+            </div>
+            <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{t('system_update.current.commit', 'Commit')}</dt>
               <dd className="font-mono">{repo?.shortCommit || '—'}</dd>
             </div>
@@ -233,6 +244,14 @@ export default function SystemUpdatePageClient() {
               <dt className="text-muted-foreground">{t('system_update.status.actor', 'Triggered by')}</dt>
               <dd className="max-w-[60%] truncate text-right text-xs">{state?.actor || '—'}</dd>
             </div>
+            {state?.fromVersion || state?.toVersion ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted-foreground">{t('system_update.status.versions', 'Version change')}</dt>
+                <dd className="max-w-[60%] truncate text-right font-mono text-xs">
+                  {(state?.fromVersion || '—') + ' → ' + (state?.toVersion || '—')}
+                </dd>
+              </div>
+            ) : null}
             {state?.message ? (
               <div className="pt-1 text-xs text-muted-foreground break-words">{state.message}</div>
             ) : null}
@@ -253,6 +272,28 @@ export default function SystemUpdatePageClient() {
         </p>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
+            {repo?.releaseTags && repo.releaseTags.length > 0 ? (
+              <div className="mb-3 space-y-2">
+                <div className="text-xs text-muted-foreground">
+                  {t('system_update.action.availableVersions', 'Available versions')}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {repo.releaseTags.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => setRefInput(tag)}
+                      className={
+                        'rounded-md border px-2 py-1 font-mono text-xs transition-colors hover:bg-muted '
+                        + (refInput.trim() === tag ? 'bg-muted' : '')
+                      }
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
             <Label htmlFor="system-update-ref">{t('system_update.action.ref', 'Target ref (optional)')}</Label>
             <Input
               id="system-update-ref"
