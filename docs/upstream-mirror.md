@@ -56,3 +56,19 @@ git push origin upstream/main:refs/heads/upstream-main
 | 本地 portal（开发验证） | `yarn` 的 `portal:../om-mirror/packages/ui` | 只适合本机，CI 不可用 |
 
 **当前状态**：镜像已就绪但**尚未实现钩子**，应用仍使用 npm 上的 0.9.0 + 14 条补丁。
+
+## 当前状态（已推送）
+
+| 分支 | HEAD | 内容 |
+|---|---|---|
+| `main` | `85a58cc8` | 快照 `a6072e46` + **DataTable 源码改造**（`aria-sort` 两条表头路径、空/错误态插画） |
+
+远端校验：`packages/ui/src/backend/DataTable.tsx` 含 `aria-sort` 2 处、`state-empty.svg` / `state-error.svg`。
+
+## 产物如何进入应用（已自动化）
+
+1. 在镜像里构建：`cd packages/ui && node build.mjs`（约 5.3 秒，452 入口）；
+2. 复制产物：`cp dist/backend/DataTable.js <repo>/vendor/open-mercato/ui/DataTable.js`；
+3. 应用构建时由补丁 `source-built-datatable` 安装到 `node_modules`，因此 `npm ci` 后仍可复现。
+
+应用侧对应删除：`group-data-table-behaviour`（3 条 dist 编辑）。
