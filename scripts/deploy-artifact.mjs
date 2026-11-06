@@ -27,15 +27,43 @@ const ACTIVE = path.join(DIST_ROOT, 'next')
 const STAGING = path.join(DIST_ROOT, 'next-staging')
 const PREV = path.join(DIST_ROOT, 'next-prev')
 const REPO = process.env.GITHUB_REPOSITORY?.trim() || 'ctomall/ila3-commerce'
-const TOKEN = process.env.GITHUB_TOKEN?.trim()
+const TOKEN_FILE = process.env.ILA3_DEPLOY_TOKEN_FILE?.trim() || `${process.env.HOME || ''}/.config/ila3/github-token`
+function readToken() {
+  const fromEnv = process.env.GITHUB_TOKEN?.trim()
+  if (fromEnv) return fromEnv
+  try {
+    return fs.readFileSync(TOKEN_FILE, 'utf8').trim() || undefined
+  } catch {
+    return undefined
+  }
+}
+const TOKEN = readToken()
 const DRY_RUN = process.argv.includes('--dry-run')
+
+const SERVICE = process.env.ILA3_SERVICE?.trim() || 'mercato'
+const HEALTH_URL = process.env.ILA3_HEALTH_URL?.trim() || 'http://127.0.0.1:3000/login'
+const HEALTH_TIMEOUT_MS = Number(process.env.ILA3_HEALTH_TIMEOUT_MS ?? 180_000)
+
+async function waitForHealth() {
+  const deadline = Date.now() + HEALTH_TIMEOUT_MS
+  while (Date.now() < deadline) {
+    try {
+      const res = await fetch(HEALTH_URL)
+      if (res.ok) return true
+    } catch {
+      // still starting
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+  }
+  return false
+}
 
 function log(message) {
   console.log(`[deploy-artifact] ${message}`)
 }
 
 function apiHeaders() {
-  if (!TOKEN) throw new Error('GITHUB_TOKEN is required (needs actions:read)')
+  if (!TOKEN) throw new Error(`GITHUB_TOKEN is required (needs actions:read); also checked ${TOKEN_FILE}`)
   return { Authorization: `Bearer ${TOKEN}`, Accept: 'application/vnd.github+json' }
 }
 
@@ -78,8 +106,19 @@ async function main() {
   fs.rmSync(PREV, { recursive: true, force: true })
   if (fs.existsSync(ACTIVE)) fs.renameSync(ACTIVE, PREV)
   fs.renameSync(STAGING, ACTIVE)
-  await execFileAsync('sudo', ['-n', 'systemctl', 'restart', 'mercato'])
-  log('swapped; restart requested (health check is the one-click upgrade’s job)')
+  await execFileAsync('sudo', ['-n', 'systemctl', 'stop', SERVICE])
+  await execFileAsync('sudo', ['-n', 'systemctl', 'start', SERVICE])
+  if (await waitForHealth()) {
+    log('swapped; health check passed')
+    return
+  }
+  log('health check failed — rolling back')
+  fs.rmSync(STAGING, { recursive: true, force: true })
+  if (fs.existsSync(ACTIVE)) fs.renameSync(ACTIVE, STAGING)
+  if (fs.existsSync(PREV)) fs.renameSync(PREV, ACTIVE)
+  await execFileAsync('sudo', ['-n', 'systemctl', 'start', SERVICE])
+  const recovered = await waitForHealth()
+  throw new Error(`health check failed; rollback ${recovered ? 'restored traffic' : 'also failed'}`)
 }
 
 main().catch((error) => {
