@@ -6,7 +6,8 @@
  * (ListEmptyState) goes through the shared EmptyState primitive:
  *   1. filters/ListEmptyState.js    — pages that pass an entity-aware empty state
  *   2. filters/SearchEmptyResults.js — "no results for <query>"
- *   3. backend/DataTable.js         — the generic "No results." fallback
+ *   3. (moved to source) backend/DataTable.tsx — the generic "No results." fallback
+ *      now ships the illustration via the package build instead of a dist patch
  * All three are patched here so the empty state looks the same everywhere.
  *
  * Idempotent; asserted by scripts/verify-patches.mjs.
@@ -34,19 +35,6 @@ const PATCHES = [
     target: 'node_modules/@open-mercato/ui/dist/backend/filters/SearchEmptyResults.js',
     from: `/* @__PURE__ */ jsx("div", { className: "flex size-16 items-center justify-center rounded-full bg-muted", children: /* @__PURE__ */ jsx(SearchX, { className: "size-7 text-muted-foreground", "aria-hidden": true }) }),`,
     to: `${MARKER}\n    ${IMG('    ').trimStart()}`,
-  },
-  {
-    target: 'node_modules/@open-mercato/ui/dist/backend/DataTable.js',
-    from: `                EmptyState,
-                {
-                  variant: "subtle",
-                  icon: /* @__PURE__ */ jsx(Inbox, { className: "size-6", "aria-hidden": true }),`,
-    to: `                EmptyState,
-                {
-                  variant: "subtle",
-                  ${MARKER}
-                  illustration: ` + IMG('                  ').trimStart() + `
-                  icon: /* @__PURE__ */ jsx(Inbox, { className: "size-6", "aria-hidden": true }),`,
   },
 ]
 

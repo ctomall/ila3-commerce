@@ -105,12 +105,14 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
   // Effect assertions: markers alone cannot catch a half-applied change such as
   // aria-sort wired into one header path only.
   const uiRoot2 = path.join(pkgRoot, 'ui', 'dist')
+  // DataTable is no longer patched: aria-sort, the empty-state illustration and the
+  // error art ship from its source build (packages/ui/src/backend/DataTable.tsx), so a
+  // pristine package must NOT carry the old dist markers. The built file in the app is
+  // asserted separately by scripts/ui-regression.mjs.
   const dataTable2 = fs.readFileSync(path.join(uiRoot2, 'backend', 'DataTable.js'), 'utf8')
-  if (!dataTable2.includes('[patched:aria-sort]') || !dataTable2.includes('[patched:aria-sort-dnd]')) {
-    throw new Error('aria-sort markers missing')
+  if (dataTable2.includes('[patched:aria-sort]')) {
+    throw new Error('DataTable still carries the aria-sort dist patch; it should come from the source build')
   }
-  const sortableSites2 = (dataTable2.match(/"aria-sort":/g) ?? []).length
-  if (sortableSites2 !== 2) throw new Error(`"aria-sort" emitted at ${sortableSites2} site(s), expected 2`)
 
   const navRoute2 = fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'api', 'admin', 'nav.js'), 'utf8')
   if (!navRoute2.includes('__navGroupsDigest')) throw new Error('nav cache key does not include the catalogue digest')
@@ -124,7 +126,7 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
   for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
     if (!appShell2.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
   }
-  console.log('[repro] effects OK — aria-sort on 2 header paths, nav cache digest, density CSS, AppShell markers')
+  console.log('[repro] effects OK — DataTable ships from the vendored source build, nav cache digest, density CSS, AppShell markers')
 
   console.log(
     `[repro] behaviour OK — ${rawSections.length} partitions -> ${mergedSections.length} sections, ` +
@@ -153,6 +155,10 @@ try {
     fs.cpSync(path.join(root, 'scripts', entry), path.join(tmp, 'scripts', entry), { recursive: true })
   }
   fs.cpSync(path.join(root, 'src', 'nav'), path.join(tmp, 'src', 'nav'), { recursive: true })
+  // The DataTable build output is vendored, so a pristine run must carry it too.
+  if (fs.existsSync(path.join(root, 'vendor'))) {
+    fs.cpSync(path.join(root, 'vendor'), path.join(tmp, 'vendor'), { recursive: true })
+  }
   fs.mkdirSync(path.join(tmp, 'src', 'lib'), { recursive: true })
   for (const file of ['custom-field-zh.ts']) {
     const from = path.join(root, 'src', 'lib', file)

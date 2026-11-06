@@ -193,3 +193,26 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
 
 **过程记录**：首版断言写成"`ariaSort:` 出现 2 次"，实际只有 1 次——真实实现是两条路径的不同写法。
 按实际改断言，而不是改代码迁就断言；`nav-aria-labels` 的标记名同理（实际为 `patched:nav-aria`）。
+
+## 第 11 轮：DataTable 改为源码构建（首个"源码级"改造）
+
+不再给 `DataTable.js` 打 dist 补丁，而是**改镜像里的源码并重新构建**：
+
+| 步骤 | 结果 |
+|---|---|
+| 镜像内安装依赖解析 | 构建脚本仅用 `esbuild` + `glob` + `typescript-js`，用应用 `node_modules` 软链即可 |
+| 构建 | `node build.mjs` **5.3 秒**，452 个入口，产出 `dist/backend/DataTable.js` |
+| 源码改造 | `aria-sort`（两处表头路径）、空状态插画、错误态插画写进 `DataTable.tsx` |
+| 乘积替换 | 构建产物 `137,784 B` 替换 npm 的 `138,709 B` |
+| 补丁变化 | 删除 `group-data-table-behaviour`（3 条 dist 编辑），新增 `source-built-datatable`（1 条，vendor 文件同步）→ **14 条不变，但 DataTable 上不再有 dist 补丁** |
+| 实测 | `aria-sort 4/4`、设置页 `20/20`、`ui-regression 17/17`、`nav-check 0 issue`、`repro` 通过 |
+
+**为什么新增 1 条补丁**：构建产物需要可复现地进入 `node_modules`，所以把它 vendored 到
+`vendor/open-mercato/ui/DataTable.js`，由构建期复制（而不是手工 cp）。这条补丁只是"安装产物"，
+不修改 DOM 行为，因此与"dist 补丁"性质不同。
+
+**截图**：`/home/pro/dsh/shots/src-built-table.png`（表格页，`aria-sort` 存在而对应补丁已删除）、
+`/home/pro/dsh/shots/src-built-empty-state.png`（空状态插画）。
+
+**未闭环**：其余 13 条补丁（AppShell、dashboard widget、页面列标签等）仍在 dist 上；镜像只在
+`/tmp`，尚未提交钩子代码到 `ctomall/open-mercato`。

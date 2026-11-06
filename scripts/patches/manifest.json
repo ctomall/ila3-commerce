@@ -93,11 +93,11 @@
       "reason": "One entry for every change to page.js: cf-label-deals, column-priority-deals"
     },
     {
-      "id": "group-data-table-behaviour",
-      "script": "scripts/patches/apply-group-data-table-behaviour.mjs",
+      "id": "source-built-datatable",
+      "script": "scripts/patches/apply-source-built-datatable.mjs",
       "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
-      "marker": "/* [patched:empty-state-art] */",
-      "reason": "One entry for every change to DataTable.js: empty-state-art-default, list-error-visual, aria-sort"
+      "marker": "/* [patched:source-built-data-table] */",
+      "reason": "DataTable's aria-sort, empty-state and error art come from the mirror's source build now; the dist patches are gone."
     }
   ]
 }
