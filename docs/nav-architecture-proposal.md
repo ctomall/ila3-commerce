@@ -121,3 +121,22 @@ issues            : 0
 | 23→8 收敛 | 改包内合并表 | 改 `members` 一行 |
 | 改底栏 | 打补丁 + 重打包 | 改 app 组件 |
 | 错配发现 | 上线后肉眼 | 构建期 `nav-check` 失败 |
+
+## 实施记录（2026-11-06）
+
+| 步 | 状态 | 证据 |
+|---|---|---|
+| 1 设置分区数据外置 | ✅ | 映射表移到 `scripts/patches/data/settings-sections.json`；补丁改为复制 + import；8 个分区不变 |
+| 2 分组目录（23→7） | ✅ | `scripts/patches/data/nav-groups.json`：19 个 page-group 收成 **7 个主分组**，侧栏高 **2505 → 674px（≤728，一屏）** |
+| 3 底栏改注入 | ⬜ 未做 | 注入点与 `useSidebarCollapse` 已确认可用 |
+
+### 第 2 步踩的两个坑（都记下来）
+
+1. **`async function groupEntries` 被当成 `function groupEntries` 匹配**，插入帮助函数后把 `async` 与函数体隔断，构建前 `node --check` 直接报 `Unexpected reserved word`。
+2. **导航 payload 有缓存**（缓存键含 `v7` 版本）。改完目录后超级管理员仍看到旧分组，employee 却是新的 —— 因为前者命中缓存。修法：把目录内容的哈希并入缓存键（`v7:<指纹>:nav:<哈希>`），**改目录即自动失效**。
+3. **误把设置上下文分组并入主菜单**：`backend.nav.externalSystems` / `auth.nav.group` / `feature_toggles` / `entities` 的条目 `pageContext = settings`，合并后整组被主侧栏过滤，导致「平台与集成」整组消失、入口只能靠 URL 访问。已从目录移除，最终为 **7 组**。
+
+### 最终分组（7）
+
+客户与销售(10) / 商品与库存(7) / 履约与售后(2) / 人员与排程(9) / 财务与规则(6) /
+自动化与流程(4) / 内容与通信(6) = **44 个主菜单入口**（其余 9 个属设置/账户面，仍走各自分区）。

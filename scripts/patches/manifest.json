@@ -210,6 +210,13 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:sidebar-footer-inline] */",
       "reason": "A fixed footer covered nav rows at the viewport bottom mid-scroll; the footer now owns a row inside a column-flex aside so nothing can overlap."
+    },
+    {
+      "id": "nav-groups",
+      "script": "scripts/patches/apply-nav-groups.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
+      "marker": "/* [patched:nav-groups] */",
+      "reason": "Grouping now comes from scripts/patches/data/nav-groups.json: 23 page groups collapse into 8 sidebar sections without editing the package."
     }
   ]
 }
