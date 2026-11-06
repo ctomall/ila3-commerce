@@ -178,3 +178,18 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
 | 重复 key 去重为 2 个 | ✅ |
 | 空输入 → **0 次查询** | ✅ |
 | 查询带 tenantId/organizationId 作用域 | ✅ |
+
+### 第 8 轮：补丁效果断言（不只查标记）
+
+`patches:repro` 新增两类断言，覆盖"标记存在但效果半对"的风险：
+
+| 断言 | 依据 |
+|---|---|
+| `"aria-sort"` 在 DataTable 出现 **恰好 2 处**（DnD 与普通表头两条路径） | 实测：DnD 由 `ariaSort` 转发、普通路径内联 |
+| `SortableHeaderCell` 接收 `ariaSort` | 同上 |
+| `nav.js` 缓存键含 `__navGroupsDigest` | 改目录即失效的机制 |
+| `globals.css` 中 `table td.py-2 { padding-block: 4px }` 存在 | 密度由 CSS 承担 |
+| AppShell 四个标记：`nav-aria`、`settings-sidebar`、`sidebar-active-group`、`sidebar-footer-injected` | 外壳行为补丁 |
+
+**过程记录**：首版断言写成"`ariaSort:` 出现 2 次"，实际只有 1 次——真实实现是两条路径的不同写法。
+按实际改断言，而不是改代码迁就断言；`nav-aria-labels` 的标记名同理（实际为 `patched:nav-aria`）。

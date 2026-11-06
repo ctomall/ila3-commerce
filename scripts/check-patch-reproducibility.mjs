@@ -98,6 +98,38 @@ function assertPatchedBehaviour(tmp, pkgRoot) {
     throw new Error('group catalog dropped an unlisted group')
   }
 
+  // Effect assertions for the patches whose markers alone would not catch a
+  // half-applied change: an aria-sort edit only on one of the two header paths, a nav
+  // cache key without the catalogue digest, or density CSS that never shipped.
+  const uiRoot = path.join(pkgRoot, 'ui', 'dist')
+  const dataTable = fs.readFileSync(path.join(uiRoot, 'backend', 'DataTable.js'), 'utf8')
+  if (!dataTable.includes('[patched:aria-sort]')) throw new Error('aria-sort table marker missing')
+  if (!dataTable.includes('[patched:aria-sort-dnd]')) throw new Error('aria-sort dnd marker missing')
+  // Two header paths exist: the dnd path forwards `ariaSort` and emits it, the plain
+  // path emits it inline. Both must end up with an "aria-sort" prop.
+  const sortableSites = (dataTable.match(/"aria-sort":/g) ?? []).length
+  if (sortableSites !== 2) throw new Error(`"aria-sort" emitted at ${sortableSites} site(s), expected 2`)
+  if (!/SortableHeaderCell\(\{[^}]*ariaSort/.test(dataTable)) {
+    throw new Error('SortableHeaderCell does not accept ariaSort')
+  }
+
+  const navRoute = fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'api', 'admin', 'nav.js'), 'utf8')
+  if (!navRoute.includes('patched:nav-groups-cache')) throw new Error('nav cache digest patch missing')
+  if (!/__navGroupsDigest/.test(navRoute)) throw new Error('nav cache key does not include the catalogue digest')
+
+  const appCssPath = path.join(root, 'src', 'app', 'globals.css')
+  const appCss = fs.readFileSync(appCssPath, 'utf8')
+  if (!/table td\.py-2[\s\S]{0,80}padding-block:\s*4px/.test(appCss)) {
+    throw new Error('table density CSS missing (padding-block: 4px on py-2 cells)')
+  }
+
+  const appShell = fs.readFileSync(path.join(uiRoot, 'backend', 'AppShell.js'), 'utf8')
+  for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
+    if (!appShell.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
+  }
+
+  console.log('[repro] effects OK — aria-sort on 2 header paths, nav cache digest, density CSS, AppShell markers')
+
   console.log(
     `[repro] behaviour OK — ${rawSections.length} partitions -> ${mergedSections.length} sections, ` +
       `${members.length} groups -> ${mergedGroups.length} sections, unlisted groups preserved`,
