@@ -73,9 +73,8 @@ if (!next) {
 source = next
 
 // Keep the marker on its own line right after the last import so a re-run finds it.
-const firstImportEnd = source.lastIndexOf('\nimport ')
-const insertAt = source.indexOf('\n', source.indexOf('\n', firstImportEnd) + 1)
-source = `${source.slice(0, insertAt + 1)}${IMPORT}${source.slice(insertAt + 1)}`
+// Append rather than guess where the last import ends (see apply-settings-groups.mjs).
+source = `${source}\n${IMPORT}`
 
 fs.writeFileSync(file, source)
 console.log('[patch:nav-logic] helpers now delegate to src/nav/logic.mjs')

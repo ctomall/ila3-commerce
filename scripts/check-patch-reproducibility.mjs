@@ -126,6 +126,25 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
   for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
     if (!appShell2.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
   }
+  // Markers and behaviour are not enough: an insert can land inside a multi-line import
+  // and still satisfy every assertion. Parse the patched files the build must consume.
+  for (const relative of [
+    'core/dist/modules/auth/lib/backendChrome.js',
+    'core/dist/modules/auth/api/admin/nav.js',
+    'ui/dist/backend/AppShell.js',
+    'ui/dist/backend/DataTable.js',
+  ]) {
+    const target = path.join(pkgRoot, relative)
+    if (!fs.existsSync(target)) throw new Error(`patched file missing: ${relative}`)
+    try {
+      execFileSync(process.execPath, ['--check', target], { stdio: ['ignore', 'pipe', 'pipe'] })
+    } catch (error) {
+      const detail = String(error.stderr || error.message).split('\n').slice(0, 3).join(' ')
+      throw new Error(`patched file does not parse: ${relative} — ${detail}`)
+    }
+  }
+  console.log('[repro] syntax OK — patched files parse')
+
   console.log('[repro] effects OK — DataTable ships from the vendored source build, nav cache digest, density CSS, AppShell markers')
 
   console.log(

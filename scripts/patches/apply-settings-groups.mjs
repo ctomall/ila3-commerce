@@ -50,9 +50,10 @@ if (inline) {
     console.error('[patch:settings-groups] unexpected existing merge reference')
     process.exit(1)
   }
-  const firstImportEnd = source.lastIndexOf('\nimport ')
-  const insertAt = source.indexOf('\n', source.indexOf('\n', firstImportEnd) + 1)
-  source = `${source.slice(0, insertAt + 1)}${IMPORT}${source.slice(insertAt + 1)}`
+  // Appending is safe (ES modules allow an import declaration anywhere at top level)
+  // and avoids guessing where the last import ends: the previous heuristic landed inside
+  // a multi-line import block on a fresh package and broke the build.
+  source = `${source}\n${IMPORT}`
 }
 
 // 2. The merge itself, wrapped around the existing serializer.
