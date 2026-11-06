@@ -129,10 +129,60 @@ function hasChanges(file, from, to) {
 }
 
 /** Atomic-ish swap of the built artifact: active -> prev, staging -> active. */
+
+/**
+ * Next's build cache is ~7 GB and is not needed at runtime; keeping it in both the
+ * active and the rollback directory is what pushed this host to 71% disk. Dropping it
+ * frees the space and only costs incremental rebuild time on the next upgrade.
+ */
+function stripBuildCache(dir) {
+  const cacheDir = path.join(dir, 'cache')
+  if (!fs.existsSync(cacheDir)) return 0
+  const freed = duBytes(cacheDir)
+  fs.rmSync(cacheDir, { recursive: true, force: true })
+  return freed
+}
+
+function duBytes(dir) {
+  let total = 0
+  const stack = [dir]
+  while (stack.length) {
+    const current = stack.pop()
+    let entries = []
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true })
+    } catch {
+      continue
+    }
+    for (const entry of entries) {
+      const target = path.join(current, entry.name)
+      try {
+        if (entry.isDirectory()) stack.push(target)
+        else total += fs.statSync(target).size
+      } catch {
+        // A file can disappear between readdir and stat; ignore it.
+      }
+    }
+  }
+  return total
+}
+
+function formatBytes(bytes) {
+  if (bytes > 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`
+  if (bytes > 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(0)} MB`
+  return `${bytes} B`
+}
+
 function swapDirs() {
   fs.rmSync(PREV_DIST, { recursive: true, force: true })
   if (fs.existsSync(ACTIVE_DIST)) fs.renameSync(ACTIVE_DIST, PREV_DIST)
   fs.renameSync(STAGING_DIST, ACTIVE_DIST)
+  // Only the runnable output matters from here on; the caches are build-time state.
+  const freedActive = stripBuildCache(ACTIVE_DIST)
+  const freedPrev = stripBuildCache(PREV_DIST)
+  if (freedActive + freedPrev > 0) {
+    log(`stripped build caches: ${formatBytes(freedActive + freedPrev)}`)
+  }
 }
 
 /** Undo swapDirs(): active -> discarded, prev -> active. */
@@ -151,7 +201,25 @@ function buildArtifacts(label) {
   run('yarn', ['build'])
 }
 
+async function maintainOnly() {
+  const target = path.join(APP_DIR, '.mercato')
+  const stale = path.join(target, 'next-broken')
+  let freed = 0
+  for (const dir of [ACTIVE_DIST, PREV_DIST]) {
+    if (fs.existsSync(dir)) freed += stripBuildCache(dir)
+  }
+  if (fs.existsSync(stale)) {
+    freed += duBytes(stale)
+    fs.rmSync(stale, { recursive: true, force: true })
+  }
+  console.log(`freed ${formatBytes(freed)} (build caches and stale directories)`)
+}
+
 async function main() {
+  if (process.argv.includes('--strip-cache')) {
+    await maintainOnly()
+    return
+  }
   const request = readRequest()
   state.actor = typeof request.actor === 'string' ? request.actor : 'system'
   persist()
