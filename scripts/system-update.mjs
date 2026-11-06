@@ -211,6 +211,13 @@ async function main() {
   step('build (staging)')
   run('yarn', ['build'], { env: { ...process.env, OM_DIST_DIR: '.mercato/next-staging' } })
 
+  // The build runs verify-patches --apply and fails on a missing marker, but the
+  // upgrade log should show the assertion explicitly: the vendored source build
+  // (vendor/open-mercato/ui/DataTable.js) is installed by that step, and a silent
+  // miss would only surface as missing aria-sort in the UI.
+  step('verify managed patches (staging)')
+  run('node', ['scripts/verify-patches.mjs'])
+
   step(`stop ${SERVICE}`)
   const stoppedAt = Date.now()
   restartService('stop')
