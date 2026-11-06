@@ -1,5 +1,5 @@
 import type { EntityManager } from '@mikro-orm/postgresql'
-import { findOneWithDecryption } from '@open-mercato/shared/lib/encryption/find'
+import { findOneWithDecryption, findWithDecryption } from '@open-mercato/shared/lib/encryption/find'
 import { ExampleCustomerInteractionMapping } from '../data/entities'
 import type { ExampleCustomersSyncScope } from './runtime'
 
@@ -173,6 +173,63 @@ export async function findMappingByTodoId(
     undefined,
     scope,
   )
+}
+
+/**
+ * Load every mapping referenced by one page of legacy links in a single query.
+ *
+ * The reconcile loop used to call findMappingByTodoId and, on a miss,
+ * findMappingByInteractionId once per row, which is two round trips per link. Both
+ * columns live on the same entity, so one `$or` query answers the whole page.
+ */
+export async function findMappingsForLegacyLinks(
+  em: EntityManager,
+  scope: ExampleCustomersSyncScope,
+  linkKeys: string[],
+): Promise<{
+  byTodoId: Map<string, ExampleCustomerInteractionMapping>
+  byInteractionId: Map<string, ExampleCustomerInteractionMapping>
+}> {
+  const byTodoId = new Map<string, ExampleCustomerInteractionMapping>()
+  const byInteractionId = new Map<string, ExampleCustomerInteractionMapping>()
+  const keys = Array.from(new Set(linkKeys.filter((key) => typeof key === 'string' && key.length > 0)))
+  if (keys.length === 0) return { byTodoId, byInteractionId }
+
+  const rows = (await findWithDecryption(
+    em,
+    ExampleCustomerInteractionMapping,
+    {
+      $or: [{ todoId: { $in: keys } }, { interactionId: { $in: keys } }],
+      tenantId: scope.tenantId,
+      organizationId: scope.organizationId,
+    },
+    undefined,
+    scope,
+  )) as ExampleCustomerInteractionMapping[]
+
+  return buildMappingIndexes(rows)
+}
+
+/**
+ * Index a page of mappings by both lookup keys. Pure so the reconcile semantics
+ * can be tested without a database: first row wins per key, mirroring the old
+ * findOne behaviour.
+ */
+export function buildMappingIndexes(
+  rows: ReadonlyArray<ExampleCustomerInteractionMapping>,
+): {
+  byTodoId: Map<string, ExampleCustomerInteractionMapping>
+  byInteractionId: Map<string, ExampleCustomerInteractionMapping>
+} {
+  const byTodoId = new Map<string, ExampleCustomerInteractionMapping>()
+  const byInteractionId = new Map<string, ExampleCustomerInteractionMapping>()
+  for (const row of rows) {
+    const todoId = (row as { todoId?: string | null }).todoId
+    const interactionId = (row as { interactionId?: string | null }).interactionId
+    if (typeof todoId === 'string' && !byTodoId.has(todoId)) byTodoId.set(todoId, row)
+    if (typeof interactionId === 'string' && !byInteractionId.has(interactionId)) byInteractionId.set(interactionId, row)
+  }
+  return { byTodoId, byInteractionId }
 }
 
 function isDuplicateKeyError(error: unknown): boolean {

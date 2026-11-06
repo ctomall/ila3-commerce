@@ -25,6 +25,7 @@ import {
   deleteExampleCustomerInteractionMapping,
   findMappingByInteractionId,
   findMappingByTodoId,
+  findMappingsForLegacyLinks,
   upsertExampleCustomerInteractionMapping,
 } from './mappings'
 import {
@@ -926,11 +927,16 @@ export async function reconcileLegacyExampleTodoLinks(
   let createdInteractions = 0
   let failed = 0
 
+  // One query answers the mapping lookups for the whole page instead of two per
+  // row; the loop below only reads the prepared maps.
+  const mappings = await findMappingsForLegacyLinks(em, scope, rows.map((row) => row.todoId))
+
   for (const row of rows) {
     try {
       const mapping =
-        await findMappingByTodoId(em, scope, row.todoId)
-        ?? await findMappingByInteractionId(em, scope, row.todoId)
+        mappings.byTodoId.get(row.todoId)
+        ?? mappings.byInteractionId.get(row.todoId)
+        ?? null
       const canonical = await ensureCanonicalInteractionForLegacyLink(container, scope, row)
       if (!canonical) {
         items.push({
