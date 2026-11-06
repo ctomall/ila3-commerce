@@ -217,3 +217,23 @@ node scripts/ui-regression.mjs --static # 仅静态检查（无需浏览器）
 这是我在计划里**自己加的**更严目标（不是原始需求）：业务页 965px vs 可视 728px。
 达成它需要 23 → 8 的信息架构调整，方案与量化预判已交付
 （`docs/nav-grouping-proposal.md`），等产品决策。**不影响上述验收项。**
+
+## 折叠态无法展开（用户反馈，Round 19 修复）
+
+**症状**（用户原话）：「第一左侧菜单只有小图标，没有左右展开的功能」。
+
+**实测**：折叠后 aside 80px、40 个链接只有图标（`title`/`aria-label` 有名称，但无可见文字）；
+展开控件是一个 28px 的纯图标按钮，`fixed top-4`，位置 `left: calc(width - 14px)`，
+落在图标栏右上角、与品牌 Logo 区域重叠 —— 用户看不到它是「展开」。
+
+**修复（受管补丁 `sidebar-expand-affordance`）**：
+
+| 状态 | 表现 |
+|---|---|
+| 折叠 | 图标栏**底部**（`bottom: 52px`、`z-index: 60`）出现宽 62px 的按钮，带面板图标 + **「展开」文字** |
+| 展开 | 恢复为原 28px 纯图标按钮，位置回到 240px 侧栏右上角 |
+| 点击 | 真实指针点击实测：aside **80px → 240px**，`om_sidebar_collapsed` cookie 写 0 持久化 |
+
+**踩坑**：第一版把按钮放在 `bottom: 16px`，结果与图标栏底部的「滚动到底部」按钮重叠，
+真实点击全部被后者接管（`elementFromPoint` 命中的是另一个 button）。
+上移 36px 并加 `z-index` 后才可点。
