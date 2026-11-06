@@ -464,7 +464,7 @@ export default function OrganizationSwitcher({ compact }: OrganizationSwitcherEx
       <PopoverContent align="end" className="w-80 p-0">
         {showTenantSelect ? (
           <div className="border-b p-3 space-y-2">
-            <div className="text-overline font-medium uppercase tracking-wider text-muted-foreground/80 leading-none">
+            <div className="text-overline font-medium text-muted-foreground/80 leading-none">
               {t('organizationSwitcher.tenantLabel', 'Tenant')}
             </div>
             <Select
@@ -488,7 +488,7 @@ export default function OrganizationSwitcher({ compact }: OrganizationSwitcherEx
           </div>
         ) : null}
         <div className="p-2">
-          <div className="px-2 py-1.5 text-overline font-medium uppercase tracking-wider text-muted-foreground/80 leading-none">
+          <div className="px-2 py-1.5 text-overline font-medium text-muted-foreground/80 leading-none">
             {t('organizationSwitcher.label')}
           </div>
           <div className="max-h-72 overflow-y-auto">

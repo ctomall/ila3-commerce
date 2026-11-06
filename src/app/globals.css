@@ -943,14 +943,6 @@ TODO: Fix that latter to have reference by the package names
   animation: ai-pulse-active 1.5s ease-in-out infinite;
 }
 
-.animate-ai-glow {
-  animation: ai-glow 3s ease-in-out infinite;
-}
-
-.animate-ai-glow-active {
-  animation: ai-glow-active 1.5s ease-in-out infinite;
-}
-
 .animate-ai-spin {
   animation: ai-spin 8s linear infinite;
 }

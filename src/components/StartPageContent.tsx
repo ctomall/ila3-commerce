@@ -34,7 +34,7 @@ function RoleTile({
   const t = useT()
   const defaultDisabledCtaLabel = t('startPage.roleTile.loginUnavailable', 'Login unavailable')
   return (
-    <div className="rounded-lg border bg-card p-6 flex flex-col gap-4 transition-all hover:shadow-md">
+    <div className="rounded-lg border bg-card p-6 flex flex-col gap-4 transition-[box-shadow,border-color] hover:shadow-md">
       <div className="flex items-start gap-4">
         <div className="rounded-lg bg-primary/10 p-3 text-primary">
           {icon}
