@@ -23,6 +23,12 @@ jobs:
         with:
           submodules: recursive
 
+      # The project pins yarn 4 via `packageManager`; setup-node's yarn cache step runs
+      # whatever yarn is on PATH, so corepack has to be enabled first (yarn 1.22.22 is
+      # preinstalled on the runner and refuses to run this repository).
+      - name: Enable corepack (yarn 4)
+        run: corepack enable
+
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
