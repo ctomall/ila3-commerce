@@ -22,7 +22,7 @@ module.exports = {
   // strips those usages before delegating to ts-jest; without it every command,
   // entity, or data-engine test fails to load.
   transform: {
-    '^.+\\.(t|j)sx?$': [
+    '^.+\.[tj]sx?$': [
       '<rootDir>/scripts/jest-mikroorm-transformer.cjs',
       {
         tsconfig: {

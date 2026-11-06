@@ -17,7 +17,7 @@
 import { spawnSync } from 'node:child_process'
 import path from 'node:path'
 
-const STEPS = ['apply-settings-groups.mjs', 'apply-nav-groups.mjs']
+const STEPS = ['apply-settings-groups.mjs', 'apply-nav-groups.mjs', 'apply-nav-logic.mjs']
 
 for (const step of STEPS) {
   const script = path.resolve(process.cwd(), 'scripts/patches', step)

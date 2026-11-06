@@ -1,4 +1,5 @@
 import catalog from '../../nav/nav-groups.json'
+import { applyGroupCatalog as applyGroupCatalogImpl } from '../../nav/logic.js'
 
 /**
  * Group catalogue: how page groups from module metadata collapse into the sidebar
@@ -26,32 +27,7 @@ export type ShellGroup = {
 export const NAV_GROUP_CATALOG = catalog as NavGroupSpec[]
 
 export function applyGroupCatalog(groups: ReadonlyArray<ShellGroup>): ShellGroup[] {
-  const byId = new Map(groups.map((group) => [group.id, group]))
-  const consumed = new Set<string>()
-  const merged: ShellGroup[] = []
-
-  for (const spec of NAV_GROUP_CATALOG) {
-    const items: unknown[] = []
-    for (const member of spec.members) {
-      const group = byId.get(member)
-      if (!group) continue
-      consumed.add(member)
-      items.push(...(group.items ?? []))
-    }
-    if (items.length === 0) continue
-    merged.push({
-      id: spec.id,
-      name: spec.label,
-      defaultName: spec.label,
-      weight: spec.order,
-      items,
-    })
-  }
-
-  // Anything the catalogue does not know about stays visible: a module that ships
-  // later must never disappear because the catalogue is stale.
-  for (const group of groups) {
-    if (!consumed.has(group.id)) merged.push(group)
-  }
-  return merged
+  // The rules live in src/nav/logic.mjs, which the managed patch also installs into the
+  // shell, so tests and runtime cannot drift apart.
+  return applyGroupCatalogImpl(groups, NAV_GROUP_CATALOG) as ShellGroup[]
 }

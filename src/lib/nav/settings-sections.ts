@@ -1,4 +1,5 @@
 import table from '../../nav/settings-sections.json'
+import { mergeSettingsSections as mergeSettingsSectionsImpl } from '../../nav/logic.js'
 
 /**
  * Settings-section merge table: the module-declared settings partitions collapse
@@ -25,25 +26,6 @@ export const SETTINGS_SECTION_MERGE = table as Record<string, SettingsSectionSpe
 export function mergeSettingsSections(
   sections: ReadonlyArray<ShellSettingsSection>,
 ): ShellSettingsSection[] {
-  const merged = new Map<string, ShellSettingsSection>()
-  for (const section of sections) {
-    const spec = SETTINGS_SECTION_MERGE[section.id]
-    if (!spec) {
-      merged.set(section.id, section)
-      continue
-    }
-    const existing = merged.get(spec.id)
-    if (existing) {
-      existing.items = [...(existing.items ?? []), ...(section.items ?? [])]
-      continue
-    }
-    merged.set(spec.id, {
-      id: spec.id,
-      label: spec.label,
-      labelKey: spec.labelKey,
-      order: spec.order,
-      items: [...(section.items ?? [])],
-    })
-  }
-  return Array.from(merged.values()).sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER))
+  // Same shared implementation the shell runs (see src/nav/logic.mjs).
+  return mergeSettingsSectionsImpl(sections, SETTINGS_SECTION_MERGE) as ShellSettingsSection[]
 }

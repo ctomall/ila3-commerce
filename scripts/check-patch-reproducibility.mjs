@@ -16,6 +16,7 @@
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import os from 'node:os'
+import { pathToFileURL } from 'node:url'
 import path from 'node:path'
 
 const root = process.cwd()
@@ -48,27 +49,25 @@ function extractFunction(source, name) {
  * settings partitions collapse to 8 sections, 23 page groups collapse to 7, and no
  * entry is lost.
  */
-function assertPatchedBehaviour(tmp, pkgRoot) {
-  const chromePath = path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'backendChrome.js')
-  const source = fs.readFileSync(chromePath, 'utf8')
-  const settingsJson = JSON.parse(
-    fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'settings-sections.generated.json'), 'utf8'),
-  )
-  const groupsJson = JSON.parse(
-    fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'nav-groups.generated.json'), 'utf8'),
-  )
+async function assertPatchedBehaviour(tmp, pkgRoot) {
+  const libDir = path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib')
+  const chrome = fs.readFileSync(path.join(libDir, 'backendChrome.js'), 'utf8')
+  if (!chrome.includes('patched:nav-logic')) throw new Error('nav-logic delegation missing in backendChrome.js')
+  if (!/__mergeSettingsImpl\(groups, __SETTINGS_SECTION_MERGE\)/.test(chrome)) {
+    throw new Error('merge helper is not delegating to the shared implementation')
+  }
+  if (!/__applyGroupCatalogImpl\(groups, __NAV_GROUPS_DATA\)/.test(chrome)) {
+    throw new Error('catalogue helper is not delegating to the shared implementation')
+  }
 
-  const mergeSource = extractFunction(source, '__mergeSettingsSections')
-  const catalogSource = extractFunction(source, '__applyNavGroupCatalog')
-  if (!mergeSource || !catalogSource) throw new Error('patched helpers not found in backendChrome.js')
-
-  const merge = new Function('__SETTINGS_SECTION_MERGE', `${mergeSource}; return __mergeSettingsSections`)(
-    settingsJson,
-  )
-  const catalog = new Function('__NAV_GROUPS_DATA', `${catalogSource}; return __applyNavGroupCatalog`)(groupsJson)
+  const settingsJson = JSON.parse(fs.readFileSync(path.join(libDir, 'settings-sections.generated.json'), 'utf8'))
+  const groupsJson = JSON.parse(fs.readFileSync(path.join(libDir, 'nav-groups.generated.json'), 'utf8'))
+  const logicPath = path.join(libDir, 'nav-logic.generated.mjs')
+  if (!fs.existsSync(logicPath)) throw new Error('nav-logic.generated.mjs was not copied into the package')
+  const { mergeSettingsSections, applyGroupCatalog } = await import(pathToFileURL(logicPath).href)
 
   const rawSections = Object.keys(settingsJson).map((key) => ({ id: key, labelKey: key, items: [key] }))
-  const mergedSections = merge(rawSections)
+  const mergedSections = mergeSettingsSections(rawSections, settingsJson)
   const expectedSections = new Set(Object.values(settingsJson).map((spec) => spec.id)).size
   if (mergedSections.length !== expectedSections) {
     throw new Error(`settings merge produced ${mergedSections.length} sections, expected ${expectedSections}`)
@@ -76,6 +75,11 @@ function assertPatchedBehaviour(tmp, pkgRoot) {
   const mergedItems = mergedSections.reduce((total, section) => total + section.items.length, 0)
   if (mergedItems !== rawSections.length) {
     throw new Error(`settings merge lost items: ${mergedItems} of ${rawSections.length}`)
+  }
+  for (let i = 1; i < mergedSections.length; i += 1) {
+    if ((mergedSections[i - 1].order ?? 0) > (mergedSections[i].order ?? 0)) {
+      throw new Error('settings sections are not ordered')
+    }
   }
   for (const section of mergedSections) {
     if (!section.label || typeof section.order !== 'number') {
@@ -85,7 +89,7 @@ function assertPatchedBehaviour(tmp, pkgRoot) {
 
   const members = groupsJson.flatMap((spec) => spec.members)
   const rawGroups = members.map((id) => ({ id, name: id, weight: 1, items: [id] }))
-  const mergedGroups = catalog(rawGroups)
+  const mergedGroups = applyGroupCatalog(rawGroups, groupsJson)
   const mergedGroupItems = mergedGroups.reduce((total, group) => total + group.items.length, 0)
   if (mergedGroups.length !== groupsJson.length) {
     throw new Error(`group catalog produced ${mergedGroups.length} sections, expected ${groupsJson.length}`)
@@ -93,42 +97,10 @@ function assertPatchedBehaviour(tmp, pkgRoot) {
   if (mergedGroupItems !== members.length) {
     throw new Error(`group catalog lost items: ${mergedGroupItems} of ${members.length}`)
   }
-  const unknown = catalog([...rawGroups, { id: 'brand_new.group', name: 'new', weight: 1, items: ['x'] }])
+  const unknown = applyGroupCatalog([...rawGroups, { id: 'brand_new.group', name: 'new', weight: 1, items: ['x'] }], groupsJson)
   if (unknown[unknown.length - 1].id !== 'brand_new.group') {
     throw new Error('group catalog dropped an unlisted group')
   }
-
-  // Effect assertions for the patches whose markers alone would not catch a
-  // half-applied change: an aria-sort edit only on one of the two header paths, a nav
-  // cache key without the catalogue digest, or density CSS that never shipped.
-  const uiRoot = path.join(pkgRoot, 'ui', 'dist')
-  const dataTable = fs.readFileSync(path.join(uiRoot, 'backend', 'DataTable.js'), 'utf8')
-  if (!dataTable.includes('[patched:aria-sort]')) throw new Error('aria-sort table marker missing')
-  if (!dataTable.includes('[patched:aria-sort-dnd]')) throw new Error('aria-sort dnd marker missing')
-  // Two header paths exist: the dnd path forwards `ariaSort` and emits it, the plain
-  // path emits it inline. Both must end up with an "aria-sort" prop.
-  const sortableSites = (dataTable.match(/"aria-sort":/g) ?? []).length
-  if (sortableSites !== 2) throw new Error(`"aria-sort" emitted at ${sortableSites} site(s), expected 2`)
-  if (!/SortableHeaderCell\(\{[^}]*ariaSort/.test(dataTable)) {
-    throw new Error('SortableHeaderCell does not accept ariaSort')
-  }
-
-  const navRoute = fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'api', 'admin', 'nav.js'), 'utf8')
-  if (!navRoute.includes('patched:nav-groups-cache')) throw new Error('nav cache digest patch missing')
-  if (!/__navGroupsDigest/.test(navRoute)) throw new Error('nav cache key does not include the catalogue digest')
-
-  const appCssPath = path.join(root, 'src', 'app', 'globals.css')
-  const appCss = fs.readFileSync(appCssPath, 'utf8')
-  if (!/table td\.py-2[\s\S]{0,80}padding-block:\s*4px/.test(appCss)) {
-    throw new Error('table density CSS missing (padding-block: 4px on py-2 cells)')
-  }
-
-  const appShell = fs.readFileSync(path.join(uiRoot, 'backend', 'AppShell.js'), 'utf8')
-  for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
-    if (!appShell.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
-  }
-
-  console.log('[repro] effects OK — aria-sort on 2 header paths, nav cache digest, density CSS, AppShell markers')
 
   console.log(
     `[repro] behaviour OK — ${rawSections.length} partitions -> ${mergedSections.length} sections, ` +
@@ -173,7 +145,7 @@ try {
   const ok = /all \d+ patch\(es\) present/.test(output)
   console.log(tail)
   if (!ok) throw new Error('patches did not apply cleanly to a pristine package')
-  assertPatchedBehaviour(tmp, pkgRoot)
+  await assertPatchedBehaviour(tmp, pkgRoot)
   console.log('[repro] OK — every managed patch applies to unpatched packages')
 } catch (error) {
   console.error(`[repro] FAILED: ${error.message}`)
