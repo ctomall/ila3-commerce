@@ -53,7 +53,8 @@
     "tokens:dynamic": "node ./scripts/check-dynamic-token-usage.mjs",
     "css:overrides": "node scripts/check-css-overrides.mjs",
     "nav:check": "node scripts/nav-check.mjs",
-    "patches:budget": "node scripts/check-patch-budget.mjs"
+    "patches:budget": "node scripts/check-patch-budget.mjs",
+    "hooks:check": "node scripts/check-upstream-hooks.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

@@ -37,3 +37,28 @@
 - 本仓库侧已把数据与纯函数放到 `src/nav`、`src/lib/nav`（可测、单一来源），
   上游钩子到位后删补丁即可，不需要再迁数据。
 - 在此之前，S5 的 ≤15 不可达；本仓库保持 27 并已用分类表记录每个补丁的阻塞原因。
+
+## 就绪检查（现在可运行）
+
+```bash
+yarn hooks:check     # 或 node scripts/check-upstream-hooks.mjs
+```
+
+逐钩子读取已安装包并输出 `READY/PENDING`、判据证据、以及"可立即删除的补丁"。
+它只读文件，不改 manifest。当前实测：
+
+| 钩子 | 状态 | 证据 |
+|---|---|---|
+| `nav.groups` / `settings.sections` | PENDING | overrides 未导出 · payload 未消费 |
+| `DataTable` ariaSort + 空/错状态槽 | PENDING | ariaSort 由我们的补丁提供 · 空状态槽未使用 |
+| 页面 `columns` 外置 | PENDING | page.meta 无 columns · 无覆盖 API |
+
+**探针会排除我们自己的补丁**：`aria-sort` 的文本匹配在补丁存在时判为"非上游"，
+上游真正支持后（补丁被删、文本仍在）才翻 `READY`。正向分支已用伪造包实测：
+三钩子齐备时输出 `3/3 hooks available` 并列出 11 个可删补丁。
+
+## 钩子到位后的删除顺序（照此执行，预算不需上调）
+
+1. `nav-config` → 27→26
+2. `aria-sort`、`empty-state-art*`×3、`list-error-visual` → 26→21
+3. `cf-label-*`×3、`column-priority`×2 → 21→16（余下按实际情况再收）
