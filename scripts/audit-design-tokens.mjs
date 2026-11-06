@@ -54,7 +54,14 @@ for (const file of files) {
 }
 
 const declaredTokens = [...declared.keys()]
+// Tailwind v4 resolves these namespaces through utilities (`rounded-lg`,
+// `border-border`), so they never appear as var() even when in use. Counting them as
+// "dead" made the report look like 164 removable tokens while the pruner — correctly —
+// refuses to remove any of them. They are reported separately.
+const THEME_NAMESPACE = /^--(color|radius|font|spacing|shadow|text|leading|tracking|breakpoint|container|ease|animate|blur|perspective|aspect)-/
 const dead = declaredTokens.filter((t) => !refs.has(t)).sort()
+const deadThemeNamespaced = dead.filter((t) => THEME_NAMESPACE.test(t))
+const deadActionable = dead.filter((t) => !THEME_NAMESPACE.test(t))
 const dangling = [...refs.keys()].filter((t) => !declared.has(t)).sort()
 const top = [...refs.entries()].sort((a, b) => b[1] - a[1]).slice(0, 15)
 
@@ -75,6 +82,9 @@ const report = {
   tokensWithDarkOverride: darkTokens.size,
   tokensReferenced: refs.size,
   deadTokens: dead.length,
+  deadThemeNamespaced: deadThemeNamespaced.length,
+  deadActionable: deadActionable.length,
+  deadActionableSample: deadActionable.slice(0, 20),
   deadBySourceOnly: dead.length,
   deadInBuiltCss: trulyDead.length,
   builtTokensReferenced: builtUsage.size,
@@ -92,7 +102,9 @@ if (process.argv.includes('--json')) {
   console.log(`  with .dark override    : ${report.tokensWithDarkOverride}`)
   console.log(`tokens referenced in src : ${report.tokensReferenced}`)
   console.log(`dead tokens (src-only)   : ${report.deadBySourceOnly}`)
-  console.log(`dead tokens (built CSS)  : ${report.deadInBuiltCss}  <- authoritative`)
+  console.log(`dead tokens (built CSS)  : ${report.deadInBuiltCss}  <- declared but never referenced`)
+  console.log(`  theme-namespaced (kept)  : ${report.deadThemeNamespaced}  <- Tailwind utilities; pruning them breaks the build`)
+  console.log(`  actionable candidates    : ${report.deadActionable}  (verify with scripts/prune-dead-tokens.mjs before deleting)`)
   console.log(`dangling refs (undefined): ${report.danglingReferences}`)
   console.log('\ntop referenced:')
   for (const [token, count] of report.topReferenced) console.log(`  ${String(count).padStart(4)}  ${token}`)

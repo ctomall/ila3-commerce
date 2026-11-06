@@ -98,3 +98,38 @@
 | B5 | 空状态/错误态插画统一（当前经补丁实现，见 upstream-hooks-proposal） | 中，与上游钩子相关 |
 
 **本方案不包含**：页面版式重排、信息架构调整、颜色体系更换——按技能规则，轻度 slop 不做这些。
+
+## B3 · 死令牌清理（结论：本轮不删任何令牌，先修工具口径）
+
+### 三份计算互相矛盾（实测）
+
+| 来源 | 结论 |
+|---|---|
+| `audit-design-tokens`（改前） | 声明 343、引用 168、"死" 185，看起来可删 |
+| `prune-dead-tokens --dry` | **nothing to prune** |
+| 独立重算（声明 − 编译 CSS 引用 − 主题命名空间） | **actionable dead = 0** |
+
+### 原因
+
+Tailwind v4 用**主题命名空间**（`--color-*`、`--radius-*`、`--font-*` 等）映射工具类：
+`rounded-lg` 消费 `--radius-lg`，`border-border` 消费 `--color-border`，**它们不会以 `var()`
+出现在编译产物里**。审计把这类令牌计入"死"，而清理脚本刻意跳过它们——否则构建会报
+`Cannot apply unknown utility class`（本项目历史上踩过这个坑）。
+
+改后审计输出：
+
+```
+dead tokens (built CSS)  : 164  <- declared but never referenced
+  theme-namespaced (kept) : 165 <- Tailwind utilities; pruning them breaks the build
+  actionable candidates   : 20  (verify with scripts/prune-dead-tokens.mjs before deleting)
+```
+
+### 结论与后续
+
+- **不删令牌**：`prune` 与独立重算都说 0 可安全删除，20 个"候选"在两种口径下不一致，
+  在无法一致前删除属于赌运气。
+- **真正的清理对象是 10 个悬空引用**（引用了未定义的令牌）：
+  `--brand-google-stroke`、`--brand-lime-foreground`、`--brand-violet-soft`、`--sidebar-accent*`（4 个）、
+  `--sidebar-border`、`--sidebar-primary*`、`--sidebar-ring`、`--tw-gradient-stops`。
+  其中 `--tw-gradient-stops` 是 Tailwind 内部变量，属**误报**；`--sidebar-*` 是 shadcn 旧命名。
+  修复方式：或定义、或移除引用，需逐页确认后再动（列为 B3b）。
