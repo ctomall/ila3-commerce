@@ -11,7 +11,7 @@
 | S3 | 配置数据与纯函数入 app 层 | ✅ | `src/nav/*.json` + `src/lib/nav/*`；8 个新单测 |
 | S4 | 分组合并去补丁（≤27） | ✅ 27（部分达成） | 密度改 CSS（-1）+ 两个导航配置补丁合并（-2） |
 | S5 | 表头/空状态/错误态改 app 层（≤15） | ⬜ 未做（密度已提前完成） | 剩余 11 个补丁，需表格/空状态包装层 |
-| S6 | 门禁：nav-check 环境变量 + `!important` 预算 | ✅ | `yarn css:overrides` 13/13；env 凭据可达 API |
+| S6 | 门禁：nav-check 环境变量 + `!important` 预算 + docs 开关 | ✅ | `css:overrides` 13/13；`API_DOCS_ENABLED=false` → **404**；默认匿名 401 / 登录 200（冷 3.89s、热 0.19s） |
 | S7 | 交付记录（不评分） | ✅ | `~/.pua/feedback.jsonl` |
 
 ## S4 如何从 29 降到 27
@@ -73,3 +73,9 @@ S5 需要把这些补丁逐个换成 app 层实现：`apply-aria-sort`（表头�
 3. 页面 `columns` 配置外置（解锁 5 个）
 
 三个钩子到位后，补丁数可落到 14–16 区间。
+
+
+## 附：上游钩子提案
+
+见 [docs/upstream-hooks-proposal.md](upstream-hooks-proposal.md)，三个钩子按收益排序，
+预计把补丁从 27 降到 14±1；在此之前 S5 的 ≤15 不可达。

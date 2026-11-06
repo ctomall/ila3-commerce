@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { API_DOCS_CALLER_SCOPED_HEADERS } from '@open-mercato/core/modules/api_docs/lib/document'
 import { loadOpenApiDocument } from '../document-cache'
+import { apiDocsDisabled } from '../availability'
 
 export const dynamic = 'force-dynamic'
 
@@ -11,6 +12,9 @@ export const dynamic = 'force-dynamic'
  * of CPU per anonymous request.
  */
 export async function GET(req: Request) {
+  if (apiDocsDisabled()) {
+    return NextResponse.json({ error: 'not_found' }, { status: 404 })
+  }
   const auth = await getAuthFromRequest(req as never).catch(() => null)
   if (!auth) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401, headers: API_DOCS_CALLER_SCOPED_HEADERS })
