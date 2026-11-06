@@ -13,12 +13,34 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = process.cwd()
-const BASE = 'http://127.0.0.1:3000'
+const BASE = process.env.NAV_CHECK_BASE_URL ?? 'http://127.0.0.1:3000'
+
+/**
+ * Credentials come from the environment first (NAV_CHECK_EMAIL / NAV_CHECK_PASSWORD)
+ * so this check runs in CI; a local credentials file is only a development
+ * fallback and its path can be redirected with NAV_CHECK_CREDENTIALS.
+ */
+function loadCredentials() {
+  const email = process.env.NAV_CHECK_EMAIL
+  const password = process.env.NAV_CHECK_PASSWORD
+  if (email && password) return { email, password }
+  const file = process.env.NAV_CHECK_CREDENTIALS ?? '/home/pro/.ila3-admin-credentials'
+  if (!fs.existsSync(file)) {
+    console.error(`[nav-check] no credentials: set NAV_CHECK_EMAIL/NAV_CHECK_PASSWORD or provide ${file}`)
+    process.exit(2)
+  }
+  const creds = fs.readFileSync(file, 'utf8')
+  const line = creds.split('\n').find((l) => l.startsWith('superadmin'))
+  if (!line) {
+    console.error('[nav-check] credentials file has no superadmin line')
+    process.exit(2)
+  }
+  const [, email2, password2] = line.trim().split(/\s+/)
+  return { email: email2, password: password2 }
+}
 
 async function login() {
-  const creds = fs.readFileSync('/home/pro/.ila3-admin-credentials', 'utf8')
-  const line = creds.split('\n').find((l) => l.startsWith('superadmin'))
-  const [, email, password] = line.trim().split(/\s+/)
+  const { email, password } = loadCredentials()
   const res = await fetch(`${BASE}/api/auth/login`, {
     method: 'POST',
     headers: { 'content-type': 'application/x-www-form-urlencoded' },
