@@ -12,7 +12,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const BUDGET = 14
+const BUDGET = 15
 const manifestPath = path.resolve(process.cwd(), 'scripts/patches/manifest.json')
 
 if (!fs.existsSync(manifestPath)) {

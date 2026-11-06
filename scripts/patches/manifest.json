@@ -98,6 +98,13 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
       "marker": "/* [patched:source-built-data-table] */",
       "reason": "DataTable's aria-sort, empty-state and error art come from the mirror's source build now; the dist patches are gone."
+    },
+    {
+      "id": "numeric-columns",
+      "script": "scripts/patches/apply-numeric-columns.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js",
+      "marker": "/* [patched:numeric-columns] */",
+      "reason": "Money and count columns read left-aligned; documents scan better with right-aligned, tabular figures."
     }
   ]
 }
