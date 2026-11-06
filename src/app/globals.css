@@ -1207,3 +1207,15 @@ h1.text-base.font-semibold {
 aside > .pointer-events-none.absolute.inset-x-0.bottom-0 {
   bottom: 56px !important;
 }
+
+/* Table density
+   Table cells shipped with Tailwind's `py-2` (8px). 4px gives ~41px rows, which
+   fits about 19% more rows per screen without shrinking any control. Written
+   unlayered on purpose: Tailwind utilities live in a layer, and unlayered rules
+   win over layered ones, so this replaces a node_modules patch with app CSS. */
+/* The utility class carries class-level specificity, so the selector has to match
+   it rather than rely on element selectors. */
+table th.py-2,
+table td.py-2 {
+  padding-block: 4px;
+}

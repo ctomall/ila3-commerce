@@ -142,13 +142,6 @@
       "reason": "Only live once pages pass `error` to DataTable (apply-list-load-error); renders an alert block with illustration and localized title."
     },
     {
-      "id": "density-table-cells",
-      "script": "scripts/patches/apply-density-and-nav.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/primitives/table.js",
-      "marker": "/* [patched:density-nav] */",
-      "reason": "Table cells used py-2 on top of 32px row actions, leaving 49px rows; py-1 gives ~41px."
-    },
-    {
       "id": "sidebar-active-group",
       "script": "scripts/patches/apply-sidebar-active-group.mjs",
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
