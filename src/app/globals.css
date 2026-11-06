@@ -1222,3 +1222,11 @@ table th.py-2,
 table td.py-2 {
   padding-block: 4px;
 }
+
+/* Sidebar scroll-hint motion
+   AppShell's "scroll to bottom" chevron runs `animate-bounce` forever while the sidebar
+   overflows. The hint is useful; the endless bounce is decoration that never resolves.
+   Stop the loop, keep the affordance. Targeted, so other bounce usage is untouched. */
+aside .pointer-events-none .animate-bounce {
+  animation: none;
+}
