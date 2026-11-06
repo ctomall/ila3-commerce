@@ -148,3 +148,19 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
 `settings-sections.generated.json` 15 条、`nav-groups.generated.json` 7 组。
 
 线上回归：`verify-patches 14/14`、`ui-regression 17/17`、`nav-check 0 issue`、`jest 37`。
+
+### 第 6 轮：repro 升级为行为断言
+
+`patches:repro` 之前只验证"标记写入 / 文件存在"，无法证明补丁后的函数行为正确。现在它在临时树里
+**提取并执行**补丁产出的 `__mergeSettingsSections` 与 `__applyNavGroupCatalog`，用合成数据断言：
+
+| 断言 | 实测 |
+|---|---|
+| 15 个设置分区 → 8 个段 | ✅ |
+| 条目守恒（15 → 15） | ✅ |
+| 每段有 label 与数字 order | ✅ |
+| 19 个 page-group → 7 个侧栏段 | ✅ |
+| 条目守恒（19 → 19） | ✅ |
+| 未在目录中的分组必须保留 | ✅ |
+
+输出：`[repro] behaviour OK — 15 partitions -> 8 sections, 19 groups -> 7 sections, unlisted groups preserved`

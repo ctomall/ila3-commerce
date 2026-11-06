@@ -22,6 +22,88 @@ const root = process.cwd()
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'patch-repro-'))
 const PACKAGES = ['ui', 'core', 'shared']
 
+
+/** Extract a top-level `function name(...) { ... }` body from patched output. */
+function extractFunction(source, name) {
+  const start = source.indexOf(`function ${name}(`)
+  if (start === -1) return null
+  let depth = 0
+  let i = source.indexOf('{', start)
+  const bodyStart = i
+  for (; i < source.length; i += 1) {
+    if (source[i] === '{') depth += 1
+    else if (source[i] === '}') {
+      depth -= 1
+      if (depth === 0) return source.slice(start, i + 1)
+    }
+  }
+  return source.slice(start, bodyStart) + '/* unbalanced */'
+}
+
+/**
+ * Behavioural assertions on the patched output.
+ *
+ * The markers only prove text was inserted. These run the two helpers the patches
+ * install, with synthetic input, and check the contract the app relies on: 15
+ * settings partitions collapse to 8 sections, 23 page groups collapse to 7, and no
+ * entry is lost.
+ */
+function assertPatchedBehaviour(tmp, pkgRoot) {
+  const chromePath = path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'backendChrome.js')
+  const source = fs.readFileSync(chromePath, 'utf8')
+  const settingsJson = JSON.parse(
+    fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'settings-sections.generated.json'), 'utf8'),
+  )
+  const groupsJson = JSON.parse(
+    fs.readFileSync(path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib', 'nav-groups.generated.json'), 'utf8'),
+  )
+
+  const mergeSource = extractFunction(source, '__mergeSettingsSections')
+  const catalogSource = extractFunction(source, '__applyNavGroupCatalog')
+  if (!mergeSource || !catalogSource) throw new Error('patched helpers not found in backendChrome.js')
+
+  const merge = new Function('__SETTINGS_SECTION_MERGE', `${mergeSource}; return __mergeSettingsSections`)(
+    settingsJson,
+  )
+  const catalog = new Function('__NAV_GROUPS_DATA', `${catalogSource}; return __applyNavGroupCatalog`)(groupsJson)
+
+  const rawSections = Object.keys(settingsJson).map((key) => ({ id: key, labelKey: key, items: [key] }))
+  const mergedSections = merge(rawSections)
+  const expectedSections = new Set(Object.values(settingsJson).map((spec) => spec.id)).size
+  if (mergedSections.length !== expectedSections) {
+    throw new Error(`settings merge produced ${mergedSections.length} sections, expected ${expectedSections}`)
+  }
+  const mergedItems = mergedSections.reduce((total, section) => total + section.items.length, 0)
+  if (mergedItems !== rawSections.length) {
+    throw new Error(`settings merge lost items: ${mergedItems} of ${rawSections.length}`)
+  }
+  for (const section of mergedSections) {
+    if (!section.label || typeof section.order !== 'number') {
+      throw new Error(`settings section ${section.id} missing label or order`)
+    }
+  }
+
+  const members = groupsJson.flatMap((spec) => spec.members)
+  const rawGroups = members.map((id) => ({ id, name: id, weight: 1, items: [id] }))
+  const mergedGroups = catalog(rawGroups)
+  const mergedGroupItems = mergedGroups.reduce((total, group) => total + group.items.length, 0)
+  if (mergedGroups.length !== groupsJson.length) {
+    throw new Error(`group catalog produced ${mergedGroups.length} sections, expected ${groupsJson.length}`)
+  }
+  if (mergedGroupItems !== members.length) {
+    throw new Error(`group catalog lost items: ${mergedGroupItems} of ${members.length}`)
+  }
+  const unknown = catalog([...rawGroups, { id: 'brand_new.group', name: 'new', weight: 1, items: ['x'] }])
+  if (unknown[unknown.length - 1].id !== 'brand_new.group') {
+    throw new Error('group catalog dropped an unlisted group')
+  }
+
+  console.log(
+    `[repro] behaviour OK — ${rawSections.length} partitions -> ${mergedSections.length} sections, ` +
+      `${members.length} groups -> ${mergedGroups.length} sections, unlisted groups preserved`,
+  )
+}
+
 const run = (command, args, options = {}) =>
   execFileSync(command, args, {
     encoding: 'utf8',
@@ -59,6 +141,7 @@ try {
   const ok = /all \d+ patch\(es\) present/.test(output)
   console.log(tail)
   if (!ok) throw new Error('patches did not apply cleanly to a pristine package')
+  assertPatchedBehaviour(tmp, pkgRoot)
   console.log('[repro] OK — every managed patch applies to unpatched packages')
 } catch (error) {
   console.error(`[repro] FAILED: ${error.message}`)
