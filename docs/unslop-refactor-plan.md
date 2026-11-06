@@ -133,3 +133,15 @@ dead tokens (built CSS)  : 164  <- declared but never referenced
   `--sidebar-border`、`--sidebar-primary*`、`--sidebar-ring`、`--tw-gradient-stops`。
   其中 `--tw-gradient-stops` 是 Tailwind 内部变量，属**误报**；`--sidebar-*` 是 shadcn 旧命名。
   修复方式：或定义、或移除引用，需逐页确认后再动（列为 B3b）。
+
+## 对比度门禁接入回归（第 4 批）
+
+对比度需要在**运行中的应用**上测量，`yarn build` 阶段没有服务，因此接到 `ui-regression`：
+
+| 检查 | 内容 |
+|---|---|
+| `a11y contrast AA (light+dark)` | 浅色与深色各 5 个文本角色，正文 4.5:1、大字号 3:1 |
+| 结果 | **10/10 within AA**；回归总数 17 → **18** |
+
+局限（需知悉）：该检查依赖已启动的服务与浏览器运行时，因此**不能进 CI 的构建作业**，
+只能在部署后或本地回归时执行。若要进 CI，需要在流水线里起数据库与服务（成本另计）。

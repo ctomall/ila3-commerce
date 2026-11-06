@@ -164,6 +164,17 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
   }
 }
 
+// Contrast needs a running app, so it cannot live in `yarn build`; folding it into this
+// regression gives one command that covers layout, a11y and colour.
+try {
+  const out = execFileSync('node', ['scripts/check-contrast.mjs'], { encoding: 'utf8', timeout: 360000 })
+  const summary = (out.trim().split('\n').pop() || '').replace('[contrast] ', '')
+  record('a11y contrast AA (light+dark)', /within AA/.test(out), summary)
+} catch (error) {
+  const detail = String(error.stdout || error.message || error).trim().split('\n').pop().slice(0, 60)
+  record('a11y contrast AA (light+dark)', false, detail)
+}
+
 const failed = results.filter((r) => !r.ok)
 console.log(`\n${results.length - failed.length}/${results.length} passed`)
 if (failed.length) process.exit(1)
