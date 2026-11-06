@@ -14,7 +14,7 @@
     "dev:verbose": "node ./scripts/dev.mjs --verbose",
     "dev:fix-wsl-watchers": "node ./scripts/fix-wsl-inotify.mjs",
     "dev:reset": "node ./scripts/dev-reset.mjs",
-    "build": "node ./scripts/verify-patches.mjs --apply && node ./scripts/check-version-tag.mjs && node ./scripts/check-token-layers.mjs --strict && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
+    "build": "node ./scripts/build.mjs",
     "mercato": "node ./scripts/mercato-cli.mjs",
     "start": "yarn mercato server start",
     "documents:collab": "node ./node_modules/@open-mercato/documents/dist/server/documents-collab-server.js",
@@ -58,7 +58,8 @@
     "patches:repro": "node scripts/check-patch-reproducibility.mjs",
     "deploy:artifact": "node scripts/deploy-artifact.mjs",
     "version:check": "node scripts/check-version-tag.mjs",
-    "release": "node scripts/release.mjs"
+    "release": "node scripts/release.mjs",
+    "build:inner": "node ./scripts/verify-patches.mjs --apply && node ./scripts/check-version-tag.mjs && node ./scripts/check-token-layers.mjs --strict && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",

@@ -45,6 +45,9 @@ type RepoInfo = {
   version?: string
   releaseLabel?: string
   releaseTags?: string[]
+  runningVersion?: string
+  runningCommit?: string
+  runningBuiltAt?: string
   dirtyCount?: number
 }
 
@@ -188,9 +191,15 @@ export default function SystemUpdatePageClient() {
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{t('system_update.current.version', 'Version')}</dt>
               <dd className="max-w-[60%] truncate text-right font-mono" title={repo?.releaseLabel || repo?.version || ''}>
-                {repo?.releaseLabel || (repo?.version ? `v${repo.version}` : '—')}
+                {repo?.runningVersion ? `v${repo.runningVersion}` : (repo?.releaseLabel || (repo?.version ? `v${repo.version}` : '—'))}
               </dd>
             </div>
+            {repo?.runningVersion && repo?.version && repo.runningVersion !== repo.version ? (
+              <div className="flex justify-between gap-3">
+                <dt className="text-muted-foreground">{t('system_update.current.repoVersion', 'Repository version')}</dt>
+                <dd className="font-mono text-amber-600">v{repo.version} · {t('system_update.current.needsUpgrade', 'upgrade available')}</dd>
+              </div>
+            ) : null}
             <div className="flex justify-between gap-3">
               <dt className="text-muted-foreground">{t('system_update.current.commit', 'Commit')}</dt>
               <dd className="font-mono">{repo?.shortCommit || '—'}</dd>

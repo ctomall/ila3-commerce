@@ -51,6 +51,10 @@ export type RepoInfo = {
   releaseLabel?: string
   /** Upgradeable release tags, newest first. */
   releaseTags?: string[]
+  /** Version stamped into the build that is running right now. */
+  runningVersion?: string
+  runningCommit?: string
+  runningBuiltAt?: string
   dirtyCount?: number
 }
 
@@ -113,6 +117,11 @@ export async function readRepoInfo(): Promise<RepoInfo> {
     .catch(() => [])
   const nearestTag = await git(['describe', '--tags', '--abbrev=0']).catch(() => '')
   const releaseLabel = [nearestTag, commit ? commit.slice(0, 8) : ''].filter(Boolean).join(' ')
+  // The running build's own stamp; it travels with the build directory through swaps.
+  const buildInfo = await fs
+    .readFile(path.join(APP_DIR, '.mercato', 'build-info.json'), 'utf8')
+    .then((raw) => JSON.parse(raw) as { version?: string; commit?: string; builtAt?: string })
+    .catch(() => null)
 
   return {
     isRepo: Boolean(commit),
@@ -126,6 +135,9 @@ export async function readRepoInfo(): Promise<RepoInfo> {
     version,
     releaseLabel,
     releaseTags,
+    runningVersion: buildInfo?.version,
+    runningCommit: buildInfo?.commit,
+    runningBuiltAt: buildInfo?.builtAt,
     dirtyCount: dirty ? dirty.split('\n').length : 0,
   }
 }
