@@ -79,3 +79,17 @@ S5 需要把这些补丁逐个换成 app 层实现：`apply-aria-sort`（表头�
 
 见 [docs/upstream-hooks-proposal.md](upstream-hooks-proposal.md)，三个钩子按收益排序，
 预计把补丁从 27 降到 14±1；在此之前 S5 的 ≤15 不可达。
+
+
+## 第 3 轮：S5 替代路径穷尽（结论：需上游）
+
+| 尝试 | 结果 |
+|---|---|
+| app CSS 替代密度类 | ✅ 已做（`density-table-cells` 删除） |
+| 组件覆盖（`widgets/components.ts` + `ComponentOverrideProvider`） | ❌ 只支持已注册 id（如 `staff.kanban_card`、`section:auth.login.form`），`DataTable`/`EmptyState` 未注册 |
+| 注入槽（`dataTableExtensionSpotId`） | ❌ 只有 `columns`/`row-actions`/`bulk-actions` 等，空状态与表头属性无槽 |
+| 模块 overrides（`nav.groups` 类） | ❌ 只有 `nav.groupOrder` |
+| 删除已冗余补丁 | ❌ `nav-aria-labels` 删除会让折叠态菜单失去可访问名称（a11y 回退） |
+
+**因此 S5 的 ≤15 在本仓库不可达**，需上游三个钩子（见 [upstream-hooks-proposal.md](upstream-hooks-proposal.md)）。
+当前基线：27 个补丁。
