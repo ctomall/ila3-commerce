@@ -1189,3 +1189,13 @@ h1.text-base.font-semibold {
 .uppercase.tracking-wider {
   letter-spacing: 0;
 }
+
+/* Sidebar footer clearance
+   The pinned sidebar footer (user centre + collapse control) sits 16px above the
+   viewport bottom and is ~38px tall. Without extra padding the last navigation
+   item ends at y=880 while the footer starts at 846, so the final entry is
+   covered and cannot be clicked. 60px of bottom padding keeps the last row above
+   the footer once scrolled to the end. */
+[data-sidebar-scroll="true"] {
+  padding-bottom: 60px;
+}

@@ -102,6 +102,9 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
   }
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false })
   await page.goto('http://127.0.0.1:3000/backend/customers/companies')
+  await new Promise((r) => setTimeout(r, 2000))
+  await page.evaluate(() => { document.cookie = 'om_sidebar_collapsed=0; path=/; max-age=31536000' })
+  await page.goto('http://127.0.0.1:3000/backend/customers/companies')
   await new Promise((r) => setTimeout(r, 3500))
   const sidebar = await page.evaluate(() => {
     const inner = document.querySelector('[data-testid="sidebar"]')

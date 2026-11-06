@@ -243,3 +243,22 @@ node scripts/ui-regression.mjs --static # 仅静态检查（无需浏览器）
 回归脚本一度报 `focus ring 2px 2/4`。实测 6 个 Tab 停靠点：**全部有可见环**，但宽度为 2px（链接）或 3px（按钮）。
 不是缺失，是**宽度未完全统一**。断言改为「solid 且 ≥2px」，并如实记录差异；
 若要强制 2px，需要覆盖各 Button 组件自带的 ring 偏移，属于组件级改动，暂不做。
+
+## 侧栏底部固定栏：用户中心 + 折叠（Round 20）
+
+需求：把「用户中心头像」和「折叠/展开」放到左侧菜单最下面，并且固定。
+
+| 项 | 实现 |
+|---|---|
+| 位置 | 侧栏底部 `fixed`，`bottom: 16px`、`left: 8px`，`z-index: 60` |
+| 展开态 | 宽 `calc(240px - 16px)` = 224px：头像 + 邮箱 + 收起按钮 |
+| 折叠态 | 宽 68px：头像（首字母）+ 展开按钮，邮箱隐藏 |
+| 头像 | `Link` → `/backend/profile`（实测落地为 `/backend/profile/change-password`，是应用自身的重定向） |
+| 可访问名称 | 头像「用户中心」、按钮「切换侧边栏」，标题含邮箱 |
+| 固定性 | `position: fixed`，导航滚动时始终可见（实测 `padding-bottom: 60px` 让最后一项不被压住） |
+
+**实测**：`240 → 80 → 240` 往返正常；底栏宽度 `224 → 68 → 224`；折叠后底栏只剩「S」。
+**踩坑**：`z-dropdown` 这个类在此处不生成有效 `z-index`（计算值 `auto`），底栏被 `aside` 覆盖，
+真实点击全部落空；改为内联 `zIndex: 60` 才可点。
+**遮挡**：固定底栏最初压住最后一项导航（最后项 bottom 880 vs 底栏 top 846），
+给 `[data-sidebar-scroll]` 加 `padding-bottom: 60px` 后最后项 bottom 820，不再重叠。

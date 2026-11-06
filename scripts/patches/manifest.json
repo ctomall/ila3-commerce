@@ -196,6 +196,13 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:expand-affordance] */",
       "reason": "Collapsed rail exposed the expand control as a bare 28px glyph in the corner; it now renders a labelled 展开 button."
+    },
+    {
+      "id": "sidebar-footer",
+      "script": "scripts/patches/apply-sidebar-footer.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:sidebar-footer] */",
+      "reason": "User centre and collapse control pinned to the sidebar bottom: avatar links to the profile, email shows when expanded, and the bar stays fixed while nav scrolls."
     }
   ]
 }
