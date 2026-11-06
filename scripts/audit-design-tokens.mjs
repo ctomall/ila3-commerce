@@ -89,6 +89,8 @@ const report = {
   deadInBuiltCss: trulyDead.length,
   builtTokensReferenced: builtUsage.size,
   danglingReferences: dangling.length,
+  danglingInternal: dangling.filter((t) => t.startsWith('--tw-')).length,
+  danglingActionable: dangling.filter((t) => !t.startsWith('--tw-')).length,
   topReferenced: top,
   deadSample: trulyDead.slice(0, 20),
   danglingSample: dangling.slice(0, 20),
@@ -105,7 +107,7 @@ if (process.argv.includes('--json')) {
   console.log(`dead tokens (built CSS)  : ${report.deadInBuiltCss}  <- declared but never referenced`)
   console.log(`  theme-namespaced (kept)  : ${report.deadThemeNamespaced}  <- Tailwind utilities; pruning them breaks the build`)
   console.log(`  actionable candidates    : ${report.deadActionable}  (verify with scripts/prune-dead-tokens.mjs before deleting)`)
-  console.log(`dangling refs (undefined): ${report.danglingReferences}`)
+  console.log(`dangling refs (undefined): ${report.danglingReferences}  (Tailwind internals: ${report.danglingInternal}; actionable: ${report.danglingActionable})`)
   console.log('\ntop referenced:')
   for (const [token, count] of report.topReferenced) console.log(`  ${String(count).padStart(4)}  ${token}`)
   if (report.deadSample.length) console.log('\ndead sample: ' + report.deadSample.join(', '))

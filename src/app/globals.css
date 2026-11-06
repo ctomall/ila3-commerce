@@ -296,6 +296,7 @@ TODO: Fix that latter to have reference by the package names
   --om-floating-cta-safe-area: 5rem;
   /* Brand lime + yellow — theme-invariant (no .dark override). Brand violet is themed (see below + .dark). */
   --brand-lime: #B4F372;
+  --brand-lime-foreground: #0C0C0C;
   /* Brand yellow — mid stop of the OM brand gradient (lime -> yellow -> violet), theme-invariant. */
   --brand-yellow: #EEFB63;
   /* Foreground for text/icons placed on the brand-lime surface — dark, theme-invariant (the lime stays light in both themes). */
@@ -304,6 +305,7 @@ TODO: Fix that latter to have reference by the package names
   --focus-ring-outer: rgba(153, 160, 174, 0.16);
   /* Social brand colors — theme-invariant */
   --brand-google: #F14336;
+  --brand-google-stroke: color-mix(in oklab, var(--brand-google) 55%, transparent);
   --brand-google-text-bg: #D93C31; /* White label contrast4.53:1; source red remains for icon-only. */
   --brand-apple: #000000;
   --brand-github: #181717;
@@ -319,7 +321,16 @@ TODO: Fix that latter to have reference by the package names
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.205 0 0);
   --primary-foreground: oklch(0.985 0 0);
+  /* shadcn sidebar aliases: @theme maps --color-sidebar-* to these names, which were
+     never defined, so bg-sidebar-* resolved to nothing. Mapped onto the existing ramp. */
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
   --brand-violet: #BC9AFF;
+  --brand-violet-soft: color-mix(in oklab, var(--brand-violet) 45%, transparent);
   --brand-violet-foreground: #0C0C0C;
   --primary-hover: oklch(0.145 0 0);
   /* Accent indigo — used for selection controls (checkbox, radio, switch) */
