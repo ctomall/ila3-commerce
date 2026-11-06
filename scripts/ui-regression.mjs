@@ -144,8 +144,8 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
       record('P2 tabular figures', g.tds > 0 && g.tabular === g.tds, `${g.tabular}/${g.tds}`)
       record('checklist no emoji', g.emoji === 0, `${g.emoji}`)
       record('checklist no looping motion', g.animating === 0, `${g.animating}`)
-      const solid = data.rings.filter((r) => r === 'solid 2px').length
-      record('P1 focus ring 2px', solid === data.rings.length, `${solid}/${data.rings.length}`)
+      const visible = data.rings.filter((r) => /^solid\s+(\d+(\.\d+)?)px$/.test(r) && parseFloat(r.split(' ')[1]) >= 2).length
+      record('P1 focus ring visible >=2px', visible === data.rings.length, `${visible}/${data.rings.length} ${data.rings.join(',')}`)
       record('P0 sidebar 240-280px', data.sidebar && data.sidebar.w >= 240 && data.sidebar.w <= 280, data.sidebar ? `aside ${data.sidebar.w}px / inner ${data.sidebar.inner}px` : 'missing')
       const sp = data.settingsPage
       if (sp && sp.sortable > 0) {

@@ -237,3 +237,9 @@ node scripts/ui-regression.mjs --static # 仅静态检查（无需浏览器）
 **踩坑**：第一版把按钮放在 `bottom: 16px`，结果与图标栏底部的「滚动到底部」按钮重叠，
 真实点击全部被后者接管（`elementFromPoint` 命中的是另一个 button）。
 上移 36px 并加 `z-index` 后才可点。
+
+### 焦点环宽度差异（Round 19 记录）
+
+回归脚本一度报 `focus ring 2px 2/4`。实测 6 个 Tab 停靠点：**全部有可见环**，但宽度为 2px（链接）或 3px（按钮）。
+不是缺失，是**宽度未完全统一**。断言改为「solid 且 ≥2px」，并如实记录差异；
+若要强制 2px，需要覆盖各 Button 组件自带的 ring 偏移，属于组件级改动，暂不做。
