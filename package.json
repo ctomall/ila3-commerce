@@ -59,7 +59,8 @@
     "deploy:artifact": "node scripts/deploy-artifact.mjs",
     "version:check": "node scripts/check-version-tag.mjs",
     "release": "node scripts/release.mjs",
-    "build:inner": "node ./scripts/verify-patches.mjs --apply && node ./scripts/check-version-tag.mjs && node ./scripts/check-token-layers.mjs --strict && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build"
+    "build:inner": "node ./scripts/verify-patches.mjs --apply && node ./scripts/check-version-tag.mjs && node ./scripts/check-token-layers.mjs --strict && yarn generate && cross-env NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 next build",
+    "a11y:contrast": "node scripts/check-contrast.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",
