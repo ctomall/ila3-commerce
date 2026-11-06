@@ -1230,3 +1230,10 @@ table td.py-2 {
 aside .pointer-events-none .animate-bounce {
   animation: none;
 }
+
+/* Sidebar group label contrast
+   Measured 4.24:1 in dark theme (AA needs 4.5 for normal text). The label used a faded
+   foreground mix; pin it to --muted-foreground, which measures 7.66:1 on the same surface. */
+[data-sidebar-group="true"] > button[aria-expanded] {
+  color: var(--muted-foreground);
+}
