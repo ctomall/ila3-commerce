@@ -130,3 +130,21 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
   空状态、列标签、日期本地化仍在 `node_modules` 里。
 - 因此 S5 的机制部分依旧等待上游钩子（`yarn hooks:check` 全 PENDING）；分组只降低了
   清单与门禁的管理成本，不减少升级风险。
+
+## 第 5 轮：干净安装可复现性（发现并修复 2 个真 bug）
+
+`node scripts/check-patch-reproducibility.mjs`（`yarn patches:repro`）把 registry 的原始 tarball
+解到临时目录，跑 `verify-patches --apply`，不动工作区 `node_modules`。
+
+**首跑结果：14 条中 3 条在干净包上失败。**
+
+| 补丁 | 根因 | 修法 |
+|---|---|---|
+| `apply-aria-sort.mjs` | `const source` 后又赋值 → 干净包走到该分支即 `TypeError`；已打补丁的树不会进入该分支，所以一直没暴露 | 改 `let source` |
+| `apply-settings-groups.mjs` | 依赖"另一个补丁留下的内联字面量"，原始包里根本没有 | 改为自包含：导入数据 + 注入合并函数 + 包裹 `serializeSectionGroups` |
+| `apply-sidebar-footer-removed.mjs` | 干净包里没有 footer 块可移除，却按失败退出 | 干净包判定为"无事可做"，写标记后正常退出 |
+
+修复后：**pristine 14/14 全部应用**，产物验证 `backendChrome.js` 含两个 helper 与两份 import，
+`settings-sections.generated.json` 15 条、`nav-groups.generated.json` 7 组。
+
+线上回归：`verify-patches 14/14`、`ui-regression 17/17`、`nav-check 0 issue`、`jest 37`。

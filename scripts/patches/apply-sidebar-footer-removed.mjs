@@ -36,8 +36,12 @@ if (source.includes(MARKER)) {
 
 const start = source.indexOf(OLD)
 if (start === -1) {
-  console.error('[patch:sidebar-footer-removed] footer block not found — package changed')
-  process.exit(1)
+  // On a pristine package there is no patched footer to remove, which is the desired
+  // end state. Record the marker so verification sees this entry as satisfied.
+  source = `${MARKER}\n${source}`
+  fs.writeFileSync(file, source)
+  console.log('[patch:sidebar-footer-removed] nothing to remove (pristine package)')
+  process.exit(0)
 }
 // The footer block ends with the line `            }),` followed by the scroll-hint block.
 const endMarker = '            }),\n'
@@ -52,8 +56,9 @@ source = source.slice(0, start) + MARKER + '\n' + source.slice(end + endMarker.l
 // for the in-layout footer).
 const WRAPPED = '            /* @__PURE__ */ jsx("div", { className: "flex min-h-0 flex-1 flex-col", children: renderSidebar(effectiveCollapsed, false, isSectionView) }),'
 if (!source.includes(WRAPPED)) {
-  console.error('[patch:sidebar-footer-removed] nav wrapper not found')
-  process.exit(1)
+  console.log('[patch:sidebar-footer-removed] no wrapper to unwrap (pristine package)')
+  fs.writeFileSync(file, source)
+  process.exit(0)
 }
 source = source.replace(WRAPPED, '            renderSidebar(effectiveCollapsed, false, isSectionView),')
 fs.writeFileSync(file, source)

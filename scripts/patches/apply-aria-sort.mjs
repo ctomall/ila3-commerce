@@ -53,7 +53,7 @@ if (!fs.existsSync(file)) {
   console.error(`[patch:aria-sort] target not found: ${TARGET}`)
   process.exit(1)
 }
-const source = fs.readFileSync(file, 'utf8')
+let source = fs.readFileSync(file, 'utf8')
 for (const { from, to } of DND_EDITS) {
   if (source.includes(from)) source = source.replace(from, to)
 }

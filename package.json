@@ -54,7 +54,8 @@
     "css:overrides": "node scripts/check-css-overrides.mjs",
     "nav:check": "node scripts/nav-check.mjs",
     "patches:budget": "node scripts/check-patch-budget.mjs",
-    "hooks:check": "node scripts/check-upstream-hooks.mjs"
+    "hooks:check": "node scripts/check-upstream-hooks.mjs",
+    "patches:repro": "node scripts/check-patch-reproducibility.mjs"
   },
   "dependencies": {
     "@ai-sdk/amazon-bedrock": "^5.0.2",
