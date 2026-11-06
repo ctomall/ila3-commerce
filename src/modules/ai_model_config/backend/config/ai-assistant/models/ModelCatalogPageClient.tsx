@@ -1077,7 +1077,7 @@ function ModelEditorDialog({ editor, providers, onClose, onSaved, onError, runMu
                 {TAG_OPTIONS.map((option) => (
                   <label
                     key={option.value}
-                    className="flex cursor-pointer items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs hover:bg-muted/50"
+                    className="flex cursor-pointer items-center gap-1.5 rounded-md border px-2.5 py-1 text-xs hover:bg-muted/50"
                   >
                     <Checkbox
                       checked={tags.includes(option.value)}
