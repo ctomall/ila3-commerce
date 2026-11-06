@@ -18,7 +18,7 @@ import path from 'node:path'
 const MARKER = '/* [patched:nav-groups] */'
 const DIR = 'node_modules/@open-mercato/core/dist/modules/auth/lib'
 const TARGET = `${DIR}/backendChrome.js`
-const DATA_SRC = 'scripts/patches/data/nav-groups.json'
+const DATA_SRC = 'src/nav/nav-groups.json'
 const DATA_DEST = `${DIR}/nav-groups.generated.json`
 
 const src = path.resolve(process.cwd(), DATA_SRC)

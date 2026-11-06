@@ -17,7 +17,7 @@ import path from 'node:path'
 const MARKER = '/* [patched:settings-groups] */'
 const DIR = 'node_modules/@open-mercato/core/dist/modules/auth/lib'
 const TARGET = `${DIR}/backendChrome.js`
-const DATA_SRC = 'scripts/patches/data/settings-sections.json'
+const DATA_SRC = 'src/nav/settings-sections.json'
 const DATA_DEST = `${DIR}/settings-sections.generated.json`
 
 const src = path.resolve(process.cwd(), DATA_SRC)
