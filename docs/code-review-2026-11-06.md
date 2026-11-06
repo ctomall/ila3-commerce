@@ -50,3 +50,26 @@ S5 需要把这些补丁逐个换成 app 层实现：`apply-aria-sort`（表头�
 | nav-check | 212 项 / 0 issue |
 | ui-regression | 17/17 |
 | `!important` | 13（预算 13，不再新增大） |
+
+
+## S5 可行性分类（27 → ≤15 的依据）
+
+对剩余 26 个补丁逐个判断"是否有 app 层替代路径"，结论：**12 个里没有一个能在不改包的前提下等价替换**，除密度类（已完成）。
+
+| 类别 | 补丁 | 阻塞原因 / 替代路径 |
+|---|---|---|
+| ✅ 已用 app CSS 替代 | `density-table-cells`（已删） | `table th.py-2, table td.py-2 { padding-block: 4px }` |
+| ⚠️ 理论可 CSS，但无稳定选择器 | `dashboard-density-*`（3） | 目标行只有通用类名（`rounded-md border p-3`），选择器会误伤其他卡片；需要组件暴露 `data-*` |
+| ⛔ 需要组件能力 | `aria-sort` | 包内 `SortableHeaderCell` 不接受 `ariaSort` 属性；需上游支持后由页面传参 |
+| ⛔ 页面级包内实现 | `cf-label-*`（3）、`column-priority`（2）、`list-load-error-*`（2） | 页面与列定义在包内，app 无法注入列标签/顺序；需 `columns` 配置外置 |
+| ⛔ 组件级插画 | `empty-state-art*`（3）、`list-error-visual` | 需空状态/错误态注入槽（当前只有 sidebar/topbar 一类槽位） |
+| ⛔ 组件内日期 | `dashboard-locale-init-*`（2）、`dashboard-date-locale-*`（2） | 组件直接用字面 locale 构造日期，app 层无法覆盖 |
+| ⛔ 外壳行为 | `nav-aria-labels`、`settings-sidebar-expanded`、`sidebar-active-group`、`nav-config`、`sidebar-footer-removed`、`brand-login-asset`、`cf-zh-defaults` | 包内 AppShell/登录页行为；部分已被注入 widget 取代（footer），但外层仍需还原 |
+
+**结论**：≤15 在"不改上游"的前提下不可达。可行路径是向上游提三个钩子（按收益排序）：
+
+1. `nav.groups` / `settings.sections`（解锁 2 个补丁，且让配置真正声明化）
+2. `DataTable` 的 `ariaSort` 与 `emptyState`/`errorState` 槽位（解锁 4–5 个）
+3. 页面 `columns` 配置外置（解锁 5 个）
+
+三个钩子到位后，补丁数可落到 14–16 区间。
