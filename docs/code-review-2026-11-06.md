@@ -105,3 +105,28 @@ S5 的 ≤15 不再作为本轮交付条件，改为**上游就绪后执行**。
 
 **基线含义**：补丁数可以往下走（例如上游合并 `nav.groups` 后删除 `nav-config`），
 但任何新增补丁必须先说明为什么不能走 app 层，并在评审中上调预算数字。
+
+## 第 4 轮：清单条目按目标文件分组（27 → 14）
+
+同一个目标文件原本被拆成多条清单项（例如 `AppShell.js` 有 4 条、`page.js` 有 3 条）。
+现在每个目标文件只有一条，包装脚本按序调用原有步骤，标识仍由成员标记保证。
+
+| 目标文件 | 原条目 | 现条目 |
+|---|---|---|
+| `AppShell.js` | 4 | 1 |
+| `DataTable.js` | 3 | 1 |
+| `customers/companies/page.js` | 3 | 1 |
+| `customers/deals/page.js` | 2 | 1 |
+| `widgets/new-deals/widget.client.js` | 4 | 1 |
+| `widgets/new-customers/widget.client.js` | 2 | 1 |
+| `customers/people/page.js` | 2 | 1 |
+| 其余单条 | 7 | 7 |
+| **合计** | **27** | **14** |
+
+### 重要限定（不要把数字当机制）
+
+- **达成的是清单条目数**：`patches:budget` 预算同步下调到 14。
+- **没有达成的是 S5 的"改 app 层"**：被改写的包文件数量仍是 10 个，`aria-sort`、
+  空状态、列标签、日期本地化仍在 `node_modules` 里。
+- 因此 S5 的机制部分依旧等待上游钩子（`yarn hooks:check` 全 PENDING）；分组只降低了
+  清单与门禁的管理成本，不减少升级风险。

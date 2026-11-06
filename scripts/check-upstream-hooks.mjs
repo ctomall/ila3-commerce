@@ -93,5 +93,5 @@ console.log(`\n[upstream-hooks] ${ready}/${HOOKS.length} hooks available`)
 if (unblocked.length > 0) {
   console.log(`[upstream-hooks] patches removable now: ${Array.from(new Set(unblocked)).join(', ')}`)
 } else {
-  console.log('[upstream-hooks] no hook is available yet; keep the current baseline (27) and see docs/upstream-hooks-proposal.md')
+  console.log('[upstream-hooks] no hook is available yet; keep the current baseline (14 manifest entries) and see docs/upstream-hooks-proposal.md')
 }

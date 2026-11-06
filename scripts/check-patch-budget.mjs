@@ -3,15 +3,16 @@
  * Patch budget.
  *
  * S5 (moving the remaining patches to the app layer) is deferred until the package
- * exposes the hooks described in docs/upstream-hooks-proposal.md, so 27 managed
- * patches is the accepted baseline. This check makes that baseline explicit: the
+ * exposes the hooks described in docs/upstream-hooks-proposal.md. Entries are grouped
+ * per target file, so the manifest now carries 14 lines for the same edits; that is
+ * the baseline, and it only goes down. This check makes that baseline explicit: the
  * number can go down freely, but adding a patch needs a deliberate budget bump in
  * review, the same way the !important budget works.
  */
 import fs from 'node:fs'
 import path from 'node:path'
 
-const BUDGET = 27
+const BUDGET = 14
 const manifestPath = path.resolve(process.cwd(), 'scripts/patches/manifest.json')
 
 if (!fs.existsSync(manifestPath)) {

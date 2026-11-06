@@ -9,88 +9,11 @@
       "reason": "Upstream login page hardcodes /open-mercato.svg; the product must not ship the original brand asset path."
     },
     {
-      "id": "cf-label-companies",
-      "script": "scripts/patches/apply-custom-field-cell-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
-      "marker": "/* [patched:cf-label] */",
-      "reason": "Select custom-field cells stringify the raw code; the page builds customColumns inline and its cell closure never receives the field definition."
-    },
-    {
-      "id": "cf-label-people",
-      "script": "scripts/patches/apply-custom-field-cell-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
-      "marker": "/* [patched:cf-label] */",
-      "reason": "Same list pattern as companies."
-    },
-    {
-      "id": "dashboard-date-locale-deals",
-      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
-      "marker": "/* [patched:dashboard-locale] */",
-      "reason": "formatDate falls back to the runtime locale, so a zh UI rendered en-US dates."
-    },
-    {
-      "id": "dashboard-date-locale-customers",
-      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
-      "marker": "/* [patched:dashboard-locale] */",
-      "reason": "Same formatter in the new-customers widget."
-    },
-    {
-      "id": "dashboard-deal-status",
-      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
-      "marker": "/* [patched:dashboard-status] */",
-      "reason": "Renders item.status verbatim; routes it through the existing quickDeal.status dictionary keys."
-    },
-    {
-      "id": "dashboard-locale-init-deals",
-      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
-      "marker": "/* [patched:dashboard-locale-init] */",
-      "reason": "The widget seeds its date locale from navigator.language, so a zh UI rendered en-US dates."
-    },
-    {
-      "id": "dashboard-locale-init-customers",
-      "script": "scripts/patches/apply-dashboard-widget-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
-      "marker": "/* [patched:dashboard-locale-init] */",
-      "reason": "The widget seeds its date locale from navigator.language, so a zh UI rendered en-US dates."
-    },
-    {
-      "id": "nav-aria-labels",
-      "script": "scripts/patches/apply-nav-aria-labels.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:nav-aria] */",
-      "reason": "Collapsed nav rail renders icon-only links with the label in title (tooltip only), leaving no accessible name."
-    },
-    {
       "id": "cf-zh-defaults",
       "script": "scripts/patches/apply-custom-field-zh-defaults.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/customers/customFieldDefaults.js",
       "marker": "/* [patched:cf-zh] */",
       "reason": "API merges code-defined custom fields over DB rows, so seeded English labels win over the translated database."
-    },
-    {
-      "id": "cf-label-deals",
-      "script": "scripts/patches/apply-custom-field-cell-labels.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
-      "marker": "/* [patched:cf-label-deals] */",
-      "reason": "Deals list builds its custom-field cell inline and stringifies raw option codes."
-    },
-    {
-      "id": "column-priority",
-      "script": "scripts/patches/apply-column-priority.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
-      "marker": "/* [patched:column-priority] */",
-      "reason": "Default view showed ~10 columns and overflowed at 1280px; secondary columns are demoted to the chooser."
-    },
-    {
-      "id": "column-priority-deals",
-      "script": "scripts/patches/apply-column-priority.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
-      "marker": "/* [patched:column-priority] */",
-      "reason": "Deals list opened with 16 columns; secondary columns are demoted to the chooser."
     },
     {
       "id": "empty-state-art",
@@ -107,48 +30,6 @@
       "reason": "Search no-results state rendered an icon circle instead of the brand illustration."
     },
     {
-      "id": "empty-state-art-default",
-      "script": "scripts/patches/apply-empty-state-art.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
-      "marker": "/* [patched:empty-state-art] */",
-      "reason": "DataTable default empty state ignored the illustration slot."
-    },
-    {
-      "id": "list-load-error-companies",
-      "script": "scripts/patches/apply-list-load-error.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
-      "marker": "/* [patched:list-load-error] */",
-      "reason": "A failed list fetch was swallowed and rendered as an empty table; the page now passes the error to DataTable."
-    },
-    {
-      "id": "list-load-error-people",
-      "script": "scripts/patches/apply-list-load-error.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
-      "marker": "/* [patched:list-load-error] */",
-      "reason": "A failed list fetch was swallowed and rendered as an empty table; the page now passes the error to DataTable."
-    },
-    {
-      "id": "list-error-visual",
-      "script": "scripts/patches/apply-list-error-visual.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
-      "marker": "/* [patched:list-error-visual] */",
-      "reason": "Only live once pages pass `error` to DataTable (apply-list-load-error); renders an alert block with illustration and localized title."
-    },
-    {
-      "id": "sidebar-active-group",
-      "script": "scripts/patches/apply-sidebar-active-group.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:sidebar-active-group] */",
-      "reason": "All 18 nav groups started expanded (2505px tall); only the group owning the current route opens, explicit toggles and search still win."
-    },
-    {
-      "id": "dashboard-density-new-deals",
-      "script": "scripts/patches/apply-dashboard-density.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
-      "marker": "/* [patched:dashboard-density] */",
-      "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
-    },
-    {
       "id": "dashboard-density-customer-todos",
       "script": "scripts/patches/apply-dashboard-density.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/customer-todos/widget.client.js",
@@ -163,32 +44,60 @@
       "reason": "Widget rows used p-3 / space-y-1.5 / mt-2, giving ~90px per record; tightened spacing raises records per screen."
     },
     {
-      "id": "aria-sort",
-      "script": "scripts/patches/apply-aria-sort.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
-      "marker": "/* [patched:aria-sort] */",
-      "reason": "Sortable headers exposed no aria-sort, so assistive tech could not tell sort state; value derives from column.getIsSorted()."
-    },
-    {
-      "id": "settings-sidebar-expanded",
-      "script": "scripts/patches/apply-settings-sidebar-expanded.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:settings-sidebar] */",
-      "reason": "Entering settings forced a 79px icon rail with 40 unlabelled entries; keeping the user's preference reuses the labelled grouped sidebar."
-    },
-    {
-      "id": "sidebar-footer-removed",
-      "script": "scripts/patches/apply-sidebar-footer-removed.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
-      "marker": "/* [patched:sidebar-footer-injected] */",
-      "reason": "The sidebar footer now ships as an app injection widget (backend:sidebar:footer); this patch takes the package back to its original aside so only the injected footer renders."
-    },
-    {
       "id": "nav-config",
       "script": "scripts/patches/apply-nav-config.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
       "marker": "/* [patched:nav-groups] */",
       "reason": "One entry for navigation configuration: settings section merge plus page-group collapse, both sourced from src/nav."
+    },
+    {
+      "id": "group-customers-page-companies",
+      "script": "scripts/patches/apply-group-customers-page-companies.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
+      "marker": "/* [patched:cf-label] */",
+      "reason": "One entry for every change to page.js: cf-label-companies, column-priority, list-load-error-companies"
+    },
+    {
+      "id": "group-customers-page-people",
+      "script": "scripts/patches/apply-group-customers-page-people.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
+      "marker": "/* [patched:cf-label] */",
+      "reason": "One entry for every change to page.js: cf-label-people, list-load-error-people"
+    },
+    {
+      "id": "group-dashboard-widget-new-deals",
+      "script": "scripts/patches/apply-group-dashboard-widget-new-deals.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
+      "marker": "/* [patched:dashboard-locale] */",
+      "reason": "One entry for every change to widget.client.js: dashboard-date-locale-deals, dashboard-deal-status, dashboard-locale-init-deals, dashboard-density-new-deals"
+    },
+    {
+      "id": "group-dashboard-widget-new-customers",
+      "script": "scripts/patches/apply-group-dashboard-widget-new-customers.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-customers/widget.client.js",
+      "marker": "/* [patched:dashboard-locale] */",
+      "reason": "One entry for every change to widget.client.js: dashboard-date-locale-customers, dashboard-locale-init-customers"
+    },
+    {
+      "id": "group-app-shell-behaviour",
+      "script": "scripts/patches/apply-group-app-shell-behaviour.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:nav-aria] */",
+      "reason": "One entry for every change to AppShell.js: nav-aria-labels, sidebar-active-group, settings-sidebar-expanded, sidebar-footer-removed"
+    },
+    {
+      "id": "group-deals-page",
+      "script": "scripts/patches/apply-group-deals-page.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
+      "marker": "/* [patched:cf-label-deals] */",
+      "reason": "One entry for every change to page.js: cf-label-deals, column-priority-deals"
+    },
+    {
+      "id": "group-data-table-behaviour",
+      "script": "scripts/patches/apply-group-data-table-behaviour.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
+      "marker": "/* [patched:empty-state-art] */",
+      "reason": "One entry for every change to DataTable.js: empty-state-art-default, list-error-visual, aria-sort"
     }
   ]
 }
