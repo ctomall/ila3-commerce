@@ -93,13 +93,6 @@
       "reason": "Deals list opened with 16 columns; secondary columns are demoted to the chooser."
     },
     {
-      "id": "settings-groups",
-      "script": "scripts/patches/apply-settings-groups.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
-      "marker": "/* [patched:settings-groups] */",
-      "reason": "Settings rail sections are serialized server-side; merged 12 -> 8 by labelKey (labels are still default English at that point)."
-    },
-    {
       "id": "empty-state-art",
       "script": "scripts/patches/apply-empty-state-art.mjs",
       "target": "node_modules/@open-mercato/ui/dist/backend/filters/ListEmptyState.js",
@@ -184,18 +177,18 @@
       "reason": "Entering settings forced a 79px icon rail with 40 unlabelled entries; keeping the user's preference reuses the labelled grouped sidebar."
     },
     {
-      "id": "nav-groups",
-      "script": "scripts/patches/apply-nav-groups.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
-      "marker": "/* [patched:nav-groups] */",
-      "reason": "Grouping now comes from scripts/patches/data/nav-groups.json: 23 page groups collapse into 8 sidebar sections without editing the package."
-    },
-    {
       "id": "sidebar-footer-removed",
       "script": "scripts/patches/apply-sidebar-footer-removed.mjs",
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:sidebar-footer-injected] */",
       "reason": "The sidebar footer now ships as an app injection widget (backend:sidebar:footer); this patch takes the package back to its original aside so only the injected footer renders."
+    },
+    {
+      "id": "nav-config",
+      "script": "scripts/patches/apply-nav-config.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/auth/lib/backendChrome.js",
+      "marker": "/* [patched:nav-groups] */",
+      "reason": "One entry for navigation configuration: settings section merge plus page-group collapse, both sourced from src/nav."
     }
   ]
 }

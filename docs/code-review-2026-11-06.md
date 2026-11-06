@@ -9,12 +9,21 @@
 | S1 | `/api/docs/*` 鉴权 + 文档缓存 | ✅ | 匿名 401（24B）；登录 200；冷 3.68s → 热 0.20s |
 | S2 | 对账 N+1 | ✅ | 每页映射查询 2n → 1；3 个单测锁定语义 |
 | S3 | 配置数据与纯函数入 app 层 | ✅ | `src/nav/*.json` + `src/lib/nav/*`；8 个新单测 |
-| S4 | 分组合并完全去补丁（≤27） | ⛔ 受阻 | 官方无分组钩子，详见下节 |
-| S5 | 表头/密度/空状态/错误态改 app 层（≤15） | ⬜ 未做 | 需逐个替换 12 个补丁，风险高，需单独排期 |
+| S4 | 分组合并去补丁（≤27） | ✅ 27（部分达成） | 密度改 CSS（-1）+ 两个导航配置补丁合并（-2） |
+| S5 | 表头/空状态/错误态改 app 层（≤15） | ⬜ 未做（密度已提前完成） | 剩余 11 个补丁，需表格/空状态包装层 |
 | S6 | 门禁：nav-check 环境变量 + `!important` 预算 | ✅ | `yarn css:overrides` 13/13；env 凭据可达 API |
 | S7 | 交付记录（不评分） | ✅ | `~/.pua/feedback.jsonl` |
 
-## S4 为何受阻（证据）
+## S4 如何从 29 降到 27
+
+| 动作 | 变化 | 证据 |
+|---|---|---|
+| 表格密度改 app CSS（`table th.py-2, table td.py-2 { padding-block: 4px }`） | 29 → 28 | `/backend/users` 行高 **41px**、padding 4px；回归 17/17 |
+| `settings-groups` + `nav-groups` 合并为 `nav-config` 一条 | 28 → 27 | `verify-patches` 27 条全过；导航 7 组、设置 8 分区不变 |
+
+**注意**：合并只是把两条配置入口收成一个，**合并逻辑仍在包内 payload 构建阶段**（下方证据说明为什么无法真正搬到 app 层）。所以 S4 是"数量达标、机制未变"。
+
+## S4 深层受阻（证据）
 
 - `src/modules/example/references/module-overrides.reference.ts:139-143` 明确：`nav` 是 framework-only，
   且**只有 `groupOrder`**（重排序），没有"把多个 page group 合并成一组"的能力。
