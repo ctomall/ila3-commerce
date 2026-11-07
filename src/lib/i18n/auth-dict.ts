@@ -19,7 +19,9 @@ const AUTH_ROUTE_PREFIXES = ['/login', '/start', '/reset', '/forgot-password', '
  * `common`), the auth flow itself, plus generic error/validation copy.
  * Everything module-specific is dropped.
  */
-const AUTH_NAMESPACES = new Set(['auth', 'common', 'ui', 'appShell', 'notices', 'errors', 'validation'])
+// startPage is public and rendered on /start, which is an auth-suffix route: without it the
+// whole welcome block fell back to its English defaults on a Chinese deployment.
+const AUTH_NAMESPACES = new Set(['auth', 'common', 'ui', 'appShell', 'notices', 'errors', 'validation', 'startPage'])
 
 export function isAuthRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
@@ -50,7 +52,7 @@ export function trimDictionaryForAuthRoute(dict: Dict): Dict {
 // key string on every trimmed route.
 const SHELL_NAMESPACES = [
   'ui', 'common', 'appShell', 'auth', 'modules', 'settings', 'notices', 'errors', 'validation',
-  'organizationSwitcher', 'notifications', 'portal', 'search', 'ai_assistant',
+  'organizationSwitcher', 'notifications', 'portal', 'search', 'ai_assistant', 'startPage',
 ]
 
 /**
