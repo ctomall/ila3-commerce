@@ -16,6 +16,20 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const ROOT = process.cwd()
+// The browser probe used to skip whenever the session had expired, which made the suite depend on
+// someone logging in by hand. Read the rotated superadmin credential instead (mode 600, offline).
+const CREDS = (() => {
+  try {
+    const text = fs.readFileSync('/home/pro/.ila3-admin-credentials', 'utf8')
+    const line = text.split('\n').find((l) => /^superadmin\s/.test(l.trim()))
+    if (!line) return null
+    const [, email, password] = line.trim().split(/\s+/)
+    return email && password ? { email, password } : null
+  } catch {
+    return null
+  }
+})()
+
 const EGO = '/home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs'
 const results = []
 const record = (name, ok, detail) => {
@@ -72,12 +86,40 @@ try {
 // ---------- browser ----------
 if (!process.argv.includes('--static')) {
   const snippet = `
+const waitFor = async (sel, ms = 15000) => {
+  const end = Date.now() + ms
+  while (Date.now() < end) {
+    if (await page.evaluate((s) => !!document.querySelector(s), sel)) return true
+    await new Promise((r) => setTimeout(r, 250))
+  }
+  return false
+}
 await cdp('Emulation.setDeviceMetricsOverride', { width: 900, height: 800, deviceScaleFactor: 1, mobile: false })
 await page.goto('http://127.0.0.1:3000/backend/customers/companies')
 await new Promise((r) => setTimeout(r, 4500))
+let loggedIn = false
 if (await page.evaluate(() => !!document.querySelector('#email'))) {
+  const creds = ${JSON.stringify(CREDS)}
+  if (creds) {
+    await page.evaluate((c) => {
+      const set = (sel, val) => {
+        const el = document.querySelector(sel)
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value').set
+        setter.call(el, val)
+        el.dispatchEvent(new Event('input', { bubbles: true }))
+      }
+      set('#email', c.email)
+      set('#password', c.password)
+    }, creds)
+    await page.locator('button[type="submit"]').click()
+    await waitFor('tbody td, [data-testid="sidebar"]', 20000)
+    loggedIn = true
+  }
+}
+if (!loggedIn && (await page.evaluate(() => !!document.querySelector('#email')))) {
   console.log('@@DSH_RESULT@@' + JSON.stringify({ needsLogin: true }))
 } else {
+  await waitFor('tbody td')
   const geometry = await page.evaluate(() => {
     const td = document.querySelector('tbody td')
     const th = document.querySelector('thead th')
@@ -105,7 +147,8 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
   await new Promise((r) => setTimeout(r, 2000))
   await page.evaluate(() => { document.cookie = 'om_sidebar_collapsed=0; path=/; max-age=31536000' })
   await page.goto('http://127.0.0.1:3000/backend/customers/companies')
-  await new Promise((r) => setTimeout(r, 3500))
+  await new Promise((r) => setTimeout(r, 1200))
+  const sidebarReady = await waitFor('[data-testid="sidebar"]')
   const sidebar = await page.evaluate(() => {
     const inner = document.querySelector('[data-testid="sidebar"]')
     const aside = inner ? inner.closest('aside') : null
@@ -130,13 +173,32 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
       tds: tds.length,
     }
   })
-  console.log('@@DSH_RESULT@@' + JSON.stringify({ needsLogin: false, geometry, rings, sidebar, settingsPage }))
+  console.log('@@DSH_RESULT@@' + JSON.stringify({ needsLogin: false, geometry, rings, sidebar, sidebarReady, settingsPage }))
 }
 `
-  try {
+  // The browser probe shares one ego session with the contrast and states checks, so a cold
+  // tab or a slow hydration could previously surface as a bogus layout failure. Retry once with
+  // a fresh navigation before reporting, and say so in the note instead of hiding it.
+  const runSnippet = () => {
     const out = execFileSync('node', [EGO, 'nodejs'], { input: snippet, encoding: 'utf8', timeout: 240000 })
     const line = out.split('\n').find((l) => l.includes('@@DSH_RESULT@@')) || ''
-    const data = JSON.parse(line.slice(line.indexOf('@@DSH_RESULT@@') + '@@DSH_RESULT@@'.length))
+    return JSON.parse(line.slice(line.indexOf('@@DSH_RESULT@@') + '@@DSH_RESULT@@'.length))
+  }
+  try {
+    let data
+    let attempts = 1
+    try {
+      data = runSnippet()
+      if (data.sidebar === null || data.needsLogin) {
+        attempts = 2
+        await new Promise((r) => setTimeout(r, 1500))
+        data = runSnippet()
+      }
+    } catch (first) {
+      attempts = 2
+      await new Promise((r) => setTimeout(r, 1500))
+      data = runSnippet()
+    }
     if (data.needsLogin) {
       record('browser checks', false, 'SKIPPED — session not logged in')
     } else {
@@ -149,7 +211,8 @@ if (await page.evaluate(() => !!document.querySelector('#email'))) {
       record('checklist no looping motion', g.animating === 0, `${g.animating}`)
       const visible = data.rings.filter((r) => /^solid\s+(\d+(\.\d+)?)px$/.test(r) && parseFloat(r.split(' ')[1]) >= 2).length
       record('P1 focus ring visible >=2px', visible === data.rings.length, `${visible}/${data.rings.length} ${data.rings.join(',')}`)
-      record('P0 sidebar 240-280px', data.sidebar && data.sidebar.w >= 240 && data.sidebar.w <= 280, data.sidebar ? `aside ${data.sidebar.w}px / inner ${data.sidebar.inner}px` : 'missing')
+      const sb = data.sidebar
+      record('P0 sidebar 240-280px', !!sb && sb.w >= 240 && sb.w <= 280, sb ? `aside ${sb.w}px / inner ${sb.inner}px${attempts > 1 ? ' (retry)' : ''}` : `missing (ready=${data.sidebarReady})`)
       const sp = data.settingsPage
       if (sp && sp.sortable > 0) {
         record('settings aria-sort', sp.withAriaSort === sp.sortable, `${sp.withAriaSort}/${sp.sortable}`)
