@@ -107,9 +107,9 @@ export function StartPageContent({ showStartPage: initialShowStartPage, showOnbo
 
   return (
     <>
-      <section className="rounded-lg border bg-gradient-to-br from-background to-muted/20 p-8 text-center">
+      <section className="rounded-lg border bg-card p-8">
         <h2 className="text-2xl font-semibold mb-3">{t('startPage.welcome.title', 'Welcome to Your ILA3 Commerce Installation')}</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-muted-foreground max-w-2xl">
           {t('startPage.welcome.description', 'This is a customizable start page for your fresh ILA3 Commerce installation. Choose your role below to get started and explore the features available to you.')}
         </p>
       </section>
