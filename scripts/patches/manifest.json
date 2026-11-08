@@ -51,20 +51,6 @@
       "reason": "One entry for navigation configuration: settings section merge plus page-group collapse, both sourced from src/nav."
     },
     {
-      "id": "group-customers-page-companies",
-      "script": "scripts/patches/apply-group-customers-page-companies.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
-      "marker": "/* [patched:cf-label] */",
-      "reason": "One entry for every change to page.js: cf-label-companies, column-priority, list-load-error-companies"
-    },
-    {
-      "id": "group-customers-page-people",
-      "script": "scripts/patches/apply-group-customers-page-people.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
-      "marker": "/* [patched:cf-label] */",
-      "reason": "One entry for every change to page.js: cf-label-people, list-load-error-people"
-    },
-    {
       "id": "group-dashboard-widget-new-deals",
       "script": "scripts/patches/apply-group-dashboard-widget-new-deals.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/customers/widgets/dashboard/new-deals/widget.client.js",
@@ -86,67 +72,24 @@
       "reason": "One entry for every change to AppShell.js: nav-aria-labels, sidebar-active-group, settings-sidebar-expanded, sidebar-footer-removed"
     },
     {
-      "id": "group-deals-page",
-      "script": "scripts/patches/apply-group-deals-page.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
-      "marker": "/* [patched:cf-label-deals] */",
-      "reason": "One entry for every change to page.js: cf-label-deals, column-priority-deals"
-    },
-    {
-      "id": "source-built-datatable",
-      "script": "scripts/patches/apply-source-built-datatable.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
-      "marker": "/* [patched:source-built-data-table] */",
-      "reason": "DataTable's aria-sort, empty-state and error art come from the mirror's source build now; the dist patches are gone."
-    },
-    {
-      "id": "vendor-ui-format-locale",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/utils/format-locale.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Localized money/date come from source-built files in vendor/open-mercato; copying keeps the fix reproducible across yarn install until the dependency migration lands."
-    },
-    {
-      "id": "vendor-ui-format",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/ui/dist/utils/format.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Localized money/date come from source-built files in vendor/open-mercato; copying keeps the fix reproducible across yarn install until the dependency migration lands."
-    },
-    {
-      "id": "vendor-core-sales-table",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Localized money/date come from source-built files in vendor/open-mercato; copying keeps the fix reproducible across yarn install until the dependency migration lands."
-    },
-    {
-      "id": "vendor-core-sales-commands",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
-    },
-    {
-      "id": "vendor-core-dictionary-factory",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
-    },
-    {
-      "id": "vendor-core-quote-convert-route",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/convert/route.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
-    },
-    {
-      "id": "vendor-core-quote-send-route",
-      "script": "scripts/patches/apply-vendor-format-locale.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/send/route.js",
-      "marker": "/* [patched:vendor-format-locale] */",
-      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
+      "id": "vendor-source-build",
+      "script": "scripts/patches/apply-vendor-source-build.mjs",
+      "marker": "/* [patched:vendor-source-build] */",
+      "targets": [
+        "node_modules/@open-mercato/ui/dist/utils/format-locale.js",
+        "node_modules/@open-mercato/ui/dist/utils/format.js",
+        "node_modules/@open-mercato/ui/dist/backend/DataTable.js",
+        "node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js",
+        "node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js",
+        "node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js",
+        "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/convert/route.js",
+        "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/send/route.js",
+        "node_modules/@open-mercato/core/dist/modules/customers/lib/customFieldOptionLabel.js",
+        "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
+        "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
+        "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js"
+      ],
+      "reason": "Files compiled from the private mirror packages/** source of truth, stored in vendor/open-mercato/prebuilt (not dist/: git ignores dist). One installer, one marker per target, content guards per file."
     }
   ]
 }

@@ -2,12 +2,12 @@
 /**
  * Patch budget.
  *
- * S5 (moving the remaining patches to the app layer) is deferred until the package
- * exposes the hooks described in docs/upstream-hooks-proposal.md. Entries are grouped
- * per target file, so the manifest now carries 14 lines for the same edits; that is
- * the baseline, and it only goes down. This check makes that baseline explicit: the
- * number can go down freely, but adding a patch needs a deliberate budget bump in
- * review, the same way the !important budget works.
+ * Every managed patch is a place where this install diverges from upstream, so the
+ * count only goes down: it can shrink freely, adding one needs a deliberate budget
+ * bump in review, the same way the !important budget works. Entries are grouped per
+ * target file, and a patch that installs several files from source declares them as
+ * `targets`, so the number tracks concerns rather than lines. The file count is
+ * printed alongside it so that folding does not look like progress on its own.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -21,9 +21,16 @@ if (!fs.existsSync(manifestPath)) {
 }
 const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'))
 const patches = Array.isArray(manifest.patches) ? manifest.patches : []
+const files = patches.reduce(
+  (sum, patch) => sum + (Array.isArray(patch.targets) ? patch.targets.length : patch.target ? 1 : 0),
+  0,
+)
 
-console.log(`[patch-budget] ${patches.length} patch(es), budget ${BUDGET}`)
-for (const patch of patches) console.log(`  ${patch.id} -> ${patch.target}`)
+console.log(`[patch-budget] ${patches.length} patch(es) over ${files} file(s), budget ${BUDGET}`)
+for (const patch of patches) {
+  const targets = Array.isArray(patch.targets) ? patch.targets : [patch.target]
+  console.log(`  ${patch.id} -> ${targets.length === 1 ? targets[0] : `${targets.length} targets`}`)
+}
 
 if (patches.length > BUDGET) {
   console.error(

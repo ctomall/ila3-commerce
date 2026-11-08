@@ -93,5 +93,7 @@ console.log(`\n[upstream-hooks] ${ready}/${HOOKS.length} hooks available`)
 if (unblocked.length > 0) {
   console.log(`[upstream-hooks] patches removable now: ${Array.from(new Set(unblocked)).join(', ')}`)
 } else {
-  console.log('[upstream-hooks] no hook is available yet; keep the current baseline (14 manifest entries) and see docs/upstream-hooks-proposal.md')
+  const manifest = JSON.parse(fs.readFileSync(path.resolve(process.cwd(), 'scripts/patches/manifest.json'), 'utf8'))
+  const count = Array.isArray(manifest.patches) ? manifest.patches.length : 0
+  console.log(`[upstream-hooks] no hook is available yet; keep the current baseline (${count} manifest entries) and see docs/upstream-hooks-proposal.md`)
 }
