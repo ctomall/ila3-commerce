@@ -257,7 +257,7 @@ const md = [
   '',
   '> **阻塞不等于通过。** 只有 `pass` 才算 M4 有证据；`blocked` 的用例在 fixture 到位前不能计入验收。',
 ]
-fs.writeFileSync(path.join(OUT, 'matrix.md'), md + '\n')
+fs.writeFileSync(path.join(OUT, 'matrix.md'), md.join('\n') + '\n')
 
 console.log(`[m4] pass ${passed.length} · fail ${failed.length} · blocked ${blocked.length} · invalid ${invalid.length} · rows ${before}->${after}`)
 for (const r of results) console.log(`  ${r.status.toUpperCase().padEnd(7)} #${r.id} ${r.attack}${r.detail ? ` — ${String(r.detail).slice(0, 80)}` : ''}`)
