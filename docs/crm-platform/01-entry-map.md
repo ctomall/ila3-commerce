@@ -2,6 +2,7 @@
 
 > 基线来源：**服务端真实 payload**，不是静态 grep。
 > 复跑：`node scripts/crm-nav-baseline.mjs`（只读，一次登录 + 一次 GET/角色；凭证取自 `~/.ila3-admin-credentials`，不落盘、不打印）
+> **先失效缓存**：导航响应缓存在 `.mercato/cache/cache.db`（TTL ~15 分钟，重建不清）。验证前删掉 value 含旧文案的 `cache_entries` 行，否则会把「缓存没失效」误判成「改动没生效」。
 > 产物：`docs/crm-platform/appendix/nav-{superadmin,admin,employee}.json` + `nav-summary.json`
 
 为什么不拿静态清单当基线：导航 = 页面元数据 → payload builder → 打过补丁的 dist → `AppShell` 二次过滤（`pageContext`、settings 前缀、空组），且 `visible(ctx)` 可**按租户**隐藏入口。静态清单会随这三个环节漂移。

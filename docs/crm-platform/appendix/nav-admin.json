@@ -556,8 +556,8 @@
         {
           "id": "/backend/staff/leave-requests",
           "href": "/backend/staff/leave-requests",
-          "title": "请假申请",
-          "defaultTitle": "请假申请",
+          "title": "请假申请（管理）",
+          "defaultTitle": "请假申请（管理）",
           "enabled": true,
           "iconName": "calendar-check",
           "order": 90
@@ -565,8 +565,8 @@
         {
           "id": "/backend/staff/my-leave-requests",
           "href": "/backend/staff/my-leave-requests",
-          "title": "请假申请",
-          "defaultTitle": "请假申请",
+          "title": "我的请假",
+          "defaultTitle": "我的请假",
           "enabled": true,
           "iconName": "calendar-check",
           "order": 91
@@ -1102,8 +1102,8 @@
         {
           "id": "/backend/entities/user",
           "href": "/backend/entities/user",
-          "title": "自定义实体",
-          "defaultTitle": "自定义实体",
+          "title": "浏览自定义实体",
+          "defaultTitle": "浏览自定义实体",
           "enabled": true,
           "pageContext": "settings",
           "order": 2
@@ -1174,8 +1174,8 @@
         {
           "id": "/backend/config/settings",
           "href": "/backend/config/settings",
-          "title": "自定义实体",
-          "defaultTitle": "自定义实体",
+          "title": "自定义实体设置",
+          "defaultTitle": "自定义实体设置",
           "enabled": true,
           "pageContext": "settings",
           "order": 5
@@ -1285,8 +1285,8 @@
         {
           "id": "/backend/config/ai-assistant/agents",
           "href": "/backend/config/ai-assistant/agents",
-          "title": "AI 智能体",
-          "defaultTitle": "AI 智能体",
+          "title": "AI 智能体设置",
+          "defaultTitle": "AI 智能体设置",
           "enabled": true,
           "pageContext": "settings",
           "order": 430
@@ -1665,7 +1665,7 @@
         },
         {
           "id": "backend-entities-user",
-          "label": "自定义实体",
+          "label": "浏览自定义实体",
           "labelKey": "entities.nav.userEntities",
           "href": "/backend/entities/user",
           "order": 2
@@ -1768,7 +1768,7 @@
         },
         {
           "id": "backend-config-settings",
-          "label": "自定义实体",
+          "label": "自定义实体设置",
           "labelKey": "entities.settings.title",
           "href": "/backend/config/settings",
           "order": 5
@@ -1855,7 +1855,7 @@
         },
         {
           "id": "backend-config-ai-assistant-agents",
-          "label": "AI 智能体",
+          "label": "AI 智能体设置",
           "labelKey": "ai_assistant.agents.navTitle",
           "href": "/backend/config/ai-assistant/agents",
           "order": 430

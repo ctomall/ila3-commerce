@@ -434,8 +434,8 @@
         {
           "id": "/backend/staff/my-leave-requests",
           "href": "/backend/staff/my-leave-requests",
-          "title": "请假申请",
-          "defaultTitle": "请假申请",
+          "title": "我的请假",
+          "defaultTitle": "我的请假",
           "enabled": true,
           "iconName": "calendar-check",
           "order": 91
