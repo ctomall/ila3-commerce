@@ -105,6 +105,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js",
       "marker": "/* [patched:numeric-columns] */",
       "reason": "Money and count columns read left-aligned; documents scan better with right-aligned, tabular figures."
+    },
+    {
+      "id": "format-locale",
+      "script": "scripts/patches/apply-format-locale.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/utils/format.js",
+      "marker": "/* [patched:format-locale] */",
+      "reason": "Money and dates ignored the document language because the locale argument is omitted at every call site; the formatter now reads <html lang>."
     }
   ]
 }

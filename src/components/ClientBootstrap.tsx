@@ -3,8 +3,14 @@
 import * as React from 'react'
 import { createLogger } from '@open-mercato/shared/lib/logger'
 import type { ModuleOverrideDomain } from '@open-mercato/shared/modules/overrides'
+import { browserLocale, installFormatLocale } from '@/lib/i18n/format-locale'
 
 const logger = createLogger('app').child({ component: 'ClientBootstrap' })
+
+// The page language is the only locale source the client has; installing it here keeps
+// client-rendered dates and money in step with the server. Skipped during SSR so the
+// layout's per-request locale is not replaced with undefined.
+if (typeof window !== 'undefined') installFormatLocale(browserLocale)
 
 // The registries below are also registered by the server bootstrap, which applies
 // `src/modules.ts` overrides first. Re-registering them in the browser without the

@@ -66,13 +66,23 @@ placedAt: null
 
 ## 5. 三个结论
 
-1. **框架收敛的第一个真实收益点就是这个函数**：在 mirror 源码里给 `formatCurrency/formatDate` 加一个应用级默认 locale，一处改动覆盖全部 30 个调用点，胜过 27 个 dist 补丁里的任何一组。
+1. **格式化散落在 200 多个编译文件里，不是一个函数**：`packages/ui/src/utils/format.ts` 只覆盖演示卡片一类调用点；销售表格用的是自己内联的 `new Intl.NumberFormat(void 0, …)` 和 `date.toLocaleString()`。实测 `NumberFormat(void 0` 23 个文件、`toLocaleString()` 136 个文件、`toLocaleDateString()` 60 个文件。因此本轮的修法是应用级 shim（`src/lib/i18n/format-locale.ts`）在运行时补默认 locale，等 vendor 源码构建落地后删掉它。
 2. **¥ 是数据问题，不是样式问题**：要显示人民币，需要把租户单据币种改成 CNY；把 `$` 硬改成 `¥` 而数据仍是 USD，等于在单据上写错币种。
 3. **状态驱动按钮需要新增服务端迁移层**：现有 API 允许任意状态直改，UI 若按状态隐藏按钮，只是视觉约束，不是业务约束。
 
-## 6. 下一步（按本文件顺序执行）
+## 6. 已执行（2026-11-08）
 
-- [ ] 在 mirror 源码改 `format.ts` 默认 locale，重建 UI 包并 vendor，实测日期/金额本地化。
-- [ ] 把租户默认币种切到 CNY，验证新单据 `currencyCode=CNY` 且渲染 `¥`。
+| 项 | 结果 |
+| --- | --- |
+| 格式化默认 locale | 新增 `src/lib/i18n/format-locale.ts`，只在调用方省略 locale 时补 `<html lang>`；服务端用配置 locale，客户端用 `document.documentElement.lang` |
+| 报价单实测 | 日期 `11/13/2026, 3:10:03 PM` → **`2026/11/13 15:10:03`**；金额 `$680.00` → **`US$680.00`**（zh 下美元不再歧义） |
+| 租户基准币种 | `USD(base)` → **`CNY(base)`**（`/api/currencies/currencies` PUT，两条记录均返回 200） |
+| ¥ 渲染 | `Intl.NumberFormat('zh',{style:'currency',currency:'CNY'}).format(680)` = **`¥680.00`** |
+| 存量单据 | 仍是 USD（数据如此），新建单据才会取 CNY |
+
+`format.ts` 的源码级默认值仍是最终形态，要等 vendor 源码构建上线后再做，届时删除 shim。
+
+## 7. 下一步（按本文件顺序执行）
+
 - [ ] 为报价加迁移守卫（合法状态图 + 前置条件），并让 UI 由状态推导按钮。
 - [ ] 清洗字典种子数据里的 `\r`。
