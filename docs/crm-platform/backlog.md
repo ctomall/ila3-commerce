@@ -119,4 +119,5 @@
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
 | 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 10/10 通过（PASS/FAIL/SKIP 分开计） |
+| 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |
