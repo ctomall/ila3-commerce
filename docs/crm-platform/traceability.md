@@ -60,7 +60,7 @@
 
 | # | 约束 | 遵守情况 | 证据 |
 |---|---|---|---|
-| C1 | 不直接改 node_modules | 遵守：mirror 源码 + `vendor/open-mercato/prebuilt` + 受管补丁 | `apply-vendor-source-build.mjs`（12 文件） |
+| C1 | 不直接改 node_modules | 遵守：mirror 源码 + `vendor/open-mercato/prebuilt` + 受管补丁 | `scripts/patches/apply-vendor-source-build.mjs`（12 文件） |
 | C2 | 不手改生成物 | 遵守：只跑 `yarn generate` | 本轮无 `.mercato/generated` 手改 |
 | C3 | 迁移先审阅、应用需批准 | 遵守：迁移只在分支，未应用 | `03b`；`git branch` |
 | C4 | 生产发布/真实外发需批准 | 遵守：未发布、未建 provider、未发信 | 本轮 commit 无部署动作 |

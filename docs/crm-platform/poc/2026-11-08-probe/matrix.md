@@ -1,10 +1,10 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-08T19:46:11.359Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-08T19:54:41.211Z · 目标：http://127.0.0.1:3000
 
 用例 14 · 符合预期 14 · 需要复核 0
 
-写入检查：`customer_entities` 前 9 / 后 9 → **未写入**
+写入检查：5 张表前后行数一致 → **未写入**
 
 | 角色 | 方法 | 路径 | 期望 | 实际 | 判定 |
 |---|---|---|---|---|---|
@@ -13,7 +13,7 @@
 | employee | GET | `/api/sales/quotes` | 200 | 200 | 符合 |
 | employee | GET | `/api/audit_logs/audit-logs/actions?canViewTenant=true&scope=tenant` | 200 | 200 | 符合 |
 | admin | GET | `/api/audit_logs/audit-logs/actions` | 200|403 | 200 | 符合 |
-| employee | GET | `/api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000` | 403|200 | 403 | 符合 |
+| employee | GET | `/api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000` | 403 | 403 | 符合 |
 | employee | GET | `/api/customers/companies?organizationId=00000000-0000-0000-0000-000000000000` | 403|200 | 200 | 符合 |
 | employee | POST | `/api/customers/companies` | 400|403|422 | 400 | 符合 |
 | employee | POST | `/api/customers/companies` | 400|403|422 | 403 | 符合 |

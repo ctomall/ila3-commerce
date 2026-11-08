@@ -12,7 +12,7 @@
 | M3 原型 | **完成（原型，非生产）** | `04-prototype.md` + `src/modules/crm_prototype/**` | 六页截图 `proto-*.png`；navHidden 使入口数不变 152/150/74 |
 | M4 安全 PoC | **计划完成，待路线确认** | `05-security-poc.md` | 7 维隔离 + 7 条对抗用例 + 撤权时序 |
 | M5 获客 | **规则层完成** | `06-leadgen.md` + `src/lib/leadgen/verification.ts` | 19 例单测 + 负向对照（5 红）；存储/抽取待 M2-9 与 M4 |
-| M6 触达 | **逻辑层完成** | `07-outreach.md` + `src/lib/leadgen/outreach.ts` | 22 例：审批哈希绑定/状态机/unknown 不重发/退订抑制 |
+| M6 触达 | **逻辑层完成** | `07-outreach.md` + `src/lib/leadgen/outreach.ts` | 19 例：审批哈希绑定/状态机/unknown 不重发/退订抑制 |
 | M7 Bot | **守卫层完成** | `08-bot.md` + `src/lib/bot/guard.ts` | 14 例：签名/时效/重放/群聊只读/脱敏 |
 | M8 试用 | **方案完成（未执行）** | `09-trial.md` | 四层完成口径、两种压测口径、备份恢复演练步骤 |
 
@@ -52,7 +52,9 @@ node scripts/crm-verify-all.mjs --full   # 追加 typecheck / 对比度 / ui-reg
 
 ## 门禁现状（2026-11-08 实测，--full 10/10）
 
-`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest 40 tests · `yarn build` BUILD_OK。
+截图证据位于仓库外 `/home/pro/dsh/shots/*.png`（`proto-*.png`、`crm-*.png`），文档中的文件名对应这里的绝对路径。
+
+`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **13 suites / 116 tests** · `yarn build` BUILD_OK。
 
 ## 纪律
 

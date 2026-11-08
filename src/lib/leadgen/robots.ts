@@ -54,7 +54,28 @@ export function parseRobots(text: string | null | undefined): RobotsFile {
     }
   }
 
-  return { groups, raw: text ?? undefined }
+  return { groups: mergeSameAgentGroups(groups), raw: text ?? undefined }
+}
+
+/**
+ * RFC 9309: if more than one group matches a user-agent, their rules are combined. Files
+ * that repeat `User-agent: X` are common, so the rules are merged up front rather than
+ * picking whichever block happened to come first.
+ */
+function mergeSameAgentGroups(groups: RobotsGroup[]): RobotsGroup[] {
+  const merged: RobotsGroup[] = []
+  for (const group of groups) {
+    const existing = merged.find((candidate) => candidate.agents.some((agent) => group.agents.includes(agent)))
+    if (!existing) {
+      merged.push({ agents: [...group.agents], rules: [...group.rules] })
+      continue
+    }
+    existing.rules.push(...group.rules)
+    for (const agent of group.agents) {
+      if (!existing.agents.includes(agent)) existing.agents.push(agent)
+    }
+  }
+  return merged
 }
 
 function agentMatches(groupAgent: string, userAgent: string): number {

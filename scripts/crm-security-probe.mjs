@@ -79,15 +79,17 @@ for (const role of ['superadmin', 'admin', 'employee']) {
   if (creds.has(role)) cookies[role] = await loginWithRetry(BASE, creds.get(role), { role })
 }
 
-const before = rowCount('customer_entities')
+const WATCHED_TABLES = ['customer_entities', 'customer_companies', 'customer_people', 'sales_quotes', 'dictionary_entries']
+const beforeCounts = Object.fromEntries(WATCHED_TABLES.map((table) => [table, rowCount(table)]))
 
 // Baseline the caller's own visible set: an injected scope must not widen it.
-let baselineCompanyTotal = null
+let baselineCompanyIds = null
 {
   const res = await fetch(`${BASE}/api/customers/companies`, { headers: { cookie: cookies.employee ?? '' } })
   if (res.ok) {
     const json = await res.json().catch(() => null)
-    baselineCompanyTotal = typeof json?.total === 'number' ? json.total : null
+    const items = Array.isArray(json?.items) ? json.items : []
+    baselineCompanyIds = items.map((item) => String(item?.id ?? '')).sort()
   }
 }
 
@@ -110,14 +112,18 @@ const cases = [
   { role: 'admin', method: 'GET', path: '/api/audit_logs/audit-logs/actions', expect: [200, 403] },
 
   // scope injection: a value the caller must not be able to honour
-  { role: 'employee', method: 'GET', path: `/api/customers/companies?tenantId=${ZERO_UUID}`, expect: [403, 200] },
+  { role: 'employee', method: 'GET', path: `/api/customers/companies?tenantId=${ZERO_UUID}`, expect: 403 },
   {
     role: 'employee',
     method: 'GET',
     path: `/api/customers/companies?organizationId=${ZERO_UUID}`,
     expect: [403, 200],
     // A 200 is only acceptable if it is the caller's own set, not a widened one.
-    check: (json) => baselineCompanyTotal === null || json.total === baselineCompanyTotal,
+    check: (json) => {
+      if (baselineCompanyIds === null) return false
+      const ids = (Array.isArray(json?.items) ? json.items : []).map((item) => String(item?.id ?? '')).sort()
+      return ids.length === baselineCompanyIds.length && ids.every((id, index) => id === baselineCompanyIds[index])
+    },
   },
 
   // write attempts: any refusal is acceptable, a 2xx would not be (it would mean a write)
@@ -154,16 +160,17 @@ for (const item of cases) {
   results.push(await probe({ ...item, cookie }))
 }
 
-const after = rowCount('customer_entities')
-const noWrites = before !== null && before === after
+const afterCounts = Object.fromEntries(WATCHED_TABLES.map((table) => [table, rowCount(table)]))
+const changed = WATCHED_TABLES.filter((table) => beforeCounts[table] !== afterCounts[table])
+const noWrites = changed.length === 0
 
 const failing = results.filter((r) => r.verdict === 'needs-review')
 fs.mkdirSync(OUT, { recursive: true })
 const payload = {
   generatedAt: new Date().toISOString(),
   base: BASE,
-  rowCount: { before, after, unchanged: noWrites },
-  baseline: { employeeVisibleCompanies: baselineCompanyTotal },
+  rowCount: { tables: WATCHED_TABLES, before: beforeCounts, after: afterCounts, changed, unchanged: noWrites },
+  baseline: { employeeVisibleCompanyIds: baselineCompanyIds?.length ?? null },
   summary: { cases: results.length, asExpected: results.length - failing.length, needsReview: failing.length },
   results,
 }
@@ -176,7 +183,7 @@ const md = [
   '',
   `用例 ${results.length} · 符合预期 ${payload.summary.asExpected} · 需要复核 ${payload.summary.needsReview}`,
   '',
-  `写入检查：\`customer_entities\` 前 ${before} / 后 ${after} → ${noWrites ? '**未写入**' : '**发生变化，必须调查**'}`,
+  `写入检查：${WATCHED_TABLES.length} 张表前后行数一致 → ${noWrites ? '**未写入**' : `**变化：${changed.join('、')}，必须调查**`}`,
   '',
   '| 角色 | 方法 | 路径 | 期望 | 实际 | 判定 |',
   '|---|---|---|---|---|---|',
@@ -197,8 +204,14 @@ const md = [
 
 fs.writeFileSync(path.join(OUT, 'matrix.md'), md + '\n')
 console.log(`[probe] ${payload.summary.asExpected}/${results.length} as expected, ${payload.summary.needsReview} needs review`)
-console.log(`[probe] rows ${before} -> ${after} (${noWrites ? 'unchanged' : 'CHANGED'})`)
+console.log(`[probe] watched ${WATCHED_TABLES.length} tables: ${noWrites ? 'unchanged' : `CHANGED (${changed.join(', ')})`}`)
 for (const r of results.filter((x) => x.verdict !== 'as-expected')) {
   console.log(`  NEEDS REVIEW ${r.method} ${r.path} [${r.role}] expected ${r.expected} got ${r.status}`)
 }
 console.log(`[probe] wrote ${path.relative(process.cwd(), OUT)}/matrix.{json,md}`)
+
+// A probe that always exits 0 is not a gate. Needs-review or a changed row count fails.
+if (failing.length > 0 || !noWrites) {
+  console.error(`[probe] FAILED: ${failing.length} case(s) need review, writes ${noWrites ? 'none' : 'detected'}`)
+  process.exit(1)
+}

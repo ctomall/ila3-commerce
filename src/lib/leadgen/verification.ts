@@ -27,11 +27,23 @@ const ROLE_LOCAL_PARTS = new Set([
   'service', 'billing', 'accounts', 'purchase', 'procurement', 'noreply', 'no-reply',
 ])
 
+/**
+ * Verifier identity. The verification row stores these, so a stored verdict can be tied to
+ * the exact rules that produced it (see 03a `leadgen_verifications`).
+ */
+export const VERIFIER_VERSION = '1.0.0'
+
+/** Hash of the rule names below; bump when a rule is added or removed. */
+export const RULESET_HASH =
+  'evidence_present,evidence_hashed,company_name,domain,source_domain,email_evidence,address_kind,mx'
+
 export type AddressKind = 'role' | 'personal' | 'unknown'
 
 export type Evidence = {
   url: string
   fetchedAt: string
+  /** sha256 of the fetched bytes: proof of what was seen, not just where. */
+  contentHash?: string
   /** Fields the extractor claims it read from the page. */
   fields: Partial<Record<'companyName' | 'domain' | 'contactName' | 'contactTitle' | 'email' | 'phone', string>>
 }
@@ -57,6 +69,8 @@ export type SignalCheck = {
 
 export type Verification = {
   verdict: 'pass' | 'needs_review' | 'fail'
+  verifierVersion: string
+  rulesetHash: string
   reasons: string[]
   checks: SignalCheck[]
   /** Deliverability is never asserted here; the UI must show it as unknown. */
@@ -155,16 +169,25 @@ export function verifyCandidate(candidate: CandidateInput, options: { mxChecked?
   const reasons: string[] = []
 
   const evidence = Array.isArray(candidate.evidence) ? candidate.evidence : []
+  const usableEvidence = evidence.filter((e) => Boolean(e?.url))
   checks.push({
     name: 'evidence_present',
-    result: evidence.length > 0 ? 'ok' : 'missing',
-    detail: `${evidence.length} 条`,
+    result: usableEvidence.length > 0 ? 'ok' : 'missing',
+    detail: `${usableEvidence.length}/${evidence.length} 条带 URL`,
   })
-  if (evidence.length === 0) reasons.push('没有证据链接：不允许入库，也不允许补造联系人')
+  const hashed = evidence.filter((e) => Boolean(e?.contentHash))
+  checks.push({
+    name: 'evidence_hashed',
+    result: hashed.length === evidence.length && evidence.length > 0 ? 'ok' : hashed.length > 0 ? 'weak' : 'missing',
+    detail: `${hashed.length}/${evidence.length} 条带 contentHash`,
+  })
+  if (usableEvidence.length === 0) reasons.push('没有带 URL 的证据：不允许入库，也不允许补造联系人')
+  if (evidence.length > 0 && hashed.length < evidence.length) reasons.push('证据缺少 contentHash：无法证明看到的就是这份内容')
 
   const company = candidate.companyName?.trim() ?? ''
-  checks.push({ name: 'company_name', result: company.length >= 2 ? 'ok' : 'missing' })
-  if (company.length < 2) reasons.push('公司名缺失')
+  const companyUsable = company.length >= 2
+  checks.push({ name: 'company_name', result: companyUsable ? 'ok' : 'missing' })
+  if (!companyUsable) reasons.push('公司名缺失或不可用（少于 2 个字符）')
 
   const domain = normalizeDomain(candidate.domain)
   const host = normalizeHost(candidate.domain)
@@ -205,7 +228,7 @@ export function verifyCandidate(candidate: CandidateInput, options: { mxChecked?
   })
 
   let verdict: Verification['verdict']
-  if (!company || evidence.length === 0) verdict = 'fail'
+  if (!companyUsable || usableEvidence.length === 0) verdict = 'fail'
   else if (reasons.length > 0) verdict = 'needs_review'
   else verdict = 'pass'
 
@@ -213,6 +236,8 @@ export function verifyCandidate(candidate: CandidateInput, options: { mxChecked?
     verdict,
     reasons,
     checks,
+    verifierVersion: VERIFIER_VERSION,
+    rulesetHash: RULESET_HASH,
     deliverability: 'unknown',
     dedupeKey: companyDedupeKey({
       domain: candidate.domain,

@@ -58,12 +58,21 @@ describe('reserve', () => {
 })
 
 describe('consume / refund', () => {
-  it('requires the matching lease and the reserved state', () => {
-    expect(consume(reservation, 'lease-1', NOW).ok).toBe(true)
+  it('requires the matching lease and the reserved state, and reports the units', () => {
+    const consumed = consume(reservation, 'lease-1', NOW)
+    expect(consumed).toEqual({ ok: true, consumedUnits: 2 })
     expect(consume(reservation, 'lease-2', NOW).ok).toBe(false)
     expect(consume({ ...reservation, state: 'consumed' }, 'lease-1', NOW).ok).toBe(false)
-    expect(refund(reservation, 'lease-1').ok).toBe(true)
+
+    const refunded = refund(reservation, 'lease-1')
+    expect(refunded).toEqual({ ok: true, refundedUnits: 2 })
     expect(refund({ ...reservation, state: 'refunded' }, 'lease-1').ok).toBe(false)
+  })
+
+  it('refuses when the timestamps cannot be parsed', () => {
+    const result = consume(reservation, 'lease-1', 'not-a-date')
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.reason).toContain('时间无法解析')
   })
 
   it('refuses to consume an expired reservation', () => {
@@ -95,7 +104,10 @@ describe('sweeper and bucket application', () => {
     expect(refunded.reserved).toBe(0)
     expect(refunded.consumed).toBe(9)
 
-    // never negative, even if applied twice
+    // a refund against a bucket with nothing reserved must not go negative
     expect(applyReservation({ ...employee, reserved: 0 }, { ...reservation, state: 'refunded' }).reserved).toBe(0)
+
+    // the expired branch also releases the reservation
+    expect(applyReservation(reserved, { ...reservation, state: 'expired' }).reserved).toBe(0)
   })
 })

@@ -23,6 +23,20 @@ Disallow: /
     expect(parsed.groups[1].agents).toEqual(['badbot'])
   })
 
+  it('merges repeated groups for the same agent (RFC 9309)', () => {
+    const parsed = parseRobots(`
+User-agent: *
+Disallow: /a
+
+User-agent: *
+Disallow: /b
+`)
+    expect(parsed.groups).toHaveLength(1)
+    expect(parsed.groups[0].rules.map((rule) => rule.pattern)).toEqual(['/a', '/b'])
+    // both rules apply, not just the first block
+    expect(isAllowed(parsed, { userAgent: UA, path: '/b' }).allowed).toBe(false)
+  })
+
   it('treats an empty Disallow as "allow everything"', () => {
     const parsed = parseRobots('User-agent: *\nDisallow:\n')
     expect(parsed.groups[0].rules).toHaveLength(0)

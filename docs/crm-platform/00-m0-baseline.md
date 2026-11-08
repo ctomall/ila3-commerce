@@ -32,9 +32,9 @@
 | 层 | 位置 | 规模 | 含义 |
 |---|---|---|---|
 | 应用路由 | `src/app/**` | 6 个 `page.tsx`、9 个 `route.ts` | 应用自己的页面/接口，数量很少 |
-| 应用模块 | `src/modules/**` | 9 个：`agent_directory`、`agent_examples`、`ai_model_config`、`example`、`example_customers_sync`、`module_directory`、`ratelimit_probe`、`settings_home`、`system_update` | 这就是「我们能直接改」的业务代码 |
+| 应用模块 | `src/modules/**` | 10 个：`agent_directory`、`agent_examples`、`ai_model_config`、`crm_prototype`（M3 新增）、`example`、`example_customers_sync`、`module_directory`、`ratelimit_probe`、`settings_home`、`system_update` | 这就是「我们能直接改」的业务代码 |
 | 框架模块 | `node_modules/@open-mercato/**` | 25 个包：`core`、`ui`、`shared`、`ai-assistant`、`web-research`、`channel-{gmail,imap,resend,ses,discord,expo,fcm,apns}`、`enterprise`、`gateway-stripe`、`scheduler`、`queue`、`search`、`sync-akeneo`、`tillio`、`telemetry`、`webhooks` 等 | **不得直接改**；按项目既有 mirror + vendor `prebuilt` 流程（§5） |
-| 生成注册表 | `.mercato/generated/**` | 360 个文件；`modules.generated.ts` 含 67 个模块 id、701 条 `path:` | 生成物，不手改，改完源码跑 `yarn generate` |
+| 生成注册表 | `.mercato/generated/**` | 362 个文件；`modules.generated.ts` 含 68 个模块 id、701 条 `path:` | 生成物，不手改，改完源码跑 `yarn generate` |
 
 > 关键判断：CRM 业务（customers / sales / catalog / staff / auth）**不在** `src/modules`，而在框架包里。因此本项目的主要交付形态是「应用层模块 + 受管镜像补丁 + UMES/overrides 扩展」，而不是往 `src/modules` 里重写 CRM。
 
@@ -65,7 +65,7 @@
 | 金额/日期 locale | mirror `packages/ui/src/utils/format-locale.ts` + `format.ts` | `¥0.00` / `US$496.00` / `2026/11/8` |
 | 客户列表列优先级/选项标签/加载失败 | mirror `.../customers/backend/customers/{companies,people,deals}/page.tsx` | 4/20 列、良好/需关注、无法连接服务器文案 |
 
-门禁（当前实测）：`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 10/10 AA · `yarn build` BUILD_OK。
+门禁（2026-11-08 实测）：`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 12/12 AA · `yarn build` BUILD_OK。
 
 ## 4. 风险清单（M0 结论）
 
@@ -85,7 +85,7 @@
 | 缺陷 | 修法 | 正向证据 | 负向对照 |
 |---|---|---|---|
 | `check-contrast.mjs` 丢样本后仍 PASS | 断言落地 URL + 样本数下限；`CONTRAST_PAGE` 可注入以便测试 | `12/12 within AA`（**此前报 10/10 其实每主题只测到 5 个样本**，primary button 选择器漏了 `<a>`） | `CONTRAST_PAGE=/login` → exit 1：`measured /backend instead of /login … refusing to pass` |
-| Jest `passWithNoTests:true`（0 测试也绿） | 删除该开关 | 8 suites / 40 tests 全绿 | `yarn test --testPathPattern=__none__` → exit 1 |
+| Jest `passWithNoTests:true`（0 测试也绿） | 删除该开关 | 96 tests / 13 suites 全绿（当时 40） | `yarn test --testPathPattern=__none__` → exit 1 |
 
 仍未修（留给 M0-8 后续）：`.ai/qa` 0 个 spec、`build:inner` 不含 typecheck/lint/test、`hooks:check` 恒退出 0。
 

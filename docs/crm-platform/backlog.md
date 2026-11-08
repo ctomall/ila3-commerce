@@ -10,8 +10,8 @@
 | M0-1 | 读项目规范（AGENTS/CLAUDE/`.ai`） | 本目录 `00-m0-baseline.md` §5 | 文件存在 + 引用了具体条款 | done |
 | M0-2 | 运行入口/分支/未提交/服务/DB/贡献者核对 | 同上 §1 | `systemctl is-active`、`git status`、`psql count(*)` 输出 | done |
 | M0-3 | 代码构成与「改哪里」边界 | 同上 §1.2 | 目录计数、`modules.generated.ts` 统计 | done |
-| M0-4 | 能力矩阵（复用/包装/新建） | 同上 §2 + `02-capability-matrix.md` | 每条带位置 | doing（等 B/C 子审计回填） |
-| M0-5 | 风险清单 | 同上 §4 | 7 条，含本轮已修的 R1 | done |
+| M0-4 | 能力矩阵（复用/包装/新建） | 同上 §2 + `02-capability-matrix.md` | 每条带位置 | done |
+| M0-5 | 风险清单 | 同上 §4 | R1–R8 共 8 条，含已修的 R1/R8 | done |
 | M0-6 | 既有报价/订单修复保护清单 | 同上 §3 | 五项修复 + 当前门禁数字 | done |
 | M0-7 | 四路只读子审计 A/B/C/D | `audit/{a,b,c,d}-*.md` | 四份原文归档，关键结论由主 Agent 抽查复核 | done |
 | M0-8 | 验证层加固（只加强不放宽） | `check-contrast` 断 URL+样本数（12/12，负向 `CONTRAST_PAGE=/login` → exit 1）；`jest` 去 `passWithNoTests`（40 测试，负向 `--testPathPattern=__none__` → exit 1） | 剩余：`.ai/qa` 0 spec、`build:inner` 无 typecheck/lint、`hooks:check` 恒 0 | doing |
@@ -59,10 +59,12 @@
 | # | 事项 | 产物 | 证据 | 状态 |
 |---|---|---|---|---|
 | M4-1 | 两个测试员工、两个专属助手 | `05-security-poc.md` §2 | 计划已写；执行待路线确认 | blocked |
-| M4-0 | 安全基线与探针脚本 | `scripts/crm-security-probe.mjs` + `poc/` | 13 例 / 13 符合 / 零写入（9→9 行） | done |
+| M4-0 | 安全基线与探针脚本 | `scripts/crm-security-probe.mjs` + `poc/` | 14 例 / 14 符合 / 5 张表零写入；**脚本现在会 exit 1**（负向对照：改期望 → exit 1） | done |
+| M4-0b | 对抗执行器（12 条） | `scripts/crm-m4-harness.mjs` + `poc/<日期>-m4/` | 5 pass · 1 弱通过 · 0 fail · 5 blocked · 1 invalid | doing |
+| M4-0c | 执行手册 | `05a-m4-runbook.md` | 前置检查 + fixture + 7 维命令 + 回滚 + 四份交付物 | done |
 | M4-2 | 隔离 DSH 数据/执行环境（会话/订阅/任务/文件/记忆/凭据/浏览器态） | 同上 | 7 类隔离逐条证据 | todo |
 | M4-3 | 一个 CRM 只读工具 | 同上 | 工具声明 + 授权点 | todo |
-| M4-4 | 对抗用例：猜 ID / 直连 API / 模型伪造身份 / 子 Agent 扩权 / 撤权后在途任务 | 同上 | 每条：请求 + 拒绝响应原文 | todo |
+| M4-4 | 对抗用例：猜 ID / 直连 API / 伪造操作者 / 子 Agent 扩权 / 撤权后在途任务 | `crm-m4-harness.mjs` | 已跑的记 pass/弱通过；缺 fixture 的记 blocked，**不计入通过** | doing |
 | M4-5 | 插件分三类（每用户能力/实例全局/高权限）并处置共享实例 | 同上 | 分类表 + 不可信的隔离处置 | todo |
 
 ## M5 获客 MVP
@@ -80,8 +82,8 @@
 
 | # | 事项 | 产物 | 证据 | 状态 |
 |---|---|---|---|---|
-| M6-1 | 草稿→审批→幂等发送→回执→回复分类 | `src/lib/leadgen/outreach.ts` + `07-outreach.md` | 22 例（门/状态机/分类）；负向对照 9 红 | done（逻辑层） |
-| M6-2 | 额度、退订抑制、退信投诉、重复防护 | `src/lib/leadgen/quota.ts` + `06` §9 | 22 例：四层取小、lease、过期回收、幂等 | done（算术层） |
+| M6-1 | 草稿→审批→幂等发送→回执→回复分类 | `src/lib/leadgen/outreach.ts` + `07-outreach.md` | 19 例（门/状态机/分类）；负向对照 9 红 | done（逻辑层） |
+| M6-2 | 额度、退订抑制、退信投诉、重复防护 | `src/lib/leadgen/quota.ts` + `06` §9 | 10 例：四层取小、lease、过期回收、幂等 | done（算术层） |
 | M6-3 | 真实渠道验收 + 域名认证 | 同上 | **需用户批准真实外发** | blocked |
 
 ## M7 Bot

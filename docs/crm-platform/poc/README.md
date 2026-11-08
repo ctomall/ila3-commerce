@@ -11,7 +11,7 @@ node scripts/crm-security-probe.mjs            # 默认输出到 poc/<日期>-pr
 node scripts/crm-security-probe.mjs --out /tmp/probe-2
 ```
 
-## 2026-11-08 基线（13 例 / 13 符合预期 / 0 需复核 / 零写入）
+## 2026-11-08 基线（14 例 / 14 符合预期 / 0 需复核 / 5 张表零写入；脚本会在不符合时 exit 1）
 
 | 结论 | 证据 |
 |---|---|

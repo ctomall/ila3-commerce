@@ -14,9 +14,9 @@
 
 | 能力 | 代码位置 | 结论 |
 |---|---|---|
-| SSRF 防护 | `src/net/ssrf.ts`（含 `169.254.0.0/16`、loopback、scheme 白名单） | **有**，抓取前调 `assertPublicUrl` |
-| 抓取礼貌延迟 | `src/net/client.ts:44,301-311` `politenessMs`（按 host 记 `nextAllowedAt`） | **有**，但默认 `0`，必须配置 |
-| 每适配器调用上限 | `src/contract/policy.ts` `maxCallsPerHour` | **只有字段**，注释明说“engine 不执行，由宿主计数” |
+| SSRF 防护 | `node_modules/@open-mercato/web-research/src/net/ssrf.ts`（含 `169.254.0.0/16`、loopback、scheme 白名单） | **有**，抓取前调 `assertPublicUrl` |
+| 抓取礼貌延迟 | `.../src/net/client.ts:44,301-311` `politenessMs`（按 host 记 `nextAllowedAt`） | **有**，但默认 `0`，必须配置 |
+| 每适配器调用上限 | `.../src/contract/policy.ts` `maxCallsPerHour` | **只有字段**，注释明说“engine 不执行，由宿主计数” |
 | 页面上限/并发 | `ContentPolicy.maxPages`、`SearchPolicy.concurrency` | 有 |
 | **robots.txt** | 全包 grep `robots` **零命中** | **没有** ← 必须自己补 |
 

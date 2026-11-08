@@ -1,13 +1,33 @@
 {
-  "generatedAt": "2026-11-08T19:46:11.359Z",
+  "generatedAt": "2026-11-08T19:54:41.211Z",
   "base": "http://127.0.0.1:3000",
   "rowCount": {
-    "before": 9,
-    "after": 9,
+    "tables": [
+      "customer_entities",
+      "customer_companies",
+      "customer_people",
+      "sales_quotes",
+      "dictionary_entries"
+    ],
+    "before": {
+      "customer_entities": 9,
+      "customer_companies": 3,
+      "customer_people": 6,
+      "sales_quotes": 2,
+      "dictionary_entries": 291
+    },
+    "after": {
+      "customer_entities": 9,
+      "customer_companies": 3,
+      "customer_people": 6,
+      "sales_quotes": 2,
+      "dictionary_entries": 291
+    },
+    "changed": [],
     "unchanged": true
   },
   "baseline": {
-    "employeeVisibleCompanies": 3
+    "employeeVisibleCompanyIds": 3
   },
   "summary": {
     "cases": 14,
@@ -65,7 +85,7 @@
       "role": "employee",
       "method": "GET",
       "path": "/api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000",
-      "expected": "403|200",
+      "expected": "403",
       "status": 403,
       "verdict": "as-expected",
       "body": "{\"error\":\"Not authorized to target this tenant.\"}"

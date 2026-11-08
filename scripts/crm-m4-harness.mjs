@@ -114,6 +114,7 @@ const cases = [
     expected: '200 且 items 为空或全部属于本人',
     path: '/ai_assistant/ai/conversations',
     requires: [],
+    weakReason: '当前没有任何会话，列表为空时通过只能算弱证据；有会话后必须重跑',
     run: () => http({ role: 'employee', url: '/api/ai_assistant/ai/conversations' }),
     judge: (r) => {
       if (r.status !== 200) return false
@@ -143,9 +144,9 @@ const cases = [
   },
   {
     id: 3,
-    attack: '模型伪造身份（调用方指定 agent 与操作者）',
+    attack: '未知 agent 在进入模型前被拒（原误标为“伪造身份”）',
     path: '/ai_assistant/ai/chat',
-    expected: '未知 agent 在进入模型前被拒',
+    expected: '404 agent_unknown，且不进入模型',
     requires: [],
     run: () =>
       http({
@@ -157,6 +158,16 @@ const cases = [
     // 404 with agent_unknown proves the agent is resolved and rejected before any model
     // call; a bare 400 would only prove the payload was wrong.
     judge: (r) => r.status === 404 && r.text.includes('agent_unknown'),
+  },
+  {
+    id: 3.1,
+    attack: '模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId）',
+    expected: '审计记录真实 actor，注入值不生效',
+    // Proving this needs a tool that reports the resolved actor. Until then it is a gap,
+    // not a pass — the earlier "identity forgery pass" only proved an unknown agent 404s.
+    requires: ['probe-tool'],
+    run: null,
+    judge: null,
   },
   {
     id: 4,
@@ -226,7 +237,8 @@ for (const item of cases) {
     attack: item.attack,
     expected: item.expected,
     requires: item.requires,
-    status: pass ? 'pass' : 'fail',
+    status: pass ? (item.weakReason ? 'pass-weak' : 'pass') : 'fail',
+    weakReason: item.weakReason,
     detail: `${response.status} ${response.text}`,
   })
 }
@@ -234,6 +246,7 @@ for (const item of cases) {
 const after = psqlCount('customer_entities')
 const noWrites = before !== null && before === after
 const passed = results.filter((r) => r.status === 'pass')
+const passedWeak = results.filter((r) => r.status === 'pass-weak')
 const failed = results.filter((r) => r.status === 'fail')
 const blocked = results.filter((r) => r.status === 'blocked')
 const invalid = results.filter((r) => r.status === 'invalid')
@@ -244,7 +257,7 @@ const payload = {
   base: BASE,
   fixtures,
   rowCount: { table: 'customer_entities', before, after, unchanged: noWrites },
-  summary: { total: results.length, pass: passed.length, fail: failed.length, blocked: blocked.length, invalid: invalid.length },
+  summary: { total: results.length, pass: passed.length, passWeak: passedWeak.length, fail: failed.length, blocked: blocked.length, invalid: invalid.length },
   results,
 }
 fs.writeFileSync(path.join(OUT, 'matrix.json'), JSON.stringify(payload, null, 2) + '\n')
@@ -254,7 +267,7 @@ const md = [
   '',
   `生成时间：${payload.generatedAt} · 目标：${BASE}`,
   '',
-  `共 ${results.length} 例 · 通过 ${passed.length} · 失败 ${failed.length} · 无法执行（缺 fixture）${blocked.length} · **用例无效 ${invalid.length}**`,
+  `共 ${results.length} 例 · 通过 ${passed.length} · 弱通过 ${passedWeak.length} · 失败 ${failed.length} · 无法执行（缺 fixture）${blocked.length} · **用例无效 ${invalid.length}**`,
   '',
   `写入检查：\`customer_entities\` ${before} → ${after}（${noWrites ? '未写入' : '**发生变化，必须调查**'}）`,
   '',
@@ -262,7 +275,7 @@ const md = [
   '|---|---|---|---|---|',
   ...results.map(
     (r) =>
-      `| ${r.id} | ${r.attack} | ${r.expected} | ${r.status === 'pass' ? '通过' : r.status === 'fail' ? '**失败**' : r.status === 'invalid' ? '**用例无效**' : '阻塞'} | ${String(r.detail).replace(/\|/g, '/').slice(0, 120)} |`,
+      `| ${r.id} | ${r.attack} | ${r.expected} | ${r.status === 'pass' ? '通过' : r.status === 'pass-weak' ? '弱通过' : r.status === 'fail' ? '**失败**' : r.status === 'invalid' ? '**用例无效**' : '阻塞'} | ${String(r.detail).replace(/\|/g, '/').slice(0, 120)} |`,
   ),
   '',
   '## fixture 现状',
@@ -275,7 +288,7 @@ const md = [
 ]
 fs.writeFileSync(path.join(OUT, 'matrix.md'), md.join('\n') + '\n')
 
-console.log(`[m4] pass ${passed.length} · fail ${failed.length} · blocked ${blocked.length} · invalid ${invalid.length} · rows ${before}->${after}`)
+console.log(`[m4] pass ${passed.length} · pass-weak ${passedWeak.length} · fail ${failed.length} · blocked ${blocked.length} · invalid ${invalid.length} · rows ${before}->${after}`)
 for (const r of results) console.log(`  ${r.status.toUpperCase().padEnd(7)} #${r.id} ${r.attack}${r.detail ? ` — ${String(r.detail).slice(0, 80)}` : ''}`)
 console.log(`[m4] wrote ${path.relative(process.cwd(), OUT)}/matrix.{json,md}`)
 // Blocked and invalid cases are coverage gaps, not product failures: they are recorded in

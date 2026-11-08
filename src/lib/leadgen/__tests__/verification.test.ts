@@ -7,7 +7,9 @@ import {
   emailHash,
   normalizeDomain,
   normalizeEmail,
+  RULESET_HASH,
   verifyCandidate,
+  VERIFIER_VERSION,
   type CandidateInput,
 } from '../verification'
 
@@ -21,6 +23,7 @@ const complete: CandidateInput = {
     {
       url: 'https://nordwind-energie.de/team',
       fetchedAt: '2026-11-08T10:00:00Z',
+      contentHash: 'a'.repeat(64),
       fields: { companyName: 'Nordwind Energie GmbH', email: 'Marta@Nordwind-Energie.de' },
     },
   ],
@@ -117,6 +120,7 @@ describe('verifyCandidate', () => {
         {
           url: 'https://nordwind-energie.de/team',
           fetchedAt: '2026-11-08T10:00:00Z',
+          contentHash: 'b'.repeat(64),
           fields: { email: 'info@nordwind-energie.de' },
         },
       ],
@@ -128,6 +132,34 @@ describe('verifyCandidate', () => {
     const result = verifyCandidate({ ...complete, sourceUrl: 'https://some-directory.example/list/123' })
     expect(result.checks.find((c) => c.name === 'source_domain')?.result).toBe('conflict')
     expect(result.verdict).toBe('needs_review')
+  })
+
+  it('fails a company name that is too short to be a company', () => {
+    const result = verifyCandidate({ ...complete, companyName: 'A' })
+    expect(result.verdict).toBe('fail')
+    expect(result.reasons.join()).toContain('公司名缺失或不可用')
+  })
+
+  it('needs review when evidence has no content hash, and fails when it has no URL', () => {
+    const noHash = verifyCandidate({
+      ...complete,
+      evidence: [{ url: 'https://nordwind-energie.de/team', fetchedAt: '2026-11-08T10:00:00Z', fields: {} }],
+    })
+    expect(noHash.verdict).toBe('needs_review')
+    expect(noHash.reasons.join()).toContain('contentHash')
+
+    const noUrl = verifyCandidate({
+      ...complete,
+      evidence: [{ url: '', fetchedAt: '2026-11-08T10:00:00Z', contentHash: 'c'.repeat(64), fields: {} }],
+    })
+    expect(noUrl.verdict).toBe('fail')
+    expect(noUrl.reasons.join()).toContain('没有带 URL 的证据')
+  })
+
+  it('stamps the verifier identity so a stored verdict is reproducible', () => {
+    const result = verifyCandidate(complete)
+    expect(result.verifierVersion).toBe(VERIFIER_VERSION)
+    expect(result.rulesetHash).toBe(RULESET_HASH)
   })
 
   it('is deterministic: identical input yields identical output', () => {

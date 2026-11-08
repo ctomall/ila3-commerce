@@ -74,11 +74,13 @@ running → awaiting_approval   # 候选已提交，等人工审核
 | 想做的事 | 现有缝 | 结论 |
 |---|---|---|
 | 在应用层给每次 AI 工具调用加前置鉴权 | `aiToolOverrides` 只能**替换**工具，拿不到原实现 | 做不到通用拦截，只能枚举工具 |
-| 用 `ApiInterceptor.before` 做门 | 只在 `makeCrudRoute` 工厂内执行；runner 自造空 `Headers`，无 AI 来源标记 | 覆盖不到自定义路由，也无法区分 AI/人类流量 |
+| 用 `ApiInterceptor.before` 做门 | 在 `makeCrudRoute` 工厂内**确实会执行**（`shared/lib/crud/factory.ts`），`InterceptorContext` 带 userId/orgId/container，可按 `targetRoute` 重跑该路由的 `requireFeatures` | 能覆盖 CRUD 路由的鉴权；覆盖不到自定义路由，也**无法只对 AI 生效**（runner 自造空 Headers，无来源标记） |
 | 用 `overrides.di` 替换 runner | runner 是直接 import（`api-backed-tool.ts:64`），不在 DI 里 | 不可替换 |
 | Next middleware | runner 在进程内构造合成 Request 直调 handler | 不经过 |
 
-因此 M4 的处置只有两条路，二选一，写清楚再开工：
+**更正（独立 QA 复核后）**：早前写“不存在拦截缝”过头了。准确说法是：**CRUD 路由上存在零上游改动的 `before` 重鉴权缝**，缺的只是“识别这是 AI 调用”，所以无法只对 AI 生效。这意味着路线 A 不必只做“关工具”——也可以给工具会打到的那几条 CRUD 路由装 interceptor 做逐次重鉴权。
+
+因此 M4 的处置有三条路，选一条并写清楚再开工（原两条 + 新增的 interceptor 方案）：
 
 1. **关工具**（现在可做）：`aiToolOverrides` 把变更类工具替换为抛错 + `aiAgentExtensions.deleteAllowedTools` 移除其名，PoC 只暴露只读工具。代价：Agent 不能写 CRM，候选入库改由「人工审核后由员工自己的会话执行」。
 2. **改上游**（需另行申请）：runner 工厂进 DI + `registerAiToolExecutionGuard(onBeforeExecute)` + 合成请求打 `x-om-ai-origin`。代价：动 framework 包，要走 mirror/vendor 流程并接受上游合并成本。

@@ -29,14 +29,69 @@ const approval: Approval = {
   expiresAt: '2026-11-08T12:00:00Z',
 }
 
+describe('sendKey', () => {
+  it('has an exact, documented shape', () => {
+    // Literal expectation on purpose: computing it with sendKey() would make the test agree
+    // with any implementation, including a broken one.
+    expect(
+      sendKey({ draftId: 'd1', draftHash: 'h1', approvalId: 'a1', recipientHash: 'r1', channel: 'email' }),
+    ).toBe('send:d1:h1:a1:r1:email')
+  })
+
+  it('changes when any component changes', () => {
+    const base = { draftId: 'd1', draftHash: 'h1', approvalId: 'a1', recipientHash: 'r1', channel: 'email' }
+    const keys = new Set([
+      sendKey(base),
+      sendKey({ ...base, draftId: 'd2' }),
+      sendKey({ ...base, draftHash: 'h2' }),
+      sendKey({ ...base, approvalId: 'a2' }),
+      sendKey({ ...base, recipientHash: 'r2' }),
+      sendKey({ ...base, channel: 'sms' }),
+    ])
+    expect(keys.size).toBe(6)
+  })
+})
+
+describe('recipientHash', () => {
+  it('is stable, case-insensitive and refuses invalid addresses', () => {
+    expect(recipientHash('Marta@Nordwind-Energie.de')).toBe(recipientHash('marta@nordwind-energie.de'))
+    expect(recipientHash('marta@nordwind-energie.de')).toMatch(/^[a-f0-9]{8}$/)
+    expect(recipientHash('marta@nordwind-energie.de')).not.toBe(recipientHash('info@nordwind-energie.de'))
+    expect(recipientHash('not-an-email')).toBeNull()
+    expect(recipientHash(null)).toBeNull()
+  })
+})
+
 describe('canSend', () => {
-  it('allows a draft with a matching, unexpired approval', () => {
+  it('allows a draft with a matching, unexpired approval and mints the documented key', () => {
     const decision = canSend({ draft, approval, now: NOW })
     expect(decision.allowed).toBe(true)
-    if (decision.allowed) expect(decision.sendKey).toBe(sendKey({
-      draftId: 'draft-1', draftHash: 'hash-a', approvalId: 'appr-1',
-      recipientHash: recipientHash(draft.recipientEmail) as string, channel: 'email',
-    }))
+    if (decision.allowed) {
+      expect(decision.sendKey).toBe(
+        `send:draft-1:hash-a:appr-1:${recipientHash(draft.recipientEmail)}:email`,
+      )
+    }
+  })
+
+  it('reports every blocking reason at once, not just the first', () => {
+    const decision = canSend({
+      draft: { ...draft, bodyHash: 'hash-b', state: 'superseded' },
+      approval,
+      suppressed: true,
+      now: NOW,
+    })
+    expect(decision.allowed).toBe(false)
+    if (!decision.allowed) {
+      expect(decision.reasons.length).toBeGreaterThanOrEqual(3)
+      expect(decision.reasons.join()).toContain('正文已变化')
+      expect(decision.reasons.join()).toContain('抑制')
+      expect(decision.reasons.join()).toContain('失效')
+    }
+  })
+
+  it('refuses a draft already marked sent or blocked', () => {
+    expect(canSend({ draft: { ...draft, state: 'sent' }, approval, now: NOW }).allowed).toBe(false)
+    expect(canSend({ draft: { ...draft, state: 'blocked' }, approval, now: NOW }).allowed).toBe(false)
   })
 
   it('refuses without an approval', () => {
@@ -113,14 +168,15 @@ describe('reply classification', () => {
   })
 
   it('detects unsubscribe and negative replies, which must also suppress', () => {
-    const unsub = classifyReply({ fromMatchesRecipient: true, body: 'please unsubscribe me' })
-    expect(unsub).toBe('unsubscribe')
-    expect(suppressionFromReply(unsub)).toBe('unsubscribe')
-
-    const negative = classifyReply({ fromMatchesRecipient: true, body: 'not interested, remove us' })
-    expect(['negative', 'unsubscribe']).toContain(negative)
-
-    expect(classifyReply({ fromMatchesRecipient: true, subject: 'hello' })).toBe('human_reply')
+    expect(classifyReply({ fromMatchesRecipient: true, body: 'please unsubscribe me' })).toBe('unsubscribe')
+    expect(classifyReply({ fromMatchesRecipient: true, body: '不要联系了，不考虑' })).toBe('negative')
+    expect(suppressionFromReply('unsubscribe')).toBe('unsubscribe')
+    expect(suppressionFromReply('negative')).toBe('complaint')
     expect(suppressionFromReply('human_reply')).toBeNull()
+  })
+
+  it('classifies delivery failures as machine replies, not human intent', () => {
+    expect(classifyReply({ fromMatchesRecipient: false, body: 'Undeliverable: delivery status notification' })).toBe('auto_reply')
+    expect(suppressionFromReply('auto_reply')).toBeNull()
   })
 })

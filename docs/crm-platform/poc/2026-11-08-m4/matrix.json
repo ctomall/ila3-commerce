@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T19:46:12.674Z",
+  "generatedAt": "2026-11-08T19:54:42.095Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -16,10 +16,11 @@
     "unchanged": true
   },
   "summary": {
-    "total": 11,
-    "pass": 6,
+    "total": 12,
+    "pass": 5,
+    "passWeak": 1,
     "fail": 0,
-    "blocked": 4,
+    "blocked": 5,
     "invalid": 1
   },
   "results": [
@@ -63,7 +64,8 @@
       "attack": "会话列表越权（是否只回本人）",
       "expected": "200 且 items 为空或全部属于本人",
       "requires": [],
-      "status": "pass",
+      "status": "pass-weak",
+      "weakReason": "当前没有任何会话，列表为空时通过只能算弱证据；有会话后必须重跑",
       "detail": "200 {\"items\":[],\"nextCursor\":null}"
     },
     {
@@ -76,11 +78,24 @@
     },
     {
       "id": 3,
-      "attack": "模型伪造身份（调用方指定 agent 与操作者）",
-      "expected": "未知 agent 在进入模型前被拒",
+      "attack": "未知 agent 在进入模型前被拒（原误标为“伪造身份”）",
+      "expected": "404 agent_unknown，且不进入模型",
       "requires": [],
       "status": "pass",
       "detail": "404 {\"error\":\"Agent \\\"probe.m4\\\" is not registered.\",\"code\":\"agent_unknown\"}"
+    },
+    {
+      "id": 3.1,
+      "attack": "模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId）",
+      "expected": "审计记录真实 actor，注入值不生效",
+      "requires": [
+        "probe-tool"
+      ],
+      "status": "blocked",
+      "missing": [
+        "probe-tool"
+      ],
+      "detail": "缺少 fixture：probe-tool"
     },
     {
       "id": 4,

@@ -4,7 +4,7 @@
 
 先草稿、后审批、再发送。**审批绑定正文哈希**：正文/收件人/附件任一变化，审批立即失效。状态未知时**先查再定，绝不重发**。
 
-实现：`src/lib/leadgen/outreach.ts` · 测试：`src/lib/leadgen/__tests__/outreach.test.ts`（22 例，含状态机与回复分类）
+实现：`src/lib/leadgen/outreach.ts` · 测试：`src/lib/leadgen/__tests__/outreach.test.ts`（19 例，含状态机与回复分类；早前写「22 例」是把它与配额文件混算）
 
 ## 2. 发送门（`canSend`）
 
@@ -62,7 +62,7 @@ queued → dispatching → accepted → delivered → replied
 | unknown 不重发 | `never retries on unknown: it looks up first` |
 | 退订/负面必须抑制 | `detects unsubscribe and negative replies…` |
 
-**负向对照**：把“有原因就拒绝”改成“永不拒绝”，并让配额忽略上限 → **9 条变红**；恢复后 41 条全绿。
+**负向对照**：把“有原因就拒绝”改成“永不拒绝”，并让配额忽略上限 → **9 条变红**（跨 outreach 与 quota 两个文件）；恢复后两文件合计 29 条全绿。
 
 ## 6. 尚未实现
 
