@@ -90,6 +90,43 @@ const cases = [
     judge: (r) => r.status === 404,
   },
   {
+    id: 1.2,
+    attack: '猜 ID：AI 会话（他人/不存在）',
+    description: '404 且带 conversation_not_found，而不是 403——403 会承认这个 id 存在。',
+    expected: '404 conversation_not_found',
+    path: '/ai_assistant/ai/conversations/{conversationId}',
+    requires: [],
+    run: () => http({ role: 'employee', url: `/api/ai_assistant/ai/conversations/${ZERO}` }),
+    judge: (r) => r.status === 404 && r.text.includes('conversation_not_found'),
+  },
+  {
+    id: 1.3,
+    attack: '猜 ID：AI 会话参与者列表',
+    expected: '404（不泄露会话是否存在）',
+    path: '/ai_assistant/ai/conversations/{conversationId}/participants',
+    requires: [],
+    run: () => http({ role: 'employee', url: `/api/ai_assistant/ai/conversations/${ZERO}/participants` }),
+    judge: (r) => r.status === 404,
+  },
+  {
+    id: 1.4,
+    attack: '会话列表越权（是否只回本人）',
+    expected: '200 且 items 为空或全部属于本人',
+    path: '/ai_assistant/ai/conversations',
+    requires: [],
+    run: () => http({ role: 'employee', url: '/api/ai_assistant/ai/conversations' }),
+    judge: (r) => {
+      if (r.status !== 200) return false
+      try {
+        const json = JSON.parse(r.text)
+        const items = Array.isArray(json.items) ? json.items : []
+        return items.every((item) => item.ownerUserId === undefined || item.ownerUserId === null)
+      } catch {
+        return false
+      }
+    },
+  },
+  {
     id: 2,
     attack: '直连写接口 + body 注入 tenantId/organizationId',
     path: '/customers/companies',

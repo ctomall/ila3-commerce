@@ -1,8 +1,8 @@
 # M4 对抗用例执行记录
 
-生成时间：2026-11-08T19:44:49.189Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-08T19:46:12.674Z · 目标：http://127.0.0.1:3000
 
-共 8 例 · 通过 3 · 失败 0 · 无法执行（缺 fixture）4 · **用例无效 1**
+共 11 例 · 通过 6 · 失败 0 · 无法执行（缺 fixture）4 · **用例无效 1**
 
 写入检查：`customer_entities` 9 → 9（未写入）
 
@@ -10,6 +10,9 @@
 |---|---|---|---|---|
 | 1 | 猜 ID：随机 uuid 取记录（现有模块） | 404（不泄露存在性） | 通过 | 404 {"error":"未找到"} |
 | 1.1 | 猜 ID：跨员工取 candidate/run（leadgen API） | 404 | **用例无效** | openapi 里没有 /leadgen/candidates/{id}：404 不能当作拒绝证据 |
+| 1.2 | 猜 ID：AI 会话（他人/不存在） | 404 conversation_not_found | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
+| 1.3 | 猜 ID：AI 会话参与者列表 | 404（不泄露会话是否存在） | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
+| 1.4 | 会话列表越权（是否只回本人） | 200 且 items 为空或全部属于本人 | 通过 | 200 {"items":[],"nextCursor":null} |
 | 2 | 直连写接口 + body 注入 tenantId/organizationId | 400/403/422，且不写库 | 通过 | 403 {"error":"Not authorized to target this tenant."} |
 | 3 | 模型伪造身份（调用方指定 agent 与操作者） | 未知 agent 在进入模型前被拒 | 通过 | 404 {"error":"Agent \"probe.m4\" is not registered.","code":"agent_unknown"} |
 | 4 | 子 Agent 提权（子工具集 ⊄ 父工具集） | 子工具集 = 交集 | 阻塞 | 缺少 fixture：probe-tool、dsh-profile-per-employee |

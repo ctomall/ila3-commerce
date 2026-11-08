@@ -33,6 +33,7 @@
 | `03-dsh-contract.md` | 绑定、Run/事件/产物、桥接现实约束、逐次鉴权、隔离、撤离与离职 |
 | `03a-data-model.md` | 五组表（候选/配额/审批发送/抑制/绑定）+ 幂等键组合 + API 面 + UMES + 迁移约定 |
 | `03b-migration-draft.md` | **待批准**：两片迁移草案（第一片 5 表 / 第二片 11 表，共 16 表），分支 `feat/leadgen-schema` 与 `feat/leadgen-schema-2` |
+| `05a-m4-runbook.md` | M4 **执行手册**：前置检查、fixture、7 维验证命令、回滚与交付物 |
 | `06-leadgen.md` | 确定性验证规则 + 配额算术：判决、去重键、有效≠可触达、测试映射与负向对照 |
 | `07-outreach.md` | 审批门（哈希绑定）、发送状态机、回复分类与抑制 |
 | `08-bot.md` | Bot 入站四关、群聊只读、群内脱敏、离职撤权 |
