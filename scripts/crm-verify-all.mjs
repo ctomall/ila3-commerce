@@ -21,6 +21,8 @@ import { spawnSync } from 'node:child_process'
 
 const FULL = process.argv.includes('--full')
 // --only <id>[,<id>] runs a subset; useful when iterating on a single gate.
+// A gate that was skipped proves nothing. For a release-grade run, say so out loud.
+const REQUIRE_NO_SKIP = process.argv.includes('--require-no-skip')
 const onlyFlag = process.argv.indexOf('--only')
 const ONLY = onlyFlag === -1 ? null : new Set((process.argv[onlyFlag + 1] || '').split(',').map((s) => s.trim()).filter(Boolean))
 const outFlag = process.argv.indexOf('--out')
@@ -33,7 +35,12 @@ const GATES = [
   { id: 'quote-regression', cmd: 'node scripts/crm-quote-regression.mjs', why: '既有报价/订单修复未回归' },
   { id: 'security-probe', cmd: 'node scripts/crm-security-probe.mjs', why: '授权行为与基线一致、零写入' },
   { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例（阻塞项单独报）' },
-  { id: 'nav-baseline', cmd: 'node scripts/crm-nav-baseline.mjs', why: '入口数不变、重名 0' },
+  // --check turns the recorded baseline into an assertion. Without it this gate ran the
+  // recorder: it refreshed appendix/nav-*.json and could not fail on an entry count or a
+  // duplicate title, so the M1 acceptance criterion was enforced by nobody.
+  { id: 'nav-baseline', cmd: 'node scripts/crm-nav-baseline.mjs --check', why: '入口数与冻结基线一致、重名 0' },
+  // The structural checker existed and exited 1 on issues, but was never in the gate set.
+  { id: 'nav-structure', cmd: 'node scripts/nav-check.mjs', why: '导航数据本身无问题（重名 href/空标签/孤儿分组）' },
   { id: 'tokens', cmd: 'node scripts/check-token-layers.mjs --strict', why: '设计令牌没有非语义用法' },
   { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '没有绕过 i18n 的硬编码文案' },
   { id: 'typecheck', cmd: 'yarn typecheck', why: '类型检查', full: true },
@@ -100,14 +107,22 @@ const lines = [
   '|---|---|---|---|',
   ...results.map((r) => `| \`${r.id}\` | ${r.status === 'PASS' ? '通过' : r.status === 'FAIL' ? '**失败**' : '跳过'} | ${r.duration}s | ${r.why}${r.note ? ` — ${String(r.note).replace(/\|/g, '/')}` : ''} |`),
   '',
-  skip.length ? `> 跳过 ${skip.length} 项**不计入通过**；要全量证据请加 \`--full\`。` : '> 本次无跳过项。',
+  skip.length
+    ? FULL
+      ? `> 跳过 ${skip.length} 项**不计入通过**（已带 \`--full\`，跳过原因是环境/对象缺失，不是没加参数）。`
+      : `> 跳过 ${skip.length} 项**不计入通过**；要全量证据请加 \`--full\`。`
+    : '> 本次无跳过项。',
   fail.length ? '> 有失败项，先修再谈交付。' : '',
 ]
 fs.writeFileSync(file, lines.join('\n') + '\n')
 
 console.log(`\n[crm-verify] PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length}`)
+if (REQUIRE_NO_SKIP && skip.length > 0) {
+  console.log(`[crm-verify] --require-no-skip: ${skip.length} 项被跳过，视为失败`)
+  for (const row of skip) console.log(`  SKIP ${row.id}: ${row.note || ''}`)
+}
 console.log(`[crm-verify] wrote ${path.relative(process.cwd(), file)}`)
-process.exit(fail.length === 0 ? 0 : 1)
+process.exit(fail.length === 0 && !(REQUIRE_NO_SKIP && skip.length > 0) ? 0 : 1)
 
 function head() {
   const run = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' })

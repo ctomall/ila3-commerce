@@ -7,7 +7,7 @@
 --   dictionaries.description   0 条
 --   dictionaries.key           0 条
 --   dictionary_entries         291 行；label / value **0 条**带 CR
---   每行恰好 1 个 CR，且都在**末尾**（18 个中文字符 + 1 个 CR）
+--   每行恰好 1 个 CR，且都在**末尾**（清洗后名称 2–7 个字符：货币/单位 2，其余 4–7）
 --   清洗后同一 (organization_id, tenant_id) 内**无同名冲突**
 --   唯一约束是 (organization_id, tenant_id, key)，不在 name 上；外键
 --   `dictionary_entries.dictionary_id` 是 ON UPDATE CASCADE 且本脚本不动 id
@@ -33,68 +33,107 @@ select key, replace(name, chr(13), '<CR>') as name_with_marker,
 
 -- 期望：19 行，且每行 name_with_marker 都以 <CR> 结尾
 
--- ── 1) 事务内：捕获目标行 → 清理 → 逐项核对 ───────────────────────────────
+-- ── 1) 事务内：捕获 → 清理 → 断言（不满足就 RAISE，不是"打印看看"） ─────────
+--
+-- 关键区别：裸 SELECT 打印一个数字，psql 不会因此失败。上一版就是六条裸 SELECT，
+-- 所以 UPDATE 命中 0 行时它照样打印期望值、照样 exit 0。这里用 `\set ON_ERROR_STOP on`
+-- 加 DO 块 RAISE，任何一条断言不成立都会中止事务并让 psql 非零退出。
+\set ON_ERROR_STOP on
+
 begin;
 
--- 捕获和更新必须在同一个事务里：`on commit drop` 的临时表在自动提交模式下建完就没了。
--- 捕获的意义是让这个 UPDATE 有精确逆操作——把 CR 加回这些 id 即可。
-create temp table dict_cr_targets on commit drop as
+-- 捕获与更新在同一个事务里。`on commit preserve rows` 是有意的：文档里承诺的
+-- 精确回滚要在**提交之后**仍然可用，`on commit drop` 会让那张表在提交瞬间消失，
+-- 于是回滚语句引用一个不存在的表（上一版的自相矛盾）。
+create temp table dict_cr_targets on commit preserve rows as
 select id, name as name_before
   from dictionaries
  where position(chr(13) in name) > 0;
 
+create temp table dict_totals on commit preserve rows as
+select count(*) as n from dictionaries;
+
 -- 期望：19
 select count(*) as captured_for_rollback from dict_cr_targets;
 
--- 只剥**末尾**的 CR：若某行 CR 在中间，这条不会碰它，随后的断言会把它暴露出来，
+-- 只剥**末尾**的 CR：若某行 CR 在中间，这条不会碰它，断言会把它暴露出来，
 -- 而不是被 replace() 悄悄一起删掉。
 update dictionaries
    set name = regexp_replace(name, chr(13) || '+$', '')
  where position(chr(13) in name) > 0;
 
--- 期望：0（末尾 CR 已清；若 >0 说明存在中间 CR，必须停下人工判断）
-select count(*) as remaining_trailing_cr
-  from dictionaries
- where regexp_replace(name, chr(13) || '+$', '') <> name;
+do $$
+declare
+  remaining_any bigint;
+  remaining_trailing bigint;
+  total_after bigint;
+  total_before bigint;
+  changed bigint;
+  captures bigint;
+  dup_groups bigint;
+begin
+  select count(*) into captures from dict_cr_targets;
+  if captures = 0 then
+    raise exception '捕获到 0 行：UPDATE 前就没有 CR，或审计读到的是空库';
+  end if;
 
--- 期望：0（若 >0 说明 CR 出现在非末尾位置）
-select count(*) as remaining_any_cr
-  from dictionaries
- where position(chr(13) in name) > 0;
+  select count(*) into remaining_any
+    from dictionaries where position(chr(13) in name) > 0;
+  if remaining_any <> 0 then
+    raise exception '仍有 % 行带 CR（CR 可能在非末尾位置，需人工判断）', remaining_any;
+  end if;
 
--- 期望：19 —— 证明只改了 name，没有删行
-select count(*) as total_rows_after from dictionaries;
+  select count(*) into remaining_trailing
+    from dictionaries where regexp_replace(name, chr(13) || '+$', '') <> name;
+  if remaining_trailing <> 0 then
+    raise exception '仍有 % 行末尾带 CR', remaining_trailing;
+  end if;
 
--- 期望：19 —— 证明改动行数正确
-select count(*) as changed_rows
-  from dictionaries d
-  join dict_cr_targets t on t.id = d.id
- where d.name = regexp_replace(t.name_before, chr(13) || '+$', '');
+  select n into total_before from dict_totals;
+  select count(*) into total_after from dictionaries;
+  if total_after <> total_before then
+    raise exception '行数变了：% -> %（本脚本不允许删行）', total_before, total_after;
+  end if;
 
--- 期望：0 —— 同一 scope 内没有因为清洗而撞名
-select count(*) as duplicate_name_groups
-  from (select organization_id, tenant_id, name
-          from dictionaries
-         group by organization_id, tenant_id, name
-        having count(*) > 1) dup;
+  select count(*) into changed
+    from dictionaries d
+    join dict_cr_targets t on t.id = d.id
+   where d.name = regexp_replace(t.name_before, chr(13) || '+$', '');
+  if changed <> captures then
+    raise exception '改动行数 % 与捕获行数 % 不一致', changed, captures;
+  end if;
+
+  select count(*) into dup_groups from (
+    select organization_id, tenant_id, name
+      from dictionaries
+     group by organization_id, tenant_id, name
+    having count(*) > 1) dup;
+  if dup_groups <> 0 then
+    raise exception '清洗后同一 scope 内出现 % 组同名', dup_groups;
+  end if;
+
+  raise notice '全部断言通过：捕获 %，残留 0，行数 % 不变，改动 %，撞名 0', captures, total_after, changed;
+end $$;
 
 commit;
 
--- ── 2) 精确回滚（仅在需要撤销时执行） ─────────────────────────────────────
--- 在同一个会话里，`dict_cr_targets` 仍可读（on commit drop 只在本事务提交后消失；
--- 需要跨会话回滚时，先把 id 清单导出留档，再按同一 UPDATE 逆向执行）：
+-- 跨会话回滚需要先把 id 留档；需要时执行（用 psql 的 \copy，不是 SQL）：
+--   \copy (select id, name_before from dict_cr_targets) to '/tmp/dict-cr-targets.tsv'
+
+-- ── 2) 精确回滚（同一会话内可用；演练时把 commit 改成 rollback） ────────────
 --
--- begin;
--- update dictionaries d
---    set name = name || chr(13)
---   from dict_cr_targets t
---  where t.id = d.id
---    and position(chr(13) in d.name) = 0;
--- -- 期望：19
--- select count(*) from dictionaries where position(chr(13) in name) > 0;
--- commit;
+-- `dict_cr_targets` 是 `on commit preserve rows`，所以提交之后它还在，直到会话结束。
+-- 真回滚 = 把 CR 加回这 19 个 id：
 --
--- 更稳妥的回滚仍然是备份：执行前先 pg_dump（见 03b-migration-draft.md §5）。
+--   \set ON_ERROR_STOP on
+--   begin;
+--   update dictionaries d
+--      set name = d.name || chr(13)
+--     from dict_cr_targets t
+--    where t.id = d.id
+--      and position(chr(13) in d.name) = 0;
+--   select count(*) as restored_with_cr from dictionaries where position(chr(13) in name) > 0;  -- 期望 19
+--   rollback;   -- 演练用 rollback；真要撤销就把这句改成 commit
 
 -- ── 3) 执行后回归 ─────────────────────────────────────────────────────────
 --   node scripts/crm-dict-cr-audit.mjs --assert-clean   # 期望 PASS

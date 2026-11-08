@@ -31,18 +31,35 @@ function psql(sql) {
   // psql treats a literal backslash inside -c as a meta-command, so a multi-line query
   // arrives as "invalid command \\n". Collapse the whitespace before it leaves Node.
   const flat = sql.replace(/\s+/g, ' ').trim()
+  let out
   try {
-    return execFileSync(
+    out = execFileSync(
       'bash',
       [
         '-lc',
-        `cd /home/pro/apps/mercato && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -F $'\\t' -c ${JSON.stringify(flat)}`,
+        `cd /home/pro/apps/mercato && export $(grep -E "^DATABASE_URL" .env | xargs) && psql -v ON_ERROR_STOP=1 "$DATABASE_URL" -At -F $'\\t' -c ${JSON.stringify(flat)} 2>/tmp/crm-dict-audit.err`,
       ],
       { encoding: 'utf8' },
     ).trim()
   } catch (error) {
-    throw new Error(`psql failed: ${String(error).slice(0, 200)}`)
+    throw new Error(`psql failed: ${String(error).slice(0, 300)}`)
   }
+  // A warning on stderr is not fatal; a psql error that still exited 0 would be, so the
+  // stderr file is checked for "ERROR"/"FATAL" instead of being ignored.
+  try {
+    const err = fs.readFileSync('/tmp/crm-dict-audit.err', 'utf8')
+    if (/\b(ERROR|FATAL)\b/.test(err)) throw new Error(`psql reported an error: ${err.trim().slice(0, 300)}`)
+  } catch (error) {
+    if (error instanceof Error && error.message.startsWith('psql reported')) throw error
+  }
+  return out
+}
+
+/** A count that is not a plain integer is a failure, not a zero. */
+function int(text, what) {
+  const value = String(text).trim()
+  if (!/^\d+$/.test(value)) throw new Error(`${what}: expected an integer, got ${JSON.stringify(value)}`)
+  return Number(value)
 }
 
 function rows(sql) {
@@ -53,14 +70,15 @@ function rows(sql) {
 
 const CR_LIKE = (col) => `${col} like '%' || chr(13) || '%'`
 
+const targetDb = psql('select current_database()')
 const counts = {
-  dictionaries: Number(psql('select count(*) from dictionaries')),
-  nameCr: Number(psql(`select count(*) from dictionaries where ${CR_LIKE('name')}`)),
-  descriptionCr: Number(psql(`select count(*) from dictionaries where ${CR_LIKE("coalesce(description,'')")}`)),
-  keyCr: Number(psql(`select count(*) from dictionaries where ${CR_LIKE('key')}`)),
-  entries: Number(psql('select count(*) from dictionary_entries')),
-  entryLabelCr: Number(psql(`select count(*) from dictionary_entries where ${CR_LIKE('label')}`)),
-  entryValueCr: Number(psql(`select count(*) from dictionary_entries where ${CR_LIKE("coalesce(value,'')")}`)),
+  dictionaries: int(psql('select count(*) from dictionaries'), 'dictionaries'),
+  nameCr: int(psql(`select count(*) from dictionaries where ${CR_LIKE('name')}`), 'dictionaries.name'),
+  descriptionCr: int(psql(`select count(*) from dictionaries where ${CR_LIKE("coalesce(description,'')")}`), 'dictionaries.description'),
+  keyCr: int(psql(`select count(*) from dictionaries where ${CR_LIKE('key')}`), 'dictionaries.key'),
+  entries: int(psql('select count(*) from dictionary_entries'), 'dictionary_entries'),
+  entryLabelCr: int(psql(`select count(*) from dictionary_entries where ${CR_LIKE('label')}`), 'entries.label'),
+  entryValueCr: int(psql(`select count(*) from dictionary_entries where ${CR_LIKE("coalesce(value,'')")}`), 'entries.value'),
 }
 
 function mark(value) {
@@ -83,6 +101,13 @@ const collisions = rows(`
    group by organization_id, tenant_id, replace(name, chr(13), '')
   having count(*) > 1`)
 
+// An empty database answers every count with 0 and would let --assert-clean pass on
+// nothing. State the target and require the table to be non-empty where it must be.
+console.log(`目标库：${targetDb}`)
+if (counts.dictionaries === 0) {
+  console.log('\nRESULT: FAIL — dictionaries 是空的：连错库或数据缺失，任何"已无 CR"的结论都不成立。')
+  process.exit(1)
+}
 console.log('字典名称控制字符审计（只读）')
 console.log('─'.repeat(72))
 console.log(`dictionaries 总行数            ${counts.dictionaries}`)
@@ -103,6 +128,10 @@ if (affected.length > 0) {
     console.log(`| ${key} | ${mark(name)} | ${mark(cleaned)} | ${removed} | ${entryCount} |`)
   }
   console.log('')
+  if (affected.length !== counts.nameCr) {
+    console.log(`\nRESULT: FAIL — 列表 ${affected.length} 行与计数 ${counts.nameCr} 不一致，审计本身不可信。`)
+    process.exit(1)
+  }
   console.log(`合计 ${affected.length} 行、${affected.reduce((sum, r) => sum + Number(r[4]), 0)} 条关联条目（条目的 label/value 本身不含 CR）。`)
 } else {
   console.log('没有任何 dictionary 的 name 带 CR。')

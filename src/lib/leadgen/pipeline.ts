@@ -20,6 +20,7 @@
  */
 import {
   canEmail,
+  normalizeEmail,
   verifyCandidate,
   type CandidateInput,
   type Verification,
@@ -62,6 +63,10 @@ export type PipelineInput = {
   /** True only when MX was actually looked up; a guess must not reach the verifier. */
   mxChecked?: boolean
   suppressed?: boolean
+  /** Hard bounce already recorded for this address. */
+  bounced?: boolean
+  /** Complaint already recorded for this address: a permanent suppression. */
+  complained?: boolean
   /** One bucket per level; the effective limit is the smallest headroom across them. */
   buckets: Bucket[]
   draft?: Draft | null
@@ -123,7 +128,12 @@ export function decideCandidateToSend(input: PipelineInput): PipelineResult {
   }
 
   // 3. Reachability is separate from "the company is real": store-only is a valid end.
-  const reach = canEmail({ email: input.candidate.email, suppressed: input.suppressed })
+  const reach = canEmail({
+    email: input.candidate.email,
+    suppressed: input.suppressed,
+    bounced: input.bounced,
+    complained: input.complained,
+  })
   if (!reach.reachable) {
     return stopAt(
       { name: 'reachability', outcome: 'stop', detail: `可入库但不可触达：${reach.reason}` },
@@ -132,7 +142,12 @@ export function decideCandidateToSend(input: PipelineInput): PipelineResult {
   }
   stages.push({ name: 'reachability', outcome: 'continue', detail: reach.reason })
 
-  // 4. Quota is reserved before any draft work, so a blocked candidate costs nothing.
+  // 4. Budget CHECK, not a reservation. `reserve()` is pure: it returns a verdict and
+  // does not touch the buckets, mint a lease or write anything. Saying "reserved" here
+  // was a lie the docs then repeated — and if a caller ever wires a real ledger behind
+  // this, every path below that stops (no draft, no approval, stale approval) would
+  // leak one unit with nothing to refund. Persisting the unit belongs to the ledger
+  // layer, which needs the quota tables that are still waiting for approval.
   const reservation = reserve(input.buckets, 1)
   if (!reservation.ok) {
     return stopAt(
@@ -140,13 +155,36 @@ export function decideCandidateToSend(input: PipelineInput): PipelineResult {
       { kind: 'quota_blocked', why: reservation.reason, available: reservation.available },
     )
   }
-  stages.push({ name: 'quota', outcome: 'continue', detail: `已预留 1 单位，各层剩余最小 ${reservation.remainingAfter}` })
+  stages.push({
+    name: 'quota',
+    outcome: 'continue',
+    detail: `预算检查通过：各层剩余最小 ${reservation.remainingAfter}（未占用额度）`,
+  })
 
   // 5. A draft is a human artefact; the pipeline waits rather than generating one.
   const draft = input.draft ?? null
   if (!draft) {
     return stopAt({ name: 'draft', outcome: 'handoff', detail: '等待草稿（正文由人写，不由流程猜）' }, { kind: 'awaiting_draft' })
   }
+  // The verifier proved something about `candidate.email`; the gate below sends to
+  // `draft.recipientEmail`. Without this comparison those are two unrelated strings,
+  // and an approval granted for the verified address would cover a different one.
+  const verifiedEmail = normalizeEmail(input.candidate.email)
+  const draftRecipient = normalizeEmail(draft.recipientEmail)
+  if (verifiedEmail && draftRecipient && verifiedEmail !== draftRecipient) {
+    return stopAt(
+      {
+        name: 'draft',
+        outcome: 'stop',
+        detail: `草稿收件人 ${draftRecipient} 与已验证邮箱 ${verifiedEmail} 不一致`,
+      },
+      {
+        kind: 'blocked',
+        reasons: [`草稿收件人与已验证邮箱不一致：${draftRecipient} ≠ ${verifiedEmail}`],
+      },
+    )
+  }
+
   if (draft.state === 'editing' || draft.state === 'ready') {
     return stopAt(
       { name: 'draft', outcome: 'handoff', detail: `草稿状态 ${draft.state}，需要审批后才可发送` },

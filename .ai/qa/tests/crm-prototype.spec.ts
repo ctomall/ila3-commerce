@@ -14,8 +14,10 @@ import path from 'node:path'
  * What it proves, and nothing more:
  * - every prototype route renders the "非生产数据" banner, so demo data cannot be
  *   mistaken for real data by whoever is looking at the screen;
- * - that banner appears ONLY on prototype routes, so it cannot silently become
- *   site-wide decoration;
+ * - that banner is absent from the real shell and from the pages an anonymous visitor
+ *   can reach (`/`, `/login`), so it cannot silently become site-wide decoration;
+ *   `/backend/settings` and other internal pages are not asserted — do not read this
+ *   as "we proved it is on prototype routes only";
  * - the six pages agree with each other about which one is active;
  * - the prototype is reachable by a logged-in user but NOT present in the sidebar,
  *   which is what keeps the navigated-entry baseline stable;
@@ -61,6 +63,9 @@ test.beforeAll(async ({ playwright, baseURL }) => {
 
 test.beforeEach(async ({ context }) => {
   expect(loginStatus, '登录必须成功，否则后面的断言没有意义').toBe(200)
+  // A 200 login with no cookie would leave every "count is 0" assertion below green
+  // while the browser is anonymous, so the session itself is asserted.
+  expect(sessionCookies.length, '登录必须返回 cookie，否则后面测的是匿名视图').toBeGreaterThan(0)
   await context.addCookies(sessionCookies)
 })
 
@@ -89,6 +94,12 @@ test.describe('CRM 原型六页', () => {
     const response = await page.goto('/backend')
     expect(response?.status()).toBe(200)
 
+    // Without this, an unauthenticated visit lands on /login?redirect=%2Fbackend with
+    // status 200, where every "count is 0" assertion below passes while nothing about
+    // the real shell was ever observed. An independent review proved that hole.
+    expect(page.url(), '/backend 必须真的停在后台，而不是被重定向到登录页').not.toContain('/login')
+    expect(page.url()).toContain('/backend')
+
     // This is the discriminating assertion: the marker exists, so a leak into the real
     // shell would be caught here rather than being admired as "consistent design".
     await expect(page.getByText(/非生产数据/)).toHaveCount(0)
@@ -106,6 +117,13 @@ test.describe('CRM 原型六页', () => {
     const landedOnLogin = page.url().includes('/login')
     expect(landedOnLogin || (response?.status() ?? 0) >= 300).toBe(true)
     await expect(page.getByText(/非生产数据/)).toHaveCount(0)
+
+    // The banner must not leak onto the pages an unauthenticated visitor can see either.
+    for (const open of ['/', '/login']) {
+      const res = await page.goto(`${baseURL}${open}`)
+      expect(res?.status() ?? 0, `${open} 不该 5xx`).toBeLessThan(500)
+      await expect(page.getByText(/非生产数据/)).toHaveCount(0)
+    }
     await anonymous.close()
   })
 })

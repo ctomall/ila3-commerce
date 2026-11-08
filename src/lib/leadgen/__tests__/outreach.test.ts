@@ -27,6 +27,10 @@ const approval: Approval = {
   draftHash: 'hash-a',
   decision: 'approved',
   expiresAt: '2026-11-08T12:00:00Z',
+  // An approval binds to the recipient and channel it was granted for; without these
+  // two fields the gate refuses (see the tests at the bottom of the canSend block).
+  recipientHash: recipientHash('marta@nordwind-energie.de'),
+  channel: 'email',
 }
 
 describe('sendKey', () => {
@@ -123,6 +127,39 @@ describe('canSend', () => {
     expect(rejected.allowed).toBe(false)
     const otherDraft = canSend({ draft, approval: { ...approval, draftId: 'draft-2' }, now: NOW })
     expect(otherDraft.allowed).toBe(false)
+  })
+
+  it('invalidates the approval when the recipient changes after it was granted', () => {
+    const decision = canSend({
+      draft: { ...draft, recipientEmail: 'attacker@evil.example' },
+      approval,
+      now: NOW,
+    })
+    expect(decision.allowed).toBe(false)
+    if (decision.allowed) throw new Error('unreachable')
+    expect(decision.reasons.join()).toContain('收件人已变化')
+  })
+
+  it('refuses an approval that never recorded a recipient', () => {
+    const decision = canSend({ draft, approval: { ...approval, recipientHash: null }, now: NOW })
+    expect(decision.allowed).toBe(false)
+    if (decision.allowed) throw new Error('unreachable')
+    expect(decision.reasons.join()).toContain('审批未绑定收件人')
+  })
+
+  it('invalidates the approval when the channel changes', () => {
+    const decision = canSend({ draft: { ...draft, channel: 'sms' }, approval, now: NOW })
+    expect(decision.allowed).toBe(false)
+    if (decision.allowed) throw new Error('unreachable')
+    expect(decision.reasons.join()).toContain('渠道已变化')
+  })
+
+  it('refuses an editing or merely ready draft even with a matching approval', () => {
+    for (const state of ['editing', 'ready'] as const) {
+      const decision = canSend({ draft: { ...draft, state }, approval, now: NOW })
+      // The state is in the tuple so a failure says which one let it through.
+      expect([state, decision.allowed]).toEqual([state, false])
+    }
   })
 
   it('refuses a suppressed recipient even with a valid approval', () => {

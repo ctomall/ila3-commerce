@@ -27,7 +27,14 @@ import { spawnSync } from 'node:child_process'
 const DEFAULT_REF = process.env.CRM_MIGRATION_DRILL_DEFAULT_REF || 'feat/leadgen-schema-final'
 const MATERIALISE_ROOT = path.join('.mercato', 'migration-drill')
 
-const ref = process.env.CRM_LEADGEN_MIGRATION_REF || null
+// An explicit but empty variable is almost always a CI template that failed to
+// interpolate. Treating it as "unset" silently drills a branch nobody asked about.
+const rawRef = process.env.CRM_LEADGEN_MIGRATION_REF
+if (rawRef !== undefined && rawRef.trim() === '') {
+  console.error('FAIL CRM_LEADGEN_MIGRATION_REF is set but empty: unset it, or name the ref to drill')
+  process.exit(1)
+}
+const ref = rawRef ? rawRef.trim() : null
 const worktreeDir = path.join('src', 'modules', 'leadgen', 'migrations')
 
 function git(args) {

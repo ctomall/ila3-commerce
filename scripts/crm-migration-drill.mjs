@@ -31,6 +31,7 @@ import { spawnSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
+import { createHash } from 'node:crypto'
 
 const SNAPSHOT_TYPE_MAP = {
   'timestamp with time zone': 'timestamptz(6)',
@@ -120,10 +121,16 @@ const snapshotPath = path.resolve(
 const dbName = String(args.db ?? 'om_drill_leadgen')
 const cliCheckout = args['cli-checkout'] ? path.resolve(args['cli-checkout']) : null
 const keep = args.keep === true
+const reuse = args.reuse === true
 const outDir = path.resolve(args.out ?? path.join(repo, 'docs/crm-platform/verify'))
 
 const phases = []
 const failedPhases = []
+// Lifecycle facts for the report. They live at module scope because the teardown in
+// `finally` runs after the return value is computed: a header that says "dropped"
+// without checking is how a failed drop gets reported as success.
+let created = false
+let dropped = false
 const log = (msg) => console.log(msg)
 function record(phase, ok, detail) {
   phases.push({ phase, ok, detail })
@@ -370,6 +377,69 @@ function verifyPartialIndexes(live) {
   return diffs
 }
 
+
+/**
+ * Every statement a slice may issue, checked before anything runs.
+ *
+ * `apply.scope` compares table counts, which cannot see `insert into users` or a stray
+ * sequence: an independent review proved that a slice writing two rows into `users`
+ * still printed "exactly the leadgen slices" and exited 0. A count is not a scope check,
+ * so the SQL itself is also constrained: only leadgen objects may be created, indexed,
+ * constrained or dropped, and no DML is allowed at all.
+ */
+function auditStatements(file, direction, statements) {
+  const violations = []
+  const allowed = /^(create (table|index|unique index|sequence) "leadgen_[a-z0-9_]+"|alter table "leadgen_[a-z0-9_]+"|drop (table|index|sequence) (if exists )?"leadgen_[a-z0-9_]+")/i
+  for (const raw of statements) {
+    const sql = String(raw).trim()
+    if (sql === '') continue
+    if (/^(insert|update|delete|truncate)\b/i.test(sql)) {
+      violations.push(`${path.basename(file)} ${direction}: DML is not allowed in a schema slice -> ${sql.slice(0, 90)}`)
+      continue
+    }
+    if (!allowed.test(sql)) {
+      violations.push(`${path.basename(file)} ${direction}: statement touches something other than leadgen -> ${sql.slice(0, 90)}`)
+    }
+  }
+  return violations
+}
+
+/**
+ * Digest of every non-leadgen object in the database, taken from the catalog.
+ *
+ * Text-level filtering of `pg_dump` output does not work here: a `CREATE TABLE` block is
+ * several lines and only the first mentions the table, so line filters leave orphan
+ * fragments behind, and pg_dump 18 also injects a random `\restrict <nonce>` per run.
+ * Both made this check disagree with itself. The catalog is the actual schema, so the
+ * digest is built from it: tables, columns, indexes, constraints, sequences and views,
+ * sorted, with anything whose name contains `leadgen_` removed.
+ *
+ * Verified: stable across two runs, unchanged when a leadgen table is added, and
+ * different as soon as one column is added to an unrelated table.
+ */
+function schemaDigest(db) {
+  const query = `
+    select 'table:'||schemaname||'.'||tablename from pg_tables where schemaname='public'
+    union all
+    select 'column:'||table_name||'.'||column_name||':'||data_type||':'||is_nullable||':'||coalesce(column_default,'')
+      from information_schema.columns where table_schema='public'
+    union all
+    select 'index:'||indexname||':'||indexdef from pg_indexes where schemaname='public'
+    union all
+    select 'constraint:'||conrelid::regclass::text||'.'||conname||':'||pg_get_constraintdef(oid)
+      from pg_constraint where connamespace='public'::regnamespace
+    union all
+    select 'sequence:'||sequence_name from information_schema.sequences where sequence_schema='public'
+    union all
+    select 'view:'||table_name||':'||view_definition from information_schema.views where table_schema='public'
+    order by 1`
+  const out = sudoPsql(db, query)
+  const kept = out
+    .split('\n')
+    .filter((line) => line !== '' && !/leadgen_[a-z0-9_]/i.test(line))
+  return createHash('sha256').update(kept.join('\n')).digest('hex')
+}
+
 async function main() {
   const prodUrl = readEnvUrl(path.join(repo, '.env'))
   if (!prodUrl) throw new DrillError(`no DATABASE_URL in ${path.join(repo, '.env')}`)
@@ -377,18 +447,32 @@ async function main() {
   if (!/^om_drill_[a-z0-9_]+$/.test(dbName)) {
     throw new DrillError(`refusing database name ${JSON.stringify(dbName)}: must match /^om_drill_[a-z0-9_]+$/`)
   }
+  // The name check above already excludes a production name that does not look like a
+  // drill database. This second check only matters if production itself is named
+  // om_drill_*, which the review pointed out is the only case it can ever catch.
   if (dbName === prodDb) throw new DrillError('refusing to run against the production database')
+  if (reuse) record('guards.reuse', true, `--reuse: ${dbName} may already exist and will be dropped and recreated`)
   const drillUrl = urlWithDatabase(prodUrl, dbName)
   record('guards', true, `drill db ${dbName} != prod db ${prodDb}; ${mask(drillUrl)}`)
 
   if (cliCheckout) {
-    const cliEnv = readEnvUrl(path.join(cliCheckout, '.env'))
+    const cliEnvPath = path.join(cliCheckout, '.env')
+    const cliEnv = readEnvUrl(cliEnvPath)
     if (cliEnv && dbNameOf(cliEnv) !== dbName) {
       throw new DrillError(
         `--cli-checkout .env points at ${dbNameOf(cliEnv)}, refusing: it must be the drill database (${dbName})`,
       )
     }
-    record('guards.cli', true, `cli checkout ${cliCheckout} resolves to the drill database`)
+    // No .env is not the same as "resolves to the drill database": nothing was resolved.
+    // The CLI still cannot reach production because DATABASE_URL is injected and
+    // dotenv does not override an existing variable — but say what was actually checked.
+    record(
+      'guards.cli',
+      true,
+      cliEnv
+        ? `cli checkout .env points at the drill database (${dbName})`
+        : 'cli checkout has no .env; DATABASE_URL is injected and dotenv does not override it',
+    )
   }
 
   const migrationFiles = loadMigrations()
@@ -397,15 +481,44 @@ async function main() {
   const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf8'))
   record('discovery.snapshot', true, `${snapshot.tables.length} tables declared by the ORM snapshot`)
 
+  // Every statement is inspected before a single one runs. A table count cannot see
+  // `insert into users`; this can.
+  const planned = []
+  for (const file of migrationFiles) {
+    planned.push({ file, up: await migrationSql(file, 'up'), down: await migrationSql(file, 'down') })
+  }
+  const violations = planned.flatMap((entry) => [
+    ...auditStatements(entry.file, 'up', entry.up),
+    ...auditStatements(entry.file, 'down', entry.down),
+  ])
+  if (violations.length > 0) fail('statements', `${violations.length} violation(s): ${violations.slice(0, 4).join(' | ')}`)
+  record(
+    'statements',
+    true,
+    `${planned.reduce((n, e) => n + e.up.length, 0)} up / ${planned.reduce((n, e) => n + e.down.length, 0)} down statement(s) touch only leadgen objects, no DML`,
+  )
+
   const prodBefore = prodFingerprint(prodUrl)
+  const prodSchemaBefore = schemaDigest(prodDb)
   const pg = await import('pg')
   const Client = pg.default?.Client ?? pg.Client
   let client = null
-  let created = false
 
   try {
     // ---- phase: clone the production schema into the drill database
-    spawnSync('sudo', ['-n', '-u', 'postgres', 'dropdb', '--if-exists', dbName], { encoding: 'utf8' })
+    // The first action used to be `dropdb --if-exists`, which deletes whatever carries
+    // that name without asking. Refuse instead: a drill database must be one this run
+    // creates, so `--reuse` is an explicit opt-in to destroying an existing one.
+    const exists =
+      sudoPsql('postgres', `select 1 from pg_database where datname = '${dbName}'`, { tuplesOnly: true }) === '1'
+    if (exists && !reuse) {
+      throw new DrillError(
+        `database ${dbName} already exists; pass --reuse to drop and recreate it, or choose another --db name`,
+      )
+    }
+    if (exists && reuse) {
+      spawnSync('sudo', ['-n', '-u', 'postgres', 'dropdb', '--if-exists', dbName], { encoding: 'utf8' })
+    }
     const create = spawnSync('sudo', ['-n', '-u', 'postgres', 'createdb', '-O', 'mercato', dbName], { encoding: 'utf8' })
     if (create.status !== 0) throw new DrillError(`createdb failed: ${(create.stderr || '').trim().slice(0, 300)}`)
     created = true
@@ -456,6 +569,7 @@ async function main() {
     )
     void grant
     record('clone.grants', true, 'app role can read and write the cloned schema')
+    const coreDigestBefore = schemaDigest(dbName)
 
     client = new Client({ connectionString: drillUrl })
     await client.connect()
@@ -489,8 +603,7 @@ async function main() {
           : `only these module bookkeeping tables changed: ${touched.join(', ')}`,
       )
     } else {
-      for (const file of migrationFiles) {
-        const sqls = await migrationSql(file, 'up')
+      for (const { file, up: sqls } of planned) {
         await client.query('begin')
         try {
           for (const sql of sqls) await client.query(sql)
@@ -518,6 +631,12 @@ async function main() {
       fail('apply.scope', `${totalAfterUp} tables total != ${baseline} cloned + ${tablesAfterUp} new`)
     }
     record('apply.scope', true, `total tables ${baseline} -> ${totalAfterUp}, exactly the leadgen slices`)
+    // Table counts cannot see a column added to someone else's table; the digest can.
+    const coreDigestAfter = schemaDigest(dbName)
+    if (coreDigestAfter !== coreDigestBefore) {
+      fail('apply.core-schema', `non-leadgen schema changed: ${coreDigestBefore.slice(0, 12)} -> ${coreDigestAfter.slice(0, 12)}`)
+    }
+    record('apply.core-schema', true, `non-leadgen schema digest unchanged (${coreDigestBefore.slice(0, 12)})`)
 
     if (cliCheckout) {
       const bookRows = Number((await client.query(`select count(*)::int as n from mikro_orm_migrations_leadgen`)).rows[0].n)
@@ -541,8 +660,7 @@ async function main() {
     record('drift', true, `applied schema matches the ORM snapshot exactly (${snapshot.tables.length} tables, no delta)`)
 
     // ---- phase: roll back every slice, newest first
-    for (const file of [...migrationFiles].reverse()) {
-      const sqls = await migrationSql(file, 'down')
+    for (const { file, down: sqls } of [...planned].reverse()) {
       if (sqls.length === 0) throw new DrillError(`${path.basename(file)} has an empty down()`)
       await client.query('begin')
       try {
@@ -563,10 +681,14 @@ async function main() {
     )
     if (leftoverSeq !== 0) fail('down.sequences', `${leftoverSeq} leadgen sequences survived the rollback`)
     record('down.result', true, 'zero leadgen tables and sequences left behind')
+    const coreDigestAfterDown = schemaDigest(dbName)
+    if (coreDigestAfterDown !== coreDigestBefore) {
+      fail('down.core-schema', 'rolling back left a non-leadgen object behind or removed one')
+    }
+    record('down.core-schema', true, 'rollback restored the non-leadgen schema exactly')
 
     // ---- phase: re-apply what we just rolled back
-    for (const file of migrationFiles) {
-      const sqls = await migrationSql(file, 'up')
+    for (const { up: sqls } of planned) {
       await client.query('begin')
       try {
         for (const sql of sqls) await client.query(sql)
@@ -584,15 +706,26 @@ async function main() {
     // ---- phase: production must be byte-for-byte untouched
     const prodAfter = prodFingerprint(prodUrl)
     if (prodAfter !== prodBefore) fail('prod.guard', `production fingerprint changed: ${prodBefore} -> ${prodAfter}`)
-    record('prod.guard', true, `production unchanged (tables|leadgen|bookkeeping|migration-tables = ${prodBefore})`)
+    const prodSchemaAfter = schemaDigest(prodDb)
+    if (prodSchemaAfter !== prodSchemaBefore) {
+      fail('prod.guard.schema', `production schema digest changed: ${prodSchemaBefore.slice(0, 12)} -> ${prodSchemaAfter.slice(0, 12)}`)
+    }
+    record(
+      'prod.guard',
+      true,
+      `production unchanged: counts ${prodBefore}, non-leadgen schema digest ${prodSchemaBefore.slice(0, 12)}`,
+    )
 
     return { prodBefore, prodAfter, baseline, tablesAfterUp }
   } finally {
     if (client) await client.end().catch(() => {})
     for (const f of ['schemaDump', 'dataDump']) void f
     if (created && !keep) {
-      spawnSync('sudo', ['-n', '-u', 'postgres', 'dropdb', '--if-exists', dbName], { encoding: 'utf8' })
-      log(`dropped drill database ${dbName}`)
+      const drop = spawnSync('sudo', ['-n', '-u', 'postgres', 'dropdb', '--if-exists', dbName], { encoding: 'utf8' })
+      dropped = drop.status === 0
+      if (dropped) log(`dropped drill database ${dbName}`)
+      else log(`FAILED to drop drill database ${dbName}: ${(drop.stderr || '').trim().slice(0, 200)}`)
+      if (!dropped) failedPhases.push(`teardown: drill database ${dbName} could not be dropped`)
     } else if (created && keep) {
       log(`kept drill database ${dbName} (--keep)`)
     }
@@ -613,7 +746,7 @@ function writeReport(summary, failed) {
   const lines = [
     `# Leadgen migration drill — ${new Date().toISOString()}`,
     '',
-    `Drill database: \`${dbName}\` (cloned from production schema, dropped afterwards: ${keep ? 'no, kept' : 'yes'}).`,
+    `Drill database: \`${dbName}\` — created: ${created ? 'yes' : 'no'}, dropped afterwards: ${keep ? 'not requested (--keep)' : dropped ? 'yes' : 'NO — it still exists'}.`,
     `Migrations: \`${path.relative(repo, migrationsDir) || migrationsDir}\`.`,
     '',
     '| phase | result | detail |',

@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals'
 
 import { decideAfterReply, decideCandidateToSend, describeDecision, type PipelineInput } from '../pipeline'
-import type { Approval, Draft } from '../outreach'
+import { recipientHash, type Approval, type Draft } from '../outreach'
 import type { CandidateInput } from '../verification'
 
 const complete: CandidateInput = {
@@ -37,6 +37,9 @@ const approval: Approval = {
   decision: 'approved',
   expiresAt: '2026-11-09T00:00:00Z',
   revokedAt: null,
+  // An approval binds to the recipient and channel it was granted for.
+  recipientHash: recipientHash('marta@nordwind-energie.de'),
+  channel: 'email',
 }
 
 const buckets = [
@@ -143,6 +146,33 @@ describe('decideCandidateToSend — stops at the right stage', () => {
     expect(result.decision.kind).toBe('awaiting_draft')
     // Quota is already reserved at this point: that cost is deliberate and documented.
     expect(stageNames(result)).toEqual(['verify', 'reachability', 'quota', 'draft'])
+  })
+
+  it('blocks a draft whose recipient is not the email that was verified', () => {
+    const result = decideCandidateToSend(
+      baseInput({
+        draft: { ...draft, recipientEmail: 'attacker@evil.example' },
+        approval: { ...approval, recipientHash: recipientHash('attacker@evil.example') },
+      }),
+    )
+    expect(result.decision.kind).toBe('blocked')
+    if (result.decision.kind !== 'blocked') throw new Error('unreachable')
+    expect(result.decision.reasons.join()).toContain('已验证邮箱不一致')
+  })
+
+  it('stores a hard-bounced address instead of treating it as reachable', () => {
+    const result = decideCandidateToSend(baseInput({ bounced: true }))
+    expect(result.decision.kind).toBe('stored_only')
+  })
+
+  it('does not mutate the quota buckets: this stage is a budget check, not a reservation', () => {
+    const buckets = [
+      { scope: 'tenant' as const, limit: 10, reserved: 0, consumed: 0 },
+      { scope: 'employee' as const, limit: 2, reserved: 0, consumed: 0 },
+    ]
+    const before = JSON.stringify(buckets)
+    decideCandidateToSend(baseInput({ buckets, draft: null }))
+    expect(JSON.stringify(buckets)).toBe(before)
   })
 
   it('does not send an unapproved draft', () => {

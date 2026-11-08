@@ -49,13 +49,15 @@
 |---|---|
 | 克隆 | 314 表 + 各模块记账行（`sales` 28 行等） |
 | 真实 CLI `yarn mercato db migrate` | `leadgen: 2 migrations applied`；其它 45 个模块的记账表**零变化** |
+| 语句审计 | 48 条 up / 16 条 down，**只操作 `leadgen_*` 对象，无任何 DML**（静态检查，在任何语句执行前） |
 | 建表 | 16 张，与快照声明的 16 张一致；总表数 314 → **330** |
+| 非 leadgen schema | 目录级摘要（表/列/索引/约束/序列/视图）前后**完全一致**；回滚后再核一次 |
 | 记账 | `mikro_orm_migrations_leadgen` **2 行** |
 | 漂移 | 列类型/可空/默认值、索引与唯一约束，与 `.snapshot-open-mercato.json` **零差异** |
 | 部分唯一索引 | 4 条全部存在，列与谓词逐条校验 |
 | `down()` | 11 + 5 条语句执行；回滚后 leadgen 表 **0** 张、序列 **0** 个 |
 | 再次 `up()` | 复现**完全相同**的 schema |
-| 生产护栏 | 迁移前后指纹一致：`314\|0\|0\|46`（表数/leadgen 表/leadgen 记账/记账表数） |
+| 生产护栏 | 迁移前后指纹一致：`314\|0\|0\|46`，且非 leadgen 目录摘要不变 |
 
 复跑：
 
@@ -82,8 +84,22 @@ npx tsx scripts/crm-migration-drill.mjs \
 | 从 `up()` 删掉一条部分唯一索引 | 白名单缺项 | `drift.partial-indexes … partial unique index missing` | 1 |
 | 在 `up()` 末尾加一条未声明索引 | 漂移 | `drift … unexpected index leadgen_suppressions_undeclared_idx` | 1 |
 | `--db open_mercato` | 拒绝生产库 | `refusing database name "open_mercato"` | 1 |
+| 切片里加 `insert into users ...` | 静态审计拒绝 | `statements ... DML is not allowed in a schema slice` | 1（且**未创建任何库**） |
+| 切片里加 `alter table users` / `create table audit_*` | 静态审计拒绝 | `statements ... touches something other than leadgen` | 1 |
+| 预先手工建好同名演练库 | 拒绝而非删除 | `database om_drill_preexisting already exists; pass --reuse ...` | 1（库仍在） |
+| `CRM_LEADGEN_MIGRATION_REF=`（空串） | 报错而非回落 | `CRM_LEADGEN_MIGRATION_REF is set but empty` | 1 |
 
 门自身的三条路径也验过：能解析 ref → PASS(0)；显式 ref 不存在 → FAIL(1)（**不**静默回落到默认分支）；无待评审迁移 → SKIP(78)，且 `crm-verify-all` 把它记为 SKIP 而不是 PASS。
+
+### 这条演练保证不了什么（必须说清楚）
+
+独立 QA 用"往 `users` 写两行"的切片证明过：旧版的 `apply.scope` 只比表数量，那种切片照样 PASS 并退出 0。现在加了**语句静态审计**与**非 leadgen 目录摘要**，这两种都会被挡在动作之前。
+
+但仍然有一条真实的边界：演练会 `import` 并执行待评审分支的迁移文件，模块顶层代码在导入阶段就会运行，而进程拥有本机用户权限。所以：
+
+- **能保证**：迁移 SQL 只碰 `leadgen_*`、不写数据；应用前后非 leadgen 的目录结构不变；生产库在演练前后指纹与摘要都不变。
+- **不能保证**：某段迁移代码在模块作用域里自己连生产库或写文件。演练的隔离是"另一个数据库"，不是沙箱。
+- 因此 `crm-migration-drill-gate.mjs` 只应从**已评审过源码**的分支物化迁移文件。这一点写在门脚本头部，别把它当护栏承诺。
 
 ### 备份路径同样实测过
 

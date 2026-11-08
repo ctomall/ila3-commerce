@@ -100,20 +100,26 @@
 | `verify` | `stop` | 判决 `fail`：拒绝，**不花配额、不要求草稿** |
 | `review` | `handoff` / `stop` | 判决 `needs_review`：等人工，除非显式 `reviewDecision: 'approve'` |
 | `reachability` | `stop` | 无邮箱或被抑制：**仅入库**（公司保留，不丢，也不补造地址） |
-| `quota` | `stop` | 各层取最小余量，不够就指出堵在哪层 |
+| `quota` | `stop` | 各层取最小余量做**预算检查**，不够就指出堵在哪层（不占用额度） |
 | `draft` | `handoff` | 没有草稿：等**人**写正文，流程不猜内容 |
-| `approval` | `stop` | 发送门的**全部**理由一次列全（过期/撤销/正文变了/已有发送记录） |
+| `approval` | `stop` | 发送门的**全部**理由一次列全（过期/撤销/正文变了/**收件人变了**/**渠道变了**/审批未绑定收件人/已有发送记录） |
 | `send` | `continue` | 只产出幂等键，**不发送** |
 
-### 三个刻意的决定
+### 四个刻意的决定
 
 1. **`needs_review` 只能被显式批准越过。** `reviewDecision` 缺省 = 还没人看 = handoff，绝不是隐式通过。
-2. **配额在草稿之前预留。** 代价写在测试里：到达 `awaiting_draft` 时已经占掉 1 单位。宁可让人看到这个成本，也不要为了省额度把顺序倒过来（先写草稿再发现没额度，才是真的浪费）。
-3. **被抑制的收件人在 `reachability` 就短路，根本走不到发送门。** 这条单独有测试钉住，避免有人把抑制检查挪到后面。
+2. **配额在草稿之前做检查，但这里不占额度。** `reserve()` 是纯函数：它返回判断和余量，不改桶、不发 lease、不落库，`applyReservation` 从未在这一层被调用。所以"到 `awaiting_draft` 就占掉 1 单位"是**假话**，已删除——有一条测试断言传给它的桶对象在调用后一字节未变。真正占额度属于账本层（需要还没获批的配额表），那一层才负责 lease、行锁与退款。
+3. **被抑制的收件人在 `reachability` 就短路，根本走不到发送门。** 这条单独有测试钉住，避免有人把抑制检查挪到后面；`bounced`/`complained` 同样在这一层拦。
+4. **草稿收件人必须等于被验证的邮箱。** 验证器证明的是 `candidate.email`，发送门放行的是 `draft.recipientEmail`；两者不等时直接 `blocked`。没有这条，`email_evidence` 规则保护的只是一个永远不会被用来发送的字符串。
 
-### 负向对照
+### 负向对照（两条，都实测过）
 
-把人工门改坏（`if (input.reviewDecision !== 'approve')` → 恒假），测试立刻红：`hands a needs-review candidate to a human and spends no quota` 失败、退出码 1；还原后 20/20 通过。这不是"跑绿了"，是"改坏了会红"。
+| 变异 | 期望 | 实测 |
+|---|---|---|
+| 人工门改成恒假（`reviewDecision !== 'approve'` → `false`） | 人审不再拦截 | `hands a needs-review candidate to a human and spends no quota` 失败、exit 1；还原后全绿 |
+| 删掉"审批绑定收件人"的比较 | 换收件人仍放行 | `invalidates the approval when the recipient changes after it was granted` 失败、exit 1；还原后全绿 |
+
+**独立 QA 的补充（第 29 轮）**：它用 14 个变异测过这套件，7 个存活——说明"改坏了会红"目前只对**这两个**变异成立，不是普遍保证。已按它的建议补了断言：approve 分支必须走到 `sendable`、配额用两个不同余量的桶、`ready` 状态、正文变更链路、收件人绑定。仍然没有做到的：配额预留的持久化语义（需要账本表），以及把变异测试做成常设门。
 
 ### 这一层仍然不做的事
 

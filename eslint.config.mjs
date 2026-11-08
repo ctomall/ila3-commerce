@@ -16,8 +16,10 @@ const ignores = [
   // HTML report and traces here; when a run failed, the minified report bundle was
   // linted as application code and took the lint gate down with a bogus React-hook
   // error. Keep generated artefacts out of the linter the same way .gitignore does.
-  '**/test-results/**',
-  '**/playwright-report/**',
+  // Anchored on purpose: a bare `**/test-results/**` would also skip a hand-written
+  // `src/**/test-results/` directory if one ever appeared.
+  '.ai/qa/test-results/**',
+  '.ai/qa/playwright-report/**',
 ]
 
 const ruleOverrides = {

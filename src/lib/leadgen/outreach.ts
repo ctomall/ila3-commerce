@@ -1,10 +1,14 @@
 /**
  * Outbound gate and send-state machine (M6), as pure functions.
  *
- * The rule the contract states: a message may only leave after an approval that is
- * bound to the exact draft hash, and any change to recipient, body or attachments
- * invalidates that approval. This module makes that check executable and testable
- * before any provider is wired in.
+ * The rule the contract states: a message may only leave after an approval bound to the
+ * exact draft, and any change to body, recipient or channel invalidates that approval.
+ * All three are checked: `draftHash`, `recipientHash`, `channel`. An approval that
+ * records no recipient hash is refused rather than trusted.
+ *
+ * Attachments are NOT part of this slice: `Draft` has no attachment field, so a claim
+ * about attachments would be a promise the data cannot keep. When drafts grow
+ * attachments, add an attachment hash here and to the same comparison.
  *
  * Nothing here sends anything; it decides whether sending is allowed and how a state
  * transition is recorded. Unknown provider state never becomes "retry".
@@ -27,6 +31,15 @@ export type Approval = {
   decision: 'approved' | 'rejected'
   expiresAt: string
   revokedAt?: string | null
+  /**
+   * Hash of the recipient this approval was granted for. An approval that carries no
+   * recipient hash predates binding and must be re-approved: without this, swapping
+   * `draft.recipientEmail` after approval sends to someone the approver never saw
+   * (the key changes, so nothing else would notice).
+   */
+  recipientHash?: string | null
+  /** Channel the approval covers. Switching email -> sms is a different send. */
+  channel?: string | null
 }
 
 export type SendGateInput = {
@@ -92,6 +105,11 @@ export function canSend(input: SendGateInput): SendDecision {
   if (draft.state === 'superseded') reasons.push('草稿已失效：正文改过，需要重新审批')
   if (draft.state === 'blocked') reasons.push('草稿被阻止（收件人或内容命中抑制规则）')
   if (draft.state === 'sent') reasons.push('该草稿已发送，不能重复发送')
+  // `editing`/`ready` used to fall through: a stale approval with the same id and hash
+  // was enough to send a draft nobody had marked ready. The pipeline guarded this, but
+  // the gate is exported and callers must not be able to bypass it.
+  if (draft.state === 'editing') reasons.push('草稿还在编辑中，不能发送')
+  if (draft.state === 'ready') reasons.push('草稿未经批准（只是「就绪」），不能发送')
 
   if (!recipientHash(draft.recipientEmail)) reasons.push('没有有效收件人')
   if (input.suppressed) reasons.push('收件人在抑制名单（退订/投诉/退信）')
@@ -103,6 +121,15 @@ export function canSend(input: SendGateInput): SendDecision {
     if (approval.draftId !== draft.id) reasons.push('审批绑定的不是这份草稿')
     if (approval.draftHash !== draft.bodyHash) reasons.push('正文已变化：审批失效，必须重批')
     if (approval.revokedAt) reasons.push('审批已被撤销')
+    const expectedRecipient = recipientHash(draft.recipientEmail)
+    if (!approval.recipientHash) {
+      reasons.push('审批未绑定收件人：需重新审批后再发送')
+    } else if (expectedRecipient && approval.recipientHash !== expectedRecipient) {
+      reasons.push('收件人已变化：审批失效，必须重批')
+    }
+    if (approval.channel && approval.channel !== draft.channel) {
+      reasons.push('渠道已变化：审批失效，必须重批')
+    }
     const expires = Date.parse(approval.expiresAt)
     const current = Date.parse(now)
     if (!Number.isFinite(expires) || !Number.isFinite(current)) reasons.push('时间无法解析，拒绝发送')
