@@ -58,6 +58,9 @@ const GATES = [
   // Proves the rule-layer tests can fail. An independent review found 7 of 14 mutations
   // survived; the assertions are fixed, and this keeps them honest instead of trusting
   // a hand-run experiment from a chat message.
+  // M8 asks for a restore drill. It was a hand-run experiment once; now every full run
+  // dumps production, restores the archive into a throwaway database and compares.
+  { id: 'restore-drill', cmd: 'node scripts/crm-restore-drill.mjs', why: '备份可恢复且恢复后表数/行数一致', full: true },
   { id: 'mutation', cmd: 'node scripts/crm-mutation-check.mjs', why: '规则层测试真的会红（变异击杀）', full: true },
   { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78 },
 ]
