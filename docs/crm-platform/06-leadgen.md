@@ -119,7 +119,23 @@
 | 人工门改成恒假（`reviewDecision !== 'approve'` → `false`） | 人审不再拦截 | `hands a needs-review candidate to a human and spends no quota` 失败、exit 1；还原后全绿 |
 | 删掉"审批绑定收件人"的比较 | 换收件人仍放行 | `invalidates the approval when the recipient changes after it was granted` 失败、exit 1；还原后全绿 |
 
-**独立 QA 的补充（第 29 轮）**：它用 14 个变异测过这套件，7 个存活——说明"改坏了会红"目前只对**这两个**变异成立，不是普遍保证。已按它的建议补了断言：approve 分支必须走到 `sendable`、配额用两个不同余量的桶、`ready` 状态、正文变更链路、收件人绑定。仍然没有做到的：配额预留的持久化语义（需要账本表），以及把变异测试做成常设门。
+**独立 QA 的补充（第 29 轮）**：它用 14 个变异测过这套件，7 个存活——说明"改坏了会红"当时只对**这两个**变异成立。已按它的建议补断言：approve 分支必须走到 `sendable`、配额用两个不同余量的桶、`ready` 状态、正文变更链路、收件人绑定。
+
+### 变异门（第 30 轮，`scripts/crm-mutation-check.mjs`）
+
+"测试会咬人"不再靠人跑一次然后在对话里声明。`crm-verify-all --full` 的第 17 道门对规则层施加 7 个变异，每个都必须让对应测试文件变红：
+
+| 变异 | 抹掉的行为 |
+|---|---|
+| `approval-recipient-binding` | 审批绑定收件人 |
+| `approval-body-binding` | 正文变化使审批失效 |
+| `unsendable-draft-state` | `editing`/`ready` 草稿不得发送 |
+| `pipeline-verified-email-binding` | 草稿收件人 = 已验证邮箱 |
+| `pipeline-human-review-gate` | `needs_review` 必须人工批准 |
+| `pipeline-reachability-short-circuit` | 不可达收件人不得进发送门 |
+| `verification-email-evidence` | 邮箱必须出现在证据里 |
+
+**变异存活即门失败**，锚点消失也失败（防止门在空转）。三个方向都实测过：7/7 被杀 → PASS；人为加一个只改文案、没有测试断言的变异 → `SURVIVED` + exit 1；把锚点改成不存在的字符串 → `INVALID` + exit 1。改源文件在 `finally` 里按 SHA-256 还原，并注册 `process.on('exit')` 兜底。仍然没有做到的：配额预留的持久化语义（需要账本表）。**变异测试已做成常设门**（见下）。
 
 ### 这一层仍然不做的事
 

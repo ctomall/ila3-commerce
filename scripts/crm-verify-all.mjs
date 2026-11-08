@@ -55,6 +55,10 @@ const GATES = [
   // feat/leadgen-schema-final and drills them against the current production schema
   // (apply -> drift vs snapshot -> rollback -> re-apply) in a throwaway database.
   // Exit code 78 means "no pending migration to prove" and is reported as SKIP.
+  // Proves the rule-layer tests can fail. An independent review found 7 of 14 mutations
+  // survived; the assertions are fixed, and this keeps them honest instead of trusting
+  // a hand-run experiment from a chat message.
+  { id: 'mutation', cmd: 'node scripts/crm-mutation-check.mjs', why: '规则层测试真的会红（变异击杀）', full: true },
   { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78 },
 ]
 
