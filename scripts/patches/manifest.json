@@ -100,20 +100,6 @@
       "reason": "DataTable's aria-sort, empty-state and error art come from the mirror's source build now; the dist patches are gone."
     },
     {
-      "id": "quote-transition-guard",
-      "script": "scripts/patches/apply-quote-transition-guard.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js",
-      "marker": "/* [patched:quote-transition-guard] */",
-      "reason": "convert_to_order accepted a draft quote (measured 200) and every failure answered with one generic sentence; conversion now requires sent/accepted and validation errors return 422 with field details."
-    },
-    {
-      "id": "dictionary-control-chars",
-      "script": "scripts/patches/apply-dictionary-control-chars.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js",
-      "marker": "/* [patched:dictionary-control-chars] */",
-      "reason": "all 291 dictionary entries arrived with a trailing CR from a CRLF import; labels are now normalised at the single write point (applySnapshot)."
-    },
-    {
       "id": "vendor-ui-format-locale",
       "script": "scripts/patches/apply-vendor-format-locale.mjs",
       "target": "node_modules/@open-mercato/ui/dist/utils/format-locale.js",
@@ -133,6 +119,34 @@
       "target": "node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js",
       "marker": "/* [patched:vendor-format-locale] */",
       "reason": "Localized money/date come from source-built files in vendor/open-mercato; copying keeps the fix reproducible across yarn install until the dependency migration lands."
+    },
+    {
+      "id": "vendor-core-sales-commands",
+      "script": "scripts/patches/apply-vendor-format-locale.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js",
+      "marker": "/* [patched:vendor-format-locale] */",
+      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
+    },
+    {
+      "id": "vendor-core-dictionary-factory",
+      "script": "scripts/patches/apply-vendor-format-locale.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js",
+      "marker": "/* [patched:vendor-format-locale] */",
+      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
+    },
+    {
+      "id": "vendor-core-quote-convert-route",
+      "script": "scripts/patches/apply-vendor-format-locale.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/convert/route.js",
+      "marker": "/* [patched:vendor-format-locale] */",
+      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
+    },
+    {
+      "id": "vendor-core-quote-send-route",
+      "script": "scripts/patches/apply-vendor-format-locale.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/sales/api/quotes/send/route.js",
+      "marker": "/* [patched:vendor-format-locale] */",
+      "reason": "Convert-status guard, dictionary control-character normalisation and 422 validation answers are fixed in the mirror source and installed from vendor/open-mercato."
     }
   ]
 }

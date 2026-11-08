@@ -27,6 +27,10 @@ const FILES = [
     'vendor/open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js',
     'node_modules/@open-mercato/core/dist/modules/sales/components/documents/SalesDocumentsTable.js',
   ],
+  ['vendor/open-mercato/core/dist/modules/sales/commands/documents.js', 'node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js'],
+  ['vendor/open-mercato/core/dist/modules/dictionaries/commands/factory.js', 'node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js'],
+  ['vendor/open-mercato/core/dist/modules/sales/api/quotes/convert/route.js', 'node_modules/@open-mercato/core/dist/modules/sales/api/quotes/convert/route.js'],
+  ['vendor/open-mercato/core/dist/modules/sales/api/quotes/send/route.js', 'node_modules/@open-mercato/core/dist/modules/sales/api/quotes/send/route.js'],
 ]
 
 for (const [from, to] of FILES) {
