@@ -98,3 +98,14 @@
 5. 「邮件草稿审批」是 Mercato 页还是 DSH 流程？仓库无 spec。
 6. 「开发任务」「候选审核」由谁承载（新模块 vs 复用）？
 7. 是否允许带超管凭证只读拉 `/api/auth/admin/nav` 冻结 152 条基线？
+
+
+---
+
+## 主 Agent 勘误（2026-11-08，用运行时 payload 复核）
+
+**「未编目区（英文标签漏出）」一条不成立**：`docs/crm-platform/appendix/nav-superadmin.json` 里 22 个分区名全部是中文（客户与销售 … 开发者），英文命中的 10 条条目是 `EUDR 概览`、`Webhook`、`AI 智能体`、`API 密钥` 这类合法缩写，不是漏翻。
+
+推测原因：原文读的是 `pageGroup` 的**代码默认值**，而不是 `/api/auth/admin/nav` 的服务端 payload。这正是本项目把「服务端 payload 快照」定为 M1 基线的原因——静态读源会把「默认值」当成「用户看到的东西」。
+
+其余结论（270 页 / 701 API / Top 10 重复 / 设置首页假注释 / v2 孤儿）经抽查成立；其中设置首页假注释由主 Agent 亲自复核（`src/modules.ts:188` 无 override）。
