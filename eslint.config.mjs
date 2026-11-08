@@ -12,6 +12,12 @@ const ignores = [
   'out/**',
   'build/**',
   'next-env.d.ts',
+  // Generated test output, not source. `yarn test:integration` writes a Playwright
+  // HTML report and traces here; when a run failed, the minified report bundle was
+  // linted as application code and took the lint gate down with a bogus React-hook
+  // error. Keep generated artefacts out of the linter the same way .gitignore does.
+  '**/test-results/**',
+  '**/playwright-report/**',
 ]
 
 const ruleOverrides = {

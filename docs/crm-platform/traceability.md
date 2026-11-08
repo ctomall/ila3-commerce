@@ -73,7 +73,7 @@
 
 | 结论 | 支撑 |
 |---|---|
-| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → 14/14，0 SKIP（`verify/verify-2026-11-08T22-37-36.md`） |
+| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → 15/15，0 SKIP（`verify/` 下最新一份） |
 | 既有报价修复未回归 | `crm-quote-regression` 4 pass + 1 已知 |
 | 授权基线未退化 | `crm-security-probe` 14 例 |
 | M4 尚不能通过 | 7 条对抗只有 3 条可跑，4 条缺 fixture |

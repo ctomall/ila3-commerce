@@ -40,6 +40,10 @@ const GATES = [
   { id: 'lint', cmd: 'yarn lint', why: 'ESLint（0 error 才算过）', full: true },
   { id: 'contrast', cmd: 'node scripts/check-contrast.mjs', why: '对比度 AA + 样本数下限', full: true },
   { id: 'ui-regression', cmd: 'node scripts/ui-regression.mjs', why: '界面回归 18 条', full: true },
+  // The prototype six pages, asserted in a browser instead of admired in a screenshot.
+  // Before this gate existed `.ai/qa` had zero specs and `yarn test:integration` exited 1
+  // with "No tests found" — a route nothing could fail.
+  { id: 'integration', cmd: 'yarn test:integration', why: 'M3 原型六页浏览器验收（真实断言）', full: true },
   // A review-branch gate: it materialises the pending leadgen migrations out of
   // feat/leadgen-schema-final and drills them against the current production schema
   // (apply -> drift vs snapshot -> rollback -> re-apply) in a throwaway database.

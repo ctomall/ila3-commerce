@@ -14,7 +14,7 @@
 | M0-5 | 风险清单 | 同上 §4 | R1–R8 共 8 条，含已修的 R1/R8 | done |
 | M0-6 | 既有报价/订单修复保护清单 | 同上 §3 | 五项修复 + 当前门禁数字 | done |
 | M0-7 | 四路只读子审计 A/B/C/D | `audit/{a,b,c,d}-*.md` | 四份原文归档，关键结论由主 Agent 抽查复核 | done |
-| M0-8 | 验证层加固（只加强不放宽） | ① `check-contrast` 断 URL+样本数（12/12，负向 exit 1）；② `jest` 去 `passWithNoTests`（负向 exit 1）；③ `security-probe` 开始会 exit 1（负向 exit 1）；④ `crm-verify-all` 纳入 `tokens`/`i18n-hardcoded`/`lint` | 剩余：`.ai/qa` 0 spec（`test:integration` 仍不证明任何事）、`build:inner` 未加 typecheck/lint（构建时长风险，留待发布流程单独决策）、`hooks:check` 恒 0（自述 informational） | done（可做的已做） |
+| M0-8 | 验证层加固（只加强不放宽） | ① `check-contrast` 断 URL+样本数（12/12，负向 exit 1）；② `jest` 去 `passWithNoTests`（负向 exit 1）；③ `security-probe` 开始会 exit 1（负向 exit 1）；④ `crm-verify-all` 纳入 `tokens`/`i18n-hardcoded`/`lint` | 剩余：`build:inner` 未加 typecheck/lint（构建时长风险，留待发布流程单独决策）、`hooks:check` 恒 0（自述 informational）。~~`.ai/qa` 0 spec~~ → 已补 3 条浏览器断言并成为第 15 道门 | done（可做的已做） |
 
 ## M1 业务规则与入口治理
 
@@ -52,6 +52,7 @@
 | M3-1 | 六页连贯原型 | `src/modules/crm_prototype/**` + `04-prototype.md` | 六页截图 + 页签可达；`proto-*.png` | done |
 | M3-2 | 视觉与密度 | 同上 | 对比度 12/12、ui-regression 18/18、typecheck 0 | done |
 | M3-3 | AI 随业务动作出现 | 同上 §2/§4 | 首页「让助手继续调研」、详情页「AI 建议 · 需人工确认」 | done |
+| M3-4 | 原型六页的浏览器验收（替代截图验收） | `04-prototype.md` §8 | `.ai/qa/tests/crm-prototype.spec.ts` 3 条：六页 200 + 横幅文案、子导航 aria-current 唯一且正确、真实后台页无横幅且侧栏无入口、匿名拿不到；一次登录；负向对照（改坏路由→exit 1）验过；已是第 15 道门 | done |
 
 ## M4 双员工安全 PoC（硬门禁）
 

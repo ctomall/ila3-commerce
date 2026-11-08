@@ -46,16 +46,16 @@
 
 ```bash
 node scripts/crm-verify-all.mjs          # 快速集（补丁/单元/回归/探针/对抗/导航/令牌/i18n）
-node scripts/crm-verify-all.mjs --full   # 追加 typecheck / lint / 对比度 / ui-regression / migration-drill
+node scripts/crm-verify-all.mjs --full   # 追加 typecheck / lint / 对比度 / ui-regression / integration / migration-drill
 node scripts/crm-verify-all.mjs --only migration-drill --full   # 只跑某一门
 ```
 输出 `verify/verify-<时间>.md`：PASS / FAIL / SKIP 三项分开计数，**SKIP 不算通过**。
 
-## 门禁现状（2026-11-08 实测，--full 14/14，0 SKIP）
+## 门禁现状（2026-11-08 实测，--full 15/15，0 SKIP）
 
 截图证据位于仓库外 `/home/pro/dsh/shots/*.png`（`proto-*.png`、`crm-*.png`），文档中的文件名对应这里的绝对路径。
 
-`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **14 suites / 136 tests** · `migration-drill` **18 阶段全过 + 4 条负向对照** · `yarn build` BUILD_OK。
+`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **14 suites / 136 tests** · `migration-drill` **18 阶段全过 + 4 条负向对照** · `test:integration` **3/3**（此前是 `No tests found` exit 1） · `yarn build` BUILD_OK。
 
 ## 纪律
 
