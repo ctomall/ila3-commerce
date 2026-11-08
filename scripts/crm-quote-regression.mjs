@@ -1,0 +1,164 @@
+#!/usr/bin/env node
+/**
+ * Regression check for the quote → order fixes this project already shipped.
+ *
+ * The goal says the existing quote/order work must survive every later change, so this
+ * re-proves the three behaviours instead of trusting that they still hold:
+ *   1. converting a draft quote is refused with 409 and a reason that says what to do;
+ *   2. a wrong payload key is a 422 with the offending field path, not a 409;
+ *   3. the status dictionary labels carry no carriage returns.
+ *
+ * Read-only by intent: the convert attempts must all fail, and the script asserts the
+ * quote is still a draft and the order count did not move.
+ *
+ * Usage: node scripts/crm-quote-regression.mjs [--quote <uuid>] [--out <dir>]
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import { execFileSync } from 'node:child_process'
+
+const BASE = process.env.QUOTE_BASE_URL ?? 'http://127.0.0.1:3000'
+const CREDENTIALS = '/home/pro/.ila3-admin-credentials'
+const outFlag = process.argv.indexOf('--out')
+const OUT = path.resolve(outFlag === -1 ? 'docs/crm-platform/regression' : process.argv[outFlag + 1])
+
+function arg(name) {
+  const at = process.argv.indexOf(name)
+  return at === -1 ? null : process.argv[at + 1]
+}
+
+function psql(sql) {
+  try {
+    return execFileSync(
+      'bash',
+      ['-lc', `cd /home/pro/apps/mercato && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -c ${JSON.stringify(sql)}`],
+      { encoding: 'utf8' },
+    ).trim()
+  } catch (error) {
+    return `__ERROR__ ${String(error).slice(0, 120)}`
+  }
+}
+
+function credentials() {
+  const map = new Map()
+  for (const line of fs.readFileSync(CREDENTIALS, 'utf8').split('\n')) {
+    if (!line.trim() || line.startsWith('#')) continue
+    const [role, email, password] = line.trim().split(/\s+/)
+    if (role && email && password) map.set(role, { email, password })
+  }
+  return map
+}
+
+async function login(cred) {
+  const res = await fetch(`${BASE}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(cred).toString(),
+    redirect: 'manual',
+  })
+  if (!res.ok) throw new Error(`login failed: ${res.status}`)
+  const cookie = (res.headers.getSetCookie?.() ?? []).map((c) => c.split(';')[0]).join('; ')
+  return cookie
+}
+
+async function post(cookie, apiPath, body) {
+  const res = await fetch(`${BASE}${apiPath}`, {
+    method: 'POST',
+    headers: { cookie, 'content-type': 'application/json' },
+    body: JSON.stringify(body),
+  })
+  const text = await res.text()
+  let json = null
+  try {
+    json = JSON.parse(text)
+  } catch {
+    /* keep text */
+  }
+  return { status: res.status, json, text }
+}
+
+const quoteId = arg('--quote') ?? psql("select id from sales_quotes where status = 'draft' order by created_at desc limit 1")
+if (!quoteId || quoteId.startsWith('__ERROR__')) {
+  console.error(`[quote-regression] cannot resolve a draft quote: ${quoteId}`)
+  process.exit(1)
+}
+
+const cred = credentials().get('superadmin')
+const cookie = await login(cred)
+
+const ordersBefore = Number(psql('select count(*) from sales_orders'))
+const quoteBefore = psql(`select status || '|' || currency_code from sales_quotes where id = '${quoteId}'`)
+
+const results = []
+
+const wrongKey = await post(cookie, `/api/sales/quotes/convert`, { id: quoteId })
+results.push({
+  name: 'wrong payload key → 422 with field path',
+  expected: '422 + details[].path contains quoteId',
+  pass:
+    wrongKey.status === 422 &&
+    Array.isArray(wrongKey.json?.details) &&
+    JSON.stringify(wrongKey.json.details).includes('quoteId'),
+  detail: `${wrongKey.status} ${JSON.stringify(wrongKey.json).slice(0, 160)}`,
+})
+
+const draftConvert = await post(cookie, `/api/sales/quotes/convert`, { quoteId })
+results.push({
+  name: 'draft convert → 409 with reason',
+  expected: '409 + Chinese reason mentioning 状态/draft',
+  pass: draftConvert.status === 409 && /状态|draft/.test(draftConvert.text),
+  detail: `${draftConvert.status} ${draftConvert.text.slice(0, 160)}`,
+})
+
+const ordersAfter = Number(psql('select count(*) from sales_orders'))
+const quoteAfter = psql(`select status || '|' || currency_code from sales_quotes where id = '${quoteId}'`)
+results.push({
+  name: 'no side effects on the quote or orders',
+  expected: `orders ${ordersBefore}→${ordersBefore}, quote unchanged`,
+  pass: ordersAfter === ordersBefore && quoteAfter === quoteBefore,
+  detail: `orders ${ordersBefore}→${ordersAfter}, quote ${quoteBefore} → ${quoteAfter}`,
+})
+
+const crCount = Number(
+  psql("select count(*) from dictionary_entries where label like '%' || chr(13) || '%' or coalesce(value,'') like '%' || chr(13) || '%'"),
+)
+results.push({
+  name: 'dictionary labels carry no carriage returns',
+  expected: '0',
+  pass: crCount === 0,
+  detail: `entries with CR: ${crCount}`,
+})
+
+const dictNameCr = Number(psql("select count(*) from dictionaries where name like '%' || chr(13) || '%'"))
+results.push({
+  name: 'dictionary names: legacy CR (known, not counted)',
+  expected: 'forward-only fix does not rewrite old rows; needs a data cleanup decision',
+  pass: true,
+  known: true,
+  detail: `dictionary names with CR: ${dictNameCr}`,
+})
+
+const failing = results.filter((r) => !r.pass && !r.known)
+const known = results.filter((r) => r.known)
+fs.mkdirSync(OUT, { recursive: true })
+const stamp = new Date().toISOString().slice(0, 10)
+const file = path.join(OUT, `quote-${stamp}.md`)
+const lines = [
+  '# 报价/订单修复回归',
+  '',
+  `生成时间：${new Date().toISOString()} · 目标：${BASE} · 报价：\`${quoteId}\``,
+  '',
+  `用例 ${results.length} · 通过 ${results.length - failing.length - known.length} · 失败 ${failing.length} · 已知遗留 ${known.length}`,
+  '',
+  '| 用例 | 期望 | 结果 | 实测 |',
+  '|---|---|---|---|',
+  ...results.map((r) => `| ${r.name} | ${r.expected} | ${r.known ? '已知遗留' : r.pass ? '通过' : '**失败**'} | ${r.detail.replace(/\|/g, '/')} |`),
+  '',
+  failing.length === 0 ? '结论：既有报价/订单修复仍然有效。' : '结论：有回归，必须先修再继续。',
+]
+fs.writeFileSync(file, lines.join('\n') + '\n')
+
+console.log(`[quote-regression] ${results.length - failing.length}/${results.length} passed`)
+for (const r of results) console.log(`  ${r.pass ? 'PASS' : 'FAIL'} ${r.name} — ${r.detail}`)
+console.log(`[quote-regression] wrote ${path.relative(process.cwd(), file)}`)
+process.exit(failing.length === 0 ? 0 : 1)
