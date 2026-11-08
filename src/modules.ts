@@ -188,6 +188,8 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'settings_home', from: '@app' },
   // M3 prototype pages (navHidden, non-production demo).
   { id: 'crm_prototype', from: '@app' },
+  // Lead generation schema (migration pending review).
+  { id: 'leadgen', from: '@app' },
   // Table-style directory of registered AI agents.
   { id: 'agent_directory', from: '@app' },
   // agent_orchestrator moved to the enterprise catalog — enabled below behind
