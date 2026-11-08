@@ -103,6 +103,7 @@
 | M8-1 | 试用；两种口径分别压测 | `09-trial.md` §2 §6 | 方案已写；执行待 M4 通过 | blocked |
 | M8-2 | 备份恢复、版本固定、灰度回滚 | 同上 | 恢复演练记录 | todo |
 | M8-3 | 四层完成口径 | `09-trial.md` §1 | 四层判据 + 拒收条件 | done（口径） |
+| M8-4 | 字典名称 CR 清理的审计与可回滚演练 | 用户批准 | `scripts/crm-dict-cr-audit.mjs`（只读）：19/19 行带尾随 CR、291 条条目 0 CR、同 scope 无撞名；`dict-cr-cleanup.sql` 在事务内干跑六项断言全中、回滚逆操作实测恢复 19 条；生产库仍 19/19 未变 | 待批准执行 |
 
 ## M1 收敛执行记录（C3–C4 已完成）
 
@@ -118,7 +119,7 @@
 
 | 项 | 脚本 | 当前结果 |
 |---|---|---|
-| 报价/订单修复 | `scripts/crm-quote-regression.mjs` | 4 通过 + 1 已知遗留（字典名称 19 条 CR） |
+| 报价/订单修复 | `scripts/crm-quote-regression.mjs` | 4 通过 + 1 已知遗留（字典名称 19 条 CR；已审计+事务内干跑，见 `scripts/crm-dict-cr-audit.mjs`，执行待批准） |
 | 授权行为基线 | `scripts/crm-security-probe.mjs` | 14 例符合预期、零写入 |
 | M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 3 通过 / 4 阻塞 / 1 用例无效 |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
