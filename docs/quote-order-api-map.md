@@ -137,3 +137,15 @@ placedAt: null
 ### 数据影响（如实记录）
 
 探针全程在 demo 租户执行，转换动作**销毁了两张演示报价单**（`SQ-DEMO-1001`、`SQ-DEMO-1003`），订单表已清理回 4 张 `SO-DEMO-*`。报价单需要重新播种才能恢复；这是 convert 破坏性的直接后果，不是清理疏漏。
+
+## 10. 字典尾随 `\r`：已清除并加了写入口防护
+
+| 项 | 数值 |
+| --- | --- |
+| 受影响条目 | **291 / 291**（全部带 CR，同批导入于 2026-11-03 15:10:13） |
+| 成因 | 导入按 `\n` 切 CRLF 文本，CR 留在 label 上；`normalizeDictionaryValue` 只 trim 了查找键，label 直接落库 |
+| 现存数据 | 已 `regexp_replace` 清洗，含控制字符条目 **0** |
+| 写入口 | 受管补丁 `dictionary-control-chars` 在 `applySnapshot` 统一剥离控制字符 |
+| 复验 | POST label `测试CR\r` → 回读 `测试CR`（无 CR）；测试条目已删除 |
+
+API 回读：`已取消 / 已批准 / 已拒绝 / 履约中 / 已发送 / 草稿`，`withControl: 0`。

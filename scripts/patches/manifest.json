@@ -119,6 +119,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/sales/commands/documents.js",
       "marker": "/* [patched:quote-transition-guard] */",
       "reason": "convert_to_order accepted a draft quote (measured 200) and every failure answered with one generic sentence; conversion now requires sent/accepted and validation errors return 422 with field details."
+    },
+    {
+      "id": "dictionary-control-chars",
+      "script": "scripts/patches/apply-dictionary-control-chars.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/dictionaries/commands/factory.js",
+      "marker": "/* [patched:dictionary-control-chars] */",
+      "reason": "all 291 dictionary entries arrived with a trailing CR from a CRLF import; labels are now normalised at the single write point (applySnapshot)."
     }
   ]
 }
