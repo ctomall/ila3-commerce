@@ -14,7 +14,7 @@
 | M0-5 | 风险清单 | 同上 §4 | R1–R8 共 8 条，含已修的 R1/R8 | done |
 | M0-6 | 既有报价/订单修复保护清单 | 同上 §3 | 五项修复 + 当前门禁数字 | done |
 | M0-7 | 四路只读子审计 A/B/C/D | `audit/{a,b,c,d}-*.md` | 四份原文归档，关键结论由主 Agent 抽查复核 | done |
-| M0-8 | 验证层加固（只加强不放宽） | `check-contrast` 断 URL+样本数（12/12，负向 `CONTRAST_PAGE=/login` → exit 1）；`jest` 去 `passWithNoTests`（40 测试，负向 `--testPathPattern=__none__` → exit 1） | 剩余：`.ai/qa` 0 spec、`build:inner` 无 typecheck/lint、`hooks:check` 恒 0 | doing |
+| M0-8 | 验证层加固（只加强不放宽） | ① `check-contrast` 断 URL+样本数（12/12，负向 exit 1）；② `jest` 去 `passWithNoTests`（负向 exit 1）；③ `security-probe` 开始会 exit 1（负向 exit 1）；④ `crm-verify-all` 纳入 `tokens`/`i18n-hardcoded`/`lint` | 剩余：`.ai/qa` 0 spec（`test:integration` 仍不证明任何事）、`build:inner` 未加 typecheck/lint（构建时长风险，留待发布流程单独决策）、`hooks:check` 恒 0（自述 informational） | done（可做的已做） |
 
 ## M1 业务规则与入口治理
 

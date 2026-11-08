@@ -45,8 +45,8 @@
 ## 一条命令看全部证据
 
 ```bash
-node scripts/crm-verify-all.mjs          # 快速集（补丁/单元/回归/探针/对抗/导航）
-node scripts/crm-verify-all.mjs --full   # 追加 typecheck / 对比度 / ui-regression
+node scripts/crm-verify-all.mjs          # 快速集（补丁/单元/回归/探针/对抗/导航/令牌/i18n）
+node scripts/crm-verify-all.mjs --full   # 追加 typecheck / lint / 对比度 / ui-regression
 ```
 输出 `verify/verify-<时间>.md`：PASS / FAIL / SKIP 三项分开计数，**SKIP 不算通过**。
 

@@ -31,7 +31,10 @@ const GATES = [
   { id: 'security-probe', cmd: 'node scripts/crm-security-probe.mjs', why: '授权行为与基线一致、零写入' },
   { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例（阻塞项单独报）' },
   { id: 'nav-baseline', cmd: 'node scripts/crm-nav-baseline.mjs', why: '入口数不变、重名 0' },
+  { id: 'tokens', cmd: 'node scripts/check-token-layers.mjs --strict', why: '设计令牌没有非语义用法' },
+  { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '没有绕过 i18n 的硬编码文案' },
   { id: 'typecheck', cmd: 'yarn typecheck', why: '类型检查', full: true },
+  { id: 'lint', cmd: 'yarn lint', why: 'ESLint（0 error 才算过）', full: true },
   { id: 'contrast', cmd: 'node scripts/check-contrast.mjs', why: '对比度 AA + 样本数下限', full: true },
   { id: 'ui-regression', cmd: 'node scripts/ui-regression.mjs', why: '界面回归 18 条', full: true },
 ]
