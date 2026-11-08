@@ -12,7 +12,7 @@
 | M3 原型 | **完成（原型，非生产）** | `04-prototype.md` + `src/modules/crm_prototype/**` | 六页截图 `proto-*.png`；navHidden 使入口数不变 152/150/74 |
 | M4 安全 PoC | **计划完成，待路线确认** | `05-security-poc.md` | 7 维隔离 + 7 条对抗用例 + 撤权时序 |
 | M5 获客 | **规则层完成** | `06-leadgen.md` + `src/lib/leadgen/verification.ts` | 19 例单测 + 负向对照（5 红）；存储/抽取待 M2-9 与 M4 |
-| M6 触达 | 未开始 | （规划：`07-outreach.md`） | — |
+| M6 触达 | **逻辑层完成** | `07-outreach.md` + `src/lib/leadgen/outreach.ts` | 22 例：审批哈希绑定/状态机/unknown 不重发/退订抑制 |
 | M7 Bot | 未开始 | （规划：`08-bot.md`） | — |
 | M8 试用 | 未开始 | （规划：`09-trial.md`） | — |
 
@@ -32,7 +32,8 @@
 | `02-capability-matrix.md` | 五因子授权、身份模型三选一（选 A）、复用/包装/新建矩阵、G1–G8 处置、契约计数 |
 | `03-dsh-contract.md` | 绑定、Run/事件/产物、桥接现实约束、逐次鉴权、隔离、撤离与离职 |
 | `03a-data-model.md` | 五组表（候选/配额/审批发送/抑制/绑定）+ 幂等键组合 + API 面 + UMES + 迁移约定 |
-| `06-leadgen.md` | 确定性验证规则：判决、去重键优先级、有效≠可触达、测试映射与负向对照 |
+| `06-leadgen.md` | 确定性验证规则 + 配额算术：判决、去重键、有效≠可触达、测试映射与负向对照 |
+| `07-outreach.md` | 审批门（哈希绑定）、发送状态机、回复分类与抑制 |
 | `appendix/nav-*.json` | 三角色导航快照（已剔除内联 SVG，~90% 体积） |
 
 ## 门禁现状（2026-11-08 实测）

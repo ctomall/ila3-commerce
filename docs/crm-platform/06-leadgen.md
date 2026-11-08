@@ -71,3 +71,18 @@
 
 - `03a-data-model.md` 的 `leadgen_verifications`（`verifier_version` + `ruleset_hash` + `input_digest`）对应本文件的纯函数：同一 `input_digest` 与 `verifier_version` 不重算。
 - 本文件即 `ruleset` 的第一版；任何规则改动都要改版本号，并在 `docs` 记录变更原因。
+
+## 9. 配额算术（已实现，2026-11-08）
+
+`src/lib/leadgen/quota.ts` · 测试 22 例（与触达门同一个测试文件组）
+
+| 规则 | 函数 | 测试要点 |
+|---|---|---|
+| 余量 = 上限 − 已消费 − 已预留 | `headroom` | 不为负 |
+| 四层取最小值 | `effectiveHeadroom` | tenant 70 / employee 3 → 3 |
+| 预留必须每层都够，并指出堵在哪层 | `reserve` | 拒绝时带 `employee 剩余 3` |
+| 消费/退还必须 lease 匹配且未过期 | `consume` / `refund` | lease 不符、状态不符、过期都拒 |
+| 过期预留由清扫回收 | `expiredReservations` | 只挑 `reserved` 且已过期 |
+| 落库换算不丢不重 | `applyReservation` | 预留→消费/退还，且重复应用不会变负 |
+
+这一层是纯函数，真正的一致性仍由数据库保证（`CHECK limit >= consumed + reserved` + 行锁 + `lease_token` 唯一）——纯函数只负责“算得对”，不负责“并发安全”。
