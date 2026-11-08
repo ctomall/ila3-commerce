@@ -7,6 +7,30 @@ import { isOutboundDeliveryIntended } from "../lib/outbound-delivery-intent.js";
 import { createLogger } from "@open-mercato/shared/lib/logger";
 import { COMMUNICATION_CHANNELS_QUEUES, getCommunicationChannelsQueue } from "../lib/queue.js";
 const logger = createLogger("communication_channels");
+async function auditRefusal(ctx, em, input) {
+  try {
+    const service = resolveFromCtx(ctx, "actionLogService");
+    await service.log(
+      {
+        tenantId: input.tenantId,
+        organizationId: input.organizationId ?? null,
+        actorUserId: input.actorUserId ?? null,
+        commandId: input.commandId,
+        actionLabel: input.actionLabel,
+        resourceKind: "communication_channel",
+        resourceId: input.channelId ?? void 0,
+        executionState: "failed",
+        context: { messageId: input.messageId, ...input.context }
+      },
+      em
+    );
+  } catch (error) {
+    logger.warn("outbound_bridge.audit_failed", {
+      messageId: input.messageId,
+      reason: String(error).slice(0, 200)
+    });
+  }
+}
 const metadata = {
   event: "messages.message.sent",
   persistent: true,
@@ -95,6 +119,16 @@ async function handler(payload, ctx) {
       channelId: mapping.channelId,
       tenantId: payload.tenantId
     });
+    await auditRefusal(ctx, em, {
+      commandId: "communication_channels.outbound_blocked",
+      actionLabel: "Outbound blocked: channel mapping without a live channel",
+      tenantId: payload.tenantId,
+      organizationId: payload.organizationId ?? null,
+      actorUserId: message.senderUserId ?? null,
+      channelId: mapping.channelId,
+      messageId: message.id,
+      context: { reason: "channel_missing" }
+    });
     return;
   }
   if (channel.userId != null && channel.userId !== message.senderUserId) {
@@ -104,6 +138,16 @@ async function handler(payload, ctx) {
       senderUserId: message.senderUserId ?? null,
       channelOwnerUserId: channel.userId,
       tenantId: payload.tenantId
+    });
+    await auditRefusal(ctx, em, {
+      commandId: "communication_channels.outbound_blocked",
+      actionLabel: "Outbound blocked: sender does not own the channel",
+      tenantId: payload.tenantId,
+      organizationId: payload.organizationId ?? null,
+      actorUserId: message.senderUserId ?? null,
+      channelId: channel.id,
+      messageId: message.id,
+      context: { reason: "ownership_mismatch", channelOwnerUserId: channel.userId }
     });
     return;
   }

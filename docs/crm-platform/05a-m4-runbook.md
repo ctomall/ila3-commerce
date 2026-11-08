@@ -56,6 +56,17 @@
 | 浏览器态 | 导出两 profile 的 cookie | 互不含对方会话 | 两段导出对比 |
 | 插件权限 | 每用户/实例全局/高权限各一个样本 | 高权限只对授权员工可见 | 可见性矩阵 |
 
+## 3.5 伪造操作者该看哪张表
+
+`action_logs` 有两列：`actor_user_id` 与 `on_behalf_of_user_id`（agent 代表某人执行时填后者）。
+用例 3.1 的通过判据是：**两列分别记录真实 actor 与 on-behalf-of，注入的 `actorUserId` 不改变任何一列**。
+查询示例：
+
+```sql
+select actor_user_id, on_behalf_of_user_id, command_id, context_json
+from action_logs where command_id like 'communication_channels.%' order by created_at desc limit 5;
+```
+
 ## 4. 对抗用例（脚本化，别手敲）
 
 ```bash

@@ -36,7 +36,7 @@
 | 2 | 订阅/任务 | A 用 B 的 runId 调 `/api/ai/chat` 或事件接口 | **404**（不是 403） | 状态码矩阵 CSV |
 | 3 | 文件 | 列出 A 的 DSH 产物目录，grep B 的标识 | 0 命中 | 目录清单 + grep 输出 |
 | 4 | 记忆 | A 的助手检索 B 的历史 | 空结果 + 一条审计行 | 检索响应 + 审计行 |
-| 5 | 凭据 | A 的助手尝试用 B 的渠道发送 | 发送身份门拦截（`outbound-bridge.ts`）。**2026-11-08 修复**：拒绝时不再静默 return，改为写结构化日志 `outbound_bridge.ownership_rejected`（含 messageId/channelId/senderUserId/channelOwnerUserId，不含正文与地址）。仍**不写 `action_logs` 审计行**（需接 audit service，列为待办）；`userId=null` 的租户级渠道仍放行任意 sender（D8 策略待定） | 发送尝试的日志行 + 渠道消息计数不变 |
+| 5 | 凭据 | A 的助手尝试用 B 的渠道发送 | 发送身份门拦截（`outbound-bridge.ts`）。**2026-11-08 修复**：拒绝时不再静默 return，改为写结构化日志 `outbound_bridge.ownership_rejected`（含 messageId/channelId/senderUserId/channelOwnerUserId，不含正文与地址）。**2026-11-08 第二轮**：同时写 `action_logs` 审计行（`commandId=communication_channels.outbound_blocked`，含 `resourceKind/Id`、`actorUserId`、`context.reason`），走 `actionLogService`；审计失败降级为日志，不阻断事件。`userId=null` 的租户级渠道仍放行任意 sender（D8 策略待定） | 发送尝试的日志行 + 渠道消息计数不变 |
 | 6 | 浏览器状态 | 两个 profile 的 cookies/localStorage | 互不包含对方域内会话 | 两段导出对比 |
 | 7 | 插件权限 | 每用户能力 / 实例全局 / 高权限三类各一个样本 | 高权限插件只对授权员工可见；共享实例不可信则隔离 | 三类清单 + 可见性矩阵 |
 
