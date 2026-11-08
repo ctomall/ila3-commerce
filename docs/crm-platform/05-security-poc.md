@@ -80,6 +80,8 @@ T+30s  审计行可查到：撤销时间、受影响 Run、被拒调用
 
 覆盖不到的：跨组织（只有 1 个组织）、DSH 跨员工、AI 工具越权（G2）、撤权在飞任务 —— 这四项正是 M4 的执行主体，见 `poc/README.md`。
 
+**对抗用例执行器已就绪**：`node scripts/crm-m4-harness.mjs`。7 条用例中 3 条现在可跑（猜 ID、直连写+注入、伪造身份），4 条因缺 fixture 标为 blocked；缺 fixture 的**不计入验收**。
+
 顺带确认两条对 M5 有影响的事实：
 1. **CRM 写入需要组织上下文**：`POST /api/customers/companies` 无组织时 400「需要组织上下文」，不是校验失败。候选入库必须带解析后的 org，否则写不进去。
 2. **审计日志按 ACL 自限**：员工塞 `canViewTenant=true` 也返回本人范围（`canViewTenant:false`）。

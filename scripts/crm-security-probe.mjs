@@ -156,7 +156,15 @@ const cases = [
   { role: 'employee', method: 'DELETE', path: `/api/customers/companies/${ZERO_UUID}`, expect: [403, 404] },
 
   // AI surface: unknown agent must be rejected before any model call
-  { role: 'employee', method: 'POST', path: '/api/ai/chat', body: { agentId: 'probe.does_not_exist', messages: [] }, expect: [400, 403, 404, 422] },
+  {
+    role: 'employee',
+    method: 'POST',
+    path: '/api/ai_assistant/ai/chat?agent=probe.does_not_exist',
+    body: { messages: [{ role: 'user', content: 'hi' }] },
+    expect: 404,
+    check: (json) => json.code === 'agent_unknown',
+  },
+  { role: 'anon', cookie: null, method: 'POST', path: '/api/ai_assistant/ai/chat?agent=probe.does_not_exist', body: { messages: [] }, expect: 401 },
 
   // contract surface: anonymous 401; any signed-in employee may read it (recorded, by design)
   { role: 'anon', cookie: null, method: 'GET', path: '/api/docs/openapi', expect: 401 },

@@ -1,8 +1,8 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-08T18:53:28.571Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-08T19:23:08.370Z · 目标：http://127.0.0.1:3000
 
-用例 13 · 符合预期 13 · 需要复核 0
+用例 14 · 符合预期 14 · 需要复核 0
 
 写入检查：`customer_entities` 前 9 / 后 9 → **未写入**
 
@@ -18,7 +18,8 @@
 | employee | POST | `/api/customers/companies` | 400|403|422 | 400 | 符合 |
 | employee | POST | `/api/customers/companies` | 400|403|422 | 403 | 符合 |
 | employee | DELETE | `/api/customers/companies/00000000-0000-0000-0000-000000000000` | 403|404 | 404 | 符合 |
-| employee | POST | `/api/ai/chat` | 400|403|404|422 | 404 | 符合 |
+| employee | POST | `/api/ai_assistant/ai/chat?agent=probe.does_not_exist` | 404 | 404 | 符合 |
+| anon | POST | `/api/ai_assistant/ai/chat?agent=probe.does_not_exist` | 401 | 401 | 符合 |
 | anon | GET | `/api/docs/openapi` | 401 | 401 | 符合 |
 | employee | GET | `/api/docs/openapi` | 200 | 200 | 符合 |
 
@@ -64,9 +65,13 @@
   ```
   {"error":"未找到"}
   ```
-- `POST /api/ai/chat` (employee) → 404
+- `POST /api/ai_assistant/ai/chat?agent=probe.does_not_exist` (employee) → 404
   ```
-  {"error":"未找到"}
+  {"error":"Agent \"probe.does_not_exist\" is not registered.","code":"agent_unknown"}
+  ```
+- `POST /api/ai_assistant/ai/chat?agent=probe.does_not_exist` (anon) → 401
+  ```
+  {"error":"未登录"}
   ```
 - `GET /api/docs/openapi` (anon) → 401
   ```

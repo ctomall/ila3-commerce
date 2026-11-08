@@ -114,7 +114,8 @@
 | 项 | 脚本 | 当前结果 |
 |---|---|---|
 | 报价/订单修复 | `scripts/crm-quote-regression.mjs` | 4 通过 + 1 已知遗留（字典名称 19 条 CR） |
-| 授权行为基线 | `scripts/crm-security-probe.mjs` | 13 例符合预期、零写入 |
+| 授权行为基线 | `scripts/crm-security-probe.mjs` | 14 例符合预期、零写入 |
+| M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 3 通过 / 4 阻塞 / 1 用例无效 |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
 | 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |

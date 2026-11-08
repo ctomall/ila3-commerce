@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-08T18:53:28.571Z",
+  "generatedAt": "2026-11-08T19:23:08.370Z",
   "base": "http://127.0.0.1:3000",
   "rowCount": {
     "before": 9,
@@ -10,8 +10,8 @@
     "employeeVisibleCompanies": 3
   },
   "summary": {
-    "cases": 13,
-    "asExpected": 13,
+    "cases": 14,
+    "asExpected": 14,
     "needsReview": 0
   },
   "results": [
@@ -110,11 +110,21 @@
     {
       "role": "employee",
       "method": "POST",
-      "path": "/api/ai/chat",
-      "expected": "400|403|404|422",
+      "path": "/api/ai_assistant/ai/chat?agent=probe.does_not_exist",
+      "expected": "404",
       "status": 404,
       "verdict": "as-expected",
-      "body": "{\"error\":\"未找到\"}"
+      "semanticCheck": "passed",
+      "body": "{\"error\":\"Agent \\\"probe.does_not_exist\\\" is not registered.\",\"code\":\"agent_unknown\"}"
+    },
+    {
+      "role": "anon",
+      "method": "POST",
+      "path": "/api/ai_assistant/ai/chat?agent=probe.does_not_exist",
+      "expected": "401",
+      "status": 401,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"未登录\"}"
     },
     {
       "role": "anon",

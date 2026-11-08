@@ -22,7 +22,7 @@ node scripts/crm-security-probe.mjs --out /tmp/probe-2
 | 员工写公司 → 全部拒绝（400 无组织上下文 / 403 租户不可达 / 422 校验） | 三种拒绝都不写库：`customer_entities` 前后均为 9 行 |
 | 员工删随机 id → 404 | 不泄露「存在性」 |
 | 审计日志：员工即使在请求里塞 `canViewTenant=true&scope=tenant`，服务端仍按本人范围返回 | `canViewTenant:false`，`items:[]`，参数无法翻转 |
-| 未知 agent → 404，不进入模型调用 | 探针不产生任何 token 消耗 |
+| 未登录调 AI → 401；未知 agent → **404 `agent_unknown`**，不进入模型调用 | `/api/ai_assistant/ai/chat?agent=…`（路径曾是错的，见下） |
 
 ## 本探针**没有**覆盖（别拿它当 M4 通过）
 
@@ -39,7 +39,14 @@ node scripts/crm-security-probe.mjs --out /tmp/probe-2
 2. 状态码相同 ≠ 语义正确：审计日志与组织注入两例都加了 `check` 断言（`canViewTenant`、结果集大小），**只看 200 会误判**。
 3. 每次改动权限、路由 metadata、AI 工具集后重跑并 `git diff` 基线文件。
 
-## 已修正的两个错误期望（记录，避免下次再犯）
+## M4 对抗用例执行器
+
+`node scripts/crm-m4-harness.mjs` —— 按 `05-security-poc.md` 的 7 条用例执行，**缺 fixture 的显式标 blocked，不冒充通过**。
+
+当前：3 通过 · 0 失败 · 4 阻塞 · 1 用例无效（leadgen 路由不存在，404 不算拒绝证据）。
+
+## 已修正的三个错误期望（记录，避免下次再犯）
 
 - `GET /api/audit-logs` 是**不存在**的路径（真实是 `/api/audit_logs/audit-logs/actions`）；一开始把 404 当成「权限拒绝」。
 - `POST /api/customers/companies` 空 body 的 400「需要组织上下文」不是校验失败，而是 scope 解析在写库前就 fail closed；把 403/400 都算作合格拒绝才对。
+- `POST /api/ai/chat` **不存在**（真实是 `/api/ai_assistant/ai/chat`，agent 走 query 参数）。之前的“未知 agent → 404”其实是“路由不存在 → 404”，是一条**假通过**。现在改成真路径 + 断言 `code=agent_unknown`，并给执行器加了「路由不在 openapi 里就判用例无效」的护栏。
