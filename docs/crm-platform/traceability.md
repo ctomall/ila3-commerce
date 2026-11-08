@@ -36,7 +36,7 @@
 | M2 | 默认拒绝 / 后端注入身份 / 模型不能选操作者 | `02` §2 四条规则；Bot 守卫 `canAct` | partial（G1/G2 未闭） |
 | M2 | 绑定 / 策略版本 / Run·事件·产物 / 候选·证据·验证 / 配额 / 审批发送 / Bot 设计 | `03`、`03a`、`03b` | done（设计） |
 | M2 | DSH 适配：幂等/取消/游标/预算/继承/撤权 | `03` §3.2–§3.4 §6 | done（契约层） |
-| M2 | 迁移先审阅后申请 | `03b-migration-draft.md`；分支 `feat/leadgen-schema`，未应用 | done（待批） |
+| M2 | 迁移先审阅后申请 | `03b-migration-draft.md` §3.2：隔离库上真实 CLI 应用 2 条、16 表、漂移零差异、`down()` 干净回滚、再 `up()` 一致；分支 `feat/leadgen-schema-final`，生产库未写入 | done（演练完成，待批应用） |
 | M3 | 六页连贯原型 + 中文 + 表格优先 + 抽屉 + tokens | `src/modules/crm_prototype/**`；`04-prototype.md` | done |
 | M3 | 状态覆盖（无权限/空/错误/预算/重复/冲突/发送未知/断线取消） | 每页状态切换器；任务页新增「已取消」；`proto-tasks-cancelled.png`、`proto-candidates-duplicate.png` | done |
 | M3 | AI 随业务动作出现，不新增平行工作台 | 首页「让助手继续调研」；详情「AI 建议 · 需人工确认」 | done |
@@ -62,7 +62,7 @@
 |---|---|---|---|
 | C1 | 不直接改 node_modules | 遵守：mirror 源码 + `vendor/open-mercato/prebuilt` + 受管补丁 | `scripts/patches/apply-vendor-source-build.mjs`（12 文件） |
 | C2 | 不手改生成物 | 遵守：只跑 `yarn generate` | 本轮无 `.mercato/generated` 手改 |
-| C3 | 迁移先审阅、应用需批准 | 遵守：迁移只在分支，未应用 | `03b`；`git branch` |
+| C3 | 迁移先审阅、应用需批准 | 遵守：迁移只在分支，生产库 0 张 leadgen 表（迁移前后指纹 `314\|0\|0\|46`） | `03b` §3.2；`scripts/crm-migration-drill.mjs` |
 | C4 | 生产发布/真实外发需批准 | 遵守：未发布、未建 provider、未发信 | 本轮 commit 无部署动作 |
 | C5 | 不为测试触达真实客户 | 遵守：无任何真实外发 | `07` §6；`poc` 探针零写入 |
 | C6 | 不泄漏密钥/会话 | 遵守：脚本只读凭证文件、不打印 | `scripts/lib/session.mjs` |
@@ -73,7 +73,7 @@
 
 | 结论 | 支撑 |
 |---|---|
-| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → 10/10（`verify/*.md`） |
+| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → 14/14，0 SKIP（`verify/verify-2026-11-08T22-37-36.md`） |
 | 既有报价修复未回归 | `crm-quote-regression` 4 pass + 1 已知 |
 | 授权基线未退化 | `crm-security-probe` 14 例 |
 | M4 尚不能通过 | 7 条对抗只有 3 条可跑，4 条缺 fixture |

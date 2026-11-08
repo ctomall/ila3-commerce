@@ -42,7 +42,8 @@
 | # | 事项 | 需要谁定 | 现状 |
 |---|---|---|---|
 | M2-8 | M4 走「关工具」还是「改上游」 | 用户 | `03` §3.5：两条路二选一，未定前 M4 只演示只读 |
-| M2-9 | 是否接受 `leadgen` 模块启用 + 迁移 | 用户 | **草案已生成**：`03b`，评审分支 `feat/leadgen-schema-final`（两片合一、与 main 无冲突），未应用 |
+| M2-9 | 是否接受 `leadgen` 模块启用 + 迁移 | 用户 | **已演练**：`03b` §3.2 —— 隔离库上真实 CLI 应用 2 条、16 表、漂移零差异、`down()` 回滚干净、再 `up()` 复现一致；生产库零写入。仍需你批准才应用 |
+| M2-10 | 迁移演练门（防止未经演练就应用） | 本轮 | `scripts/crm-migration-drill.mjs` + `crm-migration-drill-gate.mjs` 成为 `--full` 第 14 门；可直接从评审分支取迁移文件跑；PASS/FAIL/SKIP 三条路径 + 4 条负向对照全部验过 | done |
 
 ## M3 原型（六页）
 
@@ -120,7 +121,7 @@
 | M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 3 通过 / 4 阻塞 / 1 用例无效 |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
-| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 10/10 通过（PASS/FAIL/SKIP 分开计） |
+| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 14/14 通过，0 SKIP（PASS/FAIL/SKIP 分开计） |
 | 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 导航嵌套 | `scripts/crm-nav-nesting-check.mjs` | 5 个「有父未嵌套」+ 1 个无父页面 |
 | robots 合规 | `src/lib/leadgen/robots.ts` | 11 测试（含 RFC 9309 分组合并） |

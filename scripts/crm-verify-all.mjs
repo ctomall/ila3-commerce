@@ -20,6 +20,9 @@ import path from 'node:path'
 import { spawnSync } from 'node:child_process'
 
 const FULL = process.argv.includes('--full')
+// --only <id>[,<id>] runs a subset; useful when iterating on a single gate.
+const onlyFlag = process.argv.indexOf('--only')
+const ONLY = onlyFlag === -1 ? null : new Set((process.argv[onlyFlag + 1] || '').split(',').map((s) => s.trim()).filter(Boolean))
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(outFlag === -1 ? 'docs/crm-platform/verify' : process.argv[outFlag + 1])
 
@@ -37,10 +40,16 @@ const GATES = [
   { id: 'lint', cmd: 'yarn lint', why: 'ESLint（0 error 才算过）', full: true },
   { id: 'contrast', cmd: 'node scripts/check-contrast.mjs', why: '对比度 AA + 样本数下限', full: true },
   { id: 'ui-regression', cmd: 'node scripts/ui-regression.mjs', why: '界面回归 18 条', full: true },
+  // A review-branch gate: it materialises the pending leadgen migrations out of
+  // feat/leadgen-schema-final and drills them against the current production schema
+  // (apply -> drift vs snapshot -> rollback -> re-apply) in a throwaway database.
+  // Exit code 78 means "no pending migration to prove" and is reported as SKIP.
+  { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78 },
 ]
 
 const results = []
 for (const gate of GATES) {
+  if (ONLY && !ONLY.has(gate.id)) continue
   if (gate.full && !FULL) {
     results.push({ ...gate, status: 'SKIP', duration: 0, note: '需要 --full' })
     continue
@@ -49,6 +58,12 @@ for (const gate of GATES) {
   const run = spawnSync('bash', ['-lc', gate.cmd], { encoding: 'utf8', cwd: process.cwd(), timeout: 900000 })
   const duration = Math.round((Date.now() - started) / 1000)
   const output = `${run.stdout || ''}\n${run.stderr || ''}`
+  if (gate.skipCode !== undefined && run.status === gate.skipCode) {
+    const reason = output.split('\n').find((line) => /^SKIP/.test(line.trim())) || '无待验证对象'
+    results.push({ ...gate, status: 'SKIP', duration, code: run.status, note: reason.trim().slice(0, 160) })
+    console.log(`SKIP ${gate.id.padEnd(16)} ${duration}s`)
+    continue
+  }
   const ok = run.status === 0
   const firstBad = output
     .split('\n')
