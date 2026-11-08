@@ -75,3 +75,17 @@ Request
 3. 一轮对话的权威 org 是账号 org（auth.orgId）还是选中 org（om_selected_org）？采用后者会改变 G4。
 4. 配额只复用每日 token 汇总，还是加**按员工账本 + 发送前硬拦截**？
 5. 抑制范围（员工/渠道/租户）与落地位置（app 模块 or messages 的 UMES 扩展）？现在没有表。
+
+---
+
+## 主 Agent 勘误（2026-11-08，逐行复核后）
+
+**G7 的表述过强，就地更正**：原文写「任何调用者可指定任意已注册 agent」。实际代码是：
+
+- `agent-policy.ts:170-176`：`checkAgentPolicy` 对 `agent.requiredFeatures` 调 `hasRequiredFeatures`，不满足即 `agent_features_denied`；
+- `agent-policy.ts:190-206`：工具必须在该 agent 的 `allowedTools` 白名单内（`tool_not_whitelisted`），且用户必须持有 `tool.requiredFeatures`（`tool_features_denied`）；
+- 生产调用点：`agent-tools.ts:331`（agent 门）、`:353`（逐工具门）、`api/ai/chat/route.ts:469`。
+
+所以真正缺的是「租户/组织级可选 agent 集合」，而不是「没有 agent 级鉴权」。
+
+**由此产生一个更重要的结论**：`hasRequiredFeatures`（无 `scopeAllowed`）同时被 agent 门、tool 门、以及 `ai-api-operation-runner.ts:296-314` 的 tool→route 超集断言调用。**改这一处，三条门同时补上组织白名单维度**——G3 是八条里性价比最高的一条。

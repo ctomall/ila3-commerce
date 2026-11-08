@@ -29,13 +29,20 @@
 
 | # | 事项 | 产物 | 证据 | 状态 |
 |---|---|---|---|---|
-| M2-1 | 授权链核验（auth/directory/staff/ACL/rbacService） | `02-capability-matrix.md` | 2 处真实调用点 + 服务端派生 scope | todo（B 审计中） |
-| M2-2 | AI 能力契约（agent/tool/requiredFeatures/allowedTools） | 同上 | 生成注册表引用 + 授权调用点 | todo |
-| M2-3 | 员工助手绑定、能力策略版本、Run/事件/产物模型 | `03-dsh-contract.md` | 表设计 + 逐次鉴权路径 | todo |
-| M2-4 | 候选/证据/验证、配额账本、审批/发送/抑制、Bot 绑定 | 同上 | 表设计 + 幂等键 | todo |
-| M2-5 | 执行权限交集定义 | 同上 | `员工∩公司∩助手∩任务∩渠道`，默认拒绝 | todo |
-| M2-6 | DSH 适配、幂等、取消、重连游标、超时预算、子 Agent 继承、撤权 | 同上 | 每项一条可测断言 | todo |
-| M2-7 | 带凭证重拉 openapi 并留时间戳 | `docs/quote-order-api-map.md` 追加段 | `curl` 带 token 的原始计数 | todo |
+| M2-1 | 授权链核验 | `02-capability-matrix.md` §1 + `audit/{b,e}` | 链图带行号；G1/G2/G3/G7 由主 Agent 亲自复核 | done |
+| M2-2 | AI 能力契约 | 同上 §3 | agent 门 `agent-policy.ts:178`、tool 门 `:208`、7 处 `hasRequiredFeatures` 调用点 | done |
+| M2-3 | 绑定 / 策略版本 / Run·事件·产物 | `03-dsh-contract.md` §1 §3 | 状态机 + 幂等键 + 重连游标 + 预算 | done |
+| M2-4 | 候选/配额/审批发送/抑制/Bot 表 | `03a-data-model.md` | 五组表 + 唯一索引 + 幂等键组合 + API 面 | done |
+| M2-5 | 执行权限交集 | `02` §2 + `03` §4 | 选定「员工身份 + 逐次重鉴权」；五因子落到具体函数 | done |
+| M2-6 | DSH 适配语义 | `03` §3 §6 | 幂等/取消/游标/预算/继承/撤权各有断言；并记录「无拦截缝」约束 | done |
+| M2-7 | 带凭证重拉 openapi | `02` §6 | 676 paths / 1149 ops，未带凭证 401 | done |
+
+### 新增 M2 决策项（阻塞 M4 或实现）
+
+| # | 事项 | 需要谁定 | 现状 |
+|---|---|---|---|
+| M2-8 | M4 走「关工具」还是「改上游」 | 用户 | `03` §3.5：两条路二选一，未定前 M4 只演示只读 |
+| M2-9 | 是否接受 `leadgen` 模块启用 + 迁移 | 用户 | `03a` §I：交付迁移与快照，应用需批准 |
 
 ## M3 原型（六页）
 

@@ -8,8 +8,8 @@
 |---|---|---|---|
 | M0 现状审计 | **done** | `00-m0-baseline.md` | 运行入口/分支/服务/DB/贡献者/能力矩阵/风险 R1–R8 |
 | M1 入口治理 | **基线完成** | `01-entry-map.md`、`appendix/nav-*.json`、`decisions.md` | `node scripts/crm-nav-baseline.mjs` |
-| M2 契约 | 未开始 | （规划：`02-capability-matrix.md`、`03-dsh-contract.md`） | — |
-| M3 原型 | 未开始 | （规划：`04-prototype.md`） | — |
+| M2 契约 | **草案完成（待 2 项决策）** | `02-capability-matrix.md`、`03-dsh-contract.md`、`03a-data-model.md` | 授权链行号证据、676/1149 契约计数、五组表设计 |
+| M3 原型 | 未开始 | `04-prototype.md`（六页） | — |
 | M4 安全 PoC | 未开始 | （规划：`05-security-poc.md`） | — |
 | M5 获客 | 未开始 | （规划：`06-leadgen.md`） | — |
 | M6 触达 | 未开始 | （规划：`07-outreach.md`） | — |
@@ -28,6 +28,10 @@
 | `audit/b-authz-dsh.md` | 子审计 B：授权链 + AI 扩展面（8 个安全缺口 G1–G8，带行号） |
 | `audit/c-leadgen-reuse.md` | 子审计 C：获客/触达可复用面（复用 vs 新建，8 项缺失） |
 | `audit/d-qa-acceptance.md` | 子审计 D：独立 QA 设计（里程碑→证据矩阵、7 条对抗用例、四层完成定义） |
+| `audit/e-authz-enforcement.md` | 子审计 E：六个缺口的逐条证据、**不存在 AI 工具拦截缝**、每条的最小强制点与 M4 判定 |
+| `02-capability-matrix.md` | 五因子授权、身份模型三选一（选 A）、复用/包装/新建矩阵、G1–G8 处置、契约计数 |
+| `03-dsh-contract.md` | 绑定、Run/事件/产物、桥接现实约束、逐次鉴权、隔离、撤离与离职 |
+| `03a-data-model.md` | 五组表（候选/配额/审批发送/抑制/绑定）+ 幂等键组合 + API 面 + UMES + 迁移约定 |
 | `appendix/nav-*.json` | 三角色导航快照（已剔除内联 SVG，~90% 体积） |
 
 ## 门禁现状（2026-11-08 实测）
