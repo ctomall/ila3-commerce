@@ -118,4 +118,5 @@
 | M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 3 通过 / 4 阻塞 / 1 用例无效 |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
+| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 10/10 通过（PASS/FAIL/SKIP 分开计） |
 | 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |

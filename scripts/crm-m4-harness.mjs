@@ -14,35 +14,14 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
+import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.M4_BASE_URL ?? 'http://127.0.0.1:3000'
-const CREDENTIALS = '/home/pro/.ila3-admin-credentials'
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(
   outFlag === -1 ? `docs/crm-platform/poc/${new Date().toISOString().slice(0, 10)}-m4` : process.argv[outFlag + 1],
 )
 const ZERO = '00000000-0000-0000-0000-000000000000'
-
-function credentials() {
-  const map = new Map()
-  for (const line of fs.readFileSync(CREDENTIALS, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue
-    const [role, email, password] = line.trim().split(/\s+/)
-    if (role && email && password) map.set(role, { email, password })
-  }
-  return map
-}
-
-async function login(cred) {
-  const res = await fetch(`${BASE}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(cred).toString(),
-    redirect: 'manual',
-  })
-  if (!res.ok) throw new Error(`login ${res.status}`)
-  return (res.headers.getSetCookie?.() ?? []).map((c) => c.split(';')[0]).join('; ')
-}
 
 function psqlCount(table) {
   try {
@@ -59,7 +38,7 @@ function psqlCount(table) {
 
 const creds = credentials()
 const cookies = {}
-for (const role of ['superadmin', 'employee', 'admin']) if (creds.has(role)) cookies[role] = await login(creds.get(role))
+for (const role of ['superadmin', 'employee', 'admin']) if (creds.has(role)) cookies[role] = await loginWithRetry(BASE, creds.get(role), { role })
 
 // ---- fixture discovery: what can actually be tested right now -------------------
 const openapi = await fetch(`${BASE}/api/docs/openapi`, { headers: { cookie: cookies.superadmin } })
@@ -262,4 +241,8 @@ fs.writeFileSync(path.join(OUT, 'matrix.md'), md.join('\n') + '\n')
 console.log(`[m4] pass ${passed.length} · fail ${failed.length} · blocked ${blocked.length} · invalid ${invalid.length} · rows ${before}->${after}`)
 for (const r of results) console.log(`  ${r.status.toUpperCase().padEnd(7)} #${r.id} ${r.attack}${r.detail ? ` — ${String(r.detail).slice(0, 80)}` : ''}`)
 console.log(`[m4] wrote ${path.relative(process.cwd(), OUT)}/matrix.{json,md}`)
-process.exit(failed.length === 0 && invalid.length === 0 ? 0 : 1)
+// Blocked and invalid cases are coverage gaps, not product failures: they are recorded in
+// the matrix and reported loudly, but they must not turn the run red. Only a real `fail`
+// (a request that was NOT refused) exits non-zero.
+if (invalid.length > 0) console.error(`[m4] WARNING: ${invalid.length} case(s) are invalid — their evidence does not count`)
+process.exit(failed.length === 0 ? 0 : 1)

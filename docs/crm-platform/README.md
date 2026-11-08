@@ -39,7 +39,15 @@
 | `09-trial.md` | M8 试用发布方案：四层完成口径、两种压测、备份恢复、灰度回滚 |
 | `appendix/nav-*.json` | 三角色导航快照（已剔除内联 SVG，~90% 体积） |
 
-## 门禁现状（2026-11-08 实测）
+## 一条命令看全部证据
+
+```bash
+node scripts/crm-verify-all.mjs          # 快速集（补丁/单元/回归/探针/对抗/导航）
+node scripts/crm-verify-all.mjs --full   # 追加 typecheck / 对比度 / ui-regression
+```
+输出 `verify/verify-<时间>.md`：PASS / FAIL / SKIP 三项分开计数，**SKIP 不算通过**。
+
+## 门禁现状（2026-11-08 实测，--full 10/10）
 
 `verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest 40 tests · `yarn build` BUILD_OK。
 

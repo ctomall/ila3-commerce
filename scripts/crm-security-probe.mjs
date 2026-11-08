@@ -19,38 +19,15 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
+import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.PROBE_BASE_URL ?? 'http://127.0.0.1:3000'
-const CREDENTIALS = '/home/pro/.ila3-admin-credentials'
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(
   outFlag === -1 ? `docs/crm-platform/poc/${new Date().toISOString().slice(0, 10)}-probe` : process.argv[outFlag + 1],
 )
 
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000'
-
-function credentials() {
-  const map = new Map()
-  for (const line of fs.readFileSync(CREDENTIALS, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue
-    const [role, email, password] = line.trim().split(/\s+/)
-    if (role && email && password) map.set(role, { email, password })
-  }
-  return map
-}
-
-async function login(cred) {
-  const res = await fetch(`${BASE}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(cred).toString(),
-    redirect: 'manual',
-  })
-  if (!res.ok) throw new Error(`login failed: ${res.status}`)
-  const cookie = (res.headers.getSetCookie?.() ?? []).map((c) => c.split(';')[0]).join('; ')
-  if (!cookie) throw new Error('login returned no cookie')
-  return cookie
-}
 
 function rowCount(table) {
   try {
@@ -99,7 +76,7 @@ async function probe({ role, cookie, method, path: apiPath, body, expect, check 
 const creds = credentials()
 const cookies = {}
 for (const role of ['superadmin', 'admin', 'employee']) {
-  if (creds.has(role)) cookies[role] = await login(creds.get(role))
+  if (creds.has(role)) cookies[role] = await loginWithRetry(BASE, creds.get(role), { role })
 }
 
 const before = rowCount('customer_entities')

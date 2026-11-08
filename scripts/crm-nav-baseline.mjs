@@ -14,37 +14,12 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.NAV_BASE_URL ?? 'http://127.0.0.1:3000'
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(outFlag === -1 ? 'docs/crm-platform/appendix' : process.argv[outFlag + 1])
-const CREDENTIALS = '/home/pro/.ila3-admin-credentials'
 const ROLES = ['superadmin', 'admin', 'employee']
-
-function credentials() {
-  if (!fs.existsSync(CREDENTIALS)) throw new Error(`missing ${CREDENTIALS}`)
-  const map = new Map()
-  for (const line of fs.readFileSync(CREDENTIALS, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue
-    const [role, email, password] = line.trim().split(/\s+/)
-    if (role && email && password) map.set(role, { email, password })
-  }
-  return map
-}
-
-async function login({ email, password }) {
-  const body = new URLSearchParams({ email, password })
-  const res = await fetch(`${BASE}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: body.toString(),
-    redirect: 'manual',
-  })
-  if (!res.ok) throw new Error(`login failed for ${email}: ${res.status}`)
-  const cookie = (res.headers.getSetCookie?.() ?? []).map((c) => c.split(';')[0]).join('; ')
-  if (!cookie) throw new Error(`login returned no cookie for ${email}`)
-  return cookie
-}
 
 /** Drop the inline SVG payload: it is ~90% of the response and says nothing about entries. */
 function slim(value) {
@@ -74,7 +49,7 @@ for (const role of ROLES) {
     console.log(`[nav] ${role}: no credentials, skipped`)
     continue
   }
-  const cookie = await login(cred)
+  const cookie = await loginWithRetry(BASE, cred, { role })
   const res = await fetch(`${BASE}/api/auth/admin/nav`, { headers: { cookie } })
   if (!res.ok) throw new Error(`nav failed for ${role}: ${res.status}`)
   const payload = await res.json()

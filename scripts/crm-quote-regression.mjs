@@ -16,9 +16,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync } from 'node:child_process'
+import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.QUOTE_BASE_URL ?? 'http://127.0.0.1:3000'
-const CREDENTIALS = '/home/pro/.ila3-admin-credentials'
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(outFlag === -1 ? 'docs/crm-platform/regression' : process.argv[outFlag + 1])
 
@@ -37,28 +37,6 @@ function psql(sql) {
   } catch (error) {
     return `__ERROR__ ${String(error).slice(0, 120)}`
   }
-}
-
-function credentials() {
-  const map = new Map()
-  for (const line of fs.readFileSync(CREDENTIALS, 'utf8').split('\n')) {
-    if (!line.trim() || line.startsWith('#')) continue
-    const [role, email, password] = line.trim().split(/\s+/)
-    if (role && email && password) map.set(role, { email, password })
-  }
-  return map
-}
-
-async function login(cred) {
-  const res = await fetch(`${BASE}/api/auth/login`, {
-    method: 'POST',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams(cred).toString(),
-    redirect: 'manual',
-  })
-  if (!res.ok) throw new Error(`login failed: ${res.status}`)
-  const cookie = (res.headers.getSetCookie?.() ?? []).map((c) => c.split(';')[0]).join('; ')
-  return cookie
 }
 
 async function post(cookie, apiPath, body) {
@@ -84,7 +62,7 @@ if (!quoteId || quoteId.startsWith('__ERROR__')) {
 }
 
 const cred = credentials().get('superadmin')
-const cookie = await login(cred)
+const cookie = await loginWithRetry(BASE, cred, { role: 'superadmin' })
 
 const ordersBefore = Number(psql('select count(*) from sales_orders'))
 const quoteBefore = psql(`select status || '|' || currency_code from sales_quotes where id = '${quoteId}'`)
