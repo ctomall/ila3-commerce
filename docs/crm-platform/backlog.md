@@ -69,7 +69,7 @@
 
 | # | 事项 | 产物 | 证据 | 状态 |
 |---|---|---|---|---|
-| M5-1 | 一产品一市场，公开搜索/官网/选定目录 | `06-leadgen.md` | 来源清单 + 抓取样本 | todo（等 M4） |
+| M5-1 | 一产品一市场，公开来源与合规门 | `11-leadgen-sources.md` | 包能力实测（无 robots）+ 7 条合规门；robots 组件 10 测试 | partial（方案 + robots 组件；抓取未开始） |
 | M5-2 | 任务→额度预留/排队→DSH 调研→候选提交 | `06` §9（配额算术） | 预留/消费/退还/过期回收 | 部分（算术层） |
 | M5-3 | 确定性验证（不猜造联系人，MX 只作弱信号） | `src/lib/leadgen/verification.ts` + `06-leadgen.md` | 19 例单测；负向对照（改判规则 → 5 红） | done（规则层） |
 | M5-3b | 联系人抽取器 | 依赖 DSH 侧 | — | blocked（M4 路线） |
@@ -121,4 +121,5 @@
 | 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 10/10 通过（PASS/FAIL/SKIP 分开计） |
 | 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 导航嵌套 | `scripts/crm-nav-nesting-check.mjs` | 5 个「有父未嵌套」+ 1 个无父页面 |
+| robots 合规 | `src/lib/leadgen/robots.ts` | 10 测试；负向对照 4 红 |
 | 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |

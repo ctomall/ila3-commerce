@@ -38,6 +38,7 @@
 | `08-bot.md` | Bot 入站四关、群聊只读、群内脱敏、离职撤权 |
 | `09-trial.md` | M8 试用发布方案：四层完成口径、两种压测、备份恢复、灰度回滚 |
 | `10-api-contract.md` + `api/leadgen-openapi.json` | **草案**：M5/M6/M7 的 14 条路径，由 linter 校验自洽与不撞车 |
+| `11-leadgen-sources.md` | 来源与合规门：web-research 实有能力、robots/礼貌延迟/调用计数由谁提供、7 条合规门 |
 | `appendix/nav-*.json` | 三角色导航快照（已剔除内联 SVG，~90% 体积） |
 
 ## 一条命令看全部证据
