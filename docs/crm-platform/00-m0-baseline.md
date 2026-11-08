@@ -65,7 +65,7 @@
 | 金额/日期 locale | mirror `packages/ui/src/utils/format-locale.ts` + `format.ts` | `¥0.00` / `US$496.00` / `2026/11/8` |
 | 客户列表列优先级/选项标签/加载失败 | mirror `.../customers/backend/customers/{companies,people,deals}/page.tsx` | 4/20 列、良好/需关注、无法连接服务器文案 |
 
-门禁（2026-11-08 实测）：`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 12/12 AA · `yarn build` BUILD_OK。
+门禁（2026-11-08 实测）：`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 12/12 AA · `yarn build` BUILD_OK。
 
 ## 4. 风险清单（M0 结论）
 

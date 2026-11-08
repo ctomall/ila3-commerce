@@ -54,7 +54,7 @@ node scripts/crm-verify-all.mjs --full   # 追加 typecheck / 对比度 / ui-reg
 
 截图证据位于仓库外 `/home/pro/dsh/shots/*.png`（`proto-*.png`、`crm-*.png`），文档中的文件名对应这里的绝对路径。
 
-`verify-patches` 11 patch / 22 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **13 suites / 116 tests** · `yarn build` BUILD_OK。
+`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **13 suites / 116 tests** · `yarn build` BUILD_OK。
 
 ## 纪律
 

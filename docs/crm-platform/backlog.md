@@ -123,5 +123,6 @@
 | 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 10/10 通过（PASS/FAIL/SKIP 分开计） |
 | 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 导航嵌套 | `scripts/crm-nav-nesting-check.mjs` | 5 个「有父未嵌套」+ 1 个无父页面 |
-| robots 合规 | `src/lib/leadgen/robots.ts` | 10 测试；负向对照 4 红 |
+| robots 合规 | `src/lib/leadgen/robots.ts` | 11 测试（含 RFC 9309 分组合并） |
+| 发送身份门可观测 | `vendor/.../outbound-bridge.js` | 拒绝时写 `ownership_rejected` 日志；**行为未实测**（无 per-user channel fixture） |
 | 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |

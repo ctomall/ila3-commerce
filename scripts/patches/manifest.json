@@ -87,7 +87,8 @@
         "node_modules/@open-mercato/core/dist/modules/customers/lib/customFieldOptionLabel.js",
         "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/companies/page.js",
         "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/people/page.js",
-        "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js"
+        "node_modules/@open-mercato/core/dist/modules/customers/backend/customers/deals/page.js",
+        "node_modules/@open-mercato/core/dist/modules/communication_channels/subscribers/outbound-bridge.js"
       ],
       "reason": "Files compiled from the private mirror packages/** source of truth, stored in vendor/open-mercato/prebuilt (not dist/: git ignores dist). One installer, one marker per target, content guards per file."
     }

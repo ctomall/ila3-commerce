@@ -42,6 +42,7 @@ const FILES = [
   'core/modules/customers/backend/customers/companies/page.js',
   'core/modules/customers/backend/customers/people/page.js',
   'core/modules/customers/backend/customers/deals/page.js',
+  'core/modules/communication_channels/subscribers/outbound-bridge.js',
 ]
 
 /**
@@ -54,6 +55,7 @@ const MUST_CONTAIN = {
   'core/modules/sales/commands/documents.js': ['convertNotAccepted'],
   'core/modules/customers/lib/customFieldOptionLabel.js': ['resolveCustomFieldOptionLabel'],
   'core/modules/customers/backend/customers/companies/page.js': ['list.error.network'],
+  'core/modules/communication_channels/subscribers/outbound-bridge.js': ['ownership_rejected'],
 }
 
 let failed = 0
