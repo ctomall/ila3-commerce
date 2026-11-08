@@ -46,3 +46,18 @@ B 的前提是「API 足够完备，前端可以完全脱离」。API 确实完�
 ## 与单页重设计的关系
 
 重设计选哪一页都走 A′：页面在包里，改包才能改页面结构。首屏验收建议选「报价单列表 → 报价单详情」，因为这一页同时承载格式化、状态、权限三个已修/待修点。
+
+## 第一步已落地：格式化进源码（2026-11-08）
+
+| 项 | 结果 |
+| --- | --- |
+| 源码改动 | `packages/ui/src/utils/format-locale.ts`（新增，`setFormatLocale/getFormatLocale/resolveFormatLocale`）；`packages/ui/src/utils/format.ts` 改为读取活动 locale；`packages/core/.../SalesDocumentsTable.tsx` 的金额与日期改用 `getFormatLocale()` |
+| 构建 | `packages/ui` 453 入口、`packages/core` 5527 入口，均 `built successfully` |
+| 产物验证（Node） | 默认 `$680.00`；`setFormatLocale('zh-CN')` 后 `US$680.00` / `¥680.00`；切回 `en-US` 恢复 `$680.00` |
+| 应用侧 | `vendor/open-mercato/**` 存构建产物，`apply-vendor-format-locale.mjs` 负责安装（受管补丁，marker 校验） |
+| 删除的临时方案 | `src/lib/i18n/format-locale.ts`（全局 monkey-patch `Intl`）已删；`layout.tsx` 与 `ClientBootstrap.tsx` 改为调用包的 `setFormatLocale` |
+| 顺带退役 | `numeric-columns` 补丁（对齐逻辑已并入源码），补丁数 20 → **19** |
+| 运行时实测 | 列表金额 `¥0.00` / `US$496.00`，日期 `2026/11/8 13:48:49`，三个金额表头仍右对齐 |
+| 门禁 | build OK、`verify-patches` 19/19、ui-regression 18/18 |
+
+注意：这一步只是把「格式化」搬进了源码。其余 19 个补丁仍在改写 dist，所以依赖尚未切成 `file:` 版本——那一步要等补丁全部搬完，否则 `yarn install` 后补丁会与源码构建互相覆盖。

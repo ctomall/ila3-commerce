@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { installFormatLocale } from '@/lib/i18n/format-locale'
+import { setFormatLocale } from '@open-mercato/ui/utils/format-locale'
 import './globals.css'
 import '@/lib/i18n/register-dictionary-loader'
 import { AppProviders } from '@/components/AppProviders'
@@ -45,7 +45,7 @@ export default async function RootLayout({
   const locale = await detectLocale({ supportedLocales })
   // Money and dates are formatted inside the packages without a locale argument; make the
   // deployment locale the default so lists stop rendering $680.00 and 11/13/2026.
-  installFormatLocale(() => locale)
+  setFormatLocale(locale)
   const dict = await loadDictionary(locale)
   // The unauthenticated shell does not need every module namespace; trimming
   // it here keeps /login's RSC payload small without touching /backend.
