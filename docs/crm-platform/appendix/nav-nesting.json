@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-11-08T19:40:46.909Z",
+  "roots": 102,
+  "suspicious": [
+    {
+      "href": "/backend/config/customers/deals",
+      "title": "商机设置",
+      "group": "客户与销售",
+      "parent": "/backend/config/customers"
+    },
+    {
+      "href": "/backend/feature-toggles/global/create",
+      "title": "创建功能开关",
+      "group": "功能开关",
+      "parent": "/backend/feature-toggles/global"
+    },
+    {
+      "href": "/backend/entities/user/create",
+      "title": "创建实体",
+      "group": "数据设计器",
+      "parent": "/backend/entities/user"
+    },
+    {
+      "href": "/backend/users/create",
+      "title": "创建用户",
+      "group": "身份与权限",
+      "parent": "/backend/users"
+    },
+    {
+      "href": "/backend/roles/create",
+      "title": "创建角色",
+      "group": "身份与权限",
+      "parent": "/backend/roles"
+    }
+  ]
+}

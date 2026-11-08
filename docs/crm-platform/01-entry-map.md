@@ -125,18 +125,21 @@
 
 ## 6.1 「创建 X」根项的真实情况（2026-11-08 复核）
 
-之前口头说「7 个创建 X 挂在缺失父项下」，实际从服务端 payload 逐个核对是 **20 个创建类入口，其中 5 个是根项**：
+之前口头说「7 个创建 X 挂在缺失父项下」。用脚本复核（`node scripts/crm-nav-nesting-check.mjs`）后，真实分布是 **5 个「有父页面却没嵌套」+ 1 个「根本没有父页面」**：
 
-| 入口 | 父页面是否存在 | 直接原因 |
+| 入口 | 现有父页面 | 直接原因 |
 |---|---|---|
-| `/backend/users/create` 创建用户 | 是 | 父子 `pageGroupKey` 不一致（见下） |
-| `/backend/roles/create` 创建角色 | 是 | 同上 |
-| `/backend/entities/user/create` 创建实体 | 是 | 父 `settings.sections.dataDesigner` vs 子 `entities.nav.group` |
-| `/backend/feature-toggles/global/create` 创建功能开关 | 是 | 父/子分组键不同 |
-| `/backend/sales/documents/create` 创建销售单据 | **否** | 根本没有 `/backend/sales/documents` 页面 |
+| `/backend/users/create` 创建用户 | `/backend/users` | 父子 `pageGroupKey` 不一致 |
+| `/backend/roles/create` 创建角色 | `/backend/roles` | 同上 |
+| `/backend/entities/user/create` 创建实体 | `/backend/entities/user` | 父 `settings.sections.dataDesigner` vs 子 `entities.nav.group` |
+| `/backend/feature-toggles/global/create` 创建功能开关 | `/backend/feature-toggles/global` | 父/子分组键不同 |
+| `/backend/config/customers/deals` 商机设置 | `/backend/config/customers` | 同上（脚本才扫出来的第 5 条） |
+| `/backend/sales/documents/create` 创建销售单据 | **无** | 没有 `/backend/sales/documents` 页面 |
 
-**机制**（已核实）：`nav.ts` 按 href 前缀建父子，但只在**同一分组内**匹配。上面四个的父页面与创建页声明了不同的 `pageGroupKey`，于是它们被分到两个同名分组里，前缀匹配永远不触发。
+**机制**（已核实）：`nav.ts` 按 href 前缀建父子，但只在**同一分组内**匹配。父子声明了不同的 `pageGroupKey` 时，它们被分进两个同名分组，前缀匹配永远不触发。
 
-**结论：不在这里加补丁。** 这是上游元数据不一致，加一条 nav 后处理过滤器只会掩盖问题，并且会让下一次升级更难对齐。正确修法是在 upstream 把父子的 `pageGroupKey` 对齐（4 个），以及给 `/backend/sales/documents` 补一个父页面或显式 parent 元数据（1 个）。
+**结论：不在这里加补丁。** 这是上游元数据不一致，加一条 nav 后处理过滤器只会掩盖问题，并让下一次升级更难对齐。正确修法：upstream 对齐父子 `pageGroupKey`（5 个），以及给 `/backend/sales/documents` 补父页面或显式 parent 元数据（1 个）。
+
+**可复跑的检测器**：`node scripts/crm-nav-nesting-check.mjs`（默认只报告，`--strict` 才作为门禁），输出 `appendix/nav-nesting.json`。
 
 C5 因此不算“未完成的收敛”，而是“已定位、且明确不该用补丁解决”。
