@@ -86,3 +86,24 @@ placedAt: null
 
 - [ ] 为报价加迁移守卫（合法状态图 + 前置条件），并让 UI 由状态推导按钮。
 - [ ] 清洗字典种子数据里的 `\r`。
+
+## 8. 权限可见性：实测已生效（修正先前的「缺口」判断）
+
+先前我写「nav 数据 `roles` 字段 0 命中，权限是缺口」，**结论错了**。真正的机制不是 nav JSON 里的 roles，而是每条路由的 `requireFeatures`：
+
+`node_modules/@open-mercato/ui/dist/backend/utils/nav.js` 收集所有 `requireFeatures`，向 `/api/auth/feature-check` 批量校验后过滤导航项（`:163`、`:210`）。
+
+实测同一浏览器、同一部署，展开全部侧栏分组后：
+
+| 账号 | 可见导航项 |
+| --- | --- |
+| superadmin@acme.com | **40** |
+| employee@acme.com | **30** |
+| employee 看不到 | 资源类型、资源、团队、团队成员、团队角色、业务规则、规则集、执行日志、工作流事件 |
+
+即服务端按 feature 校验、前端按校验结果裁剪，不是「全部可见靠自觉」。本轮无需改动，只需把这个结论写清楚，避免再按错误前提施工。
+
+### 顺带确认的接口事实
+
+- `POST /api/auth/login` 只接受 `application/x-www-form-urlencoded` 或 formData（`parseLoginForm`），发 JSON 会得到 `400 {"ok":false,"error":"邮箱或密码不正确"}`——看起来像密码错，实际是内容类型错。这条已写入本文件，避免下次误判。
+- 报价状态迁移端点比先前记录的多一个：`POST /sales/quotes/accept` 存在；完整为 `accept` / `send` / `convert` 三个显式动作，外加集合级 `PUT`（其 requestBody 在 spec 中未定义，需读源码才能确定写入形状）。
