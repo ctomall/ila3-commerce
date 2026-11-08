@@ -556,8 +556,8 @@
         {
           "id": "/backend/staff/leave-requests",
           "href": "/backend/staff/leave-requests",
-          "title": "请假申请（管理）",
-          "defaultTitle": "请假申请（管理）",
+          "title": "团队请假",
+          "defaultTitle": "团队请假",
           "enabled": true,
           "iconName": "calendar-check",
           "order": 90

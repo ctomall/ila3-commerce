@@ -10231,7 +10231,7 @@
   "staff.leaveRequests.form.reason.save": "保存",
   "staff.leaveRequests.form.reason.valueLabel": "原因",
   "staff.leaveRequests.my.title": "我的请假",
-  "staff.leaveRequests.page.title": "请假申请（管理）",
+  "staff.leaveRequests.page.title": "团队请假",
   "staff.leaveRequests.status.approved": "已批准",
   "staff.leaveRequests.status.pending": "待处理",
   "staff.leaveRequests.status.rejected": "已拒绝",
