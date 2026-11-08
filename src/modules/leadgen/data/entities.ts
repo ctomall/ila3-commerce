@@ -244,3 +244,472 @@ export class LeadgenVerification {
   @Property({ name: 'completed_at', type: Date, nullable: true })
   completedAt?: Date | null
 }
+
+/* ------------------------------------------------------------------ 第二片：配额 / 审批发送 / 绑定 */
+
+@Entity({ tableName: 'leadgen_quota_buckets' })
+@Unique({ properties: ['tenantId', 'organizationId', 'scopeKind', 'scopeId', 'quotaKind', 'periodKey'] })
+@Index({ properties: ['tenantId', 'organizationId', 'quotaKind', 'periodKey'] })
+export class LeadgenQuotaBucket {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  /** tenant | department | employee | task — the effective limit is the minimum of all four. */
+  @Property({ name: 'scope_kind', type: 'text' })
+  scopeKind!: 'tenant' | 'department' | 'employee' | 'task'
+
+  /** Null only for the tenant-level bucket. */
+  @Property({ name: 'scope_id', type: 'uuid', nullable: true })
+  scopeId?: string | null
+
+  @Property({ name: 'quota_kind', type: 'text' })
+  quotaKind!: 'lead' | 'crm_write' | 'send'
+
+  @Property({ name: 'period_key', type: 'text' })
+  periodKey!: string
+
+  @Property({ name: 'limit_units', type: 'integer' })
+  limitUnits!: number
+
+  @Property({ name: 'reserved_units', type: 'integer', default: 0 })
+  reservedUnits: number = 0
+
+  @Property({ name: 'consumed_units', type: 'integer', default: 0 })
+  consumedUnits: number = 0
+
+  @Property({ type: 'integer', default: 1 })
+  version: number = 1
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+
+  @Property({ name: 'updated_at', type: Date, onCreate: () => new Date(), onUpdate: () => new Date() })
+  updatedAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_quota_reservations' })
+@Unique({ properties: ['tenantId', 'organizationId', 'idempotencyKey'] })
+@Unique({ properties: ['leaseToken'] })
+@Index({ properties: ['state', 'expiresAt'] })
+export class LeadgenQuotaReservation {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'bucket_id', type: 'uuid' })
+  bucketId!: string
+
+  @Property({ name: 'lease_token', type: 'text' })
+  leaseToken!: string
+
+  @Property({ name: 'idempotency_key', type: 'text' })
+  idempotencyKey!: string
+
+  @Property({ type: 'integer' })
+  units!: number
+
+  @Property({ type: 'text', default: 'reserved' })
+  state: 'reserved' | 'consumed' | 'refunded' | 'expired' = 'reserved'
+
+  @Property({ name: 'subject_kind', type: 'text', nullable: true })
+  subjectKind?: string | null
+
+  @Property({ name: 'subject_id', type: 'uuid', nullable: true })
+  subjectId?: string | null
+
+  @Property({ name: 'expires_at', type: Date })
+  expiresAt!: Date
+
+  @Property({ name: 'consumed_at', type: Date, nullable: true })
+  consumedAt?: Date | null
+
+  @Property({ name: 'refunded_at', type: Date, nullable: true })
+  refundedAt?: Date | null
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_quota_ledger' })
+@Index({ properties: ['bucketId', 'occurredAt'] })
+export class LeadgenQuotaLedger {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'bucket_id', type: 'uuid' })
+  bucketId!: string
+
+  @Property({ name: 'reservation_id', type: 'uuid', nullable: true })
+  reservationId?: string | null
+
+  @Property({ name: 'entry_kind', type: 'text' })
+  entryKind!: 'reserve' | 'consume' | 'refund' | 'expire' | 'adjust'
+
+  /** Signed: negative entries give units back. */
+  @Property({ name: 'delta_units', type: 'integer' })
+  deltaUnits!: number
+
+  @Property({ name: 'actor_user_id', type: 'uuid', nullable: true })
+  actorUserId?: string | null
+
+  @Property({ name: 'reason_code', type: 'text', nullable: true })
+  reasonCode?: string | null
+
+  @Property({ name: 'occurred_at', type: Date, onCreate: () => new Date() })
+  occurredAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_drafts' })
+@Unique({ properties: ['tenantId', 'organizationId', 'candidateId', 'bodyHash'] })
+@Index({ properties: ['tenantId', 'organizationId', 'status'] })
+export class LeadgenDraft {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'candidate_id', type: 'uuid' })
+  candidateId!: string
+
+  @Property({ name: 'recipient_email', type: 'text' })
+  recipientEmail!: string
+
+  @Property({ name: 'recipient_hash', type: 'text' })
+  recipientHash!: string
+
+  @Property({ type: 'text', default: 'email' })
+  channel: string = 'email'
+
+  @Property({ type: 'text' })
+  subject!: string
+
+  @Property({ name: 'body_markdown', type: 'text' })
+  bodyMarkdown!: string
+
+  @Property({ name: 'body_html', type: 'text', nullable: true })
+  bodyHtml?: string | null
+
+  @Property({ name: 'body_hash', type: 'text' })
+  bodyHash!: string
+
+  @Property({ name: 'template_key', type: 'text', nullable: true })
+  templateKey?: string | null
+
+  @Property({ name: 'template_version', type: 'text', nullable: true })
+  templateVersion?: string | null
+
+  @Property({ type: 'integer', default: 1 })
+  version: number = 1
+
+  @Property({ type: 'text', default: 'editing' })
+  status: 'editing' | 'ready' | 'approved' | 'sent' | 'superseded' | 'blocked' = 'editing'
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+
+  @Property({ name: 'updated_at', type: Date, onCreate: () => new Date(), onUpdate: () => new Date() })
+  updatedAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_approvals' })
+@Unique({ properties: ['tenantId', 'organizationId', 'idempotencyKey'] })
+@Index({ properties: ['draftId', 'decision'] })
+export class LeadgenApproval {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'draft_id', type: 'uuid' })
+  draftId!: string
+
+  /** The approval is bound to this hash: any body change invalidates it. */
+  @Property({ name: 'draft_hash', type: 'text' })
+  draftHash!: string
+
+  @Property({ type: 'text' })
+  decision!: 'approved' | 'rejected'
+
+  @Property({ name: 'approver_user_id', type: 'uuid' })
+  approverUserId!: string
+
+  @Property({ name: 'idempotency_key', type: 'text' })
+  idempotencyKey!: string
+
+  @Property({ name: 'expires_at', type: Date })
+  expiresAt!: Date
+
+  @Property({ name: 'revoked_at', type: Date, nullable: true })
+  revokedAt?: Date | null
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_sends' })
+@Unique({ properties: ['tenantId', 'organizationId', 'idempotencyKey'] })
+@Index({ properties: ['state', 'updatedAt'] })
+@Index({ properties: ['draftId'] })
+export class LeadgenSend {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'draft_id', type: 'uuid' })
+  draftId!: string
+
+  @Property({ name: 'approval_id', type: 'uuid' })
+  approvalId!: string
+
+  @Property({ name: 'draft_hash', type: 'text' })
+  draftHash!: string
+
+  /** One key from approval to provider, so a retry cannot double-send. */
+  @Property({ name: 'idempotency_key', type: 'text' })
+  idempotencyKey!: string
+
+  @Property({ name: 'provider_key', type: 'text', nullable: true })
+  providerKey?: string | null
+
+  @Property({ type: 'text', default: 'email' })
+  channel: string = 'email'
+
+  @Property({ name: 'provider_message_id', type: 'text', nullable: true })
+  providerMessageId?: string | null
+
+  @Property({ type: 'text', default: 'queued' })
+  state:
+    | 'queued'
+    | 'dispatching'
+    | 'accepted'
+    | 'delivered'
+    | 'replied'
+    | 'unknown'
+    | 'bounced'
+    | 'complained'
+    | 'failed'
+    | 'suppressed' = 'queued'
+
+  @Property({ type: 'integer', default: 0 })
+  attempt: number = 0
+
+  @Property({ name: 'lease_owner', type: 'text', nullable: true })
+  leaseOwner?: string | null
+
+  @Property({ name: 'lease_expires_at', type: Date, nullable: true })
+  leaseExpiresAt?: Date | null
+
+  @Property({ name: 'enqueued_at', type: Date, onCreate: () => new Date() })
+  enqueuedAt: Date = new Date()
+
+  @Property({ name: 'sent_at', type: Date, nullable: true })
+  sentAt?: Date | null
+
+  @Property({ name: 'error_code', type: 'text', nullable: true })
+  errorCode?: string | null
+
+  @Property({ name: 'updated_at', type: Date, onCreate: () => new Date(), onUpdate: () => new Date() })
+  updatedAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_message_receipts' })
+@Unique({ properties: ['tenantId', 'providerEventId'] })
+@Index({ properties: ['sendId', 'occurredAt'] })
+export class LeadgenMessageReceipt {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'send_id', type: 'uuid' })
+  sendId!: string
+
+  @Property({ name: 'provider_event_id', type: 'text' })
+  providerEventId!: string
+
+  @Property({ type: 'text' })
+  kind!: 'delivered' | 'bounced' | 'complained' | 'opened' | 'replied'
+
+  @Property({ type: 'text', nullable: true })
+  classification?: string | null
+
+  @Property({ name: 'classifier_version', type: 'text', nullable: true })
+  classifierVersion?: string | null
+
+  @Property({ name: 'occurred_at', type: Date })
+  occurredAt!: Date
+
+  @Property({ name: 'payload_hash', type: 'text' })
+  payloadHash!: string
+}
+
+@Entity({ tableName: 'leadgen_suppressions' })
+@Index({ properties: ['tenantId', 'organizationId', 'reason'] })
+export class LeadgenSuppression {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'email_hash', type: 'text' })
+  emailHash!: string
+
+  @Property({ type: 'text' })
+  email!: string
+
+  @Property({ type: 'text' })
+  reason!: 'unsubscribe' | 'complaint' | 'bounce'
+
+  @Property({ name: 'source_send_id', type: 'uuid', nullable: true })
+  sourceSendId?: string | null
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+
+  @Property({ name: 'released_at', type: Date, nullable: true })
+  releasedAt?: Date | null
+}
+
+@Entity({ tableName: 'leadgen_capability_policies' })
+@Unique({ properties: ['tenantId', 'organizationId', 'policyKey', 'version'] })
+export class LeadgenCapabilityPolicy {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'policy_key', type: 'text' })
+  policyKey!: string
+
+  @Property({ type: 'integer' })
+  version!: number
+
+  @Property({ type: 'jsonb' })
+  capabilities!: unknown
+
+  @Property({ type: 'text', default: 'draft' })
+  status: 'draft' | 'active' | 'retired' = 'draft'
+
+  @Property({ name: 'effective_from', type: Date, nullable: true })
+  effectiveFrom?: Date | null
+
+  @Property({ name: 'effective_to', type: Date, nullable: true })
+  effectiveTo?: Date | null
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
+}
+
+@Entity({ tableName: 'leadgen_employee_bindings' })
+@Unique({ properties: ['tenantId', 'organizationId', 'employeeId', 'state'] })
+@Index({ properties: ['tenantId', 'organizationId', 'assistantAgentKey'] })
+export class LeadgenEmployeeBinding {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'employee_id', type: 'uuid' })
+  employeeId!: string
+
+  @Property({ name: 'user_id', type: 'uuid', nullable: true })
+  userId?: string | null
+
+  @Property({ name: 'assistant_agent_key', type: 'text' })
+  assistantAgentKey!: string
+
+  @Property({ name: 'capability_policy_id', type: 'uuid' })
+  capabilityPolicyId!: string
+
+  @Property({ name: 'capability_policy_version', type: 'integer' })
+  capabilityPolicyVersion!: number
+
+  @Property({ type: 'text', default: 'active' })
+  state: 'active' | 'suspended' | 'revoked' | 'offboarded' = 'active'
+
+  @Property({ name: 'bound_at', type: Date, onCreate: () => new Date() })
+  boundAt: Date = new Date()
+
+  @Property({ name: 'revoked_at', type: Date, nullable: true })
+  revokedAt?: Date | null
+
+  @Property({ name: 'revoke_reason', type: 'text', nullable: true })
+  revokeReason?: string | null
+}
+
+@Entity({ tableName: 'leadgen_bot_bindings' })
+@Index({ properties: ['tenantId', 'organizationId', 'channelId', 'externalIdentity'] })
+export class LeadgenBotBinding {
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'channel_id', type: 'uuid' })
+  channelId!: string
+
+  @Property({ name: 'channel_type', type: 'text' })
+  channelType!: string
+
+  @Property({ name: 'external_identity', type: 'text' })
+  externalIdentity!: string
+
+  @Property({ name: 'employee_binding_id', type: 'uuid' })
+  employeeBindingId!: string
+
+  @Property({ type: 'text', default: 'active' })
+  state: 'active' | 'revoked' | 'offboarded' = 'active'
+
+  @Property({ name: 'verified_at', type: Date, nullable: true })
+  verifiedAt?: Date | null
+
+  @Property({ name: 'revoked_at', type: Date, nullable: true })
+  revokedAt?: Date | null
+}
