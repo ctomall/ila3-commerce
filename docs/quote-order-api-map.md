@@ -107,3 +107,33 @@ placedAt: null
 
 - `POST /api/auth/login` 只接受 `application/x-www-form-urlencoded` 或 formData（`parseLoginForm`），发 JSON 会得到 `400 {"ok":false,"error":"邮箱或密码不正确"}`——看起来像密码错，实际是内容类型错。这条已写入本文件，避免下次误判。
 - 报价状态迁移端点比先前记录的多一个：`POST /sales/quotes/accept` 存在；完整为 `accept` / `send` / `convert` 三个显式动作，外加集合级 `PUT`（其 requestBody 在 spec 中未定义，需读源码才能确定写入形状）。
+
+## 9. 转换（convert）实测：没有状态前置条件，而且会销毁源单据
+
+第 1 轮我用错字段（`{id}` 而非 `{quoteId}`）导致 400，误判成「守卫存在但报错含糊」。改成正确字段后重测，结论反转：
+
+| 调用 | 结果 |
+| --- | --- |
+| 草稿单据 `POST /sales/quotes/convert {quoteId}` | **200** → 生成订单，`sales_quotes` 中该行**消失** |
+| 已发送单据 `POST /sales/quotes/send {quoteId}` | 400（确有前置条件） |
+
+两条硬事实：
+
+1. **`convert_to_order` 没有状态检查**。`commands/documents.js` 里只校验存在性、组织范围、乐观锁和「订单是否已存在」，`draft` 直接放行——未发送、未确认的草稿可以变成销售订单。
+2. **转换会物理删除源单据，且订单没有回指字段**。转换后 `sales_quotes` 只剩其余行（`deleted_at` 计数为 0，不是软删）；`sales_orders` 里没有任何 `%quote%` 列。也就是说，单从数据看不出这张订单来自哪张报价单。
+
+### 本轮已修（受管补丁 `quote-transition-guard`，17 个补丁全部在位）
+
+| 缺陷 | 修法 | 实测 |
+| --- | --- | --- |
+| 草稿可转订单 | `assertConvertibleStatus`：仅 `sent` / `accepted` 放行，其余 409 并给出下一步 | 草稿 → **409**`报价单当前状态为「draft」，需先发送并确认后才能转订单。` |
+| 校验失败被吞成「失败」 | 路由 catch 里先识别 ZodError，返回 422 + 字段级 details | 传 `{id}` → **422**`参数校验失败` + `path:["quoteId"]` |
+| 正常路径 | 不变 | 已确认（accepted）报价单 → **200** `{"orderId": ...}` |
+
+### 未修（需要产品决策）
+
+- 转换后**保留源单据**并建立 `sales_orders.quote_id` 回指，或改为「报价单标记 converted 而非删除」。这改的是数据模型与命令语义，不是补丁能解决的，属于 mirror 源码层的改动项。
+
+### 数据影响（如实记录）
+
+探针全程在 demo 租户执行，转换动作**销毁了两张演示报价单**（`SQ-DEMO-1001`、`SQ-DEMO-1003`），订单表已清理回 4 张 `SO-DEMO-*`。报价单需要重新播种才能恢复；这是 convert 破坏性的直接后果，不是清理疏漏。
