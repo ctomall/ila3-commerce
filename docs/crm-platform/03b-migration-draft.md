@@ -38,14 +38,28 @@
 
 回滚演练的正是将要执行的 DDL —— 只不过在事务里回滚掉了。
 
+## 3.1 第二片（已生成，同一批准流程）
+
+| 项 | 值 |
+|---|---|
+| 分支 | `feat/leadgen-schema-2`（叠在第一片上） |
+| 文件 | `Migration20261108194144_leadgen.ts` |
+| 表 | 11 张：quota_buckets / quota_reservations / quota_ledger / drafts / approvals / sends / message_receipts / suppressions / capability_policies / employee_bindings / bot_bindings |
+| 语句 | up 35 / down 11 |
+| 手工补的三类约束 | ① `CHECK limit_units >= reserved_units + consumed_units`；② 三个 partial unique（同一员工仅一条 active 绑定、同一地址仅一条 active 抑制、同一渠道身份仅一条 active Bot 绑定）；③ `down()` |
+| 验证 | **两片在同一次事务里顺序执行**：事务内 leadgen 表 **16** 张，`ROLLBACK` 后 **0** 张 |
+| 未执行 | 未应用、未改库 |
+
+两片叠加后的表总数：5 + 11 = **16**。
+
 ## 4. 显式未包含（第二片）
 
 | 缺什么 | 为什么不在这一片 |
 |---|---|
-| 配额三表（buckets/reservations/ledger） | 依赖 D4 的额度层级确认；且算法层已实现，可独立验证 |
-| 审批/发送/回执/抑制四表 | 依赖 D5/D8 |
-| Bot 绑定两表 | 依赖渠道选择（D8） |
-| `contact_email` 加密 | 需要 `encryption.ts` 声明与密钥策略，属安全评审项 |
+| ~~配额三表~~ | **已进第二片**（层级粒度仍待 D4，但表结构可先建） |
+| ~~审批/发送/回执/抑制四表~~ | **已进第二片**（TTL 默认值待 D5，渠道字段待 D8） |
+| ~~Bot 绑定两表~~ | **已进第二片**（渠道选择待 D8） |
+| `contact_email` 加密 | 需要 `encryption.ts` 声明与密钥策略，属安全评审项（仍缺） |
 | 配额 `CHECK limit >= consumed + reserved` | 随配额表一起进 |
 | 能力策略版本表 | 随绑定表一起进 |
 
