@@ -86,6 +86,7 @@
 | M6-1 | 草稿→审批→幂等发送→回执→回复分类 | `src/lib/leadgen/outreach.ts` + `07-outreach.md` | 19 例（门/状态机/分类）；负向对照 9 红 | done（逻辑层） |
 | M6-2 | 额度、退订抑制、退信投诉、重复防护 | `src/lib/leadgen/quota.ts` + `06` §9 | 10 例：四层取小、lease、过期回收、幂等 | done（算术层） |
 | M6-3 | 真实渠道验收 + 域名认证 | 同上 | **需用户批准真实外发** | blocked |
+| M6-4 | 四层规则串成判决链 | `06-leadgen.md` §10 | `src/lib/leadgen/pipeline.ts` + 20 测：验证→人审→可达性→配额→草稿→审批→发送门，每阶段 continue/handoff/stop；负向对照（拆掉人审门→测试红）验过；无 IO、不发送、`deliverability` 恒 unknown | done |
 
 ## M7 Bot
 

@@ -86,3 +86,35 @@
 | 落库换算不丢不重 | `applyReservation` | 预留→消费/退还，且重复应用不会变负 |
 
 这一层是纯函数，真正的一致性仍由数据库保证（`CHECK limit >= consumed + reserved` + 行锁 + `lease_token` 唯一）——纯函数只负责“算得对”，不负责“并发安全”。
+
+## 10. 四层规则串起来的判决链（2026-11-08 新增）
+
+前面几节各自证明了一件事：验证判得对、配额算得对、发送门拦得住。但**没有任何东西证明它们能按正确顺序串起来**——顺序错（先花配额再验证）、词汇不通（把 `needs_review` 当通过）、人工门被绕过，单测一个都发现不了，因为每一层单独看都正确。
+
+实现：`src/lib/leadgen/pipeline.ts` · 测试：`src/lib/leadgen/__tests__/pipeline.test.ts`（20 例）
+
+输入一个候选 + 配额桶 + 草稿/审批 + `now`，输出**一条阶段轨迹和一个终局判决**，让复核者看到它停在哪、为什么停。
+
+| 阶段 | 结果 | 语义 |
+|---|---|---|
+| `verify` | `stop` | 判决 `fail`：拒绝，**不花配额、不要求草稿** |
+| `review` | `handoff` / `stop` | 判决 `needs_review`：等人工，除非显式 `reviewDecision: 'approve'` |
+| `reachability` | `stop` | 无邮箱或被抑制：**仅入库**（公司保留，不丢，也不补造地址） |
+| `quota` | `stop` | 各层取最小余量，不够就指出堵在哪层 |
+| `draft` | `handoff` | 没有草稿：等**人**写正文，流程不猜内容 |
+| `approval` | `stop` | 发送门的**全部**理由一次列全（过期/撤销/正文变了/已有发送记录） |
+| `send` | `continue` | 只产出幂等键，**不发送** |
+
+### 三个刻意的决定
+
+1. **`needs_review` 只能被显式批准越过。** `reviewDecision` 缺省 = 还没人看 = handoff，绝不是隐式通过。
+2. **配额在草稿之前预留。** 代价写在测试里：到达 `awaiting_draft` 时已经占掉 1 单位。宁可让人看到这个成本，也不要为了省额度把顺序倒过来（先写草稿再发现没额度，才是真的浪费）。
+3. **被抑制的收件人在 `reachability` 就短路，根本走不到发送门。** 这条单独有测试钉住，避免有人把抑制检查挪到后面。
+
+### 负向对照
+
+把人工门改坏（`if (input.reviewDecision !== 'approve')` → 恒假），测试立刻红：`hands a needs-review candidate to a human and spends no quota` 失败、退出码 1；还原后 20/20 通过。这不是"跑绿了"，是"改坏了会红"。
+
+### 这一层仍然不做的事
+
+无 IO、无时钟（`now` 是入参）、不发送、不入库、不推进商机阶段；`deliverability` 恒为 `unknown`，即使 `mxChecked` 为真也不改——送达只能由回执证明。
