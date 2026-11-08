@@ -23,15 +23,18 @@ const STATE_COPY: Record<string, string> = {
   budget: '本周额度已用完（12 / 12）。任务会排队到下一个周期，或者由主管提额。',
   duplicate: '这家公司已存在：归属人 王倩，最近更新 3 天前。原型只显示这一句，不展示对方的客户资料。',
   conflict: '这条记录已被他人更新（版本 7 → 8）。请刷新后重试，你的修改没有覆盖对方的内容。',
+  cancelled: '任务已取消（Run cancelled）：额度已退回，之后不会再有新候选提交。',
 }
 
-function useDemoState(initial = 'ready') {
+function useDemoState(initial = 'ready', options: Array<{ id: string; label: string }> = STATE_OPTIONS) {
   const [state, setState] = React.useState(initial)
   const switcher = (
-    <StateSwitcher value={state} onChange={setState} options={STATE_OPTIONS} />
+    <StateSwitcher value={state} onChange={setState} options={options} />
   )
   return { state, switcher }
 }
+
+const TASK_STATE_OPTIONS = [...STATE_OPTIONS, { id: 'cancelled', label: '已取消' }]
 
 function StateBanner({ state }: { state: string }) {
   if (state === 'ready') return null
@@ -129,7 +132,7 @@ function HomeSection() {
 /* ------------------------------------------------------------------ 开发任务 */
 
 function TasksSection() {
-  const { state, switcher } = useDemoState()
+  const { state, switcher } = useDemoState('ready', TASK_STATE_OPTIONS)
   const rows = [
     ['德国储能渠道', '户用储能 · 德国', '公开网页 + 展会名录', '8 / 20', '12', '调研中'],
     ['越南 LED 工程商', 'LED 面板灯 · 越南', '公开网页', '4 / 10', '6', '待审核'],
