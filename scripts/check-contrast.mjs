@@ -8,13 +8,20 @@
  *
  * Threshold: WCAG AA for normal text is 4.5:1; large text (>=24px, or >=18.66px bold) is 3:1.
  *
+ * A pass also requires the measurement to have happened on the intended page: an
+ * unauthenticated visit lands on /login, where most selectors do not exist. The sample
+ * list used to be filtered down to whatever rendered, so that run reported "1/1 within
+ * AA" and PASSED. The gate now asserts the page URL and the full sample count.
+ *
  * Usage: node scripts/check-contrast.mjs [--json]
  */
 import { execFileSync } from 'node:child_process'
 
 const EGO = '/home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs'
 const BASE = process.env.CONTRAST_BASE_URL ?? 'http://127.0.0.1:3000'
-const PAGE = '/backend/sales/quotes'
+const PAGE = process.env.CONTRAST_PAGE ?? '/backend/sales/quotes'
+
+const SAMPLE_NAMES = ['body', 'table header', 'page title', 'muted text', 'sidebar group', 'primary button']
 
 const snippet = `
 const measure = async (theme) => {
@@ -37,15 +44,20 @@ const measure = async (theme) => {
       ['page title', pick('h1') || pick('h2')],
       ['muted text', pick('.text-muted-foreground')],
       ['sidebar group', pick('[data-sidebar-group="true"] button')],
-      ['primary button', Array.from(document.querySelectorAll('button')).find((b)=>/创建销售单据|创建订单/.test(b.innerText||''))],
+      ['primary button', Array.from(document.querySelectorAll('button, a')).find((b)=>/创建销售单据|创建订单/.test(b.innerText||''))],
     ].filter(([, el]) => el)
-    return samples.map(([name, el]) => {
+    const measured = samples.map(([name, el]) => {
       const cs = getComputedStyle(el); const bg = bgOf(el)
       const fg = over(toRgb(cs.color), bg)
       const size = parseFloat(cs.fontSize); const bold = Number(cs.fontWeight) >= 700
       const large = size >= 24 || (bold && size >= 18.66)
       return { name, ratio: +ratio(fg,bg).toFixed(2), threshold: large ? 3 : 4.5, size, bold }
     })
+    return {
+      url: location.pathname + location.search,
+      expected: ${SAMPLE_NAMES.length},
+      items: measured,
+    }
   })
 }
 const out = { light: await measure('light'), dark: await measure('dark') }
@@ -63,7 +75,19 @@ const data = JSON.parse(line.slice(line.indexOf('@@DSH_RESULT@@') + '@@DSH_RESUL
 let failures = 0
 const rows = []
 for (const [theme, items] of Object.entries(data)) {
-  for (const item of items) {
+  const seen = items?.url ?? '(none)'
+  const expectedCount = items?.expected ?? SAMPLE_NAMES.length
+  const measured = Array.isArray(items?.items) ? items.items : []
+  if (seen !== PAGE) {
+    console.error(`[contrast] ${theme}: measured ${seen} instead of ${PAGE} — the page did not render (not signed in?), refusing to pass`)
+    failures += 1
+  }
+  if (measured.length < expectedCount) {
+    const missing = SAMPLE_NAMES.slice(measured.length)
+    console.error(`[contrast] ${theme}: only ${measured.length}/${expectedCount} samples rendered (missing: ${missing.join(', ')})`)
+    failures += 1
+  }
+  for (const item of measured) {
     const ok = item.ratio >= item.threshold
     if (!ok) failures += 1
     rows.push({ theme, ...item, ok })

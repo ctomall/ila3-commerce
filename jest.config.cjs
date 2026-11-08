@@ -7,7 +7,7 @@
 module.exports = {
   testEnvironment: 'node',
   testTimeout: 30000,
-  passWithNoTests: true,
+
   rootDir: '.',
   roots: ['<rootDir>/src'],
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
