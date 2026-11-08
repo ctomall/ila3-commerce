@@ -108,3 +108,13 @@
 | AI 智能体两处 | 「AI 智能体设置」 vs app 的「智能体列表」 | 同上 |
 | 重名检测 | **0 组重名**（原 2 组） | `appendix/nav-*.json` 去重脚本 |
 | 附录 | `appendix/entries.md`（根项 102 / 含子项 152） | 生成脚本 |
+
+## 回归与护栏（新增）
+
+| 项 | 脚本 | 当前结果 |
+|---|---|---|
+| 报价/订单修复 | `scripts/crm-quote-regression.mjs` | 4 通过 + 1 已知遗留（字典名称 19 条 CR） |
+| 授权行为基线 | `scripts/crm-security-probe.mjs` | 13 例符合预期、零写入 |
+| 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
+| 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
+| 报价契约面 | `node scripts/crm-quote-regression.mjs` | 同时充当 convert/send 的契约探针 |
