@@ -1,7 +1,8 @@
 # M2 迁移草案 · leadgen 第一片（待批准）
 
 > 状态：**已生成、已审阅、已做语法验证，未应用**。应用需要你批准。
-> 分支：`feat/leadgen-schema`（main 不含此迁移）。
+> **评审分支：`feat/leadgen-schema-final`**（基于当前 main，两片合并成一条，合并无冲突）。
+> 早期两条 `feat/leadgen-schema` / `-2` 已被它取代：它们切在 main 变更之前，与 `03b` 文档冲突。
 
 ## 1. 文件
 
@@ -42,7 +43,7 @@
 
 | 项 | 值 |
 |---|---|
-| 分支 | `feat/leadgen-schema-2`（叠在第一片上） |
+| 分支 | 同一个评审分支 `feat/leadgen-schema-final`（第一片 + 第二片都在里面，顺序执行） |
 | 文件 | `Migration20261108194144_leadgen.ts` |
 | 表 | 11 张：quota_buckets / quota_reservations / quota_ledger / drafts / approvals / sends / message_receipts / suppressions / capability_policies / employee_bindings / bot_bindings |
 | 语句 | up 35 / down 11 |
