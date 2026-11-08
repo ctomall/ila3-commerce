@@ -9,8 +9,8 @@
 | M0 现状审计 | **done** | `00-m0-baseline.md` | 运行入口/分支/服务/DB/贡献者/能力矩阵/风险 R1–R8 |
 | M1 入口治理 | **基线完成** | `01-entry-map.md`、`appendix/nav-*.json`、`decisions.md` | `node scripts/crm-nav-baseline.mjs` |
 | M2 契约 | **草案完成（待 2 项决策）** | `02-capability-matrix.md`、`03-dsh-contract.md`、`03a-data-model.md` | 授权链行号证据、676/1149 契约计数、五组表设计 |
-| M3 原型 | 未开始 | `04-prototype.md`（六页） | — |
-| M4 安全 PoC | 未开始 | （规划：`05-security-poc.md`） | — |
+| M3 原型 | **完成（原型，非生产）** | `04-prototype.md` + `src/modules/crm_prototype/**` | 六页截图 `proto-*.png`；navHidden 使入口数不变 152/150/74 |
+| M4 安全 PoC | **计划完成，待路线确认** | `05-security-poc.md` | 7 维隔离 + 7 条对抗用例 + 撤权时序 |
 | M5 获客 | 未开始 | （规划：`06-leadgen.md`） | — |
 | M6 触达 | 未开始 | （规划：`07-outreach.md`） | — |
 | M7 Bot | 未开始 | （规划：`08-bot.md`） | — |
