@@ -6,7 +6,7 @@
 
 | # | 条款 | 实现 | 证据 | 状态 |
 |---|---|---|---|---|
-| A1 | 入口收敛 | `01-entry-map.md`；改名去重（2 组 → 0）；`nav-groups` 分组 | `scripts/crm-nav-baseline.mjs`（152/150/74，重名 0）；`appendix/entries.md` | partial（C5「创建 X」根项未做） |
+| A1 | 入口收敛 | `01-entry-map.md`；改名去重（2 组 → 0）；`nav-groups` 分组；C5 复核 | `crm-nav-baseline`（152/150/74，重名 0）；`entries.md`；`01` §6.1 | done（C5 定位为上游元数据问题，不加补丁） |
 | A2 | 中文业务流程与视觉 | 六页原型（含 8 类状态）；i18n 补键；英文残留扫描 | `proto-*.png`（含 `proto-tasks-cancelled.png`）；`crm-i18n-sweep`；`appendix/i18n-residual.md` | done（原型层） |
 | A3 | 员工专属助手 | 绑定模型（员工/助手/策略版本/状态） | `03-dsh-contract.md` §1；`leadgen_employee_bindings` 设计（未建表） | partial |
 | A4 | CRM 权限控制 DSH 工具与插件 | 五因子交集；工具集取交集；插件三类 | `02-capability-matrix.md` §2；`03` §3.5 §5 | partial（M4 未执行） |

@@ -75,7 +75,7 @@
 | C2 | 两个 AI 智能体入口留一个，另一个 `navHidden` 或 301 | `config/ai-assistant/agents` vs `config/ai-agents` | 低 | 先确认哪份是权威 |
 | C3 | 「请假申请」两处改名区分（管理 / 我的） | staff 两页 | 低 | i18n 键 |
 | C4 | 「自定义实体」两处改名区分 | config/settings、entities/user | 低 | i18n 键 |
-| C5 | 7 个「创建 X」不再作根项，改为列表页内主按钮 | 各域 create 页 | 中（深链可能被外部书签引用） | 先立 301 映射 |
+| C5 | ~~7 个「创建 X」不再作根项~~ **已核对：实际 5 个，且不建议加补丁** | 详见 §6.1 | 低 | 上游对齐 `pageGroupKey`（见下） |
 | C6 | 设置首页权威化：`/backend/settings` → `/backend/config/home` | 断链面 | 中 | 决策 D11 |
 | C7 | 客户详情 v2 收编或删除 | v2 两页 | 中 | 决策 D12 |
 
@@ -121,3 +121,22 @@
 **已修**：源码本来就用 `t(key, fallback)`，缺的只是 `src/i18n/zh.json` 的键。补三条键后，团队请假的搜索框与列头全部中文（`搜索…`、`日期`）。不需要改代码，也不需要加补丁。
 
 **可复跑的扫描**：`node scripts/crm-i18n-sweep.mjs` → `appendix/i18n-residual.md`（8 个页面，过滤合法缩写）。最新结论：界面结构无英文残留，命中项全是公司名/人名/单据号/渠道值这类**数据**。
+
+
+## 6.1 「创建 X」根项的真实情况（2026-11-08 复核）
+
+之前口头说「7 个创建 X 挂在缺失父项下」，实际从服务端 payload 逐个核对是 **20 个创建类入口，其中 5 个是根项**：
+
+| 入口 | 父页面是否存在 | 直接原因 |
+|---|---|---|
+| `/backend/users/create` 创建用户 | 是 | 父子 `pageGroupKey` 不一致（见下） |
+| `/backend/roles/create` 创建角色 | 是 | 同上 |
+| `/backend/entities/user/create` 创建实体 | 是 | 父 `settings.sections.dataDesigner` vs 子 `entities.nav.group` |
+| `/backend/feature-toggles/global/create` 创建功能开关 | 是 | 父/子分组键不同 |
+| `/backend/sales/documents/create` 创建销售单据 | **否** | 根本没有 `/backend/sales/documents` 页面 |
+
+**机制**（已核实）：`nav.ts` 按 href 前缀建父子，但只在**同一分组内**匹配。上面四个的父页面与创建页声明了不同的 `pageGroupKey`，于是它们被分到两个同名分组里，前缀匹配永远不触发。
+
+**结论：不在这里加补丁。** 这是上游元数据不一致，加一条 nav 后处理过滤器只会掩盖问题，并且会让下一次升级更难对齐。正确修法是在 upstream 把父子的 `pageGroupKey` 对齐（4 个），以及给 `/backend/sales/documents` 补一个父页面或显式 parent 元数据（1 个）。
+
+C5 因此不算“未完成的收敛”，而是“已定位、且明确不该用补丁解决”。
