@@ -40,7 +40,9 @@ async function main(){
  const stateDirs=manual?[path.dirname(requestFile)]:[]
  for(const d of stateDirs)writeJsonAtomic(path.join(d,'state.json'),{status:'running',step:'isolated-executor',toCommit:sha,actor,startedAt:new Date().toISOString()})
  // Existing executor owns flock, CI gating, candidate checks, switch and rollback.
- const child=spawnSync(process.execPath,[path.join(APP_DIR,'scripts/auto-deploy/deploy.mjs'),manual?'--manual':'--auto','--sha',sha,'--allow-production'],{cwd:APP_DIR,env:{...process.env,ILA3_ALLOW_PRODUCTION:'1'},stdio:'inherit',timeout:5200000})
+ // The unified entry always requests the CI release package; a local build is an
+ // explicit operator fallback (`deploy.mjs --build-locally`), never an implicit one.
+ const child=spawnSync(process.execPath,[path.join(APP_DIR,'scripts/auto-deploy/deploy.mjs'),manual?'--manual':'--auto','--from-artifact','--sha',sha,'--allow-production'],{cwd:APP_DIR,env:{...process.env,ILA3_ALLOW_PRODUCTION:'1'},stdio:'inherit',timeout:5200000})
  const code=child.status??1
  for(const d of stateDirs)writeJsonAtomic(path.join(d,'state.json'),legacyState(code,sha,actor))
  process.exitCode=code

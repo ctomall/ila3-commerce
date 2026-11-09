@@ -1,8 +1,14 @@
-# Builds the production output in CI so the server never needs the toolchain.
+# Builds the production release package in CI so the server never needs the toolchain.
 #
-# The server-side one-click upgrade still exists as a fallback; this workflow is the
-# path that makes upgrades pull + restart only. Artifact size matters: Next's incremental
-# cache is excluded, which keeps it around 900 MB instead of 8 GB.
+# The artifact is a *complete runtime package*, not just `.mercato/next`:
+#   release.tar.gz          tracked runtime sources + .mercato/next + .mercato/generated
+#   release-manifest.json   repo/run/commit/platform + per-file sha256 + archive sha256
+# Both files are uploaded as ONE artifact, so the GitHub artifact digest covers the
+# manifest too. scripts/auto-deploy/artifact.mjs re-hashes the download, compares it
+# with that digest, then extracts and verifies every file before installing.
+#
+# On the production host the installer runs `yarn install --immutable` only — it never
+# runs `next build`. `deploy.mjs --build-locally` remains the explicit CI-down fallback.
 name: build-artifact
 
 on:
@@ -18,7 +24,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
@@ -61,18 +67,51 @@ jobs:
           NODE_OPTIONS: --max-old-space-size=8192
         run: yarn build
 
-      - name: Report build size
-        run: |
-          du -sh .mercato/next || true
-          du -sh .mercato/next/cache || true
-
-      - name: Drop build cache before upload
+      # The incremental build cache is not needed to run the app and is the single
+      # largest directory; dropping it keeps the uploaded artifact to roughly 700 MB.
+      - name: Drop build cache before packaging
         run: rm -rf .mercato/next/cache
 
-      - name: Upload build output
+      # package-release.mjs is the same code path used by the local drills, so CI and
+      # the server cannot drift on what a release package is.
+      - name: Package release artifact
+        run: |
+          node scripts/auto-deploy/package-release.mjs \
+            --source . \
+            --out dist \
+            --repository "$GITHUB_REPOSITORY" \
+            --run-id "$GITHUB_RUN_ID" \
+            --commit "$GITHUB_SHA" \
+            --ref "$GITHUB_REF" \
+            --node-major 24 \
+            --platform linux \
+            --arch x64 \
+            --checks typecheck,unit,build \
+            --json
+
+      - name: Verify package contents
+        run: |
+          set -euo pipefail
+          test -f dist/release.tar.gz
+          test -f dist/release-manifest.json
+          jq -e --arg sha "$GITHUB_SHA" --arg repo "$GITHUB_REPOSITORY" --argjson run "$GITHUB_RUN_ID" \
+            '.schema == 1 and .commit == $sha and .repository == $repo and .workflowRunId == $run and .database.migrationRequired == false' \
+            dist/release-manifest.json
+          # The package must not carry secrets, database dumps or node_modules.
+          # Root node_modules is forbidden, but .mercato/next/node_modules contains the
+          # relative symlinks Next creates for externalized packages and must stay.
+          if tar -tzf dist/release.tar.gz | grep -E '(^|/)\.env($|\.)|^node_modules/|\.sql($|\.)|\.dump($|\.)'; then
+            echo "forbidden file in release package" >&2
+            exit 1
+          fi
+          ls -lh dist
+
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: next-build-${{ github.sha }}
-          path: .mercato/next
+          name: mercato-release-${{ github.sha }}
+          path: dist/
           retention-days: 7
+          # release.tar.gz is already gzip-compressed; zipping it again only wastes CPU.
           compression-level: 0
+          if-no-files-found: error

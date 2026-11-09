@@ -32,6 +32,8 @@ async function main() {
   const latestRun = readJson(path.join(STATE_DIR, 'latest.json'))
   const gate = readJson(path.join(STATE_DIR, 'gates', 'latest.json'))
   const drills = readJson(path.join(DRILLS_DIR, 'latest.json'))
+  const artifactDrills = readJson(path.join(DRILLS_DIR, 'artifact-latest.json'))
+  const artifactE2E = readJson(path.join(DRILLS_DIR, 'artifact-e2e-latest.json'))
   const checker = readJson(path.join(CHECKER_STATE_DIR, 'status.json'))
   const timerEnabled = systemctl(['is-enabled', 'ila3-auto-deploy.timer'])
   const timerActive = systemctl(['is-active', 'ila3-auto-deploy.timer'])
@@ -55,7 +57,14 @@ async function main() {
     },
     current,
     currentManifest: manifest
-      ? {sha: manifest.sha, status: manifest.status, createdAt: manifest.createdAt, artifactHuman: manifest.artifact?.totalHuman}
+      ? {
+          sha: manifest.sha,
+          status: manifest.status,
+          createdAt: manifest.createdAt,
+          source: manifest.source?.method ?? null,
+          installer: manifest.artifact ? 'ci-artifact' : 'git-worktree',
+          artifactHuman: manifest.artifact?.totalHuman,
+        }
       : null,
     activeProcess: active ?? null,
     latestRun: latestRun
@@ -72,6 +81,26 @@ async function main() {
       : null,
     ciGate: gate
       ? {sha: gate.sha, decision: gate.decision, reason: gate.reason, checkedAt: gate.checkedAt}
+      : null,
+    artifactDrills: artifactDrills
+      ? {
+          drillRunId: artifactDrills.drillRunId,
+          passed: artifactDrills.passed,
+          digest: artifactDrills.scenarios?.digest?.errorCode ?? null,
+          metadata: artifactDrills.scenarios?.metadata?.errorCode ?? null,
+          traversal: artifactDrills.scenarios?.traversal?.errorCode ?? null,
+          download404: artifactDrills.scenarios?.deployDownload404?.result ?? null,
+          downloadTimeout: artifactDrills.scenarios?.deployDownloadTimeout?.result ?? null,
+          record: path.join(DRILLS_DIR, 'artifact-latest.json'),
+        }
+      : null,
+    artifactE2E: artifactE2E
+      ? {
+          drillRunId: artifactE2E.drillRunId,
+          passed: artifactE2E.passed,
+          result: artifactE2E.result ?? null,
+          record: path.join(DRILLS_DIR, 'artifact-e2e-latest.json'),
+        }
       : null,
     drills: drills
       ? {

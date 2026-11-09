@@ -42,6 +42,7 @@ import {
 } from './lib.mjs'
 import {runGate} from './ci-gate.mjs'
 import {buildRelease, verifyRelease} from './release.mjs'
+import {installFromArtifact} from './artifact.mjs'
 import {checkRelease, checkRunning} from './health.mjs'
 
 const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
@@ -60,6 +61,15 @@ function parseArgs(argv) {
     releaseDir: null,
     sha: null,
     injectPostSwitchFailure: false,
+    fromArtifact: false,
+    buildLocally: false,
+    artifactFile: null,
+    artifactUrl: null,
+    artifactSha256: null,
+    artifactRunId: null,
+    artifactRepo: null,
+    installDir: null,
+    artifactTimeoutMs: Number(process.env.ILA3_ARTIFACT_TIMEOUT_MS || 900000),
     allowProduction: false,
     allowFirstDeploy: false,
     allowReplaceMercato: false,
@@ -82,6 +92,15 @@ function parseArgs(argv) {
     else if (flag === '--release-dir') args.releaseDir = value()
     else if (flag === '--sha') args.sha = value()
     else if (flag === '--inject-post-switch-failure') args.injectPostSwitchFailure = true
+    else if (flag === '--from-artifact') args.fromArtifact = true
+    else if (flag === '--build-locally') args.buildLocally = true
+    else if (flag === '--artifact-file') args.artifactFile = value()
+    else if (flag === '--artifact-url') args.artifactUrl = value()
+    else if (flag === '--artifact-sha256') args.artifactSha256 = value()
+    else if (flag === '--artifact-run-id') args.artifactRunId = value()
+    else if (flag === '--artifact-repo') args.artifactRepo = value()
+    else if (flag === '--install-dir') args.installDir = value()
+    else if (flag === '--artifact-timeout') args.artifactTimeoutMs = Number(value())
     else if (flag === '--allow-production') args.allowProduction = true
     else if (flag === '--allow-first-deploy') args.allowFirstDeploy = true
     else if (flag === '--allow-replace-mercato') args.allowReplaceMercato = true
@@ -250,7 +269,7 @@ async function main() {
   const args = parseArgs(rawArgs)
   if (args.help) {
     console.log(
-      'usage: node scripts/auto-deploy/deploy.mjs (--auto|--manual) [--sha SHA] [--drill --pid-mode --target-port 3200 ...]',
+      'usage: node scripts/auto-deploy/deploy.mjs (--auto|--manual) [--sha SHA] [--from-artifact|--build-locally] [--artifact-run-id N] [--drill --pid-mode --target-port 3200 ...]',
     )
     process.exit(0)
   }
@@ -261,6 +280,20 @@ async function main() {
     if (args.targetPort === PRODUCTION_PORT) throw new Error('drills must not target production port 3000')
   }
   if (args.skipCiGate && !args.drill) throw new Error('--skip-ci-gate is only allowed with --drill')
+  if (args.fromArtifact && args.buildLocally) throw new Error('--from-artifact and --build-locally are mutually exclusive')
+  if (args.artifactFile && args.artifactUrl) throw new Error('--artifact-file and --artifact-url are mutually exclusive')
+  for (const flag of ['artifactFile', 'artifactUrl', 'installDir', 'artifactRepo']) {
+    if (args[flag] && !args.drill) throw new Error(`--${flag.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)} is only allowed with --drill`)
+  }
+  if (args.artifactSha256 && !/^[a-f0-9]{64}$/.test(args.artifactSha256)) throw new Error('--artifact-sha256 must be 64 lowercase hex')
+  if (args.artifactRunId && !/^\d+$/.test(String(args.artifactRunId))) throw new Error('--artifact-run-id must be numeric')
+  if ((args.artifactFile || args.artifactUrl) && (!args.artifactSha256 || !args.artifactRunId)) {
+    throw new Error('drill artifact sources require --artifact-sha256 and --artifact-run-id')
+  }
+  // Default path: production pulls the CI package. Local builds are an explicit
+  // fallback (`--build-locally`), and drills keep their previous behaviour unless
+  // they ask for the artifact path.
+  args.useArtifact = args.fromArtifact || (!args.buildLocally && !args.drill && !args.releaseDir)
   if (args.injectPostSwitchFailure && !args.drill) throw new Error('--inject-post-switch-failure is only allowed with --drill')
   if (args.releaseDir && !args.drill) throw new Error('--release-dir is only allowed with --drill')
 
@@ -299,6 +332,7 @@ async function main() {
   let oldRelease = null
   let release = null
   let switched = false
+  let gateResult = null
 
   const rollback = async (reason) => {
     if (!switched || !oldRelease || oldRelease.missing) {
@@ -360,15 +394,19 @@ async function main() {
       record.ciGate = {decision: 'skipped', reason: 'drill-only --skip-ci-gate', allow: false}
       record.steps.push({name: 'ci-gate', ok: true, startedAt: nowIso(), finishedAt: nowIso(), detail: 'skipped for drill'})
     } else {
-      const gate = await step('ci-gate', async () => runGate({sha}))
+      gateResult = await step('ci-gate', async () => runGate({sha}))
       record.ciGate = {
-        allow: Boolean(gate.allow),
-        decision: gate.decision,
-        reason: gate.reason,
+        allow: Boolean(gateResult.allow),
+        decision: gateResult.decision,
+        reason: gateResult.reason,
+        repo: gateResult.repo ?? null,
+        runId: gateResult.matchedRun?.id ?? null,
+        runPath: gateResult.matchedRun?.path ?? null,
+        runUrl: gateResult.matchedRun?.url ?? null,
         evidence: path.join(STATE_DIR, 'gates', `${sha}.json`),
       }
       record.evidence.ciGate = record.ciGate.evidence
-      if (!gate.allow) throw refusal('ci-gate-denied', gate)
+      if (!gateResult.allow) throw refusal('ci-gate-denied', gateResult)
     }
 
     release = await step('release', async () => {
@@ -377,14 +415,41 @@ async function main() {
         const manifest = readJson(path.join(dir, 'release.json'))
         return {reused: true, dir, manifest, synthetic: true}
       }
+      if (args.useArtifact) {
+        const runId = args.artifactRunId ?? gateResult?.matchedRun?.id ?? null
+        if (!runId) {
+          throw refusal(
+            'artifact-run-missing',
+            'no successful CI workflow run id available for this SHA; pass --artifact-run-id or use --build-locally',
+          )
+        }
+        const source = args.artifactFile
+          ? {kind: 'file', file: args.artifactFile, sha256: args.artifactSha256, runId}
+          : args.artifactUrl
+            ? {kind: 'url', url: args.artifactUrl, sha256: args.artifactSha256, runId}
+            : {kind: 'github'}
+        return installFromArtifact({
+          sha,
+          runId,
+          repo: args.artifactRepo ?? gateResult?.repo ?? null,
+          source,
+          installDir: args.installDir,
+          force: args.force,
+          downloadTimeoutMs: args.artifactTimeoutMs,
+          logPath: path.join(LOGS_DIR, `${record.runId}-artifact.log`),
+        })
+      }
       return buildRelease({sha, force: args.force})
     })
     record.release = {
       dir: release.dir,
       reused: release.reused,
       synthetic: Boolean(release.synthetic),
+      installer: args.useArtifact ? 'ci-artifact' : args.releaseDir ? 'synthetic' : 'local-build',
+      source: release.manifest?.source?.method ?? null,
       manifest: path.join(release.dir, 'release.json'),
       sha: release.manifest?.sha ?? sha,
+      log: release.log ?? null,
     }
     record.evidence.releaseManifest = record.release.manifest
 
@@ -495,6 +560,8 @@ async function main() {
       const recovered = await rollback(record.error.code)
       record.result = recovered ? 'rolled-back' : 'rollback-failed'
     } else {
+      // Artifact failures are refusals: they are detected before the symlink
+      // switch, and the old release is left running untouched.
       const refusalCodes = new Set([
         'ci-gate-denied',
         'candidate-unhealthy',
@@ -504,6 +571,50 @@ async function main() {
         'service-not-installed',
         'release-missing',
         'release-invalid',
+        'artifact-run-missing',
+        'artifact-run-not-found',
+        'artifact-run-sha-mismatch',
+        'artifact-run-not-successful',
+        'artifact-run-wrong-workflow',
+        'artifact-not-found',
+        'artifact-expired',
+        'artifact-digest-missing',
+        'artifact-digest-mismatch',
+        'artifact-size-mismatch',
+        'artifact-download-failed',
+        'artifact-token-missing',
+        'artifact-github-error',
+        'artifact-repository-invalid',
+        'artifact-sha-invalid',
+        'artifact-source-invalid',
+        'artifact-zip-invalid',
+        'artifact-zip-incomplete',
+        'artifact-zip-empty',
+        'artifact-unsafe-path',
+        'artifact-symlink-escape',
+        'artifact-hardlink-rejected',
+        'artifact-unsupported-file-type',
+        'artifact-manifest-invalid',
+        'artifact-manifest-mismatch',
+        'artifact-content-digest-mismatch',
+        'artifact-file-hash-mismatch',
+        'artifact-type-mismatch',
+        'artifact-symlink-target-mismatch',
+        'artifact-missing-file',
+        'artifact-extra-file',
+        'artifact-build-stamp-mismatch',
+        'artifact-install-failed',
+        'artifact-install-incomplete',
+        'artifact-release-invalid',
+        'artifact-target-in-use',
+        'insufficient-disk',
+        'artifact-empty-package',
+        'artifact-package-failed',
+        'artifact-source-missing',
+        'artifact-scan-failed',
+        'artifact-extract-failed',
+        'artifact-extract-timeout',
+        'artifact-too-many-files',
       ])
       record.result = refusalCodes.has(record.error.code) ? 'refused' : 'failed'
       if (oldRelease && !oldRelease.missing && args.pidMode) {
@@ -542,6 +653,7 @@ async function main() {
       worktreeDirty: record.worktreeDirty,
       ciGate: record.ciGate ?? null,
       release: record.release ?? null,
+      installer: record.release?.installer ?? null,
       candidate: record.candidate ?? null,
       postSwitch: record.postSwitch ?? null,
       rollback: record.rollback ?? null,
