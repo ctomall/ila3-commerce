@@ -78,11 +78,12 @@ for (const role of ROLES) {
   // and the page for a role that was never granted it.
   const deniedApi = await fetch(`${BASE}/api/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
   const deniedPage = await fetch(`${BASE}/backend/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
-  const deniedText = await deniedPage.text()
-  const denied = { api: deniedApi.status, page: deniedPage.status, accessDenied: /Access Denied|无权访问/.test(deniedText) }
-  if (role === 'employee') {
-    if (deniedApi.status !== 403) push(role, `organizations API was not refused (${deniedApi.status})`)
-    if (!denied.accessDenied) push(role, 'direct admin page did not render an access-denied state')
+  // Server HTML embeds error-component source, so an "Access Denied" substring is
+  // not proof the caller saw it. The API status is authoritative here; the
+  // visible page denial is asserted in the browser run.
+  const denied = { api: deniedApi.status, page: deniedPage.status }
+  if (role === 'employee' && deniedApi.status !== 403) {
+    push(role, `organizations API was not refused (${deniedApi.status})`)
   }
   if (role === 'admin' && deniedApi.status === 403) push(role, 'admin unexpectedly refused the organizations API')
 
@@ -97,11 +98,12 @@ for (const role of ROLES) {
   // and the page for a role that was never granted it.
   const deniedApi = await fetch(`${BASE}/api/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
   const deniedPage = await fetch(`${BASE}/backend/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
-  const deniedText = await deniedPage.text()
-  const denied = { api: deniedApi.status, page: deniedPage.status, accessDenied: /Access Denied|无权访问/.test(deniedText) }
-  if (role === 'employee') {
-    if (deniedApi.status !== 403) push(role, `organizations API was not refused (${deniedApi.status})`)
-    if (!denied.accessDenied) push(role, 'direct admin page did not render an access-denied state')
+  // Server HTML embeds error-component source, so an "Access Denied" substring is
+  // not proof the caller saw it. The API status is authoritative here; the
+  // visible page denial is asserted in the browser run.
+  const denied = { api: deniedApi.status, page: deniedPage.status }
+  if (role === 'employee' && deniedApi.status !== 403) {
+    push(role, `organizations API was not refused (${deniedApi.status})`)
   }
   if (role === 'admin' && deniedApi.status === 403) push(role, 'admin unexpectedly refused the organizations API')
 
@@ -152,11 +154,12 @@ for (const role of ROLES) {
   // and the page for a role that was never granted it.
   const deniedApi = await fetch(`${BASE}/api/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
   const deniedPage = await fetch(`${BASE}/backend/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
-  const deniedText = await deniedPage.text()
-  const denied = { api: deniedApi.status, page: deniedPage.status, accessDenied: /Access Denied|无权访问/.test(deniedText) }
-  if (role === 'employee') {
-    if (deniedApi.status !== 403) push(role, `organizations API was not refused (${deniedApi.status})`)
-    if (!denied.accessDenied) push(role, 'direct admin page did not render an access-denied state')
+  // Server HTML embeds error-component source, so an "Access Denied" substring is
+  // not proof the caller saw it. The API status is authoritative here; the
+  // visible page denial is asserted in the browser run.
+  const denied = { api: deniedApi.status, page: deniedPage.status }
+  if (role === 'employee' && deniedApi.status !== 403) {
+    push(role, `organizations API was not refused (${deniedApi.status})`)
   }
   if (role === 'admin' && deniedApi.status === 403) push(role, 'admin unexpectedly refused the organizations API')
 

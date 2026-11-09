@@ -288,6 +288,16 @@ for (const role of ROLES) {
     await shot('direct-settings-url')
     results.push({ role, surface: 'direct-settings-url', sidebar: direct })
     check(`${role} direct URL keeps rail`, direct.itemCount === 5 && direct.groupHeaders === 0, `items=${direct.itemCount} headers=${direct.groupHeaders}`)
+
+    // Hiding a menu entry is not authorization: an employee who types an
+    // admin-only URL must see the denial, and the API must refuse independently.
+    if (role === 'employee') {
+      await page.goto('/backend/directory/organizations', { waitUntil: 'domcontentloaded' })
+      await page.waitForTimeout(2500)
+      const deniedText = await page.evaluate(() => document.querySelector('main')?.innerText ?? '')
+      await page.screenshot({ path: path.join(OUT, `${LABEL}-${role}-direct-admin-page.png`), fullPage: false })
+      check(`${role} direct admin URL denied`, /Access Denied|无权限/.test(deniedText), deniedText.slice(0, 60).replace(/\n/g, ' '))
+    }
   }
 
   await context.close()
