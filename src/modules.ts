@@ -236,6 +236,8 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'settings_home', from: '@app' },
   // M3 prototype pages (navHidden, non-production demo).
   { id: 'crm_prototype', from: '@app' },
+  // P1: named 工作台 entry pointing at the existing /backend dashboard.
+  { id: 'workbench', from: '@app' },
   // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no
   // migrations — only a module-root ai-tools.ts that the generator folds into the
   // ai-assistant tool registry.

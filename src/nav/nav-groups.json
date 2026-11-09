@@ -1,63 +1,36 @@
 [
   {
-    "id": "sales",
-    "label": "客户与销售",
+    "id": "workbench",
+    "label": "工作台",
     "order": 10,
     "members": [
-      "customers.nav.group",
-      "customers~sales.nav.group"
-    ]
-  },
-  {
-    "id": "catalog",
-    "label": "商品与库存",
-    "order": 20,
-    "members": [
-      "catalog.nav.group",
-      "wms.nav.group",
-      "checkout.nav.group"
-    ]
-  },
-  {
-    "id": "fulfillment",
-    "label": "履约与售后",
-    "order": 30,
-    "members": [
-      "warranty_claims.nav.group",
-      "eudr.nav.group"
-    ]
-  },
-  {
-    "id": "people",
-    "label": "人员与排程",
-    "order": 40,
-    "members": [
+      "workbench.nav.group",
+      "profile.sections.account",
       "resources.nav.group",
       "staff.nav.group",
       "staff.time_tracking.nav.group"
     ]
   },
   {
-    "id": "finance",
-    "label": "财务与规则",
-    "order": 50,
+    "id": "sales",
+    "label": "销售业务",
+    "order": 20,
     "members": [
+      "customers.nav.group",
+      "customers~sales.nav.group",
+      "catalog.nav.group",
+      "wms.nav.group",
+      "checkout.nav.group",
+      "warranty_claims.nav.group",
+      "eudr.nav.group",
       "currencies.nav.group",
       "rules.nav.group"
     ]
   },
   {
-    "id": "automation",
-    "label": "自动化与流程",
-    "order": 60,
-    "members": [
-      "workflows.module.name"
-    ]
-  },
-  {
-    "id": "comms",
-    "label": "内容与通信",
-    "order": 70,
+    "id": "resources",
+    "label": "资料中心",
+    "order": 30,
     "members": [
       "documents.nav.group",
       "attachments.nav.group",
@@ -65,6 +38,25 @@
       "inbox_ops.nav.group",
       "communication_channels.nav.group",
       "phone_calls.nav.group"
+    ]
+  },
+  {
+    "id": "admin",
+    "label": "管理后台",
+    "order": 40,
+    "members": [
+      "workflows.module.name",
+      "backend.nav.externalSystems",
+      "settings.sections.directory",
+      "settings.sections.featureToggles",
+      "settings.sections.dataDesigner",
+      "settings.sections.moduleConfigs",
+      "settings.sections.system",
+      "settings.sections.auth",
+      "backend.nav.security",
+      "backend.nav.developers",
+      "customer_accounts.settings.section",
+      "appShell.sidebarCustomizationGroup"
     ]
   }
 ]

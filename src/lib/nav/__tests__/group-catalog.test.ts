@@ -5,15 +5,17 @@ const group = (id: string, items: unknown[]) => ({ id, items })
 
 describe('applyGroupCatalog', () => {
   it('merges member groups into the declared sections in catalog order', () => {
+    // The catalog is 工作台 / 销售业务 / 资料中心 / 管理后台: customers, catalog, fulfilment
+    // and finance are one business area now, so they merge into `sales`.
     const result = applyGroupCatalog([
       group('customers.nav.group', ['a', 'b']),
       group('customers~sales.nav.group', ['c']),
       group('catalog.nav.group', ['d']),
+      group('workbench.nav.group', ['home']),
     ])
-    expect(result[0].id).toBe('sales')
-    expect(result[0].items).toEqual(['a', 'b', 'c'])
-    expect(result[1].id).toBe('catalog')
-    expect(result[1].items).toEqual(['d'])
+    expect(result.map((entry) => entry.id)).toEqual(['workbench', 'sales'])
+    expect(result[0].items).toEqual(['home'])
+    expect(result[1].items).toEqual(['a', 'b', 'c', 'd'])
   })
 
   it('keeps unknown groups visible after the catalog', () => {
@@ -27,7 +29,7 @@ describe('applyGroupCatalog', () => {
 
   it('drops catalog entries whose members are absent', () => {
     const result = applyGroupCatalog([group('catalog.nav.group', ['d'])])
-    expect(result.map((entry) => entry.id)).toEqual(['catalog'])
+    expect(result.map((entry) => entry.id)).toEqual(['sales'])
   })
 
   it('matches the shipped catalog contract', () => {
