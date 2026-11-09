@@ -62,7 +62,7 @@ const GATES = [
   // without updating the baseline.
   { id: 'nav-nesting', cmd: 'node scripts/crm-nav-nesting-check.mjs --check', why: '未嵌套入口与白名单一致（多一条或修好一条都红）' },
   { id: 'tokens', cmd: 'node scripts/check-token-layers.mjs --strict', why: '设计令牌没有非语义用法' },
-  { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '没有绕过 i18n 的硬编码文案', evidence: /\[i18n:check-hardcoded\]/ },
+  { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '硬编码文案扫描 0 error（advisory 命中单独计数，不当作已清零）', evidence: /\[i18n:check-hardcoded\]/ },
   { id: 'typecheck', cmd: 'yarn typecheck', why: '类型检查（tsc 成功时无输出）', full: true },
   { id: 'lint', cmd: 'yarn lint', why: 'ESLint（0 error 才算过）', full: true },
   { id: 'contrast', cmd: 'node scripts/check-contrast.mjs', why: '对比度 AA + 样本数下限', full: true, evidence: /\[contrast\] \d+\/\d+ within AA/ },

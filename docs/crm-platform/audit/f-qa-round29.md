@@ -71,3 +71,7 @@
 | D18 | restore 只比表数与 6 个行数：丢索引/FK/sequence、值损坏都 PASS | 结构比对（4076 列 / 1027 索引 / 3005 约束 / 53 序列 / 触发器 / 视图）＋ 探针表整表内容摘要；比对器每次运行先做 4 项反向自证 | 删一个真实 UNIQUE 约束 → 点名索引与约束；行数 3→3 但改一行 → 内容摘要不同被判红 |
 | D19 | `source.guard` 无条件 PASS | 改为比较演练前后源库指纹 | 源库变动 → FAIL（`e0356f3`） |
 | D21/D22 | verify-all 的 PASS 行 note 恒空、报告不记录工作树脏 | PASS 行写门禁自己的摘要行；报告头记工作树状态；`--require-clean` 脏树即失败 | 本轮实测：脏树 + `--require-clean` → exit 1，报告头写"**脏**（7 项未提交…）" |
+
+关掉之后的复核运行：`verify/verify-2026-11-09T01-58-45.md` — `--full --require-clean --require-no-skip`，21/21 通过、0 跳过、工作树干净、提交 `9fa6618`。每一行都带该门禁自己的观测（如 `m4-harness` 的 `pass 5 · pass-weak 2 · fail 0 · blocked 4 · invalid 1`、`restore-drill` 的 `columns 4076 / indexes 1027 / constraints 3005 / sequences 53`）。
+
+顺带暴露的一处口径不实：`i18n-hardcoded` 门描述写着"没有绕过 i18n 的硬编码文案"，实际证据是 `advisory: 153 findings in 294 files`（0 error）。门本身没变，**描述已改成它真正证明的东西**——否则那一行就是在借一个它没做到的说法通过。
