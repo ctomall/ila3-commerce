@@ -10,6 +10,7 @@
  * A dirty development worktree is recorded, never used as a build source.
  */
 import fs from 'node:fs'
+import {spawnSync} from 'node:child_process'
 import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {
@@ -26,6 +27,7 @@ import {
   makeRunId,
   nowIso,
   persistRun,
+  killTree,
   pidAlive,
   readJson,
   readLink,
@@ -92,14 +94,43 @@ function parseArgs(argv) {
   return args
 }
 
+/**
+ * Free the candidate port if a previous attempt left a server on it.
+ *
+ * `checkRelease` kills its own child, but the child it spawns is `yarn start`, and the
+ * `next-server` grandchild can outlive it. On 2026-11-09 that left a next-server on 3100
+ * after a refusal, and the *next* run's candidate check failed for a reason that had
+ * nothing to do with the release under test. A refusal must leave the machine as it found
+ * it, so the port is checked and cleared on every exit path.
+ */
+function freePortIfOccupied(port, echo = false) {
+  const out = spawnSync('ss', ['-ltnp'], {encoding: 'utf8'})
+  const line = (out.stdout || '').split('\n').find((l) => l.includes(`:${port} `))
+  if (!line) return {freed: false, pid: null}
+  const match = line.match(/pid=(\d+)/)
+  if (!match) return {freed: false, pid: null}
+  const pid = Number(match[1])
+  try {
+    killTree(pid, 'SIGTERM')
+  } catch {
+    return {freed: false, pid}
+  }
+  if (echo) console.log(`[deploy] freed candidate port ${port} from pid ${pid}`)
+  return {freed: true, pid}
+}
+
 function refusal(code, detail) {
   return Object.assign(new Error(code), {code, detail})
 }
 
 async function systemctl(args, {echo = false, timeoutMs = 120000} = {}) {
+  // `sudo -n` because the executor runs as `pro` and the release-slot unit is a system
+  // unit. Without it the first cutover switched the symlink, failed to restart the app
+  // ("Access denied ... requires interactive authentication"), then failed to roll back
+  // for the same reason — and production was down until it was started by hand.
   return runStreaming({
-    cmd: 'systemctl',
-    args,
+    cmd: 'sudo',
+    args: ['-n', 'systemctl', ...args],
     cwd: '/',
     timeoutMs,
     echo,
@@ -460,6 +491,11 @@ async function main() {
       }
     }
   } finally {
+    // A refusal must not leave a candidate server behind (see freePortIfOccupied).
+    if (!switched) {
+      const freed = freePortIfOccupied(args.candidatePort)
+      if (freed.pid) record.candidatePortCleanup = freed
+    }
     record.finishedAt = nowIso()
     if (!record.runId) record.runId = makeRunId(record.sha || 'unknown', 'deploy')
     const file = persistRun(record)

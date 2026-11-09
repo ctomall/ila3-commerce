@@ -229,7 +229,12 @@ let serviceStart = arg('--service-start')
 if (serviceStart === null) {
   // Epoch seconds, not the human string: `Mon 2026-11-09 08:27:42 CST` parses to the wrong
   // instant under any timezone but the one that produced it.
-  const show = spawnSync('systemctl', ['show', 'mercato', '-p', 'ActiveEnterTimestamp', '--timestamp=unix', '--value'], {
+  // The unit that serves the app is not always `mercato`: once auto-deploy is live the
+  // release slot is `ila3-auto-deploy-app`. Hardcoding one meant the gate would fail the
+  // moment the deployment model changed, and a failing gate is not a wrong gate — but a
+  // gate that fails for the wrong reason gets ignored.
+  const APP_UNIT = process.env.CRM_APP_UNIT ?? 'mercato'
+  const show = spawnSync('systemctl', ['show', APP_UNIT, '-p', 'ActiveEnterTimestamp', '--timestamp=unix', '--value'], {
     encoding: 'utf8',
   })
   // systemd prints epoch seconds as `@1794185985`; the leading @ is part of the format.

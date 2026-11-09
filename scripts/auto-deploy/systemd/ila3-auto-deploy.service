@@ -4,11 +4,13 @@ After=network-online.target
 Wants=network-online.target
 
 [Service]
+# NoNewPrivileges would block the setuid `sudo` this unit needs to start/stop the
+# release-slot app service; without elevation the executor installs a symlink it cannot
+# activate (that is what happened on 2026-11-09 09:06 and left production down).
 Type=oneshot
 User=pro
 Group=pro
 WorkingDirectory=/home/pro/apps/mercato
 Environment=ILA3_ALLOW_PRODUCTION=1
-ExecStart=/usr/bin/node /home/pro/apps/mercato/scripts/auto-deploy/deploy.mjs --auto
+ExecStart=/usr/bin/node /home/pro/apps/mercato/scripts/auto-deploy/deploy.mjs --auto --allow-production
 TimeoutStartSec=5400
-NoNewPrivileges=true
