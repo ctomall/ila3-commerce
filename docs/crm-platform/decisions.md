@@ -129,3 +129,11 @@
 - 定：`git status` 读不到时，`--require-clean` 按**不干净**处理（"无从判断"不是"干净"）。
 - 定：运行前后各取一次工作树快照。门产物（`docs/crm-platform/{verify,poc,regression}/`）与人工改动**分开计数**；发布级下人工改动不为 0 即失败。这样"报告说干净"描述的是整次运行，而不只是启动那一秒。
 - 定：门禁的证据行必须**自带它声称的属性**。例如恢复演练新增 `summary` 行（结构 N 列/索引/约束/序列 + 探测表内容摘要），profile 门的 `RESULT` 行写明"目录 0700、陌生人读不到"。之前证据行只挑到 `compare.catalog` 或"2 个角色"，读者引用那一行时会高估。
+
+## D28 报价回归门需要一条 draft 报价夹具，而这条夹具会被业务动作吃掉
+
+- 现状：`crm-quote-regression` 用 `select id from sales_quotes where status = 'draft'` 找夹具。2026-11-09 03:17:33 一次 `sales.order` 写入之后，表里只剩一条 `status = NULL` 的报价（`<null>=1`），门于是失败。这不是报价修复回归，是夹具没了。
+- 定：门失败时必须打印 `status` 分布与两条可行路径（`--quote <uuid>` 或自建夹具），不能只丢一句 `cannot resolve a draft quote`。本轮已实现。
+- 定：**不把 `status IS NULL` 当成 draft**。那行报价没有状态条目，把它当草稿去跑 convert/send 是在猜；门宁可不跑。
+- 定：**不让这个门在缺夹具时静默跳过**。跳过不计入通过（`--require-no-skip` 会红），缺夹具就红，红得可解释。
+- 待批：允许脚本自建夹具——`POST /api/sales/quotes` 建一条最小草稿 → 跑回归 → `DELETE` 撤销。属数据写入，需用户明确同意后实现；在此之前，发布级运行需要有人手工提供 `--quote`。

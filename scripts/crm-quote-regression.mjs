@@ -57,7 +57,16 @@ async function post(cookie, apiPath, body) {
 
 const quoteId = arg('--quote') ?? psql("select id from sales_quotes where status = 'draft' order by created_at desc limit 1")
 if (!quoteId || quoteId.startsWith('__ERROR__')) {
+  // A bare "cannot resolve" is unactionable. Print what the table actually holds, so the
+  // next person sees whether the fixture was consumed, never existed, or was never a draft.
+  const breakdown = psql(
+    "select coalesce(status, '<null>') || '=' || count(*) from sales_quotes group by status order by 1",
+  )
   console.error(`[quote-regression] cannot resolve a draft quote: ${quoteId}`)
+  console.error(`[quote-regression] sales_quotes 现状：${breakdown.startsWith('__ERROR__') ? breakdown : breakdown.split('\n').join(' · ')}`)
+  console.error('[quote-regression] 两条可行路径：')
+  console.error('[quote-regression]   1) 指定现成的一条：--quote <uuid>（该草稿必须 status=draft 且未发送）')
+  console.error('[quote-regression]   2) 让脚本自建夹具再删除：数据写入，需用户批准后实现（decisions D28）')
   process.exit(1)
 }
 
