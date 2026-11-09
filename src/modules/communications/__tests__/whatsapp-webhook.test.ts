@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import crypto from 'node:crypto'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
-import { CommunicationChannel, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
+import { CommunicationChannel, ExternalMessage, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { getCommunicationChannelsQueue } from '@open-mercato/core/modules/communication_channels/lib/queue'
 
 jest.mock('@open-mercato/shared/lib/di/container', () => ({ createRequestContainer: jest.fn() }))
@@ -25,11 +25,15 @@ function setup(channels: Array<Record<string, unknown>>, links: Link[] = []) {
   const enqueue = jest.fn(async (..._args: unknown[]) => ({id: 'job'}))
   mockQueue.mockReturnValue({enqueue} as never)
   const flush = jest.fn(async () => undefined)
+  const externalMessages = links.map((link) => ({id: `ext-row-${link.externalMessageId}`, externalMessageId: link.externalMessageId, channelId: 'ch-wa'}))
   const em = {
     find: jest.fn(async (entity: unknown) => (entity === CommunicationChannel ? channels : [])),
     findOne: jest.fn(async (entity: unknown, where: Record<string, unknown>) => {
+      if (entity === ExternalMessage) {
+        return externalMessages.find((row) => row.externalMessageId === where.externalMessageId) ?? null
+      }
       if (entity !== MessageChannelLink) return null
-      return links.find((link) => link.externalMessageId === where.externalMessageId) ?? null
+      return links.find((link) => `ext-row-${link.externalMessageId}` === where.externalMessageId) ?? null
     }),
     flush,
   }
