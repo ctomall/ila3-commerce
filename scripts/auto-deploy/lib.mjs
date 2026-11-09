@@ -251,6 +251,107 @@ export function duHuman(target) {
   return String(result.stdout).split(/\s+/)[0]
 }
 
+/** A release directory is named by its full 40-hex commit sha; nothing else is a prune candidate. */
+const RELEASE_DIR_RE = /^[0-9a-f]{40}$/
+
+function resolveLinkTarget(link) {
+  const raw = readLink(link)
+  if (!raw) return null
+  return path.isAbsolute(raw) ? path.resolve(raw) : path.resolve(path.dirname(link), raw)
+}
+
+/**
+ * Release directories still referenced by a symlink, which must survive pruning.
+ * At most two: the release `current` is running and the one `previous` rolls back to.
+ */
+export function protectedReleases({root = RELEASE_ROOT, currentLink, previousLink} = {}) {
+  const keep = new Set()
+  for (const link of [currentLink || path.join(root, 'current'), previousLink || path.join(root, 'previous')]) {
+    const target = resolveLinkTarget(link)
+    if (target) keep.add(target)
+  }
+  return keep
+}
+
+/** First pid whose cwd is inside `dir`, or null. Guards against deleting a release in use. */
+function releaseInUse(dir) {
+  let entries
+  try {
+    entries = fs.readdirSync('/proc')
+  } catch {
+    return null // no /proc (non-Linux host): skip the guard instead of refusing to prune
+  }
+  for (const entry of entries) {
+    if (!/^\d+$/.test(entry)) continue
+    let cwd
+    try {
+      cwd = fs.readlinkSync(`/proc/${entry}/cwd`)
+    } catch {
+      continue // process exited, or cwd is not readable for this user
+    }
+    if (cwd === dir || cwd.startsWith(`${dir}${path.sep}`)) return entry
+  }
+  return null
+}
+
+function pruneGitWorktrees() {
+  try {
+    spawnSync('git', ['-C', APP_DIR, 'worktree', 'prune'], {encoding: 'utf8', timeout: 60000})
+  } catch {
+    /* best effort: a stale worktree registration is harmless next to a full disk */
+  }
+}
+
+/**
+ * Delete release directories that neither `current` nor `previous` points at.
+ *
+ * Every release is a full copy of node_modules plus the .mercato build output
+ * (about 4.2G for this app) and the 15-minute timer puts no other bound on how
+ * many accumulate, so without this the root volume fills up and PostgreSQL
+ * starts failing writes. Only 40-hex directories directly under `root` are
+ * candidates: the symlinks, release.json evidence and unrelated files are never
+ * touched, and a directory a live process still has as its cwd is skipped.
+ */
+export function pruneReleases({root = RELEASE_ROOT, dryRun = false, extraKeep = []} = {}) {
+  const keep = protectedReleases({root})
+  for (const dir of extraKeep) keep.add(path.resolve(dir))
+  const removed = []
+  const skipped = []
+  let freedBytes = 0
+  let candidates = 0
+
+  let entries
+  try {
+    entries = fs.readdirSync(root, {withFileTypes: true})
+  } catch {
+    return {removed, skipped, freedBytes, candidates}
+  }
+
+  for (const entry of entries) {
+    if (!entry.isDirectory() || !RELEASE_DIR_RE.test(entry.name)) continue
+    candidates += 1
+    const dir = path.join(root, entry.name)
+    if (keep.has(path.resolve(dir))) {
+      skipped.push({name: entry.name, reason: 'current-or-previous'})
+      continue
+    }
+    const pid = releaseInUse(path.resolve(dir))
+    if (pid) {
+      skipped.push({name: entry.name, reason: `in-use-by-pid-${pid}`})
+      continue
+    }
+    const bytes = duBytes(dir) ?? 0
+    if (!dryRun) {
+      fs.rmSync(dir, {recursive: true, force: true})
+      if (path.resolve(root) === path.resolve(RELEASE_ROOT)) pruneGitWorktrees()
+    }
+    freedBytes += bytes
+    removed.push({name: entry.name, bytes})
+  }
+
+  return {removed, skipped, freedBytes, candidates}
+}
+
 export function readLink(link) {
   try {
     return fs.readlinkSync(link)

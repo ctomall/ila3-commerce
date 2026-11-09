@@ -27,6 +27,7 @@ import {
   makeRunId,
   nowIso,
   persistRun,
+  pruneReleases,
   killTree,
   pidAlive,
   readJson,
@@ -151,6 +152,26 @@ function resolveOldRelease(link) {
     missing: false,
     sha: manifest?.sha || stamp?.commit || null,
     source: manifest?.source?.method || 'unknown',
+  }
+}
+
+/**
+ * Retention: keep only the releases `current` and `previous` point at.
+ *
+ * Each release is a full ~4.2G copy, so leaving the timer unbounded is what put
+ * the root volume at 96% (8 releases in 5 hours, only one of them live).
+ */
+function pruneOrphans() {
+  try {
+    const pruned = pruneReleases()
+    return {
+      removed: pruned.removed.map((entry) => entry.name),
+      freedBytes: pruned.freedBytes,
+      kept: pruned.skipped.map((entry) => entry.name),
+      skippedInUse: pruned.skipped.filter((entry) => entry.reason !== 'current-or-previous'),
+    }
+  } catch (error) {
+    return {error: String(error?.message || error)}
   }
 }
 
@@ -426,7 +447,11 @@ async function main() {
     }
 
     await step('switch', async () => {
-      if (oldRelease && !oldRelease.missing) atomicSymlink(oldRelease.target, PREVIOUS_LINK)
+      // Redeploying an already-live sha must not overwrite `previous` with that same
+      // release, or the rollback target silently becomes the thing we just deployed.
+      if (oldRelease && !oldRelease.missing && path.resolve(oldRelease.target) !== path.resolve(release.dir)) {
+        atomicSymlink(oldRelease.target, PREVIOUS_LINK)
+      }
       atomicSymlink(release.dir, CURRENT_LINK)
       switched = true
 
@@ -462,6 +487,7 @@ async function main() {
     })
 
     record.result = 'deployed'
+    record.prune = pruneOrphans()
   } catch (error) {
     record.error = {code: error?.code || 'failed', message: error?.message || String(error), detail: error?.detail ?? null}
 
@@ -489,6 +515,9 @@ async function main() {
         })
         record.targetUnchanged = {healthy: target.ok, checks: target.checks}
       }
+      // A refused or failed build leaves an unreferenced release copy behind; reclaim
+      // it here or repeated failures fill the volume even though no deploy succeeds.
+      record.prune = pruneOrphans()
     }
   } finally {
     // A refusal must not leave a candidate server behind (see freePortIfOccupied).
@@ -517,6 +546,7 @@ async function main() {
       postSwitch: record.postSwitch ?? null,
       rollback: record.rollback ?? null,
       targetUnchanged: record.targetUnchanged ?? null,
+      prune: record.prune ?? null,
       error: record.error ?? null,
       record: file,
     }
@@ -527,6 +557,10 @@ async function main() {
       console.log(`[deploy] record=${file}`)
       if (record.error) console.log(`[deploy] error=${record.error.code}: ${record.error.message}`)
       if (record.rollback) console.log(`[deploy] rollback healthy=${record.rollback.healthy} to=${record.rollback.to}`)
+      if (record.prune?.removed?.length) {
+        const mib = Math.round((record.prune.freedBytes || 0) / 1024 / 1024)
+        console.log(`[deploy] pruned=${record.prune.removed.length} freed=${mib}MiB`)
+      }
     }
 
     const exitCode =
