@@ -1,6 +1,10 @@
 import { describe, expect, it } from '@jest/globals'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import {
   deriveProfile,
+  materializeProfile,
   profileKeyOf,
   revoke,
   sharedRoots,
@@ -92,5 +96,56 @@ describe('deriveProfile', () => {
 
   it('yields an empty toolset when nothing is granted, rather than the ceiling', () => {
     expect(deriveProfile({ ...base, grantedTools: [] }).tools).toEqual([])
+  })
+})
+
+describe('materializeProfile', () => {
+  const tempRoot = () => fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-profile-test-'))
+  const mode = (target: string) => fs.statSync(target).mode & 0o777
+
+  it('creates four 0700 directories and a 0600 metadata file', () => {
+    const root = tempRoot()
+    const profile = deriveProfile(base)
+    const written = materializeProfile(profile, root)
+    for (const suffix of ['session', 'artifacts', `memory/${base.policyVersion}`, 'browser']) {
+      const dir = path.join(written.profileDir, suffix)
+      expect(fs.statSync(dir).isDirectory()).toBe(true)
+      expect(mode(dir)).toBe(0o700)
+    }
+    expect(mode(written.metadataPath)).toBe(0o600)
+    expect(JSON.parse(fs.readFileSync(written.metadataPath, 'utf8'))).toMatchObject({
+      userId: base.userId,
+      profileKey: profile.profileKey,
+    })
+    fs.rmSync(root, { recursive: true, force: true })
+  })
+
+  it('is idempotent for the same identity', () => {
+    const root = tempRoot()
+    const profile = deriveProfile(base)
+    expect(materializeProfile(profile, root).created).toBe(true)
+    expect(materializeProfile(profile, root).created).toBe(false)
+    fs.rmSync(root, { recursive: true, force: true })
+  })
+
+  it('refuses to reuse a directory whose metadata names another identity', () => {
+    const root = tempRoot()
+    const profile = deriveProfile(base)
+    const written = materializeProfile(profile, root)
+    fs.writeFileSync(written.metadataPath, JSON.stringify({ userId: 'someone-else', profileKey: profile.profileKey }))
+    expect(() => materializeProfile(profile, root)).toThrow(/already belongs to another identity/)
+    fs.rmSync(root, { recursive: true, force: true })
+  })
+
+  it('keeps two employees in unrelated directories', () => {
+    const root = tempRoot()
+    const a = materializeProfile(deriveProfile(base), root)
+    const b = materializeProfile(deriveProfile({ ...base, userId: 'user-bbbb' }), root)
+    expect(a.profileDir).not.toBe(b.profileDir)
+    expect(fs.readdirSync(path.join(root, 'profiles')).sort()).toEqual(
+      [a.profileDir, b.profileDir].map((dir) => path.basename(dir)).sort(),
+    )
+    expect(fs.readdirSync(a.profileDir)).not.toContain(path.basename(b.profileDir))
+    fs.rmSync(root, { recursive: true, force: true })
   })
 })

@@ -108,3 +108,14 @@
 - 定：`revoke()` 失败关闭：工具清零、`revoked=true`、身份保留（审计还要能定位到人）。
 - 为什么不是"框架已经保证了子集"：`AiAgentExtension` 有 `appendAllowedTools` 与 `replaceAllowedTools`，注册表本身**不做**子集校验（实测：`src/modules/example/ai-agents.ts` 声明的扩展给 `customers.account_assistant` 追加了一个工具）。交集必须在这里发生，不能假设上游会做。
 - 边界写清楚：本层只证"名字是对的"。DSH 是否按这些根目录隔离、运行中的子 agent 是否触达不到 profile 外的工具、文件系统权限是否互不可读——**都未证**，M4 用例 4/6 的运行时部分仍 blocked。
+
+## D26 profile 要真的落到磁盘，权限位本身就是机制
+
+- 现状（46 轮止）：派生层只产出字符串路径，目录从未被创建；"互不可读"没有任何实测。
+- 定：`materializeProfile(profile, root)` 负责落盘——四个目录`0700`（`mkdir` 的 mode 会被 umask 掩掉，所以显式 `chmod`）、`profile.json` `0600`。目录已存在且元数据属于另一个身份时**抛错并拒绝复用**：哈希碰撞、复制粘贴、快照回滚都不该静默变成两个员工共用一个会话根。
+- 定：门里做**跨 OS 用户**读测试（`sudo -n -u postgres cat <pro 的 profile>`），并且必须满足三条才叫证明：
+  1. 拒绝原因是 `Permission denied`（EACCES），不是"文件不存在"或"sudo 没配"——否则一个拼错的路径也能"通过"；
+  2. 同一棵临时树里放一个 `0644` 控制文件，`postgres` 必须能读到——证明拒绝来自权限位而不是根目录本身不可达；
+  3. 根目录 `chmod 0711`：`mkdtemp` 默认 `0700` 会把陌生人在根目录就挡住，那样下面每一条拒绝都无法归因。
+- 反向证据：`probe-reads-same-tree` 第一次跑就失败——控制文件读不到，因为根目录还是 0700。**阳性对照先抓住了我自己的假阴性。**
+- 边界：这只证明"这台机器上 `pro` 与 `postgres` 之间的权限位有效"。生产上服务账号、容器边界、挂载参数都可能不同，那条要等发布前用真实运行态复验。

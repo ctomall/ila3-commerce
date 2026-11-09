@@ -23,9 +23,14 @@
  *
  * Usage: npx tsx scripts/crm-dsh-profile-check.ts [--base http://127.0.0.1:3000]
  */
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
+import { execFileSync } from 'node:child_process'
 import { credentials, loginWithRetry } from './lib/session.mjs'
 import {
   deriveProfile,
+  materializeProfile,
   revoke,
   sharedRoots,
   wideningAttempt,
@@ -130,7 +135,80 @@ const leaked = [...Object.values(profileA.roots), ...Object.values(profileB.root
 )
 check('no-ids-in-paths', leaked.length === 0, '路径里不含任一方 userId')
 
-// 5. revocation fails closed
+// 5. the profile really exists on disk, with modes that do not rely on trust
+const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-profile-gate-'))
+// mkdtemp creates 0700, which would deny the stranger at the root and make every denial
+// below unattributable. Make the root traversable (0711) so the only thing standing
+// between the stranger and the profile is the profile's own mode.
+fs.chmodSync(tempRoot, 0o711)
+const own = process.env.USER ?? execFileSync('id', ['-un'], { encoding: 'utf8' }).trim()
+const stranger = 'postgres'
+const canRead = (user: string, target: string): { ok: boolean; detail: string; denied: boolean } => {
+  try {
+    execFileSync('sudo', ['-n', '-u', user, 'cat', target], { stdio: 'pipe' })
+    return { ok: true, detail: 'readable', denied: false }
+  } catch (error) {
+    const stderr = String((error as { stderr?: Buffer }).stderr ?? '')
+    return {
+      ok: false,
+      detail: stderr.split('\n').find((line) => line.trim())?.trim().slice(0, 90) ?? 'failed',
+      // "denied" must mean EACCES, not "path does not exist" or "sudo is not configured".
+      denied: /permission denied/i.test(stderr),
+    }
+  }
+}
+try {
+  const writtenA = materializeProfile(profileA, tempRoot)
+  const writtenB = materializeProfile(profileB, tempRoot)
+  const modes = ['session', 'artifacts', 'browser', `memory/${profileA.policyVersion}`].map((suffix) => ({
+    suffix,
+    mode: fs.statSync(path.join(writtenA.profileDir, suffix)).mode & 0o777,
+  }))
+  const metadataMode = fs.statSync(writtenA.metadataPath).mode & 0o777
+  check(
+    'roots-on-disk-0700',
+    modes.every((entry) => entry.mode === 0o700) && metadataMode === 0o600,
+    `${modes.length} 个目录 ${modes.map((entry) => entry.mode.toString(8)).join('/')}、元数据 ${metadataMode.toString(8)}`,
+  )
+
+  // Without a working cross-user probe this check would "pass" because sudo failed, which
+  // is the exact false green this project keeps hunting. Prove the probe works first.
+  const probe = canRead(stranger, '/etc/hostname')
+  if (!probe.ok) {
+    fail('cross-user-probe-usable', `无法用 ${stranger} 读世界可读文件，跨用户结论不成立：${probe.detail}`)
+  } else {
+    // Positive control in the same tree: if the stranger can read a 0644 file here, then a
+    // denial on the profile below is caused by its mode, not by a wrong path.
+    const control = path.join(tempRoot, 'control.txt')
+    fs.writeFileSync(control, 'control\n', { mode: 0o644 })
+    const controlRead = canRead(stranger, control)
+    check('probe-reads-same-tree', controlRead.ok, `${stranger} 能读同目录下的 0644 控制文件：${controlRead.detail}`)
+
+    const self = canRead(own, writtenA.metadataPath)
+    const other = canRead(stranger, writtenA.metadataPath)
+    const otherDir = canRead(stranger, path.join(writtenA.profileDir, 'session'))
+    check('owner-can-read-own', self.ok, `${own} 读自己的 profile：${self.detail}`)
+    check(
+      'stranger-denied-by-mode',
+      !other.ok && other.denied,
+      `${stranger} 读 ${own} 的 profile.json：${other.ok ? '居然读到了' : other.detail}`,
+    )
+    check(
+      'stranger-cannot-enter',
+      !otherDir.ok && otherDir.denied,
+      `${stranger} 进入 ${own} 的 session 目录：${otherDir.ok ? '居然进去了' : otherDir.detail}`,
+    )
+  }
+  check(
+    'two-dirs-on-disk',
+    fs.readdirSync(path.join(tempRoot, 'profiles')).length === 2 && writtenA.profileDir !== writtenB.profileDir,
+    `磁盘上两个独立目录：${path.basename(writtenA.profileDir).slice(0, 8)} ≠ ${path.basename(writtenB.profileDir).slice(0, 8)}`,
+  )
+} finally {
+  fs.rmSync(tempRoot, { recursive: true, force: true })
+}
+
+// 6. revocation fails closed
 const revoked = revoke(profileA)
 check('revoke-fails-closed', revoked.tools.length === 0 && revoked.revoked && revoked.userId === profileA.userId, '工具清零、标记 revoked、身份保留')
 

@@ -82,6 +82,22 @@ const MUTATIONS = [
     why: '不可达收件人不得进入发送门',
   },
   {
+    id: 'profile-dir-mode',
+    file: 'src/lib/dsh/profile.ts',
+    find: 'fs.chmodSync(path.join(keyed, suffix), 0o700)',
+    replace: 'fs.chmodSync(path.join(keyed, suffix), 0o755)',
+    test: 'src/lib/dsh/__tests__/profile.test.ts',
+    why: 'profile 目录必须 0700，否则他人可进入',
+  },
+  {
+    id: 'profile-metadata-mode',
+    file: 'src/lib/dsh/profile.ts',
+    find: 'fs.chmodSync(metadataPath, 0o600)',
+    replace: 'fs.chmodSync(metadataPath, 0o644)',
+    test: 'src/lib/dsh/__tests__/profile.test.ts',
+    why: 'profile.json 必须 0600，否则他人可读身份映射',
+  },
+  {
     id: 'profile-granted-intersection',
     file: 'src/lib/dsh/profile.ts',
     find: 'else if (!granted.has(tool)) dropped.push({ tool, reason: \'not-granted\' })',

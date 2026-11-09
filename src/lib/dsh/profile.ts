@@ -28,6 +28,8 @@
  * by this module. It is the part M4 still cannot execute.
  */
 import { createHash } from 'node:crypto'
+import fs from 'node:fs'
+import path from 'node:path'
 
 export type EmployeeProfileInput = {
   userId: string
@@ -150,4 +152,54 @@ export function sharedRoots(a: EmployeeProfile, b: EmployeeProfile): string[] {
   return Object.entries(b.roots)
     .filter(([, root]) => seen.has(root))
     .map(([kind, root]) => `${seen.get(root)} == b.${kind}`)
+}
+
+/**
+ * Create the profile on disk: four 0700 directories and a 0600 metadata file.
+ *
+ * Derivation produces names; this produces the thing those names point at. The modes are
+ * the mechanism, not a detail: 0700 on the directory is what makes "employee B cannot read
+ * employee A's session" true at the OS level even when both profiles live on one machine,
+ * and 0600 on the metadata keeps the identity mapping out of other users' reach.
+ *
+ * Collision handling fails closed. If the profile's directory already exists and its
+ * metadata names a different user, this throws instead of reusing the directory: a hash
+ * collision, a copy-paste bug, or a restored snapshot must not silently turn into two
+ * employees sharing one session root.
+ *
+ * Returns the metadata path so a caller can audit what was written.
+ */
+export function materializeProfile(profile: EmployeeProfile, root: string): { profileDir: string; metadataPath: string; created: boolean } {
+  if (!root) throw new Error('materializeProfile requires a root directory')
+  const profileDir = profile.roots.session.replace(/\/session$/, '')
+  // The roots are relative to `<root>/profiles/<key>`; re-anchor them under the caller's root.
+  const keyed = path.join(root, 'profiles', profile.profileKey)
+  for (const relative of [profile.roots.session, profile.roots.artifacts, profile.roots.memory, profile.roots.browser]) {
+    const suffix = relative.slice(profileDir.length)
+    fs.mkdirSync(path.join(keyed, suffix), { recursive: true, mode: 0o700 })
+    // mkdir's mode is masked by the umask, so state the intent explicitly.
+    fs.chmodSync(path.join(keyed, suffix), 0o700)
+  }
+  const metadataPath = path.join(keyed, 'profile.json')
+  const metadata = {
+    userId: profile.userId,
+    tenantId: profile.tenantId,
+    organizationId: profile.organizationId,
+    assistantId: profile.assistantId,
+    policyVersion: profile.policyVersion,
+    profileKey: profile.profileKey,
+  }
+  let created = true
+  if (fs.existsSync(metadataPath)) {
+    const existing = JSON.parse(fs.readFileSync(metadataPath, 'utf8')) as { userId?: string; profileKey?: string }
+    if (existing.userId !== profile.userId || existing.profileKey !== profile.profileKey) {
+      throw new Error(
+        `profile directory ${profile.profileKey.slice(0, 8)} already belongs to another identity; refusing to reuse it`,
+      )
+    }
+    created = false
+  }
+  fs.writeFileSync(metadataPath, `${JSON.stringify(metadata, null, 2)}\n`, { mode: 0o600 })
+  fs.chmodSync(metadataPath, 0o600)
+  return { profileDir: keyed, metadataPath, created }
 }

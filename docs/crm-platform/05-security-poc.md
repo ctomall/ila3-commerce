@@ -34,10 +34,10 @@
 |---|---|---|---|---|
 | 1 | 会话 | A 的 cookie 换到 B 的浏览器上下文 | 401/重定向登录，且无 B 的数据 | 两个上下文的状态码 + 截图 |
 | 2 | 订阅/任务 | A 用 B 的 runId 调 `/api/ai/chat` 或事件接口 | **404**（不是 403） | 状态码矩阵 CSV |
-| 3 | 文件 | 列出 A 的 DSH 产物目录，grep B 的标识 | 0 命中 | 目录清单 + grep 输出 |
+| 3 | 文件 | 列出 A 的 DSH 产物目录，grep B 的标识 | 0 命中 | 目录清单 + grep 输出。**落盘层已证（47 轮）**：产物目录按 profile key 分开建，0700；换 OS 用户读对方目录得 Permission denied |
 | 4 | 记忆 | A 的助手检索 B 的历史 | 空结果 + 一条审计行 | 检索响应 + 审计行 |
 | 5 | 凭据 | A 的助手尝试用 B 的渠道发送 | 发送身份门拦截（`outbound-bridge.ts`）。**2026-11-08 修复**：拒绝时不再静默 return，改为写结构化日志 `outbound_bridge.ownership_rejected`（含 messageId/channelId/senderUserId/channelOwnerUserId，不含正文与地址）。**2026-11-08 第二轮**：同时写 `action_logs` 审计行（`commandId=communication_channels.outbound_blocked`，含 `resourceKind/Id`、`actorUserId`、`context.reason`），走 `actionLogService`；审计失败降级为日志，不阻断事件。`userId=null` 的租户级渠道仍放行任意 sender（D8 策略待定） | 发送尝试的日志行 + 渠道消息计数不变 |
-| 6 | 浏览器状态 | 两个 profile 的 cookies/localStorage | 互不包含对方域内会话 | 两段导出对比。**派生层已证**：两个真实员工的四个根目录（会话/产物/记忆/浏览器）不重叠、路径不含对方 userId、换策略版本记忆重新分区；**运行时仍未验** |
+| 6 | 浏览器状态 | 两个 profile 的 cookies/localStorage | 互不包含对方域内会话 | 两段导出对比。**派生+落盘层已证（46/47 轮）**：两个真实员工的四个根目录不重叠、路径不含对方 userId、换策略版本记忆重新分区；目录实建为 0700、元数据 0600，跨 OS 用户读被拒（带同一棵树里的 0644 阳性对照）；**DSH 运行时是否按此隔离仍未验** |
 | 7 | 插件权限 | 每用户能力 / 实例全局 / 高权限三类各一个样本 | 高权限插件只对授权员工可见；共享实例不可信则隔离 | 三类清单 + 可见性矩阵 |
 
 ## 4. 对抗用例（每条 = 攻击 → 期望 → 产物）
