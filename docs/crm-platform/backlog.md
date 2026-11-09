@@ -68,6 +68,7 @@
 | M4-2 | 隔离 DSH 数据/执行环境（会话/订阅/任务/文件/记忆/凭据/浏览器态） | 同上 | 7 类隔离逐条证据 | todo |
 | M4-3 | 一个 CRM 只读工具 | `12-crm-tool.md` | **已完成**：`crm.find_companies`（`src/modules/crm_tools/`，18 测）+ 运行时注册实测（97 工具内含它）；端到端七项：401 / 200 明文数据 / scope 回显 / 注入 tenantId 400 / limit 500 → 400 / 未知工具 400 / employee 角色 200。端到端跑出并修掉两个单测抓不到的缺陷（knex 占位符、ORM 解密被绕过）| done（403 路径缺 fixture）|
 | M4-4 | 对抗用例：猜 ID / 直连 API / 伪造操作者 / 子 Agent 扩权 / 撤权后在途任务 | `crm-m4-harness.mjs` | 已跑的记 pass/弱通过；缺 fixture 的记 blocked，**不计入通过** | doing |
+| M4-6 | 撤权后在途 Run 不得完成 CRM 写入（用例 5 的规则层） | `src/lib/dsh/run.ts` + `03-dsh-contract` §6 | 状态机与写入门已实现并测 17 例：只有 `running` 且绑定 `active` 才能写；`queued`/`awaiting_approval` 都拒；`applyPrincipalRevoked` 把在途（含等审批）全部转 `cancelled`、不动已终结的；`withinRevocationDeadline` 守 10 s。变异新增 3 条，变异门 **19/19 全杀**。**运行时仍未验**：没有真实 DSH 进程可撤，用例 5 的端到端仍 blocked | done（规则层） |
 | M4-5 | 插件分三类（每用户能力/实例全局/高权限）并处置共享实例 | 同上 | 分类表 + 不可信的隔离处置 | todo |
 
 ## M5 获客 MVP

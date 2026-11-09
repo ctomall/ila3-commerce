@@ -143,6 +143,18 @@ allowed = employee.hasNext(feature)            # 员工当前授权（含组织�
 
 在途 Run 被撤销后**不得完成 CRM 写入**：写入前校验 `run.status === 'running'` 且绑定仍 active。
 
+**实现（第 54 轮）**：`src/lib/dsh/run.ts` 把这两半分开落地，因为它们是两个不同的事实：
+
+| 半 | 函数 | 说明 |
+|---|---|---|
+| 撤权广播 | `applyPrincipalRevoked()` | 把该绑定的在途 Run（`queued`/`running`/`awaiting_approval`）转 `cancelled`；已终结的不动（否则等于改写历史）；别的绑定只计数不碰 |
+| 写入前判定 | `canWriteToCrm({ run, bindingState, now })` | 绑定状态是**参数**，不是从 run 上读的：取消广播可能还没落到 run 对象上，那个时间差正是被撤销的在途任务会用的窗口 |
+| 时限 | `withinRevocationDeadline()` | 10 s 是承诺，不是描述；早于撤销时间或缺失时间戳都判失败 |
+
+拒绝原因区分 `no_run` / `run_not_running` / `run_cancelled` / `run_terminal` / `binding_not_active` / `time_unparseable`，审计能看出是哪一道拒的。
+
+**仍未验**：没有真实 DSH 进程可撤，也没有 leadgen 的 Run 表可落库，所以用例 5 的端到端仍 blocked。
+
 ## 7. 待确认（阻塞实现的部分）
 
 | 项 | 依赖决策 | 影响 |

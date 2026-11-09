@@ -146,3 +146,11 @@
 - 定：重放检查在身份之前。否则被撤销的绑定会掩盖重放，且拒绝原因泄露"该身份已撤销"。
 - 定：群聊只允许 `read`，且离开 CRM 的文本必须过 `redactForGroup()`；单聊不脱敏。放行项由调用方显式列出，不默认放行。
 - 这些顺序各有一条测试和一条变异守护，改动顺序会红。
+
+## D30 撤权要分两半：取消广播 ≠ 写入被拦住
+
+- 定：`applyPrincipalRevoked()` 只做账——把在途 Run 转 `cancelled`；`canWriteToCrm()` 才是最后一道闸，在**写入当时**按 run 状态 + 绑定状态判定。
+- 为什么分开：取消广播是异步的，run 对象上可能还写着 `running`。把绑定状态作为参数传进写入门，才能关掉这个时间差；从 run 上读绑定状态等于假设广播已经到达。
+- 定：`queued` 与 `awaiting_approval` 都算在途，但都**不能写**。等审批的 Run 被撤权后如果还能"恢复"并写入，撤权就形同虚设。
+- 定：`applyPrincipalRevoked()` 不碰已终结的 Run（completed/failed/budget_exhausted），也不碰别的绑定，只对别的绑定计数。
+- 定：10 s 是硬判据：`withinRevocationDeadline()` 对"取消早于撤销"和"缺时间戳"都返回 false，不把不可判当成合规。
