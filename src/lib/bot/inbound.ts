@@ -45,10 +45,20 @@ export type InboundContext = {
   now: Date
   /** Null when the external identity maps to no binding at all. */
   binding: BotBinding | null
+  /** The identity/channel as parsed from the request, used for the audit when unbound. */
+  externalIdentity?: string | null
+  channelId?: string | null
   employeeActive: boolean
   seenNonces: readonly string[]
-  /** Called exactly once, and only after signature + freshness both pass. */
-  rememberNonce: (nonce: string) => void
+  /**
+   * Atomically claim the nonce; true when this call won it.
+   *
+   * `isReplay` followed by `rememberNonce` is check-then-act: two concurrent deliveries
+   * read the same snapshot, both see "not seen", and both proceed. The claim must be a
+   * single atomic operation on the caller's side (INSERT ... ON CONFLICT DO NOTHING, or
+   * SETNX), and false means "someone else already had this one".
+   */
+  claimNonce: (nonce: string) => boolean
   /** Text the bot resolved from CRM data; redacted when the chat is a group. */
   text: string
   allowInGroup?: Array<'email' | 'phone' | 'amount'>
@@ -61,6 +71,9 @@ export type InboundAudit = {
   action: InboundAction
   bindingId: string | null
   employeeUserId: string | null
+  /** Which external identity spoke, so an unbound refusal can still be investigated. */
+  externalIdentity: string | null
+  channelId: string | null
   outcome: 'allowed' | 'refused'
   reason: RejectReason | null
 }
@@ -77,6 +90,8 @@ export function handleInbound(event: InboundEvent, context: InboundContext): Inb
     action: event?.action ?? 'read',
     bindingId: context.binding?.id ?? null,
     employeeUserId: context.binding?.employeeUserId ?? null,
+    externalIdentity: context.externalIdentity ?? context.binding?.externalIdentity ?? null,
+    channelId: context.channelId ?? context.binding?.channelId ?? null,
     outcome,
     reason,
   })
@@ -90,8 +105,10 @@ export function handleInbound(event: InboundEvent, context: InboundContext): Inb
   // Gate 3: replay. Recording happens here, after authentication and before the rest of
   // the decision, so an authenticated event consumes its nonce even when a later gate
   // refuses it — but an unsigned or stale request never touches the ledger.
-  if (isReplay(event.nonce, context.seenNonces)) return refuse('replay')
-  context.rememberNonce(event.nonce)
+  // One atomic claim replaces the previous "check the snapshot, then remember" pair: with
+  // two concurrent deliveries both reads saw "not seen" and both proceeded.
+  const claimed = context.claimNonce(event.nonce)
+  if (!claimed || isReplay(event.nonce, context.seenNonces)) return refuse('replay')
 
   // Gate 4: identity. No binding means the external identity is not linked to an employee.
   if (!context.binding) return refuse('identity_unbound')

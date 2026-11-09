@@ -140,8 +140,8 @@
 
 ## D29 Bot 入站的门禁顺序是安全属性，不是实现细节
 
-- 定：顺序固定为 **验签+时效 → 记 nonce → 重放 → 身份 → 群聊/脱敏**（`src/lib/bot/inbound.ts`）。
-- 定：`rememberNonce` 只在签名与时效都通过之后调用。否则未认证请求可以烧 nonce（撑大 ledger、并把合法消息判成重放）。
+- 定：顺序固定为 **验签+时效 → 重放/原子领取 nonce → 身份 → 群聊/脱敏**（`src/lib/bot/inbound.ts`）。重放判定与 nonce 记账是同一步：`claimNonce(nonce)` 返回 false 即判重放，避免"先查后记"在并发下被两条投递同时通过。
+- 定：`claimNonce` 只在签名与时效都通过之后调用；它必须由调用方实现为原子操作（`INSERT … ON CONFLICT DO NOTHING` / `SETNX`）。否则未认证请求可以烧 nonce（撑大 ledger、并把合法消息判成重放）。
 - 定：认证通过但被后续门拒绝的消息**仍然记 nonce**。它已被认证，允许无限重试才是漏洞。
 - 定：重放检查在身份之前。否则被撤销的绑定会掩盖重放，且拒绝原因泄露"该身份已撤销"。
 - 定：群聊只允许 `read`，且离开 CRM 的文本必须过 `redactForGroup()`；单聊不脱敏。放行项由调用方显式列出，不默认放行。
@@ -162,7 +162,12 @@
 - 定：声明不能把高权限降级——先算高权限，再看声明。
 - 定：门做**双向**核对。只做单向（漏声明即红）会积累僵尸条目：工具改名/删除后声明还挂着，读的人会以为它还在。
 - 定：写操作不得声明为 `instance_global`。那会把一个必须走审批流程的写操作变成"归运维、永不执行"，看似安全，实际是把这个能力从产品里静默删掉。
-- 未证：运行时是否按 `mayRunTool` 拒。函数有 16 个单测，接进运行时属于 DSH 桥接。
+- 未证：运行时是否按 `mayRunTool` 拒。函数有单测，接进运行时属于 DSH 桥接。
+
+**第 57 轮 QA 后补三条：**
+- 定：`instance_global` 声明**优先于**计算出的高权限。否则一个声明为实例全局的无功能点工具会被算成高权限，在 isolated 实例上反而放行——与声明意图相反。
+- 定：`supportsAttachments` / `loadBeforeRecord(s)` 也算高权限：附件与预读记录可能属于别人。这条让 3 个工具从不被注意的 `per_user` 变成必须认领的高权限（`catalog.draft_description_from_media`、`warranty_claims.assess_damage_photo`、`warranty_claims.extract_proof_of_purchase`）。
+- 定：认领必须写理由，空理由即红；`instance_global` 当前为 0 是**合法状态**，检查项如实写"当前为空，非缺陷"，不用"三类齐全"这种说法冒充证据。
 
 **第 57 轮补充：平台内置工具必须计入清单。** 模块注册表 94 个，运行时 97 个——差的是 `context_whoami` / `search` / `execute`。其中 `execute` 能跑沙箱 JS 调任意已登记 API（50 调 / 20 写），却不在注册表里，于是原来的门"分类了 94 个"的说法掩盖了最危险的那个。
 

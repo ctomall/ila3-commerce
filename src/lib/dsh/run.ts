@@ -26,6 +26,8 @@ export type RunStatus =
   | 'failed'
   | 'cancelled'
   | 'budget_exhausted'
+  /** 03 §3.1: an approval that timed out. Distinct from `cancelled` so audits can tell. */
+  | 'expired'
 
 export type Run = {
   id: string
@@ -100,6 +102,7 @@ export function withinRevocationDeadline(input: {
 
 export type WriteRejection =
   | 'no_run'
+  | 'binding_mismatch'
   | 'run_not_running'
   | 'run_cancelled'
   | 'run_terminal'
@@ -117,13 +120,19 @@ export type WriteDecision = { allowed: true } | { allowed: false; reason: WriteR
  */
 export function canWriteToCrm(input: {
   run: Run | null
+  /** The binding the caller is acting as; must be the one the run belongs to. */
+  bindingId: string
   bindingState: BindingState
   now: string
 }): WriteDecision {
-  const { run, bindingState, now } = input
+  const { run, bindingId, bindingState, now } = input
   if (!run) return { allowed: false, reason: 'no_run' }
-  if (!Number.isFinite(Date.parse(now))) return { allowed: false, reason: 'time_unparseable' }
+  // Reading "the caller's current binding state" and applying it to a run of a different
+  // binding lets a revoked run through: the check must be about the same binding.
+  if (!bindingId || run.bindingId !== bindingId) return { allowed: false, reason: 'binding_mismatch' }
   if (bindingState !== 'active') return { allowed: false, reason: 'binding_not_active' }
+  // Parsed after the binding facts so a bad clock cannot mask a revocation in the audit.
+  if (!Number.isFinite(Date.parse(now))) return { allowed: false, reason: 'time_unparseable' }
   if (run.status === 'cancelled') return { allowed: false, reason: 'run_cancelled' }
   if (!isInFlight(run)) return { allowed: false, reason: 'run_terminal' }
   // `queued` and `awaiting_approval` are in flight but not executing: a write from either

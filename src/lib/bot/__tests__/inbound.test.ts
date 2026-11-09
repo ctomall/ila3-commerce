@@ -34,7 +34,14 @@ function context(overrides: Partial<InboundContext> = {}): InboundContext & { re
     binding,
     employeeActive: true,
     seenNonces: [],
-    rememberNonce: (nonce: string) => remembered.push(nonce),
+    // Mirrors an atomic claim (INSERT ... ON CONFLICT DO NOTHING): returns false when the
+    // nonce was already taken, and appends only on success.
+    claimNonce: (nonce: string) => {
+      const taken = remembered.includes(nonce) || (overrides.seenNonces ?? []).includes(nonce)
+      if (taken) return false
+      remembered.push(nonce)
+      return true
+    },
     text: 'Acme 联系人 ops@acme.test，报价 ¥12,000',
   }
   return Object.assign({ ...base, ...overrides }, { remembered })
@@ -145,6 +152,45 @@ describe('handleInbound', () => {
     }
   })
 
+  it('refuses when the atomic claim loses the race, even if the snapshot says unseen', () => {
+    // Concurrent delivery: the snapshot both handlers read does not contain the nonce, but
+    // the claim (the real arbiter) says someone else won it.
+    const ctx = context({ seenNonces: [], claimNonce: () => false })
+    const result = handleInbound(event(), ctx)
+    expect(result).toMatchObject({ allowed: false, reason: 'replay' })
+  })
+
+  it('reports replay, not the binding state, when a seen nonce arrives from a revoked binding', () => {
+    // Ordering: replay is checked before identity. If it were not, a revoked binding would
+    // mask the replay and tell the caller that the identity was revoked.
+    const ctx = context({ seenNonces: ['nonce-1'], binding: { ...binding, state: 'revoked' } })
+    expect(handleInbound(event(), ctx)).toMatchObject({ allowed: false, reason: 'replay' })
+  })
+
+  it('carries the external identity and channel in the audit when nothing is bound', () => {
+    const ctx = context({ binding: null, externalIdentity: 'wx-user-9', channelId: 'channel-9' })
+    const result = handleInbound(event(), ctx)
+    expect(result.audit).toMatchObject({
+      reason: 'identity_unbound',
+      externalIdentity: 'wx-user-9',
+      channelId: 'channel-9',
+    })
+  })
+
+  it('refuses an event whose chat/action were relabelled after signing', () => {
+    // The signature covers chat and action: a captured group/read event cannot be turned
+    // into a direct write, which would bypass both the group rule and the redaction.
+    const signed = event({ chat: 'group', action: 'read' })
+    const tampered = { ...signed, chat: 'dm' as const, action: 'write' as const }
+    expect(handleInbound(tampered, context())).toMatchObject({ allowed: false, reason: 'bad_signature' })
+  })
+
+  it('refuses a non-ASCII signature of the right character length instead of throwing', () => {
+    const signed = event()
+    const result = handleInbound({ ...signed, signature: 'é'.repeat(64) }, context())
+    expect(result).toMatchObject({ allowed: false, reason: 'bad_signature' })
+  })
+
   it('still produces an audit record when it refuses', () => {
     const result = handleInbound(event(), context({ binding: { ...binding, state: 'revoked' } }))
     expect(result.audit).toEqual({
@@ -154,6 +200,8 @@ describe('handleInbound', () => {
       action: 'read',
       bindingId: 'binding-1',
       employeeUserId: 'user-employee',
+      externalIdentity: 'wx-user-1',
+      channelId: 'channel-1',
       outcome: 'refused',
       reason: 'binding_revoked',
     })

@@ -13,6 +13,18 @@
     {
       "name": "catalog.update_product_media_descriptions",
       "reason": "批量更新媒体描述，同上"
+    },
+    {
+      "name": "catalog.draft_description_from_media",
+      "reason": "读取商品媒体（可能含他人上传的图片）并生成文案；内容不是调用者自己的数据"
+    },
+    {
+      "name": "warranty_claims.assess_damage_photo",
+      "reason": "读取他人上传的损坏照片做评估；附件内容跨员工"
+    },
+    {
+      "name": "warranty_claims.extract_proof_of_purchase",
+      "reason": "读取购买凭证附件；同一单可能属于别的员工"
     }
   ],
   "platformTools": [

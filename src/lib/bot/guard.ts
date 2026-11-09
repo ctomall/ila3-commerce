@@ -13,6 +13,9 @@ export type SignedEvent = {
   body: string
   timestamp: string
   nonce: string
+  /** Signed when present: relabelling a group read as a direct write must invalidate it. */
+  chat?: 'dm' | 'group'
+  action?: 'read' | 'write' | 'approve' | 'send'
   signature: string
 }
 
@@ -24,16 +27,40 @@ export type VerifyResult =
  * HMAC-SHA256 over `timestamp.nonce.body`, compared in constant time. The timestamp is
  * part of the signed payload so a captured signature cannot be replayed later.
  */
+/**
+ * Canonical payload for the HMAC.
+ *
+ * `chat` and `action` are part of it because they decide whether the message may write and
+ * whether it is redacted. They used to sit outside the signature, so a captured
+ * group/read event could be relabelled `dm`/`write` after signing and still verify — the
+ * runtime would then allow a write from a group chat and skip redaction entirely.
+ */
+function canonicalPayload(event: SignedEvent): string {
+  return [event.timestamp, event.nonce, event.body, event.chat ?? '', event.action ?? ''].join('.')
+}
+
 export function verifySignature(event: SignedEvent, secret: string, now: Date): VerifyResult {
   if (!event?.body || !event.timestamp || !event.nonce || !event.signature) {
     return { ok: false, reason: 'missing_fields' }
   }
-  const expected = createHmac('sha256', secret)
-    .update(`${event.timestamp}.${event.nonce}.${event.body}`)
-    .digest('hex')
-  const provided = event.signature.toLowerCase()
-  if (expected.length !== provided.length) return { ok: false, reason: 'bad_signature' }
-  const same = timingSafeEqual(Buffer.from(expected, 'utf8'), Buffer.from(provided, 'utf8'))
+  const expected = Buffer.from(createHmac('sha256', secret).update(canonicalPayload(event)).digest('hex'), 'hex')
+  // Decode hex before comparing. Comparing hex *strings* looked constant-time but compared
+  // by character: a 64-character non-ASCII signature passed the length check and made
+  // timingSafeEqual throw (ERR_CRYPTO_TIMING_SAFE_EQUAL_LENGTH), i.e. an unauthenticated
+  // request could raise instead of being refused.
+  let provided: Buffer
+  try {
+    provided = Buffer.from(String(event.signature).trim().toLowerCase(), 'hex')
+  } catch {
+    return { ok: false, reason: 'bad_signature' }
+  }
+  if (provided.length !== expected.length) return { ok: false, reason: 'bad_signature' }
+  let same = false
+  try {
+    same = timingSafeEqual(expected, provided)
+  } catch {
+    return { ok: false, reason: 'bad_signature' }
+  }
   if (!same) return { ok: false, reason: 'bad_signature' }
 
   if (!isFresh(event.timestamp, now)) return { ok: false, reason: 'stale_timestamp' }
@@ -42,7 +69,7 @@ export function verifySignature(event: SignedEvent, secret: string, now: Date): 
 
 export function sign(event: Omit<SignedEvent, 'signature'>, secret: string): string {
   return createHmac('sha256', secret)
-    .update(`${event.timestamp}.${event.nonce}.${event.body}`)
+    .update(canonicalPayload(event as SignedEvent))
     .digest('hex')
 }
 
@@ -93,14 +120,35 @@ export function canAct(input: {
   return { allowed: true }
 }
 
-const SENSITIVE_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
+const SENSITIVE_PATTERNS: Array<{ name: string; pattern: RegExp; requires?: string }> = [
   // Whitespace-tolerant around `@` and the dots: after a line break is collapsed to a
   // space, `ops@acme. test` is still the same address to a reader. Over-redacting prose
   // like "ops @ acme . test" is the acceptable side of that trade.
-  { name: 'email', pattern: /[\w.+-]+\s*@\s*[\w-]+(?:\s*\.\s*[\w-]+)+/g },
-  { name: 'phone', pattern: /\+?\d[\d\s-]{7,}\d/g },
-  { name: 'amount', pattern: /(?:USD|EUR|CNY|¥|\$)\s?\d[\d,]*(?:\.\d+)?/gi },
+  //
+  // `requires` is a cheap pre-check, not a filter: `[\w.+-]+` retried at every offset makes
+  // a string with no `@` quadratic (20k characters took 1.7 s, 80k took 27 s — enough to
+  // block the event loop). If the literal is absent the scan is skipped entirely.
+  { name: 'email', pattern: /[\w.+-]+\s*@\s*[\w-]+(?:\s*\.\s*[\w-]+)+/g, requires: '@' },
+  // Dots and parentheses are how phone numbers are actually written: `138.0000.0000` and
+  // `(138) 0000 0000` both walked through the old `[\d\s-]` class.
+  { name: 'phone', pattern: /\+?[\d(][\d\s().-]{7,}\d/g },
+  // Currency before the number, and the `元/块` suffix form. `RMB`, `€`, `£` and
+  // `人民币` were simply not in the alternation.
+  {
+    name: 'amount',
+    pattern: /(?:(?:USD|EUR|CNY|RMB|JPY|GBP|人民币|美元|欧元)\s?|¥|\$|€|£)\s?\d[\d,]*(?:\.\d+)?/gi,
+  },
+  { name: 'amount', pattern: /\d[\d,]*(?:\.\d+)?\s*(?:元|块|万元)/g },
 ]
+
+/**
+ * Longest message the group renderer will touch.
+ *
+ * The patterns are linear in practice, but a pathological input still costs time and — more
+ * importantly — text past the cap would never be redacted. Refusing to render is the only
+ * answer that neither blocks the loop nor leaks the tail.
+ */
+export const MAX_GROUP_RENDER_LENGTH = 20_000
 
 /**
  * Group-chat rendering: the CRM never dumps a record into a group. Sensitive fields are
@@ -113,8 +161,12 @@ export function redactForGroup(text: string, allow: Array<'email' | 'phone' | 'a
   // whitespace rejoins a token that was broken across lines. The returned text is the
   // normalised one: a redactor that preserves formatting is a redactor you can bypass.
   let output = (text ?? '').normalize('NFKC').replace(/\s+/g, ' ')
+  if (output.length > MAX_GROUP_RENDER_LENGTH) {
+    return '〔消息过长，群聊不渲染，请到私聊查看〕'
+  }
   for (const rule of SENSITIVE_PATTERNS) {
     if (allow.includes(rule.name as 'email' | 'phone' | 'amount')) continue
+    if (rule.requires && !output.includes(rule.requires)) continue
     output = output.replace(rule.pattern, `〔${rule.name} 已隐藏〕`)
   }
   return output

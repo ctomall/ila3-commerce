@@ -136,6 +136,34 @@ describe('group redaction', () => {
     expect(redactForGroup('a\r\n\nb\t c')).toBe('a b c')
   })
 
+  it('covers dotted, parenthesised, RMB and suffix amount formats', () => {
+    // Regression for the shapes that walked through the first version: dots/parens in
+    // phone numbers, RMB/€/£/人民币 prefixes, and the 元 suffix.
+    for (const sample of [
+      '电话 138.0000.0000',
+      '手机 (138) 0000 0000',
+      '报价 RMB 12,000',
+      '报价 人民币 12,000',
+      '报价 12,000 元',
+      '报价 €12,000',
+    ]) {
+      const redacted = redactForGroup(sample)
+      expect(redacted).not.toContain('12,000')
+      expect(redacted).not.toMatch(/138[\d\s.()-]*/)
+      expect(redacted).toContain('已隐藏')
+    }
+  })
+
+  it('stays linear on input with no @ and refuses to render an oversized message', () => {
+    // 100k characters used to take 12.8 s (the email pattern retried at every offset with
+    // no `@` anywhere). Both the pre-check and the length cap keep this bounded.
+    const started = Date.now()
+    redactForGroup('a'.repeat(100_000))
+    const elapsed = Date.now() - started
+    expect(elapsed).toBeLessThan(200)
+    expect(redactForGroup('a'.repeat(30_000))).toBe('〔消息过长，群聊不渲染，请到私聊查看〕')
+  })
+
   it('leaves clean text untouched', () => {
     expect(redactForGroup('Nordwind 有 3 条待跟进')).toBe('Nordwind 有 3 条待跟进')
   })

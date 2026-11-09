@@ -39,7 +39,7 @@ running → awaiting_approval   # 候选已提交，等人工审核
 ```
 
 - 状态迁移只允许服务端执行；客户端只能「请求取消」。
-- `awaiting_approval` 不是终态，超时按 `expired` 处理并记审计。
+- `awaiting_approval` 不是终态，超时按 `expired` 处理并记审计（`RunStatus` 里已有 `expired`，与 `cancelled` 区分开）。
 
 ### 3.2 事件
 
@@ -149,7 +149,7 @@ allowed = employee.hasNext(feature)            # 员工当前授权（含组织�
 |---|---|---|
 | 撤权广播 | `applyPrincipalRevoked()` | 把该绑定的在途 Run（`queued`/`running`/`awaiting_approval`）转 `cancelled`；已终结的不动（否则等于改写历史）；别的绑定只计数不碰 |
 | 写入前判定 | `canWriteToCrm({ run, bindingState, now })` | 绑定状态是**参数**，不是从 run 上读的：取消广播可能还没落到 run 对象上，那个时间差正是被撤销的在途任务会用的窗口 |
-| 时限 | `withinRevocationDeadline()` | 10 s 是承诺，不是描述；早于撤销时间或缺失时间戳都判失败 |
+| 时限 | `withinRevocationDeadline()` | 10 s 是承诺，不是描述；早于撤销时间或缺失时间戳都判失败。**已知边界**：`revokedAt` 与 `cancelledAt` 可能来自两个节点的墙钟，时钟偏差会把合规判红、把迟到判绿；要作为发布级证据，必须用同一时钟（如 CRM 记录收到取消确认的时刻） |
 
 拒绝原因区分 `no_run` / `run_not_running` / `run_cancelled` / `run_terminal` / `binding_not_active` / `time_unparseable`，审计能看出是哪一道拒的。
 

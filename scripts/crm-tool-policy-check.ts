@@ -42,7 +42,8 @@ const declaration = JSON.parse(fs.readFileSync(DECLARATION, 'utf8')) as {
   platformTools?: PlatformToolDeclaration[]
 }
 const instanceGlobal = declaration.instanceGlobal ?? []
-const acknowledged = new Map((declaration.highPrivilegeAcknowledged ?? []).map((entry) => [entry.name, entry.reason ?? '']))
+const acknowledged = new Map((declaration.highPrivilegeAcknowledged ?? []).map((entry) => [entry.name, (entry.reason ?? '').trim()]))
+const blankReason = [...acknowledged.entries()].filter(([, reason]) => reason === '').map(([name]) => name)
 
 const registryModule = (await import(REGISTRY)) as { allAiTools?: ToolDescriptor[] }
 const tools = (registryModule.allAiTools ?? []).map((tool) => ({
@@ -51,6 +52,10 @@ const tools = (registryModule.allAiTools ?? []).map((tool) => ({
   isMutation: tool.isMutation,
   isDestructive: tool.isDestructive,
   isBulk: tool.isBulk,
+  // These two widen the blast radius (files/attachments, records read before acting).
+  supportsAttachments: tool.supportsAttachments,
+  loadBeforeRecord: tool.loadBeforeRecord,
+  loadBeforeRecords: tool.loadBeforeRecords,
 }))
 if (tools.length === 0) {
   console.log('FAIL  registry                       注册表是空的，分类没有对象')
@@ -62,6 +67,11 @@ const summary = summarize(tools, instanceGlobal)
 
 // 1. every computed high_privilege tool must be acknowledged by name
 const unacknowledged = summary.classes.high_privilege.filter((name) => !acknowledged.has(name))
+check(
+  'acknowledgements-have-reason',
+  blankReason.length === 0,
+  blankReason.length === 0 ? '每条认领都写了理由' : `认领了但没写理由：${blankReason.join(', ')}`,
+)
 check(
   'high-privilege-acknowledged',
   unacknowledged.length === 0,
@@ -94,10 +104,45 @@ check(
 )
 
 // 5. the classes must actually be populated the way §7 describes: a sample each
+// 05 §7 asks for a sample of each class. Today instance_global is legitimately empty (no
+// tool is declared as such), so requiring >0 would force a false declaration. The check
+// states that instead of passing silently as "three classes present".
+const instanceGlobalSamples = summary.classes.instance_global.length
 check(
-  'three-classes-present',
+  'classes-accounted',
   summary.counts.per_user > 0 && summary.counts.high_privilege > 0,
-  `per_user ${summary.counts.per_user} · instance_global ${summary.counts.instance_global} · high_privilege ${summary.counts.high_privilege}`,
+  `per_user ${summary.counts.per_user} · instance_global ${summary.counts.instance_global}${
+    instanceGlobalSamples === 0 ? '（当前为空，非缺陷：没有工具声明为实例全局）' : ''
+  } · high_privilege ${summary.counts.high_privilege}`,
+)
+
+// registry freshness: a stale generated file would classify yesterday's tools
+const newestSource = (() => {
+  const dirs = ['src/modules']
+  let newest = 0
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        if (entry.name === '__tests__') continue
+        walk(full)
+        continue
+      }
+      if (entry.name === 'ai-tools.ts') newest = Math.max(newest, fs.statSync(full).mtimeMs)
+    }
+  }
+  for (const dir of dirs) if (fs.existsSync(path.join(ROOT, dir))) walk(path.join(ROOT, dir))
+  return newest
+})()
+const registryMtime = fs.statSync(REGISTRY).mtimeMs
+check(
+  'registry-fresh',
+  newestSource === 0 || registryMtime >= newestSource,
+  newestSource === 0
+    ? '源码里没有 ai-tools.ts，跳过新鲜度比较'
+    : registryMtime >= newestSource
+      ? `生成的注册表（${new Date(registryMtime).toISOString()}）不早于最新的 ai-tools.ts`
+      : `注册表（${new Date(registryMtime).toISOString()}）早于 ai-tools.ts（${new Date(newestSource).toISOString()}）—— 先 yarn build，否则分类的是旧清单`,
 )
 
 // 5b. platform built-ins are part of the surface even though they are not in the module
@@ -147,7 +192,13 @@ const samples = {
   instance_global: summary.classes.instance_global.slice(0, 2),
   high_privilege: summary.classes.high_privilege.slice(0, 3),
 }
-console.log(`[tool-policy] samples ${JSON.stringify(samples)}`)
+const emptyClasses = Object.entries(summary.classes).filter(([, names]) => names.length === 0).map(([kind]) => kind)
+check(
+  'samples-exist',
+  samples.per_user.length > 0 && samples.high_privilege.length > 0,
+  `每类样本：per_user ${samples.per_user.join('/')} · instance_global ${samples.instance_global.join('/') || '空'} · high_privilege ${samples.high_privilege.join('/')}` +
+    (emptyClasses.length > 0 ? `（空类：${emptyClasses.join(', ')}）` : ''),
+)
 // The inventory the gate actually checked is registry + platform built-ins; printing only
 // the registry count would understate the surface it just claimed to cover.
 const totals = {

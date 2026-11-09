@@ -98,6 +98,22 @@ const MUTATIONS = [
     why: 'profile.json 必须 0600，否则他人可读身份映射',
   },
   {
+    id: 'bot-nonce-claim',
+    file: 'src/lib/bot/inbound.ts',
+    find: 'if (!claimed || isReplay(event.nonce, context.seenNonces)) return refuse(\'replay\')',
+    replace: 'if (isReplay(event.nonce, context.seenNonces)) return refuse(\'replay\')',
+    test: 'src/lib/bot/__tests__/inbound.test.ts',
+    why: 'nonce 必须原子领取，丢失它等于允许并发重放',
+  },
+  {
+    id: 'bot-redaction-length-cap',
+    file: 'src/lib/bot/guard.ts',
+    find: "if (output.length > MAX_GROUP_RENDER_LENGTH) {",
+    replace: 'if (false) {',
+    test: 'src/lib/bot/__tests__/guard.test.ts',
+    why: '超长消息必须拒绝渲染（否则既不脱敏也可能拖慢事件循环）',
+  },
+  {
     id: 'run-write-requires-running',
     file: 'src/lib/dsh/run.ts',
     find: "if (run.status !== 'running') return { allowed: false, reason: 'run_not_running' }",
@@ -132,7 +148,7 @@ const MUTATIONS = [
   {
     id: 'bot-replay-gate',
     file: 'src/lib/bot/inbound.ts',
-    find: "if (isReplay(event.nonce, context.seenNonces)) return refuse('replay')",
+    find: "if (!claimed || isReplay(event.nonce, context.seenNonces)) return refuse('replay')",
     replace: "if (false) return refuse('replay')",
     test: 'src/lib/bot/__tests__/inbound.test.ts',
     why: '重放的 nonce 必须被拒',

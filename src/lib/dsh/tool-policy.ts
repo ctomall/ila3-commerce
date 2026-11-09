@@ -24,6 +24,11 @@ export type ToolDescriptor = {
   isMutation?: boolean
   isDestructive?: boolean
   isBulk?: boolean
+  /** Can pull files/attachments, or prefetch records before acting — both widen the blast
+   *  radius beyond the caller's own list view, so they need the same treatment as bulk. */
+  supportsAttachments?: boolean
+  loadBeforeRecord?: boolean
+  loadBeforeRecords?: boolean
 }
 
 export type ToolClass = 'per_user' | 'instance_global' | 'high_privilege'
@@ -39,10 +44,15 @@ export type ClassifyInput = {
 export function classifyTool(input: ClassifyInput): ToolClass {
   const { tool } = input
   const features = tool.requiredFeatures ?? []
+  // A declaration wins over the computed class. Otherwise a declared instance_global tool
+  // that happens to be unscoped would be swallowed by the high_privilege branch and become
+  // *allowed* on isolated instances — the opposite of what the declaration asked for.
+  if ((input.instanceGlobal ?? []).includes(tool.name)) return 'instance_global'
   if (tool.isDestructive === true) return 'high_privilege'
   if (tool.isBulk === true) return 'high_privilege'
+  if (tool.supportsAttachments === true) return 'high_privilege'
+  if (tool.loadBeforeRecord === true || tool.loadBeforeRecords === true) return 'high_privilege'
   if (features.length === 0) return 'high_privilege'
-  if ((input.instanceGlobal ?? []).includes(tool.name)) return 'instance_global'
   return 'per_user'
 }
 

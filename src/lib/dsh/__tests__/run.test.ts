@@ -21,18 +21,18 @@ const run = (overrides: Partial<Run> = {}): Run => ({
 
 describe('canWriteToCrm', () => {
   it('allows a running run on an active binding', () => {
-    expect(canWriteToCrm({ run: run(), bindingState: 'active', now: NOW })).toEqual({ allowed: true })
+    expect(canWriteToCrm({ run: run(), bindingId: 'binding-1', bindingState: 'active', now: NOW })).toEqual({ allowed: true })
   })
 
   it('refuses when there is no run at all', () => {
-    expect(canWriteToCrm({ run: null, bindingState: 'active', now: NOW })).toEqual({
+    expect(canWriteToCrm({ run: null, bindingId: 'binding-1', bindingState: 'active', now: NOW })).toEqual({
       allowed: false,
       reason: 'no_run',
     })
   })
 
   it('refuses a queued run: it is in flight but not executing', () => {
-    expect(canWriteToCrm({ run: run({ status: 'queued' }), bindingState: 'active', now: NOW })).toEqual({
+    expect(canWriteToCrm({ run: run({ status: 'queued' }), bindingId: 'binding-1', bindingState: 'active', now: NOW })).toEqual({
       allowed: false,
       reason: 'run_not_running',
     })
@@ -40,20 +40,20 @@ describe('canWriteToCrm', () => {
 
   it('refuses a run parked in awaiting_approval', () => {
     expect(
-      canWriteToCrm({ run: run({ status: 'awaiting_approval' }), bindingState: 'active', now: NOW }),
+      canWriteToCrm({ run: run({ status: 'awaiting_approval' }), bindingId: 'binding-1', bindingState: 'active', now: NOW }),
     ).toEqual({ allowed: false, reason: 'run_not_running' })
   })
 
   it('refuses a cancelled run by name, so the audit says why', () => {
-    expect(canWriteToCrm({ run: run({ status: 'cancelled' }), bindingState: 'active', now: NOW })).toEqual({
+    expect(canWriteToCrm({ run: run({ status: 'cancelled' }), bindingId: 'binding-1', bindingState: 'active', now: NOW })).toEqual({
       allowed: false,
       reason: 'run_cancelled',
     })
   })
 
   it('refuses every terminal state', () => {
-    for (const status of ['completed', 'failed', 'budget_exhausted'] as const) {
-      expect(canWriteToCrm({ run: run({ status }), bindingState: 'active', now: NOW })).toEqual({
+    for (const status of ['completed', 'failed', 'budget_exhausted', 'expired'] as const) {
+      expect(canWriteToCrm({ run: run({ status }), bindingId: 'binding-1', bindingState: 'active', now: NOW })).toEqual({
         allowed: false,
         reason: 'run_terminal',
       })
@@ -63,21 +63,35 @@ describe('canWriteToCrm', () => {
   it('refuses when the binding is revoked even though the run still says running', () => {
     // The cancellation broadcast may not have reached this object yet; that gap is the
     // window a revoked employee's in-flight task would otherwise use.
-    expect(canWriteToCrm({ run: run(), bindingState: 'revoked', now: NOW })).toEqual({
+    expect(canWriteToCrm({ run: run(), bindingId: 'binding-1', bindingState: 'revoked', now: NOW })).toEqual({
       allowed: false,
       reason: 'binding_not_active',
     })
   })
 
   it('refuses a suspended binding too', () => {
-    expect(canWriteToCrm({ run: run(), bindingState: 'suspended', now: NOW })).toEqual({
+    expect(canWriteToCrm({ run: run(), bindingId: 'binding-1', bindingState: 'suspended', now: NOW })).toEqual({
       allowed: false,
       reason: 'binding_not_active',
     })
   })
 
+  it('refuses when the run belongs to a different binding than the caller', () => {
+    // The caller reading its own (active) binding state must not authorise another
+    // binding's run — that is how a revoked employee's run would slip through.
+    expect(
+      canWriteToCrm({ run: run({ bindingId: 'binding-other' }), bindingId: 'binding-1', bindingState: 'active', now: NOW }),
+    ).toEqual({ allowed: false, reason: 'binding_mismatch' })
+  })
+
+  it('names the binding problem before complaining about the clock', () => {
+    expect(
+      canWriteToCrm({ run: run(), bindingId: 'binding-1', bindingState: 'revoked', now: 'not-a-time' }),
+    ).toEqual({ allowed: false, reason: 'binding_not_active' })
+  })
+
   it('refuses when the clock cannot be parsed instead of assuming it is fine', () => {
-    expect(canWriteToCrm({ run: run(), bindingState: 'active', now: 'not-a-time' })).toEqual({
+    expect(canWriteToCrm({ run: run(), bindingId: 'binding-1', bindingState: 'active', now: 'not-a-time' })).toEqual({
       allowed: false,
       reason: 'time_unparseable',
     })

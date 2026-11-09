@@ -48,9 +48,16 @@ describe('classifyTool', () => {
     expect(classifyTool({ tool: settings, instanceGlobal: [settings.name] })).toBe('instance_global')
   })
 
-  it('lets the computed high_privilege class win over a declaration', () => {
-    // A declaration cannot demote a tool that can touch many records.
-    expect(classifyTool({ tool: bulk, instanceGlobal: [bulk.name] })).toBe('high_privilege')
+  it('lets a declaration win over the computed class', () => {
+    // Previously the computed class won, which meant a declared instance_global tool that
+    // also looked unscoped became high_privilege and was *allowed* on an isolated instance.
+    expect(classifyTool({ tool: bulk, instanceGlobal: [bulk.name] })).toBe('instance_global')
+  })
+
+  it('treats attachment and record-prefetch tools as high_privilege', () => {
+    expect(classifyTool({ tool: { ...read, supportsAttachments: true } })).toBe('high_privilege')
+    expect(classifyTool({ tool: { ...read, loadBeforeRecord: true } })).toBe('high_privilege')
+    expect(classifyTool({ tool: { ...read, loadBeforeRecords: true } })).toBe('high_privilege')
   })
 })
 
