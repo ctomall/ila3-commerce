@@ -38,6 +38,17 @@ jobs:
       - name: Install
         run: yarn install --immutable || yarn install
 
+      # Tests run BEFORE the build on purpose: a green artifact with a failing suite is the
+      # failure mode this gate exists to prevent, and the auto-deploy gate only accepts a SHA
+      # whose workflow actually ran tests (see scripts/auto-deploy/ci-gate.mjs). Type-check
+      # and the unit suite are the fast pair; the browser suite needs a running server and
+      # stays out of CI.
+      - name: Type check
+        run: yarn typecheck
+
+      - name: Unit tests
+        run: yarn test --silent
+
       - name: Build (applies managed patches)
         env:
           NODE_OPTIONS: --max-old-space-size=8192
