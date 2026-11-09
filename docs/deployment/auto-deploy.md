@@ -1,8 +1,8 @@
 # CRM 隔离自动部署（auto-deploy）
 
-> 状态（2026-11-09 12:38）：**发布默认路径已从“生产机现场构建”切到“CI 出完整发布包 → 可信校验 → 安全解包 → 安装”。** `deploy.mjs` 在非演练模式下默认走 `--from-artifact`；现场构建 `release.mjs` 保留为显式 `--build-locally` fallback。统一入口 `entry.mjs`（systemd 两个入口都走它）显式传入 `--from-artifact`。
+> 状态（2026-11-09 12:48）：**发布默认路径已从“生产机现场构建”切到“CI 出完整发布包 → 可信校验 → 安全解包 → 安装”。** `deploy.mjs` 在非演练模式下默认走 `--from-artifact`；现场构建 `release.mjs` 保留为显式 `--build-locally` fallback。统一入口 `entry.mjs`（systemd 两个入口都走它）显式传入 `--from-artifact`。
 >
-> 产物链已随 `7a38b7f` 进入 `origin/main`，并触发了 build-artifact run `42616956527`（commit `de1843f`）。该 run 暴露并已修复一个真实的 CI 缺陷：`createReleasePackage()` 误调部署专用的 `ensureDirs()`，在 runner 上 `mkdir /home/pro/releases/mercato` 触发 EACCES，run 在 “Package release artifact” 步骤失败（之前的 typecheck/test/build 全绿）。修复提交 `1e89e74`（打包不创建生产 state/release 目录）尚未 push；**push 后需要等待一个新的 build-artifact run 成功，默认 artifact 路径才真正可用。在此之前，生产发布必须显式 `--build-locally`，否则会按设计拒绝。** 旧 run `42609377937`（commit `7860993`）上传的是旧格式 `next-build-*` 目录包，不可用于新链路。
+> 产物链已随 `7a38b7f` 进入 `origin/main`。首个 run `42616956527`（`de1843f`）暴露了一个真实 CI 缺陷：`createReleasePackage()` 误调部署专用 `ensureDirs()`，在 runner 上 `mkdir /home/pro/releases/mercato` 触发 EACCES，run 在 “Package release artifact” 步骤失败（typecheck/test/build 全绿）。修复后 run **`42618381265`（`c5e525f`）成功**，产出 `mercato-release-c5e525f…`（238,428,272 字节，digest `79587711…da7`）。2026-11-09 12:46–12:47 用该真实 GitHub artifact 完成端到端安装：下载 36.9 s、14,284 文件/33 符号链接、`yarn install --immutable`、候选 3100 健康、切换、post-switch 352 ms，结果 `deployed` / `source.method=ci-artifact`。**默认 artifact 路径现已可用，且已于 2026-11-09 12:44 通过自动入口完成一次真实生产部署（run `deploy-20261109124407-c5e525f3`，`installer=ci-artifact`，3000 健康）。** 旧 run `42609377937`（`7860993`）上传的是旧格式 `next-build-*` 目录包，不可用于新链路。
 >
 > 失败演练：`artifact-drill.mjs` 7 项全部通过（sha 不匹配 / manifest 与 run 元数据不一致 / 路径穿越 / 下载 404 / 下载超时 / 部署级 404 / 部署级超时，后两项均验证旧版本仍在运行）；原有候选失败与回滚演练仍通过。真实 2.4 GB release 的 e2e（打包 → 安装 → 候选 → 切换）也通过：tar.gz 225.5 MiB / 14,296 文件 / 33 个包内符号链接，`yarn install` 115.6 s，候选与切换后健康均通过，`source.method=ci-artifact`。证据见 §11。
 
@@ -267,16 +267,27 @@ node scripts/auto-deploy/release.mjs --sha <full-sha>
 - 结果 `deployed`，`installer=ci-artifact`，`source.method=ci-artifact`，`next` 可执行文件存在，无本地 `.next` 构建输出；
 - 演练用的隔离 root 与 seed 已清理；生产 `current`/`previous` 未被触碰。
 
-证据：`drills/artifact-e2e-latest.json`、`drills/artifact-e2e-20261109121408-78609938/`、`logs/artifact-e2e-*.log`。
+证据：`drills/artifact-e2e-latest.json`（最近一次）、`drills/artifact-e2e-20261109121408-78609938/`、`logs/artifact-e2e-*.log`。
+
+真实 GitHub artifact 端到端（2026-11-09 12:46–12:47，run `42618381265` / commit `c5e525f`）：`artifact-e2e.mjs --github-run-id 42618381265 --sha c5e525f…` 走**生产同一条下载/校验/安装代码**：
+
+- GitHub API 取到 artifact `mercato-release-c5e525f…`（id `13673009000`，238,428,272 字节，digest `79587711…da7`），本地下载后重算 sha256 与 digest 一致（36.9 s）；
+- manifest 的 repo/run/commit/runtime 与本地已知值一致；`release.tar.gz` sha256 `3179ddb7…`、内容摘要 `95fcc8b1…`；解包 14,284 文件 / 33 符号链接，逐文件校验通过；
+- `yarn install --immutable` 通过；候选 3100 健康；`current` 切到 artifact release；post-switch 352 ms 通过；
+- 结果 `deployed`、`installer=ci-artifact`、`source.method=ci-artifact`、`noLocalBuildOutput=true`；隔离 root 清理，生产 `current`/`previous` 未变。
+
+证据：`drills/artifact-e2e-latest.json`（`drillRunId=artifact-e2e-20261109124541-c5e525f3`）、`drills/artifact-e2e-20261109124541-c5e525f3/`、`logs/artifact-e2e-*.log`。
 
 ## 12. 启用 / 停用
 
 ### 当前实际状态
 
 - `ila3-auto-deploy-check.timer`：**enabled/active**，只读检查，每 5 分钟。
-- `ila3-auto-deploy.timer` / `ila3-auto-deploy.service` / `ila3-auto-deploy-app.service`：**未安装**。
-- 生产 3000 仍由 `mercato.service` 从 `/home/pro/apps/mercato` 提供。
-- 自动上线：**未开启**；且当前 HEAD 还没有新格式 CI artifact，生产切换前必须等 push 后的 build-artifact run 成功，或显式使用 `--build-locally`。
+- `ila3-auto-deploy.timer`：**enabled**（每 15 分钟）；`ila3-auto-deploy.service` 是 static oneshot。
+- `ila3-auto-deploy-app.service`：**enabled/active**，从 `/home/pro/releases/mercato/current` 提供 3000。
+- `mercato.service`：**disabled**（旧槽已退役）。
+- `current -> c5e525f…`（`source.method=ci-artifact`），`previous -> 7860993…`；release 根下只保留这两个目录。
+- 自动上线：**已开启并通过真实自动部署验证**。2026-11-09 12:44 的 `deploy-20261109124407-c5e525f3`：`entry=auto`、`production=true`、`installer=ci-artifact`、candidate 3100 健康、switch 后 3000 健康、`result=deployed`、无回滚。
 
 ### 一键停用（如果以后已启用）
 
@@ -342,6 +353,8 @@ node scripts/auto-deploy/deploy.mjs --manual --build-locally --sha "$(git rev-pa
 | 切换/回滚 | `runs/<runId>.json` 的 `postSwitch` / `rollback` |
 | 产物链失败演练 | `drills/artifact-latest.json`、`drills/<drillRunId>/`、`logs/<drillRunId>.log` |
 | 真实 GitHub digest 交叉校验 | `drills/artifact-digest-proof.json`、`logs/artifact-digest-proof-20261109.log` |
-| 真实产物 e2e | `drills/artifact-e2e-latest.json`、`drills/<drillRunId>/`、`logs/artifact-e2e-*.log` |
+| 真实 GitHub artifact 安装 e2e | `drills/artifact-e2e-latest.json`（run `42618381265`，artifact `13673009000`，digest `79587711…`） |
+| 真实生产自动部署 | `runs/deploy-20261109124407-c5e525f3.json`（`installer=ci-artifact`，`result=deployed`） |
+| 本地打包 e2e | `drills/artifact-e2e-20261109121408-78609938.json` |
 | 原有失败演练 | `drills/latest.json` |
 | 只读状态 | `node scripts/auto-deploy/status.mjs` |
