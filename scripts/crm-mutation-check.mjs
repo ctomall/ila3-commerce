@@ -84,8 +84,8 @@ const MUTATIONS = [
   {
     id: 'profile-dir-mode',
     file: 'src/lib/dsh/profile.ts',
-    find: 'fs.chmodSync(path.join(keyed, suffix), 0o700)',
-    replace: 'fs.chmodSync(path.join(keyed, suffix), 0o755)',
+    find: 'fs.chmodSync(target, 0o700)',
+    replace: 'fs.chmodSync(target, 0o755)',
     test: 'src/lib/dsh/__tests__/profile.test.ts',
     why: 'profile 目录必须 0700，否则他人可进入',
   },
