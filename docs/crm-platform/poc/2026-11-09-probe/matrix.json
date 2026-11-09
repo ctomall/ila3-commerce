@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T03:05:04.747Z",
+  "generatedAt": "2026-11-09T03:18:13.089Z",
   "base": "http://127.0.0.1:3000",
   "rowCount": {
     "tables": [
@@ -13,14 +13,14 @@
       "customer_entities": 9,
       "customer_companies": 3,
       "customer_people": 6,
-      "sales_quotes": 2,
+      "sales_quotes": 1,
       "dictionary_entries": 291
     },
     "after": {
       "customer_entities": 9,
       "customer_companies": 3,
       "customer_people": 6,
-      "sales_quotes": 2,
+      "sales_quotes": 1,
       "dictionary_entries": 291
     },
     "changed": [],
@@ -60,7 +60,7 @@
       "expected": "200",
       "status": 200,
       "verdict": "as-expected",
-      "body": "{\"items\":[{\"id\":\"485b88ce-a6ea-465f-b4c4-1a0b88c0acb6\",\"quoteNumber\":\"SQ-DEMO-1002\",\"status\":\"draft\",\"statusEntryId\":null,\"customerEntityId\":\"b026cb18-bf9c-45c6-8b14-805eede4ff4c\",\"customerContactId\":\"5c13991c-a8e0-4cdc-"
+      "body": "{\"items\":[{\"id\":\"ce2cba82-4834-4896-9094-46b7f081f04a\",\"quoteNumber\":\"QUOTE-20261108-00008\",\"status\":null,\"statusEntryId\":null,\"customerEntityId\":null,\"customerContactId\":null,\"billingAddressId\":null,\"shippingAddressId\":"
     },
     {
       "role": "employee",
@@ -79,7 +79,7 @@
       "expected": "200|403",
       "status": 200,
       "verdict": "as-expected",
-      "body": "{\"items\":[{\"id\":\"7bc0d337-d162-46a5-840a-2139fc83197a\",\"commandId\":\"sales.order-statuses.create\",\"actionLabel\":\"添加销售订单状态\",\"executionState\":\"done\",\"actorUserId\":\"32c5dd71-cf97-4584-9bb9-0f81ac2cb688\",\"actorUserName\":\"supe"
+      "body": "{\"items\":[{\"id\":\"64b96e8e-4fbb-4586-a845-dc6c31fca372\",\"commandId\":\"sales.quotes.convert_to_order\",\"actionLabel\":\"将报价转换为订单\",\"executionState\":\"done\",\"actorUserId\":\"32c5dd71-cf97-4584-9bb9-0f81ac2cb688\",\"actorUserName\":\"su"
     },
     {
       "role": "employee",

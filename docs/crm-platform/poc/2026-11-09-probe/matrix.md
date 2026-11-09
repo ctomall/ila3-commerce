@@ -1,6 +1,6 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-09T03:05:04.747Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-09T03:18:13.089Z · 目标：http://127.0.0.1:3000
 
 用例 14 · 符合预期 14 · 需要复核 0
 
@@ -35,7 +35,7 @@
   ```
 - `GET /api/sales/quotes` (employee) → 200
   ```
-  {"items":[{"id":"485b88ce-a6ea-465f-b4c4-1a0b88c0acb6","quoteNumber":"SQ-DEMO-1002","status":"draft","statusEntryId":null,"customerEntityId":"b026cb18-bf9c-45c6-8b14-805eede4ff4c","customerContactId":
+  {"items":[{"id":"ce2cba82-4834-4896-9094-46b7f081f04a","quoteNumber":"QUOTE-20261108-00008","status":null,"statusEntryId":null,"customerEntityId":null,"customerContactId":null,"billingAddressId":null,
   ```
 - `GET /api/audit_logs/audit-logs/actions?canViewTenant=true&scope=tenant` (employee) → 200
   ```
@@ -43,7 +43,7 @@
   ```
 - `GET /api/audit_logs/audit-logs/actions` (admin) → 200
   ```
-  {"items":[{"id":"7bc0d337-d162-46a5-840a-2139fc83197a","commandId":"sales.order-statuses.create","actionLabel":"添加销售订单状态","executionState":"done","actorUserId":"32c5dd71-cf97-4584-9bb9-0f81ac2cb688","
+  {"items":[{"id":"64b96e8e-4fbb-4586-a845-dc6c31fca372","commandId":"sales.quotes.convert_to_order","actionLabel":"将报价转换为订单","executionState":"done","actorUserId":"32c5dd71-cf97-4584-9bb9-0f81ac2cb688"
   ```
 - `GET /api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000` (employee) → 403
   ```
