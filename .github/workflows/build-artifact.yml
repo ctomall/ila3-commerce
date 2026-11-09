@@ -43,6 +43,13 @@ jobs:
       # whose workflow actually ran tests (see scripts/auto-deploy/ci-gate.mjs). Type-check
       # and the unit suite are the fast pair; the browser suite needs a running server and
       # stays out of CI.
+      # `yarn generate` must run before type-checking: `.mercato/generated/**` is gitignored,
+      # so a fresh checkout has no generated route shards or entity types and `tsc` fails on
+      # imports that only exist after generation. The first pushed run proved it (TS2307 on
+      # backend-route-shards.generated).
+      - name: Generate registries
+        run: yarn generate
+
       - name: Type check
         run: yarn typecheck
 
