@@ -209,7 +209,7 @@ sudo systemctl disable --now ila3-auto-deploy.timer
 - **不跑数据库迁移**：release 构建只做代码生成/编译；不执行 `db:migrate`。迁移仍由人工按既有流程处理。
 - **候选只验证 HTTP 就绪**：不启动 queue worker / scheduler，不验证后台任务；候选实例与生产共用数据库，健康检查只发 GET，不写业务数据。
 - **构建资源**：单次构建 heap 6 GB、`nice 10`、单进程；共享机器上仍可能受内存/CPU 影响。失败记录在 `failed/`，不会自动重试。
-- **保留策略**：release 目录不会自动清理；需要人工按磁盘情况删除旧目录，并 `git worktree prune`。
+- **保留策略**：每次成功部署、以及每次失败/拒绝的构建收尾时，`pruneReleases()` 会删除除 `current` 和 `previous` 指向之外的 release 目录，并对 release worktree 执行 `git worktree prune`。候选只有 `RELEASE_ROOT` 下 40 位十六进制名目录；symlink、非 sha 目录和普通文件永不被处理，且 cwd 落在该目录的存活进程会让它被跳过（记录在 `prune.skippedInUse`）。单个 release 约 4.2 GB，此前无上限积累正是根分区写满的原因（5 小时 8 个 release / 33 GB）。
 - **`.env` 复制**：release 里的 `.env` 是运行时配置副本，权限 600；轮换密钥后需要重建 release 或同步更新。
 - **flock 是进程级**：只覆盖本机同一路径的 `deploy.mjs`；若有人绕过脚本直接改 symlink，不在保护范围。
 - **生产切换回滚**：若 `ila3-auto-deploy-app.service` 启动失败，回滚会把 symlink 指回旧 release 并重启服务；如果旧服务也起不来，结果 `rollback-failed`，需要人工介入。
