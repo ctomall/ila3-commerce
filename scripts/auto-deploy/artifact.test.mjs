@@ -51,6 +51,7 @@ function makeFixture(name, {commit = COMMIT, marker = 'v1'} = {}) {
   write(path.join(root, 'package.json'), JSON.stringify({name: 'fixture', version: '1.0.0'}))
   write(path.join(root, 'yarn.lock'), '# fixture\n')
   write(path.join(root, '.yarnrc.yml'), 'nodeLinker: node-modules\n')
+  write(path.join(root, 'next.config.ts'), 'export default {}\n')
   write(path.join(root, '.mercato', 'build-info.json'), JSON.stringify({status: 'ok', commit: commit.slice(0, 8)}))
   write(path.join(root, '.mercato', 'next', 'BUILD_ID'), 'fixture-build\n')
   write(path.join(root, '.mercato', 'next', 'server', 'chunk.js'), `// ${marker}\n`)
@@ -141,6 +142,46 @@ test('package + extract roundtrip verifies every file and preserves in-tree syml
   assert.equal(fs.readFileSync(path.join(dest, 'public/logo.txt'), 'utf8'), 'logo\n')
   assert.equal(fs.readlinkSync(path.join(dest, '.mercato/next/node_modules/link')), '../../../node_modules/next')
   assert.ok(!fs.existsSync(path.join(dest, '.mercato/next/cache/junk.bin')))
+})
+
+test('packaging never touches the deploy state/release roots (CI has no /home/pro)', async () => {
+  const root = makeFixture('no-state')
+  const listFile = path.join(tmp, 'no-state-files.txt')
+  fs.writeFileSync(
+    listFile,
+    ['package.json', 'yarn.lock', '.yarnrc.yml', 'public', '.mercato/build-info.json', '.mercato/generated', '.mercato/next'].join('\n'),
+  )
+  const packageScript = path.join(path.dirname(new URL(import.meta.url).pathname), 'package-release.mjs')
+  const result = spawnSync(
+    process.execPath,
+    [
+      packageScript,
+      '--source',
+      root,
+      '--out',
+      path.join(tmp, 'pkg-no-state'),
+      '--repository',
+      REPO,
+      '--run-id',
+      '42',
+      '--commit',
+      COMMIT,
+      '--file-list',
+      listFile,
+    ],
+    {
+      encoding: 'utf8',
+      timeout: 120000,
+      env: {
+        ...process.env,
+        ILA3_RELEASE_ROOT: '/proc/mercato-missing-releases',
+        ILA3_STATE_DIR: '/proc/mercato-missing-state',
+        ILA3_APP_DIR: '/proc/mercato-missing-app',
+      },
+    },
+  )
+  assert.equal(result.status, 0, `package-release failed: ${result.stderr || result.stdout}`)
+  assert.ok(fs.existsSync(path.join(tmp, 'pkg-no-state', 'release.tar.gz')))
 })
 
 test('tampered archive content fails the per-file sha256 check', async () => {

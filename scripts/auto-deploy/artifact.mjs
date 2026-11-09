@@ -199,7 +199,8 @@ export async function createReleasePackage({
   timeoutMs = 1800000,
   compression = 'gzip -1 -n',
 }) {
-  ensureDirs()
+  // CI only has the checkout: packaging must not touch the production state or
+  // release roots (that is why this function deliberately does NOT call ensureDirs).
   const root = path.resolve(sourceRoot)
   fs.mkdirSync(outDir, {recursive: true})
   const archivePath = path.join(outDir, ARCHIVE_NAME)
@@ -946,6 +947,14 @@ export async function installFromArtifact({
   if (fs.existsSync(target)) {
     const currentTarget = readLink(CURRENT_LINK)
     if (currentTarget && path.resolve(currentTarget) === target) {
+      // The live release already carries this exact commit and verifies. Installing the
+      // archive would mean replacing a directory the running server is serving from, so it
+      // is reused instead — and the record says the artifact was not installed, rather than
+      // reporting a deployment that did not happen.
+      const live = readJson(path.join(target, 'release.json'))
+      if (live?.sha === sha && verifyRelease(target, sha).ok) {
+        return {reused: true, dir: target, manifest: live, runId, log, artifactInstalled: false, note: 'live-release-same-sha'}
+      }
       throw fail('artifact-target-in-use', `refusing to replace the live release directory: ${target}`)
     }
     fs.rmSync(target, {recursive: true, force: true})

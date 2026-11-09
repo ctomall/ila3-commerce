@@ -78,7 +78,7 @@ deploy.mjs  ── flock -n /home/pro/.local/state/ila3-deploy/deploy.lock
 ```bash
 cd /home/pro/apps/mercato
 
-# 单测（52 项：artifact 13 + 默认路径 4 + 既有 35）
+# 单测（53 项：artifact 14 + 默认路径 4 + 既有 35）
 node --test scripts/auto-deploy/*.test.mjs
 
 # CI 门槛（只读；0=allow，2=deny，3=gate error）
@@ -334,7 +334,7 @@ node scripts/auto-deploy/deploy.mjs --manual --build-locally --sha "$(git rev-pa
 
 | 交付 | 证据 |
 | --- | --- |
-| 单测 | `node --test scripts/auto-deploy/*.test.mjs`（52/52） |
+| 单测 | `node --test scripts/auto-deploy/*.test.mjs`（53/53） |
 | CI 门槛拒绝 | `gates/<sha>.json`、`logs/` |
 | CI 打包 | workflow run 的 `dist/release-manifest.json`；本地 `node scripts/auto-deploy/package-release.mjs ... --json` 输出 |
 | 下载/校验/安装 | `runs/<runId>.json` 的 `release`、`release.json` 的 `artifact` 块、`logs/<runId>-artifact*.log` |
