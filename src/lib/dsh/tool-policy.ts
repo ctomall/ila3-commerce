@@ -102,3 +102,39 @@ export function summarize(tools: readonly ToolDescriptor[], instanceGlobal: read
     classes,
   }
 }
+
+/**
+ * A tool the platform registers itself, outside the module registry.
+ *
+ * The module registry is not the whole surface: `loadAllModuleTools()` also registers
+ * `context_whoami`, `search` and `execute`. Missing them made an inventory of 94 tools for
+ * a runtime that exposes 97 — and the missing one, `execute`, is a sandbox that can call
+ * any documented API endpoint, including mutations. A declaration that calls itself per_user
+ * while it can mutate is refused rather than trusted.
+ */
+export type PlatformToolDeclaration = {
+  name: string
+  class: ToolClass
+  canMutate: boolean
+  reason?: string
+}
+
+export type PlatformToolProblem = 'mutating_tool_declared_per_user' | 'missing_reason' | 'duplicate'
+
+export function checkPlatformDeclarations(
+  declared: readonly PlatformToolDeclaration[],
+): { ok: true } | { ok: false; problems: Array<{ name: string; problem: PlatformToolProblem }> } {
+  const problems: Array<{ name: string; problem: PlatformToolProblem }> = []
+  const seen = new Set<string>()
+  for (const tool of declared) {
+    if (seen.has(tool.name)) problems.push({ name: tool.name, problem: 'duplicate' })
+    seen.add(tool.name)
+    // A tool that can write is never a per-user capability: the caller's features decide
+    // *which* writes, not *whether* it crosses employees.
+    if (tool.canMutate && tool.class !== 'high_privilege') {
+      problems.push({ name: tool.name, problem: 'mutating_tool_declared_per_user' })
+    }
+    if (!tool.reason || tool.reason.trim() === '') problems.push({ name: tool.name, problem: 'missing_reason' })
+  }
+  return problems.length === 0 ? { ok: true } : { ok: false, problems }
+}

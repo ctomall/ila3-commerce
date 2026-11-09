@@ -17,7 +17,8 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
-import { summarize, type ToolDescriptor } from '../src/lib/dsh/tool-policy'
+import { checkPlatformDeclarations, summarize, type PlatformToolDeclaration, type ToolDescriptor } from '../src/lib/dsh/tool-policy'
+import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const ROOT = process.cwd()
 const DECLARATION = path.join(ROOT, 'docs/crm-platform/appendix/tool-policy.json')
@@ -38,6 +39,7 @@ if (!fs.existsSync(REGISTRY)) {
 const declaration = JSON.parse(fs.readFileSync(DECLARATION, 'utf8')) as {
   instanceGlobal?: string[]
   highPrivilegeAcknowledged?: Array<{ name: string; reason?: string }>
+  platformTools?: PlatformToolDeclaration[]
 }
 const instanceGlobal = declaration.instanceGlobal ?? []
 const acknowledged = new Map((declaration.highPrivilegeAcknowledged ?? []).map((entry) => [entry.name, entry.reason ?? '']))
@@ -98,6 +100,47 @@ check(
   `per_user ${summary.counts.per_user} · instance_global ${summary.counts.instance_global} · high_privilege ${summary.counts.high_privilege}`,
 )
 
+// 5b. platform built-ins are part of the surface even though they are not in the module
+// registry. The runtime serves 97 tools while the registry holds 94; leaving the difference
+// unclassified hides whatever is in it — in practice `execute`, a sandbox that can call any
+// documented API endpoint including writes.
+const platform = declaration.platformTools ?? []
+const platformCheck = checkPlatformDeclarations(platform)
+check(
+  'platform-tools-declared',
+  platformCheck.ok,
+  platformCheck.ok
+    ? `${platform.length} 个平台内置工具已分类（${platform.map((tool) => `${tool.name}:${tool.class}`).join(', ')}）`
+    : `平台内置工具声明有问题：${platformCheck.ok === false ? platformCheck.problems.map((p) => `${p.name}=${p.problem}`).join(', ') : ''}`,
+)
+
+// 5c. live drift: the running app's tool list must be fully accounted for. A tool the app
+// serves but neither the registry nor the declaration knows is unclassified by definition.
+const BASE = process.env.CRM_BASE_URL ?? 'http://127.0.0.1:3000'
+try {
+  const creds = credentials()
+  const role = ['superadmin', 'admin', 'employee'].find((candidate) => creds.has(candidate)) as string | undefined
+  if (!role) throw new Error('没有可用登录凭据')
+  const cookie = await loginWithRetry(BASE, creds.get(role as never), { role })
+  const response = await fetch(`${BASE}/api/ai_assistant/tools`, { headers: { cookie, accept: 'application/json' } })
+  if (!response.ok) throw new Error(`GET /api/ai_assistant/tools -> ${response.status}`)
+  const payload = (await response.json()) as { tools?: Array<{ name?: string }> }
+  const live = (payload.tools ?? []).map((tool) => tool?.name).filter((name): name is string => typeof name === 'string')
+  const known = new Set([...names, ...platform.map((tool) => tool.name), ...instanceGlobal])
+  const unclassified = live.filter((name) => !known.has(name))
+  check(
+    'live-vs-inventory',
+    live.length > 0 && unclassified.length === 0,
+    live.length === 0
+      ? '线上工具列表为空，无法核对'
+      : unclassified.length === 0
+        ? `线上 ${live.length} 个工具全部有分类（注册表 ${names.size} + 平台内置 ${platform.length}）`
+        : `线上有未分类工具：${unclassified.join(', ')} —— 先声明它，再谈分类`,
+  )
+} catch (error) {
+  check('live-vs-inventory', false, `无法核对线上工具清单：${error instanceof Error ? error.message : String(error)}`)
+}
+
 // 6. per-class samples, so a reader can see what the classes mean without opening the code
 const samples = {
   per_user: summary.classes.per_user.slice(0, 2),
@@ -105,8 +148,17 @@ const samples = {
   high_privilege: summary.classes.high_privilege.slice(0, 3),
 }
 console.log(`[tool-policy] samples ${JSON.stringify(samples)}`)
+// The inventory the gate actually checked is registry + platform built-ins; printing only
+// the registry count would understate the surface it just claimed to cover.
+const totals = {
+  per_user: summary.counts.per_user + platform.filter((tool) => tool.class === 'per_user').length,
+  instance_global: summary.counts.instance_global + platform.filter((tool) => tool.class === 'instance_global').length,
+  high_privilege: summary.counts.high_privilege + platform.filter((tool) => tool.class === 'high_privilege').length,
+}
 console.log(
-  `[tool-policy] ${failures.length === 0 ? 'RESULT: PASS' : 'RESULT: FAIL'} — ${tools.length} 个工具：per_user ${summary.counts.per_user} / instance_global ${summary.counts.instance_global} / high_privilege ${summary.counts.high_privilege}`,
+  `[tool-policy] ${failures.length === 0 ? 'RESULT: PASS' : 'RESULT: FAIL'} — 注册表 ${tools.length} + 平台内置 ${platform.length} = ${
+    tools.length + platform.length
+  } 个工具：per_user ${totals.per_user} / instance_global ${totals.instance_global} / high_privilege ${totals.high_privilege}`,
 )
 if (failures.length > 0) for (const failure of failures) console.log(`  ✗ ${failure}`)
 process.exit(failures.length === 0 ? 0 : 1)

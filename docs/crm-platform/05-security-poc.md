@@ -42,11 +42,17 @@
 
 **分类已落成可执行的定义（第 55 轮）**：`src/lib/dsh/tool-policy.ts`，判据来自注册表元数据而不是人工贴标签。
 
-| 类 | 判据 | 现在的实况（94 个工具） |
+| 类 | 判据 | 现在的实况（注册表 94 + 平台内置 3 = **97 个**） |
 |---|---|---|
-| `high_privilege` | `isDestructive` / `isBulk` / **没有任何 `requiredFeatures`**（任何登录用户都能调） | **3 个**，全是 `catalog.*` 批量工具 |
+| `high_privilege` | `isDestructive` / `isBulk` / **没有任何 `requiredFeatures`**（任何登录用户都能调）/ 平台内置且**能写** | **4 个**：3 个 `catalog.*` 批量工具 + **`execute`** |
 | `instance_global` | 在 `appendix/tool-policy.json` 里显式声明（作用不限于调用者本人） | 0 个 |
-| `per_user` | 其余 | 91 个 |
+| `per_user` | 其余 | 93 个 |
+
+**为什么把平台内置工具也纳入（第 57 轮）**：模块注册表只有 94 个，运行时有 **97** 个——差的三个是 `context_whoami` / `search` / `execute`。其中 `execute` 是在 `node:vm` 沙箱里跑 JS 调**任意已登记 API**，单次最多 50 次调用、其中 20 次可以是写操作。它不在注册表里，所以原来的门根本没看见它：**分类了 94 个、声称覆盖，实际漏掉的是权力最大的那个。**
+
+现在门做两件事：
+1. `platformTools` 必须逐个声明；**能写的工具声明成 `per_user` 直接红**（功能点决定"能写哪些"，不决定"是否跨员工"）。
+2. 拿线上 `/api/ai_assistant/tools` 的清单核对：**线上有、清单里没有 → 红并点名**。负向对照实测：从声明里删掉 `execute` → `FAIL live-vs-inventory 线上有未分类工具：execute`、exit 1。
 
 - 高权限类**由注册表算出、不可声明**：新加一个批量工具会自动变成高权限，门 `crm-tool-policy-check.ts` 会红到有人按名字认领并写下理由为止。
 - 声明与注册表**双向核对**：声明了不存在的 → 红；该认领的没认领 → 红；写操作被声明成 `instance_global` → 红。

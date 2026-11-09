@@ -1,5 +1,12 @@
 import { describe, expect, it } from '@jest/globals'
-import { classifyTool, mayRunTool, summarize, type ToolDescriptor } from '../tool-policy'
+import {
+  checkPlatformDeclarations,
+  classifyTool,
+  mayRunTool,
+  summarize,
+  type PlatformToolDeclaration,
+  type ToolDescriptor,
+} from '../tool-policy'
 
 const read: ToolDescriptor = {
   name: 'customers.list_people',
@@ -110,5 +117,37 @@ describe('summarize', () => {
     expect(result.counts).toEqual({ per_user: 2, instance_global: 1, high_privilege: 2 })
     expect(result.classes.high_privilege).toEqual(['catalog.bulk_update_products', 'x.delete_all'])
     expect(result.total).toBe(5)
+  })
+})
+
+describe('checkPlatformDeclarations', () => {
+  const base: PlatformToolDeclaration = {
+    name: 'context_whoami',
+    class: 'per_user',
+    canMutate: false,
+    reason: '只返回调用者身份',
+  }
+
+  it('accepts a read-only platform tool and a mutating one declared high_privilege', () => {
+    expect(checkPlatformDeclarations([base])).toEqual({ ok: true })
+    expect(
+      checkPlatformDeclarations([{ name: 'execute', class: 'high_privilege', canMutate: true, reason: '沙箱执行' }]),
+    ).toEqual({ ok: true })
+  })
+
+  it('refuses a mutating tool declared per_user', () => {
+    const result = checkPlatformDeclarations([{ ...base, name: 'execute', canMutate: true }])
+    expect(result).toEqual({ ok: false, problems: [{ name: 'execute', problem: 'mutating_tool_declared_per_user' }] })
+  })
+
+  it('refuses a duplicate name and a missing reason', () => {
+    expect(checkPlatformDeclarations([base, base])).toMatchObject({
+      ok: false,
+      problems: expect.arrayContaining([{ name: 'context_whoami', problem: 'duplicate' }]),
+    })
+    expect(checkPlatformDeclarations([{ ...base, reason: '   ' }])).toMatchObject({
+      ok: false,
+      problems: [{ name: 'context_whoami', problem: 'missing_reason' }],
+    })
   })
 })

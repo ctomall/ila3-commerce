@@ -1,5 +1,5 @@
 {
-  "$comment": "工具授权分类的声明文件（M4-5，决策 D31）。high_privilege 由注册表元数据计算（isDestructive / isBulk / 无 requiredFeatures），不可声明；本文件只能声明 instance_global（作用不限于调用者本人的工具）。门 scripts/crm-tool-policy-check.ts 会双向核对：声明了但不存在 → 红；出现新的 instance_global 而未声明 → 红。",
+  "$comment": "工具授权分类的声明文件（M4-5，决策 D31）。high_privilege 由注册表元数据计算（isDestructive / isBulk / 无 requiredFeatures），不可声明；本文件只能声明 instance_global（作用不限于调用者本人的工具）。门 scripts/crm-tool-policy-check.ts 会双向核对：声明了但不存在 → 红；出现新的 instance_global 而未声明 → 红。 platformTools 是运行时内置、不在模块注册表里的工具（第 57 轮补）：门必须把它们计入，否则 94 对 97 的差异里可能藏着最危险的那个。",
   "instanceGlobal": [],
   "highPrivilegeAcknowledged": [
     {
@@ -13,6 +13,26 @@
     {
       "name": "catalog.update_product_media_descriptions",
       "reason": "批量更新媒体描述，同上"
+    }
+  ],
+  "platformTools": [
+    {
+      "name": "context_whoami",
+      "class": "per_user",
+      "canMutate": false,
+      "reason": "只返回调用者自己的身份与功能点，无副作用"
+    },
+    {
+      "name": "search",
+      "class": "per_user",
+      "canMutate": false,
+      "reason": "在沙箱里查 OpenAPI 与实体图，只读"
+    },
+    {
+      "name": "execute",
+      "class": "high_privilege",
+      "canMutate": true,
+      "reason": "沙箱里执行 JS 调任意已登记 API，单次最多 50 调、其中最多 20 次写；调用者功能点只决定能调哪些端点，不构成按员工的边界——共享实例里必须隔离"
     }
   ]
 }
