@@ -131,6 +131,19 @@ async function surfaceState(page) {
  * The earlier capture took the screenshot while the table still showed
  * "正在加载表格…" — the page was not blank, the gate was simply too weak.
  */
+async function waitForNoLoading(page, timeout = 30000) {
+  try {
+    await page.waitForFunction(
+      () => !/正在加载|Loading/.test(document.querySelector('main')?.innerText ?? ''),
+      undefined,
+      { timeout },
+    )
+    return true
+  } catch {
+    return false
+  }
+}
+
 async function waitForDataTable(page, timeout = 30000) {
   try {
     await page.waitForFunction(
@@ -296,6 +309,7 @@ for (const role of ROLES) {
         selector: 'nav[aria-label="关联对象"]',
         minText: 80,
       })
+      const detailSettled = await waitForNoLoading(page)
       const related = await page.evaluate(() => {
         const nav = document.querySelector('nav[aria-label="关联对象"]')
         const tabs = document.querySelector('nav[aria-label="客户视图"]')
@@ -308,6 +322,7 @@ for (const role of ROLES) {
       })
       await shot('company-detail')
       results.push({ role, surface: 'company-detail', ...related, ready: detailReady.ok })
+      check(`${role} record detail settled`, detailSettled, `settled=${detailSettled}`)
       check(`${role} record related nav`, detailReady.ok && related.present && related.links.length > 0, JSON.stringify(related.links))
       check(`${role} detail keeps customer tabs`, related.tabs.join('/') === '公司/联系人/商机' && related.activeTab === '公司', `tabs=${related.tabs.join('/')} active=${related.activeTab}`)
       check(`${role} related nav self-describes scope`, related.links.some((link) => link.label === '全部联系人') && related.links.some((link) => link.label === '全部任务'), JSON.stringify(related.links))
