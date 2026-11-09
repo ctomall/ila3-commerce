@@ -94,7 +94,10 @@ export function canAct(input: {
 }
 
 const SENSITIVE_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
-  { name: 'email', pattern: /[\w.+-]+@[\w-]+\.[\w.-]+/g },
+  // Whitespace-tolerant around `@` and the dots: after a line break is collapsed to a
+  // space, `ops@acme. test` is still the same address to a reader. Over-redacting prose
+  // like "ops @ acme . test" is the acceptable side of that trade.
+  { name: 'email', pattern: /[\w.+-]+\s*@\s*[\w-]+(?:\s*\.\s*[\w-]+)+/g },
   { name: 'phone', pattern: /\+?\d[\d\s-]{7,}\d/g },
   { name: 'amount', pattern: /(?:USD|EUR|CNY|¥|\$)\s?\d[\d,]*(?:\.\d+)?/gi },
 ]
@@ -104,7 +107,12 @@ const SENSITIVE_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
  * replaced with a marker, and the caller keeps the original for the private view.
  */
 export function redactForGroup(text: string, allow: Array<'email' | 'phone' | 'amount'> = []): string {
-  let output = text
+  // Normalise before matching. A value written with full-width punctuation (`ｏｐｓ＠…`) or
+  // split by a newline (`ops@acme.\ntest`) is the same string to a human reader, and both
+  // shapes walked straight through the patterns. NFKC folds the width, and collapsing
+  // whitespace rejoins a token that was broken across lines. The returned text is the
+  // normalised one: a redactor that preserves formatting is a redactor you can bypass.
+  let output = (text ?? '').normalize('NFKC').replace(/\s+/g, ' ')
   for (const rule of SENSITIVE_PATTERNS) {
     if (allow.includes(rule.name as 'email' | 'phone' | 'amount')) continue
     output = output.replace(rule.pattern, `〔${rule.name} 已隐藏〕`)

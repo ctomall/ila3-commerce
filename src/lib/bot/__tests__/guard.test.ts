@@ -118,6 +118,24 @@ describe('group redaction', () => {
     expect(redacted).not.toContain('marta@nordwind.de')
   })
 
+  it('normalises full-width punctuation before matching', () => {
+    // `＠` and `．` are the same characters as `@` and `.` to a reader; without NFKC the
+    // address walked through the pattern untouched.
+    const full = redactForGroup('mail ｏｐｓ＠ａｃｍｅ．ｔｅｓｔ now')
+    expect(full).not.toContain('ｏｐｓ＠ａｃｍｅ．ｔｅｓｔ')
+    expect(full).toContain('已隐藏')
+  })
+
+  it('rejoins a value split across lines before matching', () => {
+    const split = redactForGroup('mail ops@acme.\ntest now')
+    expect(split).not.toContain('ops@acme. test')
+    expect(split).toContain('已隐藏')
+  })
+
+  it('collapses whitespace so the returned text carries no hidden line breaks', () => {
+    expect(redactForGroup('a\r\n\nb\t c')).toBe('a b c')
+  })
+
   it('leaves clean text untouched', () => {
     expect(redactForGroup('Nordwind 有 3 条待跟进')).toBe('Nordwind 有 3 条待跟进')
   })

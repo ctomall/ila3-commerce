@@ -146,6 +146,14 @@ const MUTATIONS = [
     why: '群聊必须脱敏（邮箱/电话/金额）',
   },
   {
+    id: 'bot-redaction-nfkc',
+    file: 'src/lib/bot/guard.ts',
+    find: "(text ?? '').normalize('NFKC').replace(/\\s+/g, ' ')",
+    replace: "(text ?? '')",
+    test: 'src/lib/bot/__tests__/guard.test.ts',
+    why: '脱敏前必须归一化，否则全角/换行可以绕过',
+  },
+  {
     id: 'bot-group-write-gate',
     file: 'src/lib/bot/guard.ts',
     find: "if (input.isGroup && input.action !== 'read') {",
