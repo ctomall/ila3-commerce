@@ -236,6 +236,9 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'settings_home', from: '@app' },
   // M3 prototype pages (navHidden, non-production demo).
   { id: 'crm_prototype', from: '@app' },
+  // Employee-facing mobile facade over communication_channels (own-mailbox send,
+  // conversation reads). Additive: no second channel/message table is created.
+  { id: 'communications', from: '@app' },
   // P1: named 工作台 entry pointing at the existing /backend dashboard.
   { id: 'workbench', from: '@app' },
   // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no
