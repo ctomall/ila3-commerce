@@ -195,6 +195,28 @@ const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
 const file = path.join(OUT, `verify-${stamp}.md`)
 // "Cannot tell" is not "clean": a release-grade run must not pass because git was absent.
 const GATE_OUTPUT = /^docs\/crm-platform\/(verify|poc|regression)\//
+/**
+ * Paths declared as somebody else's work (appendix/foreign-paths.json).
+ *
+ * The release verdict must not stay red forever because a second writer left two untracked
+ * directories in the tree — that trains people to ignore the verdict. It also must not
+ * silently ignore them. So an exclusion has to be declared in a file, with a reason, and it
+ * only applies to untracked paths; anything declared here that is tracked, or any undeclared
+ * untracked path, still fails the run.
+ */
+const FOREIGN_DECLARATION = path.resolve('docs/crm-platform/appendix/foreign-paths.json')
+const foreignPaths = (() => {
+  try {
+    const parsed = JSON.parse(fs.readFileSync(FOREIGN_DECLARATION, 'utf8'))
+    return (parsed.excluded ?? []).map((entry) => ({ path: String(entry.path).replace(/\/+$/, ''), reason: String(entry.reason ?? '') }))
+  } catch {
+    return []
+  }
+})()
+const isForeign = (entry) => {
+  const target = entry.replace(/^\s*\S+\s+/, '').replace(/\/+$/, '')
+  return foreignPaths.find((declared) => target === declared.path || target.startsWith(`${declared.path}/`))
+}
 const FLAGS = process.argv.slice(2).filter((arg) => arg.startsWith('--')).join(' ')
 const treeUnknown = !worktree.known
 const treeDirty = (worktree.known && worktree.entries.length > 0) || (treeUnknown && REQUIRE_CLEAN)
@@ -213,7 +235,15 @@ const after = worktreeState()
 const afterEntries = after.known ? after.entries : []
 const pathOf = (entry) => entry.replace(/^\s*\S+\s+/, '')
 const gateOutputs = afterEntries.filter((entry) => GATE_OUTPUT.test(pathOf(entry)))
-const manual = afterEntries.filter((entry) => !GATE_OUTPUT.test(pathOf(entry)))
+const foreign = afterEntries.filter((entry) => !GATE_OUTPUT.test(pathOf(entry)) && Boolean(isForeign(entry)))
+const manual = afterEntries.filter(
+  (entry) => !GATE_OUTPUT.test(pathOf(entry)) && !isForeign(entry),
+)
+// A declaration that no longer matches anything is drift: the other writer may have
+// committed or removed those files, and a stale exemption would hide the next foreign path.
+const staleExclusions = foreignPaths.filter(
+  (declared) => !afterEntries.some((entry) => pathOf(entry).replace(/\/+$/, '') === declared.path || pathOf(entry).startsWith(`${declared.path}/`)),
+)
 const releaseGrade = REQUIRE_CLEAN && REQUIRE_NO_SKIP && !ONLY
 // A run that never claimed release grade cannot pass as one. Printing PASS here made the
 // summary disagree with the header line that says 发布级：否 (caught by re-reading the
@@ -221,7 +251,7 @@ const releaseGrade = REQUIRE_CLEAN && REQUIRE_NO_SKIP && !ONLY
 const releaseOk =
   fail.length === 0 &&
   !(REQUIRE_NO_SKIP && skip.length > 0) &&
-  !(REQUIRE_CLEAN && (treeDirty || manual.length > 0))
+  !(REQUIRE_CLEAN && (manual.length > 0 || staleExclusions.length > 0))
 const releaseVerdict = releaseGrade ? (releaseOk ? 'PASS' : 'FAIL') : '不适用（非发布级运行）'
 
 const lines = [
@@ -233,9 +263,15 @@ const lines = [
   ONLY ? `范围：**仅 ${[...ONLY].sort().join(', ')}**（${results.filter((r) => r.status !== 'SKIP').length}/${GATES.length} 道门，不是全量）` : `范围：全部 ${GATES.length} 道门`,
   `参数：\`${FLAGS || '（无）'}\` · 发布级：${releaseGrade ? '**是**（--require-clean + --require-no-skip）' : '否（缺 --require-clean/--require-no-skip 或为子集运行）'}`,
   `工作树（开始时）：${treeLabel}`,
-  `工作树（结束时）：本次运行改动了 ${afterEntries.length} 项，其中门产物 ${gateOutputs.length} 项${
-    manual.length > 0 ? `，**其他改动 ${manual.length} 项**（${manual.slice(0, 4).join(' / ')}）` : '，无其他改动'
+  `工作树（结束时）：本次运行改动了 ${afterEntries.length} 项，其中门产物 ${gateOutputs.length} 项、已声明的外部产物 ${foreign.length} 项${
+    manual.length > 0 ? `，**未声明的改动 ${manual.length} 项**（${manual.slice(0, 4).join(' / ')}）` : '，无未声明改动'
   }`,
+  foreign.length > 0
+    ? `外部产物（不计入本仓库状态，声明见 appendix/foreign-paths.json）：${foreign.map((entry) => pathOf(entry)).join(' / ')}`
+    : '',
+  staleExclusions.length > 0
+    ? `> 声明了但本次没出现的外部路径：${staleExclusions.map((entry) => entry.path).join(' / ')}（可能是对方已提交或删除，需核对后更新声明）`
+    : '',
   '',
   `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length} · 发布级门禁：${releaseVerdict}`,
   '',
@@ -261,14 +297,22 @@ if (REQUIRE_NO_SKIP && skip.length > 0) {
   console.log(`[crm-verify] --require-no-skip: ${skip.length} 项被跳过，视为失败`)
   for (const row of skip) console.log(`  SKIP ${row.id}: ${row.note || ''}`)
 }
-if (REQUIRE_CLEAN && treeDirty) {
-  console.log(`[crm-verify] --require-clean: 工作树脏（${worktree.entries.length} 项），结果不算提交级证据`)
+if (REQUIRE_CLEAN && (treeDirty || manual.length > 0)) {
+  console.log(
+    `[crm-verify] --require-clean: 工作树未提交 ${worktree.entries.length} 项（开始）/ 未声明改动 ${manual.length} 项（结束），结果不算提交级证据`,
+  )
   for (const entry of worktree.entries.slice(0, 10)) console.log(`  ${entry}`)
 }
 console.log(`[crm-verify] wrote ${path.relative(process.cwd(), file)}`)
 if (REQUIRE_CLEAN && manual.length > 0) {
-  console.log(`[crm-verify] --require-clean: 本次运行改动了 ${manual.length} 个非门产物文件，结果不算提交级证据`)
+  console.log(`[crm-verify] --require-clean: 本次运行改动了 ${manual.length} 个未声明文件，结果不算提交级证据`)
   for (const entry of manual.slice(0, 10)) console.log(`  ${entry}`)
+}
+if (foreign.length > 0) {
+  console.log(`[crm-verify] 已声明的外部产物 ${foreign.length} 项（不计入本仓库状态）：${foreign.map((entry) => pathOf(entry)).join(' / ')}`)
+}
+if (staleExclusions.length > 0) {
+  console.log(`[crm-verify] 外部产物声明已过期：${staleExclusions.map((entry) => entry.path).join(' / ')}（本次没出现，需核对）`)
 }
 console.log(`[crm-verify] 发布级门禁：${releaseVerdict}`)
 process.exit(releaseOk ? 0 : 1)
