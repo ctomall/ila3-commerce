@@ -35,12 +35,20 @@ const GATES = [
   { id: 'quote-regression', cmd: 'node scripts/crm-quote-regression.mjs', why: '既有报价/订单修复未回归' },
   { id: 'security-probe', cmd: 'node scripts/crm-security-probe.mjs', why: '授权行为与基线一致、零写入' },
   { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例（阻塞项单独报）' },
+  // The leadgen OpenAPI draft lints itself (features, idempotency, 429/409, no body
+  // identity) and checks it does not collide with a live path. It existed and passed;
+  // nobody ran it, so the draft could have drifted from its own rules silently.
+  { id: 'contract', cmd: 'node scripts/crm-contract-check.mjs', why: 'leadgen 契约满足自身规则且不与线上路径碰撞' },
   // --check turns the recorded baseline into an assertion. Without it this gate ran the
   // recorder: it refreshed appendix/nav-*.json and could not fail on an entry count or a
   // duplicate title, so the M1 acceptance criterion was enforced by nobody.
   { id: 'nav-baseline', cmd: 'node scripts/crm-nav-baseline.mjs --check', why: '入口数与冻结基线一致、重名 0' },
   // The structural checker existed and exited 1 on issues, but was never in the gate set.
   { id: 'nav-structure', cmd: 'node scripts/nav-check.mjs', why: '导航数据本身无问题（重名 href/空标签/孤儿分组）' },
+  // Five stock pages are orphaned from their parent upstream; the five are pinned in
+  // appendix/nav-nesting.json, and this fails when a sixth appears OR when one is fixed
+  // without updating the baseline.
+  { id: 'nav-nesting', cmd: 'node scripts/crm-nav-nesting-check.mjs --check', why: '未嵌套入口与白名单一致（多一条或修好一条都红）' },
   { id: 'tokens', cmd: 'node scripts/check-token-layers.mjs --strict', why: '设计令牌没有非语义用法' },
   { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '没有绕过 i18n 的硬编码文案' },
   { id: 'typecheck', cmd: 'yarn typecheck', why: '类型检查', full: true },

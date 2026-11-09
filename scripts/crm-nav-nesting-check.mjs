@@ -11,15 +11,23 @@
  * parent href also exists in the payload, the entry is suspicious — the parent is there,
  * yet the link is not a child of it.
  *
- * Usage: node scripts/crm-nav-nesting-check.mjs [--strict]
- * Exit code is 0 unless --strict, so it can run in the guard set without blocking on a
- * known upstream issue.
+ * Usage:
+ *   node scripts/crm-nav-nesting-check.mjs            # report / refresh the baseline
+ *   node scripts/crm-nav-nesting-check.mjs --check    # gate: live must equal the baseline
+ *   node scripts/crm-nav-nesting-check.mjs --strict   # gate: refuse ANY orphaned entry
+ *
+ * `--check` is the gate. A bare report cannot fail, and `--strict` cannot be wired
+ * because five stock pages are orphaned upstream — so the five are pinned in
+ * `appendix/nav-nesting.json` and this fails when one more appears OR when one of the
+ * five is fixed and the baseline is not updated. Either direction is a fact worth
+ * knowing; neither should be discovered by reading a log.
  */
 import fs from 'node:fs'
 import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.NAV_BASE_URL ?? 'http://127.0.0.1:3000'
 const STRICT = process.argv.includes('--strict')
+const CHECK = process.argv.includes('--check')
 
 const cred = credentials().get('superadmin')
 const cookie = await loginWithRetry(BASE, cred, { role: 'superadmin' })
@@ -66,9 +74,33 @@ if (suspicious.length === 0) {
   console.log('[nav-nesting] cause is usually a parent/child pageGroupKey mismatch; fix belongs upstream')
 }
 
+const BASELINE = 'docs/crm-platform/appendix/nav-nesting.json'
+
+if (CHECK) {
+  if (!fs.existsSync(BASELINE)) {
+    console.log(`[nav-nesting] RESULT: FAIL — 没有基线 ${BASELINE}`)
+    process.exit(1)
+  }
+  const baseline = JSON.parse(fs.readFileSync(BASELINE, 'utf8'))
+  const baseHrefs = new Set((baseline.suspicious ?? []).map((item) => item.href))
+  const liveHrefs = new Set(suspicious.map((item) => item.href))
+  const added = [...liveHrefs].filter((href) => !baseHrefs.has(href))
+  const fixed = [...baseHrefs].filter((href) => !liveHrefs.has(href))
+  // Root-entry count drift is informational here: the nav-baseline gate owns entry counts.
+  const rootDrift = baseline.roots !== roots.length ? ` （根入口 ${baseline.roots} -> ${roots.length}，由 nav-baseline 门负责）` : ''
+  if (added.length === 0 && fixed.length === 0) {
+    console.log(`[nav-nesting] RESULT: PASS — ${liveHrefs.size} 条已知未嵌套入口与基线一致${rootDrift}`)
+    process.exit(0)
+  }
+  console.log(`[nav-nesting] RESULT: FAIL — 与基线不一致${rootDrift}`)
+  for (const href of added) console.log(`  ✗ 新增未嵌套入口 ${href}`)
+  for (const href of fixed) console.log(`  ✗ 基线里这条已修好或消失 ${href}（如果是修好了，请重录基线）`)
+  process.exit(1)
+}
+
 fs.mkdirSync('docs/crm-platform/appendix', { recursive: true })
 fs.writeFileSync(
-  'docs/crm-platform/appendix/nav-nesting.json',
+  BASELINE,
   JSON.stringify({ generatedAt: new Date().toISOString(), roots: roots.length, suspicious }, null, 2) + '\n',
 )
 
