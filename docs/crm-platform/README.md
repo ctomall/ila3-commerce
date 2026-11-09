@@ -2,19 +2,43 @@
 
 目标与门禁原文：`/home/pro/dsh/crm-enterprise-goal/DEVELOPMENT-GOAL.md`（M0 审计 → M1 规则入口 → M2 契约 → M3 原型 ⟂ M4 双员工安全 PoC → M5 获客 → M6 触达 → M7 Bot → M8 验收）。
 
-## 当前状态
+## 当前状态（2026-11-09 · 第 56 轮）
 
-| 里程碑 | 状态 | 本目录产物 | 证据锚点 |
+**一句话**：能离开“批准”和“运行时”独立做完的部分已经做完；剩下的是四件需要你拍板的事 + 两个只差批准就能跑通的运行时。
+
+| 里程碑 | 状态 | 已完成什么 | 还差什么 |
 |---|---|---|---|
-| M0 现状审计 | **done** | `00-m0-baseline.md` | 运行入口/分支/服务/DB/贡献者/能力矩阵/风险 R1–R8 |
-| M1 入口治理 | **基线完成** | `01-entry-map.md`、`appendix/nav-*.json`、`decisions.md` | `node scripts/crm-nav-baseline.mjs` |
-| M2 契约 | **草案完成（待 2 项决策）** | `02-capability-matrix.md`、`03-dsh-contract.md`、`03a-data-model.md` | 授权链行号证据、676/1149 契约计数、五组表设计 |
-| M3 原型 | **完成（原型，非生产）** | `04-prototype.md` + `src/modules/crm_prototype/**` | 六页截图 `proto-*.png`；navHidden 使入口数不变 152/150/74 |
-| M4 安全 PoC | **计划完成，待路线确认** | `05-security-poc.md` | 7 维隔离 + 7 条对抗用例 + 撤权时序 |
-| M5 获客 | **规则层完成** | `06-leadgen.md` + `src/lib/leadgen/verification.ts` | 19 例单测 + 负向对照（5 红）；存储/抽取待 M2-9 与 M4 |
-| M6 触达 | **逻辑层完成** | `07-outreach.md` + `src/lib/leadgen/outreach.ts` | 19 例：审批哈希绑定/状态机/unknown 不重发/退订抑制 |
-| M7 Bot | **守卫层完成** | `08-bot.md` + `src/lib/bot/guard.ts` | 14 例：签名/时效/重放/群聊只读/脱敏 |
-| M8 试用 | **方案完成（未执行）** | `09-trial.md` | 四层完成口径、两种压测口径、备份恢复演练步骤 |
+| M0 审计 | **done** | 入口/服务/DB/风险 R1–R8 | — |
+| M1 入口治理 | **done** | 152/150/74 入口、重名 0、嵌套基线白名单；`nav-baseline --check` 兜底 | — |
+| M2 契约 | **草案完成** | 数据模型、DSH 契约、16 操作/14 路径 OpenAPI、两片迁移草案 | 决策 ②③（`contact_email` 加密、部分唯一索引方案） |
+| M3 原型 | **完成（原型，非生产）** | 中文六页 + 浏览器断言 3 条 | — |
+| M4 双员工 PoC | **判定层完成，运行时 blocked** | profile 派生+落盘（0700、跨 OS 用户读被拒）、Run 状态机与撤权写入闸、工具三类授权 + 第 23 道门 | 每员工 DSH 运行时、第二组织、`leadgen-api` |
+| M5 获客 | **规则层完成** | 验证/配额/判决链，单测覆盖 | 存储要 ①（迁移） |
+| M6 触达 | **规则层完成** | 审批哈希/收件人/渠道绑定、退订抑制、unknown 不重发 | 真实外发要 ① 与 D8 |
+| M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
+| M8 验收 | **governance 完成** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
+
+**最后一份全量运行**：`verify/verify-2026-11-09T04-11-31.md` — `PASS 21 · FAIL 1 · SKIP 0`；
+唯一失败项是 `quote-regression`（缺 draft 报价夹具），发布级门禁因工作树里有别人的未跟踪目录而为 FAIL。
+
+### 现在需要你决定（其余都在等这四件）
+
+| # | 待批 | 批了会解锁 |
+|---|---|---|
+| ① | 应用两片 leadgen 迁移（分支 `feat/leadgen-schema-final`，隔离库演练已通过） | M5 存储、`leadgen-api` fixture、M4 用例 1/5/7、M6 真实触达、M7 落库 |
+| ② | `contact_email` 是否加密存储 | M5 入库字段定稿 |
+| ③ | 4 条部分唯一索引走“手写 + 白名单 + 每次复核” | 迁移落地前的最后一道口径 |
+| ④ | 是否把评审分支合并进 main | 与 ① 同批决定，合并即 `db:migrate` 生效 |
+
+另有两件小事会挡住“发布级全绿”：`quote-regression` 需要一条 draft 报价夹具（自建属数据写入，需批准）；工作树里的 `docs/deployment/`、`scripts/auto-deploy/` 不是本会话的产物，需确认归属。
+
+### 怎么复核这个仓库（不需要我）
+
+```
+node scripts/crm-verify-all.mjs --full --require-clean --require-no-skip
+```
+
+报告头会写：范围（全部/仅某几道门）、完整 flags、发布级是/否、工作树开始与结束状态。**只看 PASS 计数会被误导**，看“发布级门禁”那一行。
 
 ## 目录
 
@@ -22,13 +46,16 @@
 |---|---|
 | `00-m0-baseline.md` | 现状边界：运行时、代码构成、能力矩阵、既有修复保护清单、风险 R1–R8、授权边界 |
 | `01-entry-map.md` | 入口基线（三角色服务端 payload）、分区现状、重复/孤儿清单、收敛候选 C1–C7、目标五区映射 |
-| `backlog.md` | M0–M8 逐项事项：产物 / 证据 / 状态 |
-| `decisions.md` | D1–D14 待用户拍板的业务与安全规则，每条带建议默认 |
+| `backlog.md` | M0–M8 逐项事项：产物 / 证据 / 状态（含每轮补记） |
+| `decisions.md` | D1–D31：已定的口径与待拍板项，每条带理由与代价 |
 | `audit/a-nav-entries.md` | 子审计 A：后端入口与导航（270 页 / 701 API / 10 分区 / Top 10 重复） |
 | `audit/b-authz-dsh.md` | 子审计 B：授权链 + AI 扩展面（8 个安全缺口 G1–G8，带行号） |
 | `audit/c-leadgen-reuse.md` | 子审计 C：获客/触达可复用面（复用 vs 新建，8 项缺失） |
 | `audit/d-qa-acceptance.md` | 子审计 D：独立 QA 设计（里程碑→证据矩阵、7 条对抗用例、四层完成定义） |
 | `audit/e-authz-enforcement.md` | 子审计 E：六个缺口的逐条证据、**不存在 AI 工具拦截缝**、每条的最小强制点与 M4 判定 |
+| `audit/f-qa-round29.md` | 独立 QA 第一轮（D2–D22）：12 条已修并带反向证据，逐条记现状 |
+| `audit/f-qa-round48.md` | 独立 QA 第二轮（18 条，P0=0）：12 条已修、6 条仍开并写明原因 |
+| `incident-2026-11-09-repo-reset.md` | 事故记录：外部进程把仓库 reset 到旧提交并起了一次混合构建；reflog 与 action_logs 原文 |
 | `02-capability-matrix.md` | 五因子授权、身份模型三选一（选 A）、复用/包装/新建矩阵、G1–G8 处置、契约计数 |
 | `03-dsh-contract.md` | 绑定、Run/事件/产物、桥接现实约束、逐次鉴权、隔离、撤离与离职 |
 | `03a-data-model.md` | 五组表（候选/配额/审批发送/抑制/绑定）+ 幂等键组合 + API 面 + UMES + 迁移约定 |
