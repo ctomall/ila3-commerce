@@ -82,19 +82,29 @@ if (CHECK) {
     process.exit(1)
   }
   const baseline = JSON.parse(fs.readFileSync(BASELINE, 'utf8'))
-  const baseHrefs = new Set((baseline.suspicious ?? []).map((item) => item.href))
-  const liveHrefs = new Set(suspicious.map((item) => item.href))
-  const added = [...liveHrefs].filter((href) => !baseHrefs.has(href))
-  const fixed = [...baseHrefs].filter((href) => !liveHrefs.has(href))
+  // Compare the whole record, not just the href: an entry can stay orphaned while its
+  // parent, title or group changes, and a set of hrefs cannot see that.
+  const keyOf = (item) => `${item.href}|${item.parent ?? ''}|${item.title ?? ''}|${item.group ?? ''}`
+  const baseKeys = new Map((baseline.suspicious ?? []).map((item) => [item.href, keyOf(item)]))
+  const liveKeys = new Map(suspicious.map((item) => [item.href, keyOf(item)]))
+  const added = [...liveKeys.keys()].filter((href) => !baseKeys.has(href))
+  const fixed = [...baseKeys.keys()].filter((href) => !liveKeys.has(href))
+  const changed = [...liveKeys.entries()]
+    .filter(([href, key]) => baseKeys.has(href) && baseKeys.get(href) !== key)
+    .map(([href, key]) => `${href}（基线 ${baseKeys.get(href)} → 现在 ${key}）`)
   // Root-entry count drift is informational here: the nav-baseline gate owns entry counts.
-  const rootDrift = baseline.roots !== roots.length ? ` （根入口 ${baseline.roots} -> ${roots.length}，由 nav-baseline 门负责）` : ''
-  if (added.length === 0 && fixed.length === 0) {
-    console.log(`[nav-nesting] RESULT: PASS — ${liveHrefs.size} 条已知未嵌套入口与基线一致${rootDrift}`)
+  // The root count is part of the baseline too: 10 of 102 roots passing silently would make
+  // this gate useless on its own.
+  const rootDrift = baseline.roots !== roots.length ? `根入口 ${baseline.roots} -> ${roots.length}` : ''
+  if (added.length === 0 && fixed.length === 0 && changed.length === 0 && rootDrift === '') {
+    console.log(`[nav-nesting] RESULT: PASS — ${liveKeys.size} 条已知未嵌套入口与基线一致${rootDrift}`)
     process.exit(0)
   }
-  console.log(`[nav-nesting] RESULT: FAIL — 与基线不一致${rootDrift}`)
+  console.log('[nav-nesting] RESULT: FAIL — 与基线不一致')
+  if (rootDrift) console.log(`  ✗ ${rootDrift}（入口数变化由 nav-baseline 复核；这里同样要求重录基线）`)
   for (const href of added) console.log(`  ✗ 新增未嵌套入口 ${href}`)
   for (const href of fixed) console.log(`  ✗ 基线里这条已修好或消失 ${href}（如果是修好了，请重录基线）`)
+  for (const line of changed) console.log(`  ✗ 未嵌套记录的 parent/title/group 变了 ${line}`)
   process.exit(1)
 }
 
