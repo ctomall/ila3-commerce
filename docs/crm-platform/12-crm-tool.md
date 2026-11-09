@@ -29,6 +29,7 @@
 | `limit: 500` | 400 | `limit: Too big: expected number to be <=20` |
 | 不存在的工具 | 400 | `Tool "crm.delete_everything" not found` |
 | `employee` 角色调用 | 200（该角色持有 `customers.companies.view`，`context_whoami` 实测 112 个 feature 含它） | `200` + 明文公司 |
+| 与 App 自身的公司列表对齐 | 同一调用者看到同一批 | App `GET /api/customers/companies` → `total: 3`；工具 → 3 家同名（`Harborview Analytics` / `Copperleaf Design` / `Brightside Solar`） |
 
 注册确认：`/api/ai_assistant/tools` 返回 **97 个工具**，其中含 `crm.find_companies`；构建产物 `.mercato/generated/ai-tools.generated.ts` 里有 `AI_TOOLS_crm_tools_*` 的 import。
 
@@ -54,7 +55,7 @@
 
 | 项 | 为什么 |
 |---|---|
-| 403 路径实测 | 现有三个用户都持有 `customers.companies.view`，造一个缺该权限的用户属于数据变更（需批准）。运行时按 feature 拦截的机制在 M2 已审计（`hasRequiredFeatures` 7 处调用点），但**这条工具上的 403 没有实测** |
+| 403 路径实测 | 试过两条路都不通：① 三个用户都持有 `customers.companies.view`；② 改用 `warranty_claims.draft_customer_reply`（要求 `warranty_claims.claim.manage`）间接证明运行时按 feature 拦截——`context_whoami` 实测 employee 持有 **112 个 feature，连这个 manage 都有**（superadmin/admin 同样宽），所以拿不到 403。造一个受限用户属于数据变更（需批准）。机制在 M2 审计过（`hasRequiredFeatures` 7 处调用点），但**这条工具上的 403 没有实测** |
 | 每员工 DSH 隔离 | 属 M4 路线（A/B/C 未定），本工具不依赖它 |
 | 软删过滤的端到端证明 | 需要一个已软删的公司 fixture（数据变更，需批准） |
 | 写类工具 | 本阶段只做只读；写需要 pending-action 审批契约 |
