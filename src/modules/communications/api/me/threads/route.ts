@@ -9,6 +9,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
+import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 
 export const metadata = {
   path: '/communications/me/threads',
@@ -34,6 +35,7 @@ type ThreadRow = {
   lastMessageAt: string | null
   lastMessageId: string | null
   lastMessageThreadId: string | null
+  customer: {id: string; displayName: string; kind: string} | null
   channel: {
     id: string
     providerKey: string
@@ -145,6 +147,25 @@ export async function GET(req: Request): Promise<Response> {
     }
   }
 
+  // Customer display name for the inbox row. Read by id only (no ORM relation,
+  // per the module rule); the thread list already authorized the conversation.
+  const contactIds = [...new Set(page.map((c) => c.contactPersonId).filter((id): id is string => Boolean(id)))]
+  const customersById = new Map<string, {id: string; displayName: string; kind: string}>()
+  if (contactIds.length) {
+    const customers = await em.find(CustomerEntity, {
+      id: {$in: contactIds},
+      tenantId,
+      ...(organizationId ? {organizationId: {$in: [organizationId, null]}} : {}),
+    } as never)
+    for (const customer of customers as unknown as Array<{id: string; displayName?: string | null; kind?: string | null}>) {
+      customersById.set(String(customer.id), {
+        id: String(customer.id),
+        displayName: customer.displayName ?? '',
+        kind: customer.kind ?? 'person',
+      })
+    }
+  }
+
   const items: ThreadRow[] = page.map((conversation) => {
     const channel = channelById.get(conversation.channelId)
     const latestLink = latestLinkByConversation.get(conversation.id)
@@ -157,6 +178,9 @@ export async function GET(req: Request): Promise<Response> {
       assignedUserId: conversation.assignedUserId ?? null,
       lastMessageAt: conversation.lastMessageAt?.toISOString?.() ?? null,
       lastMessageId: latestLink?.messageId ?? null,
+      customer: conversation.contactPersonId
+        ? customersById.get(conversation.contactPersonId) ?? {id: conversation.contactPersonId, displayName: '', kind: 'unknown'}
+        : null,
       lastMessageThreadId: threadIdsByConversation.get(conversation.id) ?? null,
       channel: {
         id: conversation.channelId,

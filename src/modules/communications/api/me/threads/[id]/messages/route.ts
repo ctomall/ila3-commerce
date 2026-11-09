@@ -9,6 +9,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
+import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 
 export const metadata = {
   path: '/communications/me/threads/[id]/messages',
@@ -76,6 +77,13 @@ export async function GET(
     return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
   }
 
+  const customer = conversation.contactPersonId
+    ? await em.findOne(CustomerEntity, {
+        id: conversation.contactPersonId,
+        tenantId,
+      } as never).catch(() => null)
+    : null
+
   const messageWhere: Record<string, unknown> = {
     tenantId,
     conversationId: conversation.id,
@@ -133,6 +141,13 @@ export async function GET(
       subject: conversation.subject ?? null,
       contactPersonId: conversation.contactPersonId ?? null,
       assignedUserId: conversation.assignedUserId ?? null,
+      customer: customer
+        ? {
+            id: String((customer as {id: unknown}).id),
+            displayName: (customer as {displayName?: string | null}).displayName ?? '',
+            kind: (customer as {kind?: string | null}).kind ?? 'person',
+          }
+        : null,
     },
     channel: {
       id: channel.id,

@@ -10,6 +10,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { SendRequest } from '../data/entities'
+import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({
   getAuthFromRequest: jest.fn(),
@@ -31,6 +32,7 @@ function createFakeEm(rows: {
   mappings?: Row[]
   messages?: Row[]
   sendRequests?: Row[]
+  customers?: Row[]
 }) {
   const persisted: Row[] = []
   const removed: Row[] = []
@@ -38,6 +40,7 @@ function createFakeEm(rows: {
   const find = jest.fn(async (entity: unknown) => {
     if (entity === CommunicationChannel) return rows.channels ?? []
     if (entity === ExternalConversation) return rows.conversations ?? []
+    if (entity === CustomerEntity) return rows.customers ?? []
     if (entity === MessageChannelLink) return rows.links ?? []
     if (entity === ChannelThreadMapping) return rows.mappings ?? []
     if (entity === ExternalMessage) return rows.messages ?? []
@@ -57,6 +60,7 @@ function createFakeEm(rows: {
       const inbound = list.filter((row) => !where.direction || row.direction === where.direction)
       return inbound[0] ?? null
     }
+    if (entity === CustomerEntity) return (rows.customers ?? [])[0] ?? null
     if (entity === SendRequest) {
       const candidates = [...(rows.sendRequests ?? []), ...created]
       if (where.id) return candidates.find((row) => row.id === where.id) ?? null
@@ -314,10 +318,11 @@ describe('GET /api/communications/me/threads', () => {
         { id: 'ch-team', userId: null, providerKey: 'whatsapp', channelType: 'chat', displayName: '团队 WABA', visibility: 'shared' },
       ],
       conversations: [
-        { id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo', lastMessageAt: new Date('2026-11-09T10:00:00Z'), createdAt: new Date('2026-11-09T09:00:00Z') },
+        { id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo', contactPersonId: 'p1', lastMessageAt: new Date('2026-11-09T10:00:00Z'), createdAt: new Date('2026-11-09T09:00:00Z') },
       ],
       links: [{ externalConversationId: 'conv-1', messageId: 'msg-1', createdAt: new Date('2026-11-09T10:00:00Z') }],
       mappings: [{ externalConversationId: 'conv-1', messageThreadId: 'th-1' }],
+      customers: [{ id: 'p1', displayName: '客户甲', kind: 'person' }],
     })
     useContainer(() => undefined, em)
     const { GET } = await import('../api/me/threads/route')
@@ -329,6 +334,7 @@ describe('GET /api/communications/me/threads', () => {
       id: 'conv-1',
       lastMessageId: 'msg-1',
       lastMessageThreadId: 'th-1',
+      customer: { id: 'p1', displayName: '客户甲', kind: 'person' },
       channel: { id: 'ch-own', providerKey: 'imap', visibility: 'private' },
     })
     const channelWhere = (em.find.mock.calls[0] as unknown[])[1]
