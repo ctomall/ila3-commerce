@@ -51,6 +51,10 @@ const GATES = [
   // child only narrow, are two employees' session/artifact/memory/browser roots disjoint,
   // and does revocation fail closed. The runtime half stays unproven and is labelled here.
   { id: 'dsh-profile', cmd: 'npx tsx scripts/crm-dsh-profile-check.ts', why: '每员工 profile 派生+落盘：工具集=运行时、子集不变宽、目录 0700 且跨 OS 用户读被拒、撤权失败关闭（DSH 运行时隔离仍未验）', evidence: /\[dsh-profile\] RESULT:/ },
+  // M4-5's three authorization classes, computed from the generated tool registry rather
+  // than described in a table. A new bulk tool becomes high_privilege the moment it is
+  // added, and fails until someone acknowledges it by name.
+  { id: 'tool-policy', cmd: 'npx tsx scripts/crm-tool-policy-check.ts', why: '工具分三类（每用户/实例全局/高权限）：高权限逐个认领、声明与注册表双向一致（运行时是否真拒仍未验）', evidence: /\[tool-policy\] RESULT:/ },
   { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例：可执行部分无 fail（blocked/invalid 是覆盖缺口，不计入通过）', evidence: /\[m4\] pass \d+/ },
   // The leadgen OpenAPI draft lints itself (features, idempotency, 429/409, no body
   // identity) and checks it does not collide with a live path. It existed and passed;

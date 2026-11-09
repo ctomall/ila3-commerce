@@ -1,0 +1,18 @@
+{
+  "$comment": "工具授权分类的声明文件（M4-5，决策 D31）。high_privilege 由注册表元数据计算（isDestructive / isBulk / 无 requiredFeatures），不可声明；本文件只能声明 instance_global（作用不限于调用者本人的工具）。门 scripts/crm-tool-policy-check.ts 会双向核对：声明了但不存在 → 红；出现新的 instance_global 而未声明 → 红。",
+  "instanceGlobal": [],
+  "highPrivilegeAcknowledged": [
+    {
+      "name": "catalog.bulk_update_products",
+      "reason": "批量改商品：一次调用可覆盖多行，共享实例里没有按员工的边界"
+    },
+    {
+      "name": "catalog.apply_attribute_extraction",
+      "reason": "批量按抽取结果改属性，同上"
+    },
+    {
+      "name": "catalog.update_product_media_descriptions",
+      "reason": "批量更新媒体描述，同上"
+    }
+  ]
+}

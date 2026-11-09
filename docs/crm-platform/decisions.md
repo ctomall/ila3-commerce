@@ -154,3 +154,12 @@
 - 定：`queued` 与 `awaiting_approval` 都算在途，但都**不能写**。等审批的 Run 被撤权后如果还能"恢复"并写入，撤权就形同虚设。
 - 定：`applyPrincipalRevoked()` 不碰已终结的 Run（completed/failed/budget_exhausted），也不碰别的绑定，只对别的绑定计数。
 - 定：10 s 是硬判据：`withinRevocationDeadline()` 对"取消早于撤销"和"缺时间戳"都返回 false，不把不可判当成合规。
+
+## D31 工具授权三类由注册表元数据算出来，不靠人工分类
+
+- 定：`high_privilege` = `isDestructive` ∪ `isBulk` ∪ 无 `requiredFeatures`。前两个能一次影响多行或不可撤销，第三个是"任何登录用户都能调"——三者都不该出现在共享实例里。
+- 定：`instance_global` 只能**显式声明**（`docs/crm-platform/appendix/tool-policy.json`），因为"作用是否限于调用者"无法从元数据可靠推断，猜比承认不知道更糟。
+- 定：声明不能把高权限降级——先算高权限，再看声明。
+- 定：门做**双向**核对。只做单向（漏声明即红）会积累僵尸条目：工具改名/删除后声明还挂着，读的人会以为它还在。
+- 定：写操作不得声明为 `instance_global`。那会把一个必须走审批流程的写操作变成"归运维、永不执行"，看似安全，实际是把这个能力从产品里静默删掉。
+- 未证：运行时是否按 `mayRunTool` 拒。函数有 16 个单测，接进运行时属于 DSH 桥接。
