@@ -108,6 +108,23 @@ for (const role of roles) {
   )
 }
 
+// 1b. a ceiling that is strictly smaller than the grant must actually cut the list
+// (before this, grantedTools and assistantTools were the same array, so the intersection
+// was an identity check and could not tell a working filter from a no-op: A-P2-10)
+{
+  const granted = sessions[a].tools
+  const ceiling = granted.slice(0, Math.min(10, granted.length))
+  const narrowed = deriveProfile(inputFor(a, { assistantTools: ceiling }))
+  check(
+    'ceiling-truncates',
+    narrowed.tools.length === ceiling.length &&
+      narrowed.tools.every((tool) => ceiling.includes(tool)) &&
+      narrowed.dropped.filter((entry) => entry.reason === 'not-in-assistant-ceiling').length ===
+        granted.length - ceiling.length,
+    `助手上限取 ${ceiling.length} 个 → 工具集剩 ${narrowed.tools.length} 个，另 ${granted.length - ceiling.length} 个记为不在上限内`,
+  )
+}
+
 // 2. a child may narrow, and a request outside the parent is dropped and reported
 const parent = deriveProfile(inputFor(a))
 const child = deriveProfile(inputFor(a, { requestedTools: [...sessions[a].tools, INJECTED] }))
@@ -177,31 +194,36 @@ try {
   if (!probe.ok) {
     fail('cross-user-probe-usable', `无法用 ${stranger} 读世界可读文件，跨用户结论不成立：${probe.detail}`)
   } else {
-    // Positive control in the same tree: if the stranger can read a 0644 file here, then a
-    // denial on the profile below is caused by its mode, not by a wrong path.
-    const control = path.join(tempRoot, 'control.txt')
+    // Positive control at the SAME level as the denial: the control sits inside
+    // `profiles/` (0711), one level above the employee directory (0700). If the stranger
+    // can read the control but not the profile, the denial is attributable to the
+    // employee directory — which is the boundary meant to hold. Putting the control one
+    // level higher proved nothing (audit finding A-P2-9).
+    const control = path.join(tempRoot, 'profiles', 'control.txt')
     fs.writeFileSync(control, 'control\n', { mode: 0o644 })
     const controlRead = canRead(stranger, control)
-    check('probe-reads-same-tree', controlRead.ok, `${stranger} 能读同目录下的 0644 控制文件：${controlRead.detail}`)
+    check('probe-reads-same-level', controlRead.ok, `${stranger} 能读 profiles/ 下的 0644 控制文件：${controlRead.detail}`)
 
     const self = canRead(own, writtenA.metadataPath)
-    const other = canRead(stranger, writtenA.metadataPath)
-    const otherDir = canRead(stranger, path.join(writtenA.profileDir, 'session'))
     check('owner-can-read-own', self.ok, `${own} 读自己的 profile：${self.detail}`)
-    check(
-      'stranger-denied-by-mode',
-      !other.ok && other.denied,
-      `${stranger} 读 ${own} 的 profile.json：${other.ok ? '居然读到了' : other.detail}`,
-    )
-    check(
-      'stranger-cannot-enter',
-      !otherDir.ok && otherDir.denied,
-      `${stranger} 进入 ${own} 的 session 目录：${otherDir.ok ? '居然进去了' : otherDir.detail}`,
-    )
+    for (const [label, written] of [
+      [a, writtenA],
+      [b, writtenB],
+    ] as const) {
+      const meta = canRead(stranger, written.metadataPath)
+      const dir = canRead(stranger, path.join(written.profileDir, 'session'))
+      check(
+        `stranger-denied:${label}`,
+        !meta.ok && meta.denied && !dir.ok && dir.denied,
+        `${stranger} 读 ${label} 的 profile.json / session：${meta.ok || dir.ok ? '居然读到了' : 'Permission denied'}`,
+      )
+    }
   }
   check(
     'two-dirs-on-disk',
-    fs.readdirSync(path.join(tempRoot, 'profiles')).length === 2 && writtenA.profileDir !== writtenB.profileDir,
+    fs
+      .readdirSync(path.join(tempRoot, 'profiles'), { withFileTypes: true })
+      .filter((entry) => entry.isDirectory()).length === 2 && writtenA.profileDir !== writtenB.profileDir,
     `磁盘上两个独立目录：${path.basename(writtenA.profileDir).slice(0, 8)} ≠ ${path.basename(writtenB.profileDir).slice(0, 8)}`,
   )
 } finally {
@@ -212,6 +234,10 @@ try {
 const revoked = revoke(profileA)
 check('revoke-fails-closed', revoked.tools.length === 0 && revoked.revoked && revoked.userId === profileA.userId, '工具清零、标记 revoked、身份保留')
 
-console.log(`\n[dsh-profile] ${failures.length === 0 ? 'RESULT: PASS' : 'RESULT: FAIL'} — ${roles.length} 个角色、${sessions[a].tools.length + sessions[b].tools.length} 个工具样本`)
+console.log(
+  `\n[dsh-profile] ${failures.length === 0 ? 'RESULT: PASS' : 'RESULT: FAIL'} — ${roles.length} 个角色、${
+    sessions[a].tools.length + sessions[b].tools.length
+  } 个工具；工具集=运行时、子集不变宽、目录 0700、${stranger} 读不到、撤权清零`,
+)
 if (failures.length > 0) for (const failure of failures) console.log(`  ✗ ${failure}`)
 process.exit(failures.length === 0 ? 0 : 1)

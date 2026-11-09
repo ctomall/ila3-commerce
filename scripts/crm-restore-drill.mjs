@@ -123,7 +123,12 @@ function selfTestComparator() {
     create table ${s}.t(id serial primary key, v text not null, k int);
     create index t_k_idx on ${s}.t(k);
     create table ${s}.u(id int references ${s}.t(id));
-    create sequence ${s}.seq;`
+    create sequence ${s}.seq;
+    create view ${s}.v_t as select id, v from ${s}.t;
+    create table ${s}.audit(id int);
+    create function ${s}.touch() returns trigger language plpgsql as $$begin return new; end$$;
+    create trigger t_touch before insert on ${s}.t for each row execute function ${s}.touch();`
+  const seed = (s) => psql(`insert into ${s}.t(v, k) values ('a', 1), ('b', 2), ('c', 3)`)
   const clean = () => psql(`drop schema if exists ${A} cascade; drop schema if exists ${B} cascade`)
   const checks = []
   try {
@@ -131,11 +136,35 @@ function selfTestComparator() {
     psql(`create schema ${A}; create schema ${B}; ${ddl(A)} ${ddl(B)}`)
     const same = diffFacts(catalogFacts(psql, { schema: A }), catalogFacts(psql, { schema: B }))
     checks.push(['两个相同 schema 必须比出 0 处差异', same.total === 0])
+    // Content, not just structure. The drill's central claim is that a restore which keeps
+    // the row count but changes a value is caught; that claim had never been exercised by
+    // the self-test, only by a one-off hand run (audit finding A-P1-2).
+    seed(A)
+    seed(B)
+    const sameRows = [rowDigest(psql, `${A}.t`, { maxRows: 10 }), rowDigest(psql, `${B}.t`, { maxRows: 10 })]
+    checks.push([
+      '相同数据的内容摘要必须相同',
+      sameRows[0].digest !== null && sameRows[0].digest === sameRows[1].digest && sameRows[0].rows === 3,
+    ])
+    psql(`update ${B}.t set v = 'tampered' where k = 2`)
+    const tamperedRows = rowDigest(psql, `${B}.t`, { maxRows: 10 })
+    checks.push(['改一行但行数不变 → 内容摘要必须不同', tamperedRows.rows === 3 && tamperedRows.digest !== sameRows[0].digest])
+    if (tamperedRows.rows !== 3 || tamperedRows.digest === sameRows[0].digest) {
+      console.log(`   self-test detail: 行数 ${tamperedRows.rows}，摘要 ${String(tamperedRows.digest).slice(0, 12)} vs ${String(sameRows[0].digest).slice(0, 12)}`)
+    }
+    psql(`delete from ${B}.t where k = 3`)
+    const shorterRows = rowDigest(psql, `${B}.t`, { maxRows: 10 })
+    checks.push(['删一行 → 行数必须不同', shorterRows.rows === 2])
+    // Only now mutate the structure: a column added below would change `t::text` and
+    // make the identical-data digest comparison fail for the wrong reason.
+
     const mutations = [
       ['多加一个索引', `create index t_extra on ${B}.t(k)`, 'indexes'],
       ['多出一列', `alter table ${B}.t add column c text`, 'columns'],
       ['丢掉序列', `drop sequence ${B}.seq`, 'sequences'],
       ['丢掉外键', `alter table ${B}.u drop constraint u_id_fkey`, 'constraints'],
+      ['丢掉视图', `drop view ${B}.v_t`, 'views'],
+      ['丢掉触发器', `drop trigger t_touch on ${B}.t`, 'triggers'],
     ]
     for (const [label, sql, kind] of mutations) {
       psql(sql)
@@ -150,8 +179,12 @@ function selfTestComparator() {
     } catch {}
   }
   const bad = checks.filter(([, ok]) => !ok)
-  if (bad.length > 0) fail('self-test', `结构比对的反向自证失败：${bad.map(([label]) => label).join('; ')}`)
-  record('self-test', true, `${checks.length} 项反向自证通过（相同→0 差异；多索引/多列/丢序列/丢外键各自被点名）`)
+  if (bad.length > 0) fail('self-test', `比对器的反向自证失败：${bad.map(([label]) => label).join('; ')}`)
+  record(
+    'self-test',
+    true,
+    `${checks.length} 项反向自证通过（结构：多索引/多列/丢序列/丢外键/丢视图/丢触发器各自被点名；内容：相同→同摘要、改一行→摘要变、删一行→行数变）`,
+  )
 }
 
 /**
@@ -244,9 +277,16 @@ try {
   // A non-zero exit can still mean "restored everything, complained about a missing role"
   // so the row counts below decide, not the exit code alone.
   if (restore.status !== 0) {
-    const err = (restore.stderr || '').trim()
-    if (!/unaccent|text search/i.test(err)) fail('restore', `pg_restore failed: ${err.slice(0, 300)}`)
-    record('restore.warning', true, `pg_restore complained about a text-search object (not schema): ${err.split('\n')[0].slice(0, 120)}`)
+    // Filter line by line. Matching one benign word against the whole stderr let a real
+    // error ride along with an `unaccent` complaint and vanish (audit finding A-P2-8).
+    const lines = (restore.stderr || '')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
+    const benign = (line) => /extension "unaccent" is not available|text search (parser|configuration|dictionary)|skipping/i.test(line)
+    const residual = lines.filter((line) => !benign(line) && /error/i.test(line))
+    if (residual.length > 0) fail('restore', `pg_restore failed: ${residual.slice(0, 3).join(' | ').slice(0, 400)}`)
+    record('restore.warning', true, `pg_restore exited ${restore.status} with only ignored text-search/extensions complaints: ${lines[0]?.slice(0, 120) ?? ''}`)
   }
   record('restore', true, `restored in ${restoreMs} ms`)
 
@@ -291,6 +331,14 @@ try {
   // The bookkeeping table proves the *content* survived, not just the schema.
   const migrationRows = count(dbName, 'select count(*) from mikro_orm_migrations_sales')
   record('compare.bookkeeping', migrationRows > 0, `${migrationRows} migration bookkeeping rows survived`)
+
+  // One line that states both halves. The gate's evidence row quotes a single line, and
+  // "结构一致" alone read stronger than what that one line showed (audit finding B-P2).
+  record(
+    'summary',
+    true,
+    `结构 ${dstSum.counts.columns} 列 / ${dstSum.counts.indexes} 索引 / ${dstSum.counts.constraints} 约束 / ${dstSum.counts.sequences} 序列 与源库一致；${PROBES.length} 张探针表行数与整表内容摘要均一致`,
+  )
 
   // Compare, do not announce: this used to record(true) unconditionally, so it was a line
   // of text rather than a check.

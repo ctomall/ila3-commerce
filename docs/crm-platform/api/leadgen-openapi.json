@@ -3,7 +3,7 @@
   "info": {
     "title": "ILA3 leadgen (draft)",
     "version": "0.1.0-draft",
-    "description": "DRAFT contract for the lead-generation module (M5/M6/M7). Not mounted: the paths below do not exist yet. Rules enforced by scripts/crm-contract-check.mjs: every operation declares x-required-features, no request body may carry tenantId/organizationId, mutating operations declare an idempotency key, quota-limited operations declare 429, state transitions declare 409, and cross-tenant reads answer 404 rather than 403."
+    "description": "DRAFT contract for the lead-generation module (M5/M6/M7). Not mounted: the paths below do not exist yet. Rules enforced by scripts/crm-contract-check.mjs: every operation declares x-required-features, no request body may carry tenantId/organizationId, mutating operations declare an idempotency key, quota-limited operations declare 429, and state transitions declare 409. A planned rule that this linter does NOT verify: cross-tenant reads must answer 404 rather than 403 (D16) — it stays a written rule until the routes exist and can be exercised."
   },
   "servers": [{ "url": "https://mercato.ila3.top/api" }],
   "paths": {

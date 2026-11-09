@@ -50,8 +50,8 @@ const GATES = [
   // runtime: does every employee get a toolset equal to what the runtime reports, can a
   // child only narrow, are two employees' session/artifact/memory/browser roots disjoint,
   // and does revocation fail closed. The runtime half stays unproven and is labelled here.
-  { id: 'dsh-profile', cmd: 'npx tsx scripts/crm-dsh-profile-check.ts', why: '每员工 profile 派生+落盘：工具集=运行时、子集不变宽、目录 0700 且跨 OS 用户读被拒、撤权失败关闭（DSH 运行时隔离仍未验）', evidence: /\[dsh-profile\] (RESULT|\d+) / },
-  { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例（阻塞项单独报）', evidence: /\[m4\] pass \d+/ },
+  { id: 'dsh-profile', cmd: 'npx tsx scripts/crm-dsh-profile-check.ts', why: '每员工 profile 派生+落盘：工具集=运行时、子集不变宽、目录 0700 且跨 OS 用户读被拒、撤权失败关闭（DSH 运行时隔离仍未验）', evidence: /\[dsh-profile\] RESULT:/ },
+  { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例：可执行部分无 fail（blocked/invalid 是覆盖缺口，不计入通过）', evidence: /\[m4\] pass \d+/ },
   // The leadgen OpenAPI draft lints itself (features, idempotency, 429/409, no body
   // identity) and checks it does not collide with a live path. It existed and passed;
   // nobody ran it, so the draft could have drifted from its own rules silently.
@@ -85,10 +85,19 @@ const GATES = [
   // a hand-run experiment from a chat message.
   // M8 asks for a restore drill. It was a hand-run experiment once; now every full run
   // dumps production, restores the archive into a throwaway database and compares.
-  { id: 'restore-drill', cmd: 'node scripts/crm-restore-drill.mjs', why: '备份可恢复且结构与内容都一致（比对器每次先自证会红）', full: true, evidence: /^PASS\s+compare\.catalog/ },
+  { id: 'restore-drill', cmd: 'node scripts/crm-restore-drill.mjs', why: '备份可恢复且结构与内容都一致（比对器每次先自证会红）', full: true, evidence: /^PASS\s+summary/ },
   { id: 'mutation', cmd: 'node scripts/crm-mutation-check.mjs', why: '规则层测试真的会红（变异击杀）', full: true, evidence: /\[mutation\] killed \d+/ },
   { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78, evidence: /^INFO 演练来源/ },
 ]
+
+// A subset run cannot be release-grade evidence: the gates that did not run are the ones
+// nobody looked at. Refuse the combination instead of producing a report that says
+// "PASS n · FAIL 0 · SKIP 0" for one gate (audit finding A-P1-1).
+if (ONLY && (REQUIRE_CLEAN || REQUIRE_NO_SKIP)) {
+  console.error('[crm-verify] --only 不能与 --require-clean / --require-no-skip 同用：子集运行不是发布级证据')
+  console.error(`[crm-verify] 只跑了 ${[...ONLY].join(', ')}，其余 ${22 - ONLY.size} 道门没有运行`)
+  process.exit(1)
+}
 
 // A typo in --only used to run zero gates and exit 0 — the greenest possible lie.
 if (ONLY && !GATES.some((gate) => ONLY.has(gate.id))) {
@@ -180,12 +189,32 @@ const skip = results.filter((r) => r.status === 'SKIP')
 fs.mkdirSync(OUT, { recursive: true })
 const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
 const file = path.join(OUT, `verify-${stamp}.md`)
-const treeDirty = worktree.known && worktree.entries.length > 0
-const treeLabel = worktree.known
+// "Cannot tell" is not "clean": a release-grade run must not pass because git was absent.
+const GATE_OUTPUT = /^docs\/crm-platform\/(verify|poc|regression)\//
+const FLAGS = process.argv.slice(2).filter((arg) => arg.startsWith('--')).join(' ')
+const treeUnknown = !worktree.known
+const treeDirty = (worktree.known && worktree.entries.length > 0) || (treeUnknown && REQUIRE_CLEAN)
+const treeLabel = !worktree.known && REQUIRE_CLEAN
+  ? `**无法判断**（--require-clean 下视为不干净：${worktree.error}）`
+  : worktree.known
   ? treeDirty
     ? `**脏**（${worktree.entries.length} 项未提交：${worktree.entries.slice(0, 6).join(' / ')}${worktree.entries.length > 6 ? ' …' : ''}）`
     : '干净'
   : `未知（git status 失败：${worktree.error}）`
+
+// The gates themselves write tracked files (matrices, drill reports). A start-only
+// snapshot would let the report say "clean" about a tree this run then dirtied, and the
+// next --require-clean run would fail on the previous run's output (audit A-P2-11).
+const after = worktreeState()
+const afterEntries = after.known ? after.entries : []
+const pathOf = (entry) => entry.replace(/^\s*\S+\s+/, '')
+const gateOutputs = afterEntries.filter((entry) => GATE_OUTPUT.test(pathOf(entry)))
+const manual = afterEntries.filter((entry) => !GATE_OUTPUT.test(pathOf(entry)))
+const releaseGrade = REQUIRE_CLEAN && REQUIRE_NO_SKIP && !ONLY
+const releaseGate =
+  fail.length === 0 &&
+  !(REQUIRE_NO_SKIP && skip.length > 0) &&
+  !(REQUIRE_CLEAN && (treeDirty || manual.length > 0))
 
 const lines = [
   ONLY ? '# 子集验证结果（不是全量）' : '# 全量验证结果',
@@ -194,9 +223,13 @@ const lines = [
   // A subset run proves a subset. Without this line the report reads exactly like a full
   // one — same table, same "全部通过" — and gets quoted as if the other gates had run.
   ONLY ? `范围：**仅 ${[...ONLY].sort().join(', ')}**（${results.filter((r) => r.status !== 'SKIP').length}/${GATES.length} 道门，不是全量）` : `范围：全部 ${GATES.length} 道门`,
-  `工作树：${treeLabel}`,
+  `参数：\`${FLAGS || '（无）'}\` · 发布级：${releaseGrade ? '**是**（--require-clean + --require-no-skip）' : '否（缺 --require-clean/--require-no-skip 或为子集运行）'}`,
+  `工作树（开始时）：${treeLabel}`,
+  `工作树（结束时）：本次运行改动了 ${afterEntries.length} 项，其中门产物 ${gateOutputs.length} 项${
+    manual.length > 0 ? `，**其他改动 ${manual.length} 项**（${manual.slice(0, 4).join(' / ')}）` : '，无其他改动'
+  }`,
   '',
-  `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length}`,
+  `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length} · 发布级门禁：${releaseGate ? 'PASS' : 'FAIL'}`,
   '',
   '| 门禁 | 状态 | 耗时 | 说明 |',
   '|---|---|---|---|',
@@ -225,7 +258,12 @@ if (REQUIRE_CLEAN && treeDirty) {
   for (const entry of worktree.entries.slice(0, 10)) console.log(`  ${entry}`)
 }
 console.log(`[crm-verify] wrote ${path.relative(process.cwd(), file)}`)
-process.exit(fail.length === 0 && !(REQUIRE_NO_SKIP && skip.length > 0) && !(REQUIRE_CLEAN && treeDirty) ? 0 : 1)
+if (REQUIRE_CLEAN && manual.length > 0) {
+  console.log(`[crm-verify] --require-clean: 本次运行改动了 ${manual.length} 个非门产物文件，结果不算提交级证据`)
+  for (const entry of manual.slice(0, 10)) console.log(`  ${entry}`)
+}
+console.log(`[crm-verify] 发布级门禁：${releaseGate ? 'PASS' : 'FAIL'}`)
+process.exit(releaseGate ? 0 : 1)
 
 function head() {
   const run = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' })

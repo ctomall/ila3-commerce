@@ -28,6 +28,8 @@
 import { createHash } from 'node:crypto'
 
 const IDENT = /^[a-z0-9_]+$/
+/** A table may be schema-qualified; each part still has to be a plain identifier. */
+const TABLE = /^[a-z0-9_]+(\.[a-z0-9_]+)?$/
 
 function assertIdent(value, what) {
   if (!IDENT.test(String(value))) throw new Error(`refusing ${what} ${JSON.stringify(value)}: must match /^[a-z0-9_]+$/`)
@@ -37,12 +39,20 @@ function assertIdent(value, what) {
 const KINDS = ['columns', 'indexes', 'constraints', 'sequences', 'triggers', 'views']
 
 const QUERIES = {
+  // Precision, identity and generated-ness are part of the column, not decoration: numeric(10,2)
+  // degrading to numeric and a GENERATED column degrading to a plain one both leave the row
+  // text identical, so a text-only digest cannot see them (audit finding A-P2-6).
   columns: (s) => `
     select table_name || '|' || column_name || '|' || rn || '|' || data_type
         || '|' || coalesce(character_maximum_length::text, '') || '|' || is_nullable
         || '|' || coalesce(column_default, '')
+        || '|' || coalesce(numeric_precision::text, '') || '|' || coalesce(numeric_scale::text, '')
+        || '|' || is_identity || '|' || is_generated
+        || '|' || coalesce(generation_expression, '') || '|' || coalesce(collation_name, '')
     from (
       select table_name, column_name, data_type, character_maximum_length, is_nullable, column_default,
+             numeric_precision, numeric_scale, is_identity, is_generated, generation_expression,
+             collation_name,
              row_number() over (partition by table_name order by ordinal_position) as rn
       from information_schema.columns
       where table_schema = '${s}'
@@ -78,11 +88,19 @@ const QUERIES = {
     left join pg_class fc on fc.oid = c.confrelid
     where n.nspname = '${s}'
     order by 1`,
+  // A sequence is more than its name: start, increment, bounds and what owns it all change
+  // generated ids. Name-only was a hole (A-P2-6).
   sequences: (s) => `
-    select c.relname
-    from pg_class c
-    join pg_namespace n on n.oid = c.relnamespace
-    where c.relkind = 'S' and n.nspname = '${s}'
+    select s.sequencename || '|' || s.start_value || '|' || s.increment_by
+        || '|' || s.min_value || '|' || s.max_value || '|' || s.cycle::text
+        || '|' || coalesce(dep.refobjid::regclass::text, '') || '|' || coalesce(a.attname, '')
+    from pg_sequences s
+    left join pg_class c on c.relname = s.sequencename
+      and c.relnamespace = (select oid from pg_namespace where nspname = s.schemaname)
+    left join pg_depend dep on dep.objid = c.oid and dep.deptype in ('a', 'i')
+    left join pg_class d on d.oid = dep.refobjid
+    left join pg_attribute a on a.attrelid = dep.refobjid and a.attnum = dep.refobjsubid
+    where s.schemaname = '${s}'
     order by 1`,
   triggers: (s) => `
     select t.tgname || '|' || c.relname || '|' || pg_get_triggerdef(t.oid)
@@ -185,12 +203,19 @@ export function describeDiff(diffs, limit = 3) {
  * silently sampling (a sample would turn "identical" into a guess).
  */
 export function rowDigest(psql, table, { maxRows = 200000 } = {}) {
-  const t = assertIdent(table, 'table')
+  if (!TABLE.test(String(table))) throw new Error(`refusing table ${JSON.stringify(table)}: must be [schema.]name`)
+  const t = String(table)
   const value = psql(`select count(*) from ${t}`)
   if (!/^\d+$/.test(value)) throw new Error(`expected an integer row count from ${t}, got ${JSON.stringify(value)}`)
   const rows = Number(value)
   if (rows > maxRows) {
     return { table: t, rows, digest: null, skipped: `超过 ${maxRows} 行，不做整表摘要（不采样，避免把猜测当结论）` }
+  }
+  if (rows === 0) {
+    // An empty table has no content to compare; `string_agg` over no rows is NULL and used
+    // to throw, which turned the caller's "both sides are 0, this proves nothing" branch
+    // into dead code (audit finding A-P2-7).
+    return { table: t, rows, digest: null, skipped: `${t} 是空表，内容比对什么也没证明` }
   }
   const body = psql(
     `select coalesce(md5(string_agg(h, '' order by h)), '-') from (select md5(t::text) as h from ${t} t) s`,

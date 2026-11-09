@@ -12,6 +12,9 @@ import {
   type EmployeeProfileInput,
 } from '../profile'
 
+const tempRoot = () => fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-profile-test-'))
+const mode = (target: string) => fs.statSync(target).mode & 0o777
+
 const base: EmployeeProfileInput = {
   userId: 'user-aaaa',
   tenantId: 'tenant-1',
@@ -89,6 +92,22 @@ describe('deriveProfile', () => {
     expect(revoked.userId).toEqual(base.userId)
   })
 
+  it('refuses a policy version that could escape the profile root', () => {
+    for (const evil of ['../../../../..', '../etc', '/etc', 'pv/../..', 'pv 1', '']) {
+      expect(() => deriveProfile({ ...base, policyVersion: evil })).toThrow(/policyVersion/)
+    }
+    expect(deriveProfile({ ...base, policyVersion: 'pv-2.1_beta' }).roots.memory).toContain('pv-2.1_beta')
+  })
+
+  it('creates a traversable profiles/ parent so denial is attributable to the employee dir', () => {
+    const root = tempRoot()
+    const written = materializeProfile(deriveProfile(base), root)
+    expect(mode(path.join(root, 'profiles'))).toBe(0o711)
+    expect(mode(path.dirname(written.profileDir))).toBe(0o711)
+    expect(mode(written.profileDir)).toBe(0o700)
+    fs.rmSync(root, { recursive: true, force: true })
+  })
+
   it('refuses to build a key from a blank identity field', () => {
     expect(() => profileKeyOf({ ...base, userId: '  ' })).toThrow(/userId/)
     expect(() => deriveProfile({ ...base, assistantId: '' })).toThrow(/assistantId/)
@@ -100,9 +119,6 @@ describe('deriveProfile', () => {
 })
 
 describe('materializeProfile', () => {
-  const tempRoot = () => fs.mkdtempSync(path.join(os.tmpdir(), 'dsh-profile-test-'))
-  const mode = (target: string) => fs.statSync(target).mode & 0o777
-
   it('creates four 0700 directories and a 0600 metadata file', () => {
     const root = tempRoot()
     const profile = deriveProfile(base)

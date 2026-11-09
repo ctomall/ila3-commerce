@@ -4,9 +4,12 @@
  *
  * The rules are the ones the contract itself claims: identity is never taken from the
  * body, every operation names the feature it needs, mutating calls declare how they are
- * idempotent, quota-limited calls declare 429, state transitions declare 409, and reads
- * that can miss answer 404 rather than 403. A draft that violates its own rules must fail
- * here, before anyone implements against it.
+ * idempotent, quota-limited calls declare 429, and state transitions declare 409. A draft
+ * that violates its own rules must fail here, before anyone implements against it.
+ *
+ * NOT checked here: the 404-rather-than-403 rule for cross-tenant reads (D16). It is a
+ * written rule with no route to exercise yet; claiming it as enforced would make the draft
+ * read as guarded when nothing tests it (audit finding B-P1-1).
  *
  * Also checks that no draft path already exists in the live /api/docs/openapi, so the
  * draft cannot silently collide with something the app already serves.

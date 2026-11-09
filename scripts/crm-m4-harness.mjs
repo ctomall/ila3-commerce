@@ -13,7 +13,10 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { execFileSync } from 'node:child_process'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.M4_BASE_URL ?? 'http://127.0.0.1:3000'
@@ -27,7 +30,9 @@ function psqlCount(table) {
   try {
     const out = execFileSync(
       'bash',
-      ['-lc', `cd /home/pro/apps/mercato && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -c "select count(*) from ${table}"`],
+      // `cd` to the repo this script lives in, not to a hardcoded path: the old literal made
+      // every count null on any other checkout, and null used to read as "unchanged".
+      ['-lc', `cd ${JSON.stringify(path.resolve(__dirname, '..'))} && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -c "select count(*) from ${table}"`],
       { encoding: 'utf8' },
     )
     return Number(out.trim())
@@ -63,6 +68,9 @@ const fixtures = {
   'tool-execute': paths.includes('/ai_assistant/tools/execute'),
   'existing-quote': paths.includes('/sales/quotes/convert'),
 }
+
+/** Fixtures whose value came from an actual check, not a constant. */
+const PROBED = new Set(['leadgen-api', 'employee-B', 'probe-tool', 'tool-execute', 'existing-quote'])
 
 const before = psqlCount('customer_entities')
 
@@ -303,6 +311,12 @@ for (const item of cases) {
 
 const after = psqlCount('customer_entities')
 const noWrites = before !== null && before === after
+// The docstring said "asserts no row count moved" while the result only reached the matrix,
+// so a missing psql (both counts null) exited 0 and the gate stayed green. A run that cannot
+// measure its own footprint proves nothing and must not pass (audit finding B-P1-2).
+const writeProblems = []
+if (before === null || after === null) writeProblems.push(`无法读取 customer_entities 行数（${before}->${after}），零写入结论不成立`)
+else if (before !== after) writeProblems.push(`customer_entities 行数从 ${before} 变为 ${after}，存在写入`)
 const passed = results.filter((r) => r.status === 'pass')
 const passedWeak = results.filter((r) => r.status === 'pass-weak')
 const failed = results.filter((r) => r.status === 'fail')
@@ -340,7 +354,24 @@ const md = [
   '',
   '| fixture | 是否存在 | 说明 |',
   '|---|---|---|',
-  ...Object.entries(fixtures).map(([k, v]) => `| \`${k}\` | ${v ? '有' : '**无**'} | ${k === 'leadgen-api' ? 'leadgen 路由未部署（迁移未批准）' : k === 'second-organization' ? '只有一个租户一个组织' : k === 'dsh-profile-per-employee' ? '没有每员工 DSH 运行时' : k === 'probe-tool' ? 'context_whoami 是否在运行时工具表里' : k === 'tool-execute' ? '/ai_assistant/tools/execute 是否在 openapi 里' : ''} |`),
+  // Two of these are literals, not probes. Printing them as "无" made the matrix look like a
+  // measurement, so a reviewer could believe the fixture appears as soon as a route ships.
+  // Label the ones nobody measured (audit finding B-P2).
+  ...Object.entries(fixtures).map(([k, v]) =>
+    `| \`${k}\` | ${PROBED.has(k) ? (v ? '有' : '**无**') : '**未探测（写死 false）**'} | ${
+      k === 'leadgen-api'
+        ? 'leadgen 路由未部署（迁移未批准）'
+        : k === 'second-organization'
+          ? '只有一个租户一个组织；此值未探测'
+          : k === 'dsh-profile-per-employee'
+            ? '没有每员工 DSH 运行时；此值未探测（派生层已由 dsh-profile 门证明，运行时仍缺）'
+            : k === 'probe-tool'
+              ? 'context_whoami 是否在运行时工具表里'
+              : k === 'tool-execute'
+                ? '/ai_assistant/tools/execute 是否在 openapi 里'
+                : ''
+    } |`,
+  ),
   '',
   '> **阻塞不等于通过。** 只有 `pass` 才算 M4 有证据；`blocked` 的用例在 fixture 到位前不能计入验收。',
 ]
@@ -353,4 +384,6 @@ console.log(`[m4] wrote ${path.relative(process.cwd(), OUT)}/matrix.{json,md}`)
 // the matrix and reported loudly, but they must not turn the run red. Only a real `fail`
 // (a request that was NOT refused) exits non-zero.
 if (invalid.length > 0) console.error(`[m4] WARNING: ${invalid.length} case(s) are invalid — their evidence does not count`)
-process.exit(failed.length === 0 ? 0 : 1)
+for (const problem of writeProblems) console.error(`[m4] FAIL ${problem}`)
+console.log(writeProblems.length === 0 ? '[m4] zero-write: confirmed' : '[m4] zero-write: NOT established')
+process.exit(failed.length === 0 && writeProblems.length === 0 ? 0 : 1)

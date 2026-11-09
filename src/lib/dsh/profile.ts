@@ -72,6 +72,21 @@ export type EmployeeProfile = {
 
 const ROOT = 'profiles'
 
+/**
+ * Identity parts that end up in a path must be a plain token.
+ *
+ * `policyVersion` comes from tenant data, so an unvalidated value is a path-traversal
+ * primitive: `../../../../..` turns the memory root into `/`, and the chmod that follows
+ * would then rewrite the mode of whatever it resolved to. Audit finding A-P1-3.
+ */
+const IDENT = /^[a-z0-9][a-z0-9._-]{0,63}$/i
+const assertIdent = (field: string, value: string): string => {
+  if (typeof value !== 'string' || !IDENT.test(value)) {
+    throw new Error(`${field} must be a plain identifier (the value may not contain a path separator): ${JSON.stringify(value)}`)
+  }
+  return value
+}
+
 /** Stable, filesystem-safe, and deliberately not reversible to a user id. */
 export function profileKeyOf(input: Pick<EmployeeProfileInput, 'userId' | 'tenantId' | 'organizationId' | 'assistantId' | 'policyVersion'>): string {
   // Validate the five identity fields only: callers pass the whole input object, and a
@@ -92,6 +107,8 @@ export function profileKeyOf(input: Pick<EmployeeProfileInput, 'userId' | 'tenan
 const unique = (values: readonly string[]): string[] => [...new Set(values)].sort()
 
 export function deriveProfile(input: EmployeeProfileInput): EmployeeProfile {
+  // The memory root embeds this value, so it is validated here rather than trusted.
+  assertIdent('policyVersion', input.policyVersion)
   const ceiling = new Set(input.assistantTools)
   const granted = new Set(input.grantedTools)
   const request = input.requestedTools === undefined ? null : new Set(input.requestedTools)
@@ -171,14 +188,27 @@ export function sharedRoots(a: EmployeeProfile, b: EmployeeProfile): string[] {
  */
 export function materializeProfile(profile: EmployeeProfile, root: string): { profileDir: string; metadataPath: string; created: boolean } {
   if (!root) throw new Error('materializeProfile requires a root directory')
+  if (!/^[a-f0-9]{32}$/.test(profile.profileKey)) throw new Error(`refusing profile key ${JSON.stringify(profile.profileKey)}`)
+  const resolvedRoot = path.resolve(root)
   const profileDir = profile.roots.session.replace(/\/session$/, '')
   // The roots are relative to `<root>/profiles/<key>`; re-anchor them under the caller's root.
-  const keyed = path.join(root, 'profiles', profile.profileKey)
+  const keyed = path.join(resolvedRoot, 'profiles', profile.profileKey)
+  // `profiles/` is traversable (0711) on purpose: the per-employee directory is the
+  // boundary that must hold, and a 0700 parent would deny a stranger one level too early,
+  // making every denial below unattributable (audit finding A-P2-9).
+  fs.mkdirSync(path.join(resolvedRoot, 'profiles'), { recursive: true, mode: 0o711 })
+  fs.chmodSync(path.join(resolvedRoot, 'profiles'), 0o711)
   for (const relative of [profile.roots.session, profile.roots.artifacts, profile.roots.memory, profile.roots.browser]) {
     const suffix = relative.slice(profileDir.length)
-    fs.mkdirSync(path.join(keyed, suffix), { recursive: true, mode: 0o700 })
+    const target = path.join(keyed, suffix)
+    // Belt and braces: even with a validated identifier, refuse to touch anything that
+    // resolves outside this profile's own directory.
+    if (!path.resolve(target).startsWith(`${keyed}${path.sep}`) && path.resolve(target) !== keyed) {
+      throw new Error(`refusing to create ${target}: resolves outside the profile directory`)
+    }
+    fs.mkdirSync(target, { recursive: true, mode: 0o700 })
     // mkdir's mode is masked by the umask, so state the intent explicitly.
-    fs.chmodSync(path.join(keyed, suffix), 0o700)
+    fs.chmodSync(target, 0o700)
   }
   const metadataPath = path.join(keyed, 'profile.json')
   const metadata = {
