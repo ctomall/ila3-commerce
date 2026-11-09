@@ -245,3 +245,17 @@ NAV_BASE_URL=http://127.0.0.1:3310 node scripts/crm-nav-nesting-check.mjs --chec
 2. **合并重复入口**：employee 可区里没有「同对象双入口」；被点名的 AI 智能体双入口（`config/ai-assistant/agents` vs `config/ai-agents`）不在 employee 权限内，且哪份权威是产品决策（C2/D12），本轮不猜。
 3. **技术/配置类入口**：employee 主侧栏已无此类入口（`pageContext:"settings"` + AppShell 过滤）；但导航 **payload** 里设置页仍会同时出现在 `groups` 与 `settingsSections`（服务端 `buildAdminNav` 不做 context 过滤）。要让基线也反映「视觉真实」需要改上游 `backendChrome`，不在本任务文件边界。
 4. **人员与排程 / 自动化与流程**并入五区：需改 `src/nav/nav-groups.json`（文件所有权外）。
+
+
+## 12. 跨表面重复：已知偏差（2026-11-09，第 65 轮）
+
+四个业务区已上线（工作台 / 销售业务 / 资料中心 / 管理后台）。剩下的问题不是分组，而是同一批页面被**两个表面**索引：
+
+| 事实 | 值 |
+|---|---|
+| 主区与设置区重复的 href | **11**：`/backend/webhooks`、`/backend/integrations`、`/backend/data-sync`、`/backend/payment-gateways`、`/backend/config/{sales,translations,scheduled-jobs,wms}`、`/backend/users`、`/backend/audit-logs`、`/backend/docs` |
+| 试过的修法 | 对上述 11 个页面加 `navHidden` 掉主区入口 |
+| 结果 | **失败并已回退**：`navHidden` 是全局的，设置区也一起变空（`settingsSections: []`），员工只能手打 URL 进配置 |
+| 根因 | 上游 `buildAdminNav` 不按 `pageContext` 过滤；设置区是对同一批页面的第二个索引 |
+
+**结论**：在不动上游的前提下，只能二选一——四个区 + 11 条重复，或者 0 条重复 + 设置区为空。选前者，因为“菜单里能点到配置”比“账面没有重复”更重要。要真正两者兼得，需要上游按 pageContext 过滤，属独立改动。
