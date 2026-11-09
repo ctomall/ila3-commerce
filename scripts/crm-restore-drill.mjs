@@ -10,9 +10,21 @@
  * the source, and fail if anything disagrees.
  *
  * What it proves: the archive is readable, the restore completes, and the restored
- * database has the same table count and the same row counts in the tables that matter.
- * What it does NOT prove: point-in-time recovery (no WAL archiving), backup retention, or
- * that a restore into a *different* PostgreSQL major version works.
+ * database reproduces the source's *structure* (4076 column facts, 1027 index
+ * definitions, 3005 constraint facts, 53 sequences, triggers and views) and the
+ * *contents* of the probe tables (row count plus a full-row digest — a restore that
+ * keeps the count but changes a value used to pass).
+ *
+ * The structural comparator is a module (`scripts/lib/catalog-digest.mjs`) and every run
+ * first proves it can go red: two throwaway schemas with four deliberate differences
+ * (extra index, extra column, dropped sequence, dropped foreign key) must be named.
+ * A comparison nobody has seen fail is a comment.
+ *
+ * What it does NOT prove: point-in-time recovery (no WAL archiving), backup retention,
+ * that a restore into a *different* PostgreSQL major version works, or that a CHECK
+ * constraint's predicate text survived (the comparator compares its presence, name and
+ * column set, because pg_dump's deparse round-trip rewrites equivalent expressions — a
+ * text comparison reported a difference that did not exist).
  *
  * Safety: refuses any database name that is not `om_restore_*` or that equals the source
  * database, refuses to drop a database this run did not create unless `--reuse` is
@@ -25,6 +37,7 @@ import path from 'node:path'
 import os from 'node:os'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+import { catalogFacts, factsDigest, diffFacts, describeDiff, rowDigest } from './lib/catalog-digest.mjs'
 
 const args = {}
 for (let i = 2; i < process.argv.length; i++) {
@@ -93,14 +106,67 @@ const count = (db, sql) => {
   return Number(value)
 }
 
-/** The tables whose row counts must survive a restore. Stable, non-empty, business-real. */
+/**
+ * Negative control for the structural comparator.
+ *
+ * A comparison that has never been seen to fail is a comment. This builds two throwaway
+ * schemas in the drill database, proves they compare equal, then introduces four known
+ * differences one at a time (an extra index, an extra column, a dropped sequence, a
+ * dropped foreign key) and requires each to be named. It runs on every drill, so the
+ * comparator cannot quietly rot into always-equal.
+ */
+function selfTestComparator() {
+  const A = 'om_selftest_a'
+  const B = 'om_selftest_b'
+  const psql = (sql) => sudoPsql(dbName, sql)
+  const ddl = (s) => `
+    create table ${s}.t(id serial primary key, v text not null, k int);
+    create index t_k_idx on ${s}.t(k);
+    create table ${s}.u(id int references ${s}.t(id));
+    create sequence ${s}.seq;`
+  const clean = () => psql(`drop schema if exists ${A} cascade; drop schema if exists ${B} cascade`)
+  const checks = []
+  try {
+    clean()
+    psql(`create schema ${A}; create schema ${B}; ${ddl(A)} ${ddl(B)}`)
+    const same = diffFacts(catalogFacts(psql, { schema: A }), catalogFacts(psql, { schema: B }))
+    checks.push(['两个相同 schema 必须比出 0 处差异', same.total === 0])
+    const mutations = [
+      ['多加一个索引', `create index t_extra on ${B}.t(k)`, 'indexes'],
+      ['多出一列', `alter table ${B}.t add column c text`, 'columns'],
+      ['丢掉序列', `drop sequence ${B}.seq`, 'sequences'],
+      ['丢掉外键', `alter table ${B}.u drop constraint u_id_fkey`, 'constraints'],
+    ]
+    for (const [label, sql, kind] of mutations) {
+      psql(sql)
+      const diff = diffFacts(catalogFacts(psql, { schema: A }), catalogFacts(psql, { schema: B }))
+      const named = Boolean(diff.diffs[kind]) && diff.total > 0
+      checks.push([`${label} → 必须点名 ${kind}`, named])
+      if (!named) console.log(`   self-test detail: ${label} 的差异被漏掉了：${JSON.stringify(diff)}`)
+    }
+  } finally {
+    try {
+      clean()
+    } catch {}
+  }
+  const bad = checks.filter(([, ok]) => !ok)
+  if (bad.length > 0) fail('self-test', `结构比对的反向自证失败：${bad.map(([label]) => label).join('; ')}`)
+  record('self-test', true, `${checks.length} 项反向自证通过（相同→0 差异；多索引/多列/丢序列/丢外键各自被点名）`)
+}
+
+/**
+ * The tables whose contents must survive a restore. Stable, non-empty, business-real.
+ * Each is compared by row count AND by a full-row digest: a restore that keeps the
+ * count but changes a value passes a count-only check, and that is exactly the failure
+ * a restore drill exists to catch.
+ */
 const PROBES = [
-  ['tenants', 'select count(*) from tenants'],
-  ['users', 'select count(*) from users'],
-  ['dictionaries', 'select count(*) from dictionaries'],
-  ['dictionary_entries', 'select count(*) from dictionary_entries'],
-  ['sales_quotes', 'select count(*) from sales_quotes'],
-  ['mikro_orm_migrations_sales', 'select count(*) from mikro_orm_migrations_sales'],
+  'tenants',
+  'users',
+  'dictionaries',
+  'dictionary_entries',
+  'sales_quotes',
+  'mikro_orm_migrations_sales',
 ]
 
 // SIGKILL cannot be caught, but SIGINT/SIGTERM can, and those are what Ctrl-C and systemd
@@ -166,6 +232,8 @@ try {
   const create = spawnSync('sudo', ['-n', '-u', 'postgres', 'createdb', '-O', 'mercato', dbName], { encoding: 'utf8' })
   if (create.status !== 0) fail('restore', `createdb failed: ${(create.stderr || '').trim().slice(0, 300)}`)
   created = true
+  // Prove the comparator can go red before trusting its green.
+  selfTestComparator()
   const restoreUrl = withDb(srcUrl, dbName)
   const restoreStart = Date.now()
   const restore = spawnSync('pg_restore', ['--no-owner', '--no-privileges', '-d', restoreUrl, dumpPath], {
@@ -188,15 +256,37 @@ try {
   if (srcTables !== dstTables) fail('compare.tables', `${dstTables} tables restored vs ${srcTables} in the source`)
   record('compare.tables', true, `${dstTables} tables restored, identical count`)
 
+  // Same table names are not the same schema: indexes, constraints, sequences, triggers
+  // and views can all be gone while every table still exists. Hash the definitions.
+  const srcFacts = catalogFacts((sql) => sudoPsql(srcDb, sql))
+  const dstFacts = catalogFacts((sql) => sudoPsql(dbName, sql))
+  const structural = diffFacts(srcFacts, dstFacts)
+  if (structural.total > 0) fail('compare.catalog', `恢复后的结构与源库不一致 — ${describeDiff(structural.diffs)}`)
+  const dstSum = factsDigest(dstFacts)
+  record(
+    'compare.catalog',
+    true,
+    `${Object.entries(dstSum.counts)
+      .map(([kind, n]) => `${kind} ${n}`)
+      .join(' / ')}；定义摘要 ${dstSum.digest.slice(0, 12)} 与源库一致`,
+  )
+
   const mismatches = []
-  for (const [label, sql] of PROBES) {
-    const before = count(srcDb, sql)
-    const after = count(dbName, sql)
-    if (before !== after) mismatches.push(`${label}: ${before} -> ${after}`)
-    else if (before === 0) mismatches.push(`${label}: both sides are 0, this probe proves nothing`)
+  for (const table of PROBES) {
+    const before = rowDigest((sql) => sudoPsql(srcDb, sql), table)
+    const after = rowDigest((sql) => sudoPsql(dbName, sql), table)
+    if (before.digest === null || after.digest === null) {
+      mismatches.push(`${table}: ${before.skipped ?? after.skipped}`)
+    } else if (before.rows !== after.rows) {
+      mismatches.push(`${table}: ${before.rows} -> ${after.rows} 行`)
+    } else if (before.rows === 0) {
+      mismatches.push(`${table}: 两侧都是 0 行，这条探针什么也没证明`)
+    } else if (before.digest !== after.digest) {
+      mismatches.push(`${table}: 行数相同（${before.rows}）但整表内容摘要不同`)
+    }
   }
   if (mismatches.length > 0) fail('compare.rows', mismatches.join(' | '))
-  record('compare.rows', true, `${PROBES.length} row-count probes match (and none is vacuously zero)`)
+  record('compare.rows', true, `${PROBES.length} 张表的行数与整表内容摘要都一致（值级比对，不只比计数）`)
 
   // The bookkeeping table proves the *content* survived, not just the schema.
   const migrationRows = count(dbName, 'select count(*) from mikro_orm_migrations_sales')

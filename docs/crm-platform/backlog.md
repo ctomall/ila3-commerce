@@ -102,12 +102,13 @@
 | # | 事项 | 产物 | 证据 | 状态 |
 |---|---|---|---|---|
 | M8-1 | 试用；两种口径分别压测 | `09-trial.md` §2 §6 | 方案已写；执行待 M4 通过 | blocked |
-| M8-2 | 备份恢复、版本固定、灰度回滚 | 同上 | **备份恢复已自动化**：`scripts/crm-restore-drill.mjs` 成为第 18 道门——dump 13.6 MB / 2.0 s，`pg_restore` 4.8 s，314 表与 6 项行数逐项比对，全程只读源库；三条负向对照（截断归档→FAIL、预存库→拒绝且不删、指向源库→拒绝）|
+| M8-2 | 备份恢复、版本固定、灰度回滚 | 同上 | **备份恢复已自动化且比对到结构与内容**：`scripts/crm-restore-drill.mjs` 第 18 道门——dump 14.7 MB / 2.1 s，`pg_restore` 4.5 s；结构摘要覆盖 4076 列 / 1027 索引 / 3005 约束 / 53 序列（`scripts/lib/catalog-digest.mjs`），探针表另比整表内容摘要。**比对器每次运行先做反向自证**（同构 schema→0 差异；多索引/多列/丢序列/丢外键各自必须被点名）。真实数据反向证据：删 `sales_quotes_acceptance_token_unique` → 点名缺失索引与约束；改一行 `users.email`（行数 3→3 不变）→ 内容摘要判红，旧实现两种都放行。既有负向对照仍在（截断归档→FAIL、预存库→拒绝且不删、指向源库→拒绝）| done（结构+值级）|
 | M8-2b | 版本固定与灰度回滚 | 同上 | 需发布决策（镜像/版本钉住、回滚剧本），依赖 ①迁移与生产发布批准 | todo |
 | M8-3 | 四层完成口径 | `09-trial.md` §1 | 四层判据 + 拒收条件 | done（口径） |
 | M8-4 | 字典名称 CR 清理的审计与可回滚演练 | 用户批准 | `scripts/crm-dict-cr-audit.mjs`（只读）：19/19 行带尾随 CR、291 条条目 0 CR、同 scope 无撞名；`dict-cr-cleanup.sql` 在事务内干跑六项断言全中、回滚逆操作实测恢复 19 条；生产库仍 19/19 未变 | 待批准执行 |
 | M8-5 | 独立 QA 复核第 25–28 轮新增（三个只读 Agent） | `audit/f-qa-round29.md` | 6 条 P1/P2 可复现缺陷全部当轮修掉并各配负向对照；5 条明确列为"承认但不修"并写进文档；修完单元 143、门禁 16/16 | done |
 | M8-6 | 变异门：证明规则层测试真的会红 | QA 结论 | `scripts/crm-mutation-check.mjs`：7 个变异全部被杀；存活/锚点失效都让门失败；改源在 finally 按 SHA-256 还原 + exit 兜底；三条路径实测 | done |
+| M8-8 | 报告自带证据：PASS 行不再是空话，且记录工作树 | 本轮 | `crm-verify-all.mjs`：PASS 行写入该门禁自己的摘要行（可 `evidence: /re/` 指名），报告头记工作树干净/脏与未提交项；新增 `--require-clean`，脏树判失败（实测 exit 1）。同时复核并按反向证据关掉 QA 挂账 D2/D6/D13–D15/D17–D19/D21/D22；D17 本轮实测：给 `postcss.config.mjs` 加一行 → 新鲜度门 exit 1，还原 → PASS。剩 D16（无路由可挂）、D20（带写权限仍可伪造，未签名）仍开 | done |
 | M8-7 | 构建新鲜度门：验证「跑着的就是当前源码」 | 本轮 | 构建记录 `03427c5@20:04` 落后于 HEAD，但 dist 里已含 20:08 提交的内容（构建先于提交，属正常）。判据因此改为：运行时文件**内容**在构建后变过、或进程启动早于构建，两条各有负向对照。顺手发现变异门改写源码会顶掉 mtime，与新鲜度门互相打架，已改为还原时保留 mtime。随后真重建（BUILD_OK，commit `5e82006`），21 门全绿 | done |
 
 ## M1 收敛执行记录（C3–C4 已完成）
@@ -126,10 +127,10 @@
 |---|---|---|
 | 报价/订单修复 | `scripts/crm-quote-regression.mjs` | 4 通过 + 1 已知遗留（字典名称 19 条 CR；已审计+事务内干跑，见 `scripts/crm-dict-cr-audit.mjs`，执行待批准） |
 | 授权行为基线 | `scripts/crm-security-probe.mjs` | 14 例符合预期、零写入 |
-| M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 3 通过 / 4 阻塞 / 1 用例无效 |
+| M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 5 通过 / 2 弱通过 / 4 阻塞 / 1 用例无效（阻塞项见 M4 表） |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
-| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 14/14 通过，0 SKIP（PASS/FAIL/SKIP 分开计） |
+| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 21/21 通过，0 SKIP（PASS/FAIL/SKIP 分开计）；PASS 行自带门禁摘要，报告头记工作树，`--require-clean` 脏树即失败 |
 | 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 导航嵌套 | `scripts/crm-nav-nesting-check.mjs` | 5 个「有父未嵌套」+ 1 个无父页面 |
 | robots 合规 | `src/lib/leadgen/robots.ts` | 11 测试（含 RFC 9309 分组合并） |

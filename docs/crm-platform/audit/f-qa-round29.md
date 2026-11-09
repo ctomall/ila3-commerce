@@ -55,13 +55,19 @@
 
 **未修，仍开着**（写在 `backlog` 与本节，不当已解决）：
 
-| # | 缺陷 |
-|---|---|
-| D2 | 内容比对只对 mtime 晚于构建的文件生效；把 mtime 回拨即绕过。彻底修需要构建时记录运行树哈希 |
-| D6 | SIGKILL 后源码留在变异态；磁盘 backup 写了但从不读取（下次运行先删） |
-| D13/D14/D15 | nav-nesting 只比 href 集合：`parent`/`title`/`group` 变化、child 挂错父级、roots 数漂移都不红（全量门集里 `nav-baseline` 兜底） |
-| D16 | contract 注释声称"跨租户读 404 而非 403"，代码里没实现 |
-| D17 | `postcss.config.*` 在运行时模式里但不被扫描 |
-| D18/D19 | restore 只比表数与 6 个行数：丢索引/FK/sequence、值损坏都 PASS；`source.guard` 无条件 PASS |
-| D20 | `build-info.json` 未跟踪未签名，改一个字段就能翻转结论 |
-| D21/D22 | verify-all 的 PASS 行 note 恒空、报告不记录工作树脏 |
+| # | 缺陷 | 现状（本轮复核） |
+|---|---|---|
+| D16 | contract 注释声称"跨租户读 404 而非 403"，代码里没实现 | 仍开着。leadgen API 路由本身还没落地（M5 阻塞），404/403 语义无对象可挂；契约注释已标注为"待实现规则"，不当作已实现 |
+| D20 | `build-info.json` 未跟踪未签名，改一个字段就能翻转结论 | 部分缓解、仍开着。第 9850c70 起记录带 `treeDigest`（373 个运行文件的 sha256），只改 `status`/`commit` 而不同步改内容已会红；有写权限的人仍可连摘要一起伪造，未签名的事实没变 |
+
+**已修，逐条带反向证据**（第 37–45 轮补记，覆盖此前"未修"表里的过时条目）：
+
+| # | 缺陷 | 修法 | 反向证据 |
+|---|---|---|---|
+| D2 | 内容比对只对 mtime 晚于构建的文件生效，回拨 mtime 即绕过 | 构建时记录运行树内容摘要，门重算后比对 | 回拨 mtime → 仍红（`treeDigest` 不符） |
+| D6 | SIGKILL 后源码留在变异态，备份写了从不读取 | 下次运行先读备份恢复，再删 | 人为留下变异态 → 恢复后门才继续 |
+| D13/D14/D15 | nav-nesting 只比 href 集合，`parent`/`title`/`group`、挂错父级、roots 漂移都不红 | 改比 `href\|parent\|title\|group` 记录，roots 数变动即红 | 改任一字段 → 红（`95a18ff`） |
+| D17 | `postcss.config.*` 在运行时模式里但不被扫描 | 已在 `RUNTIME_ROOT_FILES` 并计入 `treeDigest` | 本轮实测：给 `postcss.config.mjs` 追加一行 → 门 exit 1；还原 → PASS |
+| D18 | restore 只比表数与 6 个行数：丢索引/FK/sequence、值损坏都 PASS | 结构比对（4076 列 / 1027 索引 / 3005 约束 / 53 序列 / 触发器 / 视图）＋ 探针表整表内容摘要；比对器每次运行先做 4 项反向自证 | 删一个真实 UNIQUE 约束 → 点名索引与约束；行数 3→3 但改一行 → 内容摘要不同被判红 |
+| D19 | `source.guard` 无条件 PASS | 改为比较演练前后源库指纹 | 源库变动 → FAIL（`e0356f3`） |
+| D21/D22 | verify-all 的 PASS 行 note 恒空、报告不记录工作树脏 | PASS 行写门禁自己的摘要行；报告头记工作树状态；`--require-clean` 脏树即失败 | 本轮实测：脏树 + `--require-clean` → exit 1，报告头写"**脏**（7 项未提交…）" |
