@@ -45,18 +45,7 @@
     "label": "管理后台",
     "order": 40,
     "members": [
-      "workflows.module.name",
-      "backend.nav.externalSystems",
-      "settings.sections.directory",
-      "settings.sections.featureToggles",
-      "settings.sections.dataDesigner",
-      "settings.sections.moduleConfigs",
-      "settings.sections.system",
-      "settings.sections.auth",
-      "backend.nav.security",
-      "backend.nav.developers",
-      "customer_accounts.settings.section",
-      "appShell.sidebarCustomizationGroup"
+      "workflows.module.name"
     ]
   }
 ]
