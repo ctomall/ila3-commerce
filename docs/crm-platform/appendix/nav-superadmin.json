@@ -12,17 +12,7 @@
           "defaultTitle": "公司",
           "enabled": true,
           "iconName": "building2",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/customers/companies/create",
-              "href": "/backend/customers/companies/create",
-              "title": "创建公司",
-              "defaultTitle": "创建公司",
-              "enabled": true,
-              "order": 10
-            }
-          ]
+          "order": 10
         },
         {
           "id": "/backend/customers/deals",
@@ -33,14 +23,6 @@
           "iconName": "briefcase",
           "order": 10,
           "children": [
-            {
-              "id": "/backend/customers/deals/create",
-              "href": "/backend/customers/deals/create",
-              "title": "创建商机",
-              "defaultTitle": "创建商机",
-              "enabled": true,
-              "order": 10
-            },
             {
               "id": "/backend/customers/deals/map",
               "href": "/backend/customers/deals/map",
@@ -84,17 +66,7 @@
           "defaultTitle": "联系人",
           "enabled": true,
           "iconName": "users",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/customers/people/create",
-              "href": "/backend/customers/people/create",
-              "title": "创建联系人",
-              "defaultTitle": "创建联系人",
-              "enabled": true,
-              "order": 10
-            }
-          ]
+          "order": 10
         },
         {
           "id": "/backend/config/customers/deals",
@@ -103,15 +75,6 @@
           "defaultTitle": "商机设置",
           "enabled": true,
           "order": 50
-        },
-        {
-          "id": "/backend/sales/documents/create",
-          "href": "/backend/sales/documents/create",
-          "title": "创建销售单据",
-          "defaultTitle": "创建销售单据",
-          "enabled": true,
-          "iconName": "file-text",
-          "order": 40
         },
         {
           "id": "/backend/sales/quotes",
@@ -147,14 +110,6 @@
               "defaultTitle": "渠道报价",
               "enabled": true,
               "order": 40
-            },
-            {
-              "id": "/backend/sales/channels/create",
-              "href": "/backend/sales/channels/create",
-              "title": "创建渠道",
-              "defaultTitle": "创建渠道",
-              "enabled": true,
-              "order": 121
             }
           ]
         }
@@ -172,17 +127,7 @@
           "defaultTitle": "产品与服务",
           "enabled": true,
           "iconName": "package",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/products/create",
-              "href": "/backend/catalog/products/create",
-              "title": "创建产品",
-              "defaultTitle": "创建产品",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/catalog/prices",
@@ -191,17 +136,7 @@
           "defaultTitle": "价格规则",
           "enabled": true,
           "iconName": "tag",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/prices/create",
-              "href": "/backend/catalog/prices/create",
-              "title": "创建价格规则",
-              "defaultTitle": "创建价格规则",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/catalog/categories",
@@ -210,17 +145,7 @@
           "defaultTitle": "分类",
           "enabled": true,
           "iconName": "folder-tree",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/categories/create",
-              "href": "/backend/catalog/categories/create",
-              "title": "创建分类",
-              "defaultTitle": "创建分类",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/wms",
@@ -346,17 +271,7 @@
               "defaultTitle": "供应商政策",
               "enabled": true,
               "iconName": "truck",
-              "order": 40,
-              "children": [
-                {
-                  "id": "/backend/warranty_claims/vendor-policies/create",
-                  "href": "/backend/warranty_claims/vendor-policies/create",
-                  "title": "新建供应商政策",
-                  "defaultTitle": "新建供应商政策",
-                  "enabled": true,
-                  "order": 10000
-                }
-              ]
+              "order": 40
             },
             {
               "id": "/backend/warranty_claims/settings",
@@ -374,17 +289,7 @@
               "defaultTitle": "保修登记",
               "enabled": true,
               "iconName": "badge-check",
-              "order": 40,
-              "children": [
-                {
-                  "id": "/backend/warranty_claims/registrations/create",
-                  "href": "/backend/warranty_claims/registrations/create",
-                  "title": "新建登记",
-                  "defaultTitle": "新建登记",
-                  "enabled": true,
-                  "order": 10000
-                }
-              ]
+              "order": 40
             },
             {
               "id": "/backend/warranty_claims/troubleshooting-guides",
@@ -393,25 +298,7 @@
               "defaultTitle": "排障指南",
               "enabled": true,
               "iconName": "help-circle",
-              "order": 40,
-              "children": [
-                {
-                  "id": "/backend/warranty_claims/troubleshooting-guides/create",
-                  "href": "/backend/warranty_claims/troubleshooting-guides/create",
-                  "title": "新建排障指南",
-                  "defaultTitle": "新建排障指南",
-                  "enabled": true,
-                  "order": 10000
-                }
-              ]
-            },
-            {
-              "id": "/backend/warranty_claims/create",
-              "href": "/backend/warranty_claims/create",
-              "title": "新建工单",
-              "defaultTitle": "新建工单",
-              "enabled": true,
-              "order": 10000
+              "order": 40
             }
           ]
         },
@@ -504,17 +391,7 @@
           "defaultTitle": "资源",
           "enabled": true,
           "iconName": "box",
-          "order": 31,
-          "children": [
-            {
-              "id": "/backend/resources/resources/create",
-              "href": "/backend/resources/resources/create",
-              "title": "创建资源",
-              "defaultTitle": "创建资源",
-              "enabled": true,
-              "order": 31.1
-            }
-          ]
+          "order": 31
         },
         {
           "id": "/backend/staff/teams",
@@ -523,17 +400,7 @@
           "defaultTitle": "团队",
           "enabled": true,
           "iconName": "users",
-          "order": 79,
-          "children": [
-            {
-              "id": "/backend/staff/teams/create",
-              "href": "/backend/staff/teams/create",
-              "title": "创建团队",
-              "defaultTitle": "创建团队",
-              "enabled": true,
-              "order": 79.5
-            }
-          ]
+          "order": 79
         },
         {
           "id": "/backend/staff/team-members",
@@ -660,17 +527,7 @@
           "enabled": true,
           "pageContext": "settings",
           "iconName": "coins",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/currencies/create",
-              "href": "/backend/currencies/create",
-              "title": "创建货币",
-              "defaultTitle": "创建货币",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 10
         },
         {
           "id": "/backend/exchange-rates",
@@ -680,17 +537,7 @@
           "enabled": true,
           "pageContext": "settings",
           "iconName": "refresh-cw",
-          "order": 20,
-          "children": [
-            {
-              "id": "/backend/exchange-rates/create",
-              "href": "/backend/exchange-rates/create",
-              "title": "创建汇率",
-              "defaultTitle": "创建汇率",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 20
         },
         {
           "id": "/backend/config/currency-fetching",
@@ -709,17 +556,7 @@
           "defaultTitle": "业务规则",
           "enabled": true,
           "iconName": "shield-check",
-          "order": 40,
-          "children": [
-            {
-              "id": "/backend/rules/create",
-              "href": "/backend/rules/create",
-              "title": "创建业务规则",
-              "defaultTitle": "创建业务规则",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 40
         },
         {
           "id": "/backend/sets",
@@ -728,17 +565,7 @@
           "defaultTitle": "规则集",
           "enabled": true,
           "iconName": "layers",
-          "order": 120,
-          "children": [
-            {
-              "id": "/backend/sets/create",
-              "href": "/backend/sets/create",
-              "title": "创建规则集",
-              "defaultTitle": "创建规则集",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 120
         },
         {
           "id": "/backend/logs",
@@ -891,59 +718,6 @@
           "enabled": true,
           "iconName": "phone-call",
           "order": 10
-        }
-      ]
-    },
-    {
-      "id": "feature_toggles.nav.group",
-      "name": "功能开关",
-      "defaultName": "功能开关",
-      "items": [
-        {
-          "id": "/backend/feature-toggles/global/create",
-          "href": "/backend/feature-toggles/global/create",
-          "title": "创建功能开关",
-          "defaultTitle": "创建功能开关",
-          "enabled": true,
-          "order": 100
-        }
-      ]
-    },
-    {
-      "id": "entities.nav.group",
-      "name": "数据设计器",
-      "defaultName": "数据设计器",
-      "items": [
-        {
-          "id": "/backend/entities/user/create",
-          "href": "/backend/entities/user/create",
-          "title": "创建实体",
-          "defaultTitle": "创建实体",
-          "enabled": true,
-          "order": 11
-        }
-      ]
-    },
-    {
-      "id": "auth.nav.group",
-      "name": "身份与权限",
-      "defaultName": "身份与权限",
-      "items": [
-        {
-          "id": "/backend/users/create",
-          "href": "/backend/users/create",
-          "title": "创建用户",
-          "defaultTitle": "创建用户",
-          "enabled": true,
-          "order": 10000
-        },
-        {
-          "id": "/backend/roles/create",
-          "href": "/backend/roles/create",
-          "title": "创建角色",
-          "defaultTitle": "创建角色",
-          "enabled": true,
-          "order": 10000
         }
       ]
     },
@@ -1962,16 +1736,7 @@
           "labelKey": "currencies.page.title",
           "href": "/backend/currencies",
           "order": 10,
-          "iconName": "coins",
-          "children": [
-            {
-              "id": "backend-currencies-create",
-              "label": "创建货币",
-              "labelKey": "currencies.create.title",
-              "href": "/backend/currencies/create",
-              "order": 100
-            }
-          ]
+          "iconName": "coins"
         },
         {
           "id": "backend-exchange-rates",
@@ -1979,16 +1744,7 @@
           "labelKey": "exchangeRates.page.title",
           "href": "/backend/exchange-rates",
           "order": 20,
-          "iconName": "refresh-cw",
-          "children": [
-            {
-              "id": "backend-exchange-rates-create",
-              "label": "创建汇率",
-              "labelKey": "exchangeRates.create.title",
-              "href": "/backend/exchange-rates/create",
-              "order": 100
-            }
-          ]
+          "iconName": "refresh-cw"
         },
         {
           "id": "backend-config-currency-fetching",
@@ -2101,9 +1857,7 @@
     "/backend/config/ai-agents",
     "/backend/config/system-update",
     "/backend/currencies",
-    "/backend/currencies/create",
     "/backend/exchange-rates",
-    "/backend/exchange-rates/create",
     "/backend/config/currency-fetching",
     "/backend/directory",
     "/backend/directory/branding",

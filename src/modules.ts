@@ -112,6 +112,54 @@ export const enabledModules: ModuleEntry[] = [
           'agent_orchestrator.nav.group',
         ],
       },
+      // M7 导航收敛（对象级动作从顶层菜单下沉到列表页操作区）。
+      //
+      // These routes are *object-level mutations*, not destinations: every one of them is
+      // reached from the create button of its own list surface, so keeping them in the
+      // sidebar renders the same action twice (one of the two paths is always a detour).
+      // `navHidden` only removes the nav entry — the route, its permissions and its
+      // in-page button stay untouched, so the action is still one click away where the
+      // user already is. The rule applied to the whole class, not just the first ten:
+      // a route is hidden only when its list surface declares `createHref` / a `Link`
+      // to it (verified per surface, not assumed):
+      //   customers companies|people|deals      -> Link / createHref
+      //   sales channels; quotes+orders (SalesDocumentsTable) -> Link (documents/create?kind=…)
+      //   catalog products|prices|categories    -> createHref (prices/categories gated on canManage)
+      //   warranty claims|registrations|vendor-policies|troubleshooting-guides -> Link / createHref
+      //   auth users|roles, currencies, exchange-rates, rules, sets,
+      //   resources, staff teams, feature toggles, user entities -> createHref / Link
+      // Left untouched on purpose: /backend/definitions/create and
+      // /backend/resources/resource-types/create — their list surfaces do NOT expose a
+      // create action, so hiding the menu entry would remove the only way in.
+      //
+      // Declared on the module that already owns the app-wide nav ordering so the
+      // navigation policy lives in one place; the override dispatcher is app-wide.
+      routes: {
+        pages: {
+          'backend:/backend/customers/companies/create': { metadata: { navHidden: true } },
+          'backend:/backend/customers/people/create': { metadata: { navHidden: true } },
+          'backend:/backend/customers/deals/create': { metadata: { navHidden: true } },
+          'backend:/backend/sales/channels/create': { metadata: { navHidden: true } },
+          'backend:/backend/sales/documents/create': { metadata: { navHidden: true } },
+          'backend:/backend/catalog/products/create': { metadata: { navHidden: true } },
+          'backend:/backend/catalog/prices/create': { metadata: { navHidden: true } },
+          'backend:/backend/catalog/categories/create': { metadata: { navHidden: true } },
+          'backend:/backend/warranty_claims/create': { metadata: { navHidden: true } },
+          'backend:/backend/warranty_claims/registrations/create': { metadata: { navHidden: true } },
+          'backend:/backend/warranty_claims/vendor-policies/create': { metadata: { navHidden: true } },
+          'backend:/backend/warranty_claims/troubleshooting-guides/create': { metadata: { navHidden: true } },
+          'backend:/backend/users/create': { metadata: { navHidden: true } },
+          'backend:/backend/roles/create': { metadata: { navHidden: true } },
+          'backend:/backend/currencies/create': { metadata: { navHidden: true } },
+          'backend:/backend/exchange-rates/create': { metadata: { navHidden: true } },
+          'backend:/backend/rules/create': { metadata: { navHidden: true } },
+          'backend:/backend/sets/create': { metadata: { navHidden: true } },
+          'backend:/backend/resources/resources/create': { metadata: { navHidden: true } },
+          'backend:/backend/staff/teams/create': { metadata: { navHidden: true } },
+          'backend:/backend/feature-toggles/global/create': { metadata: { navHidden: true } },
+          'backend:/backend/entities/user/create': { metadata: { navHidden: true } },
+        },
+      },
     },
   },
   { id: 'auth', from: '@open-mercato/core' },

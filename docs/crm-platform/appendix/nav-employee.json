@@ -12,17 +12,7 @@
           "defaultTitle": "公司",
           "enabled": true,
           "iconName": "building2",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/customers/companies/create",
-              "href": "/backend/customers/companies/create",
-              "title": "创建公司",
-              "defaultTitle": "创建公司",
-              "enabled": true,
-              "order": 10
-            }
-          ]
+          "order": 10
         },
         {
           "id": "/backend/customers/deals",
@@ -33,14 +23,6 @@
           "iconName": "briefcase",
           "order": 10,
           "children": [
-            {
-              "id": "/backend/customers/deals/create",
-              "href": "/backend/customers/deals/create",
-              "title": "创建商机",
-              "defaultTitle": "创建商机",
-              "enabled": true,
-              "order": 10
-            },
             {
               "id": "/backend/customers/deals/map",
               "href": "/backend/customers/deals/map",
@@ -84,17 +66,7 @@
           "defaultTitle": "联系人",
           "enabled": true,
           "iconName": "users",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/customers/people/create",
-              "href": "/backend/customers/people/create",
-              "title": "创建联系人",
-              "defaultTitle": "创建联系人",
-              "enabled": true,
-              "order": 10
-            }
-          ]
+          "order": 10
         },
         {
           "id": "/backend/config/customers/deals",
@@ -103,15 +75,6 @@
           "defaultTitle": "商机设置",
           "enabled": true,
           "order": 50
-        },
-        {
-          "id": "/backend/sales/documents/create",
-          "href": "/backend/sales/documents/create",
-          "title": "创建销售单据",
-          "defaultTitle": "创建销售单据",
-          "enabled": true,
-          "iconName": "file-text",
-          "order": 40
         },
         {
           "id": "/backend/sales/quotes",
@@ -147,14 +110,6 @@
               "defaultTitle": "渠道报价",
               "enabled": true,
               "order": 40
-            },
-            {
-              "id": "/backend/sales/channels/create",
-              "href": "/backend/sales/channels/create",
-              "title": "创建渠道",
-              "defaultTitle": "创建渠道",
-              "enabled": true,
-              "order": 121
             }
           ]
         }
@@ -172,17 +127,7 @@
           "defaultTitle": "产品与服务",
           "enabled": true,
           "iconName": "package",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/products/create",
-              "href": "/backend/catalog/products/create",
-              "title": "创建产品",
-              "defaultTitle": "创建产品",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/catalog/prices",
@@ -191,17 +136,7 @@
           "defaultTitle": "价格规则",
           "enabled": true,
           "iconName": "tag",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/prices/create",
-              "href": "/backend/catalog/prices/create",
-              "title": "创建价格规则",
-              "defaultTitle": "创建价格规则",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/catalog/categories",
@@ -210,17 +145,7 @@
           "defaultTitle": "分类",
           "enabled": true,
           "iconName": "folder-tree",
-          "order": 30,
-          "children": [
-            {
-              "id": "/backend/catalog/categories/create",
-              "href": "/backend/catalog/categories/create",
-              "title": "创建分类",
-              "defaultTitle": "创建分类",
-              "enabled": true,
-              "order": 10000
-            }
-          ]
+          "order": 30
         },
         {
           "id": "/backend/wms",
@@ -346,25 +271,7 @@
               "defaultTitle": "保修登记",
               "enabled": true,
               "iconName": "badge-check",
-              "order": 40,
-              "children": [
-                {
-                  "id": "/backend/warranty_claims/registrations/create",
-                  "href": "/backend/warranty_claims/registrations/create",
-                  "title": "新建登记",
-                  "defaultTitle": "新建登记",
-                  "enabled": true,
-                  "order": 10000
-                }
-              ]
-            },
-            {
-              "id": "/backend/warranty_claims/create",
-              "href": "/backend/warranty_claims/create",
-              "title": "新建工单",
-              "defaultTitle": "新建工单",
-              "enabled": true,
-              "order": 10000
+              "order": 40
             }
           ]
         },

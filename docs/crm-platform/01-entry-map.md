@@ -15,6 +15,8 @@
 | admin | 22 | 150 | 58 | 300 | `appendix/nav-admin.json` |
 | employee | 12 | **74** | 11 | 117 | `appendix/nav-employee.json` |
 
+> **2026-11-09 收敛后（M7，见 §11）**：superadmin 22→**19** 组 / 152→**130** 主区条目；admin 22→19 / 150→**128**；employee 12 组不变 / 74→**64**。减少的 22 个（employee 10 个）全部是「对象级创建动作」的独立菜单项，动作本身仍在列表页（逐页用 `createHref`/`Link` 核对）。设置区 superadmin 60→58、admin 58→56（货币/汇率两个子快捷方式），employee 11 不变。基线与快照已按新构建重录。
+
 静态面（子审计 A，可复跑）：后端页 **270**（47 模块）· 静态可见 **152**（主 92 = 47 根 + 45 子；设置 58；profile 2）——这是**静态声明**口径，与上面表格的**服务端 payload** 口径不同名同值，别混用· navHidden 89 · 动态页 76 · API **701**（676 唯一）。
 
 ## 2. 分区现状（superadmin 视角）
@@ -143,3 +145,103 @@
 **可复跑的检测器**：`node scripts/crm-nav-nesting-check.mjs`（默认只报告，`--strict` 才作为门禁），输出 `appendix/nav-nesting.json`。
 
 C5 因此不算“未完成的收敛”，而是“已定位、且明确不该用补丁解决”。
+
+
+
+## 11. M7 可见收敛（2026-11-09，已落地并实测）
+
+> 载体：正式页面（核心 `customers` / `sales` / `catalog` / `warranty_claims` / `currencies` / `rules` / `resources` / `staff` / `auth` / `feature_toggles` / `entities` 模块的列表页），不是 `navHidden` 原型。
+> 机制：`src/modules.ts` 的 `overrides.routes.pages[*].metadata`（框架自带的 route-metadata override：`pageRouteMetadata.ts` → `registry.registerBackendRouteManifests` → 导航 payload），**不改 node_modules、不加 nav 后处理补丁、不动角色权限**。
+> 为什么用这个抓手：`navHidden` 只隐藏菜单项，路由、`requireFeatures`、列表页按钮全部不动；同一动作因此只剩「列表页操作区」一条入口，而不是两条。
+
+### 11.1 本轮改了什么（22 个入口，全部 navHidden；按同一判据筛完整一类）
+
+判据：**只有当该页面的列表/表格自身声明了 `createHref` 或指向它的 `Link` 时才隐藏**。逐页核对，不按名称猜。
+
+| 旧名称 / 路由 | 动作的真实位置（证据） | 处置 |
+|---|---|---|
+| 创建公司 `/backend/customers/companies/create` | `customers/companies/page.js` → `Link` | 下沉到客户列表 |
+| 创建联系人 `/backend/customers/people/create` | `customers/people/page.js` → `Link` | 下沉到联系人列表 |
+| 创建商机 `/backend/customers/deals/create` | `customers/deals/page.js` → `Link` | 下沉到商机列表 |
+| 创建渠道 `/backend/sales/channels/create` | `sales/channels/page.js` → `Link` | 下沉到销售渠道列表 |
+| 创建销售单据 `/backend/sales/documents/create` | `SalesDocumentsTable` → `?kind=quote|order` | 下沉到报价单 / 订单列表 |
+| 创建产品 `/backend/catalog/products/create` | `ProductsDataTable` → `createHref` | 下沉到产品列表 |
+| 创建价格规则 `/backend/catalog/prices/create` | `PricesDataTable` → `createHref: canManage ? …` | 下沉到价格规则列表 |
+| 创建分类 `/backend/catalog/categories/create` | `CategoriesDataTable` → `createHref: canManage ? …` | 下沉到分类列表 |
+| 新建工单 `/backend/warranty_claims/create` | `warranty_claims/page.js` → `Link` | 下沉到保修工单列表 |
+| 新建登记 `/backend/warranty_claims/registrations/create` | `registrations/page.js` → `Link` | 下沉到保修登记列表 |
+| 新建供应商政策 `/backend/warranty_claims/vendor-policies/create` | `createHref` | 下沉到供应商政策列表 |
+| 新建排障指南 `/backend/warranty_claims/troubleshooting-guides/create` | `createHref` | 下沉到排障指南列表 |
+| 创建用户 `/backend/users/create` | `auth/users/page.js` → `Link` | 下沉到管理后台「用户」列表 |
+| 创建角色 `/backend/roles/create` | `auth/roles/page.js` → `Link` | 下沉到管理后台「角色」列表 |
+| 创建货币 `/backend/currencies/create` | `createHref`（同时是 `settings.sections.org` 里「货币」的子快捷方式） | 下沉到货币列表；设置区「货币」入口保留 |
+| 创建汇率 `/backend/exchange-rates/create` | `createHref`（同上，「汇率」子快捷方式） | 下沉到汇率列表；设置区「汇率」入口保留 |
+| 创建业务规则 `/backend/rules/create` | `createHref` | 下沉到业务规则列表 |
+| 创建规则集 `/backend/sets/create` | `createHref` | 下沉到规则集列表 |
+| 创建资源 `/backend/resources/resources/create` | `createHref` | 下沉到资源列表 |
+| 创建团队 `/backend/staff/teams/create` | `createHref` | 下沉到团队列表 |
+| 创建功能开关 `/backend/feature-toggles/global/create` | `FeatureTogglesTable` → `createHref` | 下沉到全局开关列表 |
+| 创建实体 `/backend/entities/user/create` | `UserEntitiesTable` → `Link` + `createHref` | 下沉到自定义实体列表 |
+
+**刻意不动**：`/backend/definitions/create`、`/backend/resources/resource-types/create` —— 它们的列表页**没有**创建按钮，隐藏菜单项会删掉唯一入口。这不是遗漏，是判据的边界。
+
+副作用（正向）：`auth.nav.group`、`feature_toggles.nav.group`、`entities.nav.group` 三个组只剩这些「创建」项，隐藏后整组消失（超管/管理员 22→19 组）；employee 的 6 个业务分组一条不少。
+
+### 11.2 旧 → 新 · 五目标区映射（按现行 manifest 与真实页面，不按排除法）
+
+| 目标区 | 现行承载（真实页面） | 处置 |
+|---|---|---|
+| 工作台 | `/backend`（DashboardScreen） | **保留**；业务员首页角色化仍待 D14，不新建空分区 |
+| 客户开发 | **无正式承载**：开发任务 / 候选审核只有 `crm_prototype`（navHidden，不算交付），数据依赖 `leadgen_*` 迁移（未批） | **本轮不建分区**（§8 规则：没有真实承载就不建）；不拿原型冒充 |
+| 销售业务 | 组 `sales`：公司/联系人/商机（含地图、漏斗）/客户相关任务/日历/报价单/订单/销售渠道/渠道报价；组 `catalog`：产品与服务/价格规则/分类/运营看板(+7)/支付链接/结账模板/交易记录；组 `fulfillment`：保修工单(+登记/供应商政策/排障指南)/EUDR(+5) | **保留**；22 个「创建 X」**下沉**（见 11.1）；不合并地图/漏斗（同一对象的不同视图，不是重复入口） |
+| 资料中心 | 组 `comms`：文档/附件/消息/收件箱建议/通信渠道/通话记录 | **保留**（目录/模板/消息/附件职责不同，未发现同对象双入口） |
+| 管理后台 | 设置区（employee 11 条、admin 56 条、superadmin 58 条）+ `/backend/users`、`/backend/config/*`、`/backend/webhooks` 等 | **保留并复核归位**：这些页面的 `pageContext` 已是 `settings`，AppShell 的 `isMainItem()` 已把它们挡在主侧栏之外（`@open-mercato/ui/backend/AppShell.js` 的 `pageContext !== "main"` 与 `settingsPathPrefixes` 过滤）；本轮再把「创建用户/创建角色/创建功能开关/创建实体」从主区 payload 移除 |
+
+**两个区外保留（不硬塞进五区）**：`people`（我的请假/我的可用性/我的工作）是个人事务面，`automation`（工作流定义/实例/工作收件箱）是流程操作面——都是真实在用的入口，五区没有对应归属；要改名/并组必须改 `src/nav/nav-groups.json`（不在本次文件边界），列为待决而不是用隐藏菜单凑数。
+
+### 11.3 基线变化（相对旧基线：只有删除，没有新增/改名）
+
+| 角色 | 分组 | 主区条目(payload) | 设置区条目 | 主侧栏可见（AppShell 过滤后） |
+|---|---|---|---|---|
+| superadmin | 22→**19** | 152→**130** | 60→**58** | 根 40→**39** · 节点 85→**69** |
+| admin | 22→**19** | 150→**128** | 58→**56** | 根 40→**39** · 节点 85→**69** |
+| employee | 12（不变） | 74→**64** | 11（不变） | 根 30→**29** · 节点 60→**50** |
+
+- 删除的 22 条 = 11.1 全表；三组空组消失（auth / feature_toggles / entities）。
+- 设置区少 2 条（superadmin/admin）：`创建货币`、`创建汇率` 原本还是 `settings.sections.org` 里「货币」「汇率」的子快捷方式；列表页本身有新建按钮，故一并下沉。employee 的设置区 11 条不变。
+- `appendix/nav-nesting.json`：根入口 102→**97**；「有父页面却未嵌套」5→**1**（只剩 `/backend/config/customers/deals` —— 它是 settings 子页与父页 `pageGroupKey` 不一致，**未加补丁掩盖**）。
+
+### 11.4 验证命令与结果
+
+新构建（`next dev`，独立 `OM_DIST_DIR`、端口 3310，同一数据库）：
+
+```text
+NAV_CHECK_BASE_URL=http://127.0.0.1:3310 node scripts/nav-check.mjs
+  groups 19 / settings 8 / items 188 / duplicate hrefs 0 / issues 0
+
+NAV_BASE_URL=http://127.0.0.1:3310 node scripts/crm-nav-baseline.mjs --check
+  superadmin 130 / admin 128 / employee 64  → RESULT: PASS
+
+NAV_BASE_URL=http://127.0.0.1:3310 node scripts/crm-nav-nesting-check.mjs --check
+  1 条已知未嵌套入口与基线一致 → RESULT: PASS
+```
+
+**部署依赖（必须写明）**：生产 3000 仍服务 05:50 的旧构建（`mercato.service`，`.mercato/next`），默认 `node scripts/crm-nav-baseline.mjs --check`（指向 3000）会报「新增入口 创建公司…」等差异——那是**旧构建 vs 新基线**，不是回归失败。重建并切换后即一致；切换属于发布链路，不在本次子任务范围。
+
+### 11.5 正式界面闭环（employee 实测，真实落库 / 真实草稿）
+
+路径：`/backend/customers/companies`（客户列表）→ 点公司进 `/backend/customers/companies/<id>`（详情）→ 详情页「记录跟进」（Notes）或右上「写邮件 → 保存草稿」。
+
+| 动作 | 端点 | 结果 | 是否真实落库 | 是否外发 |
+|---|---|---|---|---|
+| 记录跟进 | `POST /api/customers/comments`（`customers.activities.manage`） | 201 + id；`GET ?entityId=…` 能读回同一条 | **是**（随后 DELETE 清理，200） | 否 |
+| 生成邮件草稿 | `POST /api/messages` + `isDraft:true`、`objects:[{customers,company,id}]`（`messages.compose`） | 201 + id；`GET /api/messages/<id>` 返回 `isDraft:true`、`sentAt:null`；drafts 文件夹 `status:"draft"` | **是**（随后 DELETE 清理，200） | **否**（`sendViaEmail:false`、无 `sentAt`） |
+
+两个写动作都走现有命令/CRUD，没有引入 leadgen 迁移，也没有新增表。
+
+### 11.6 未完成 / 明确不做
+
+1. **客户开发区**：仍无正式承载（leadgen 迁移未批）。原型六页继续 `navHidden`，不计入交付。
+2. **合并重复入口**：employee 可区里没有「同对象双入口」；被点名的 AI 智能体双入口（`config/ai-assistant/agents` vs `config/ai-agents`）不在 employee 权限内，且哪份权威是产品决策（C2/D12），本轮不猜。
+3. **技术/配置类入口**：employee 主侧栏已无此类入口（`pageContext:"settings"` + AppShell 过滤）；但导航 **payload** 里设置页仍会同时出现在 `groups` 与 `settingsSections`（服务端 `buildAdminNav` 不做 context 过滤）。要让基线也反映「视觉真实」需要改上游 `backendChrome`，不在本任务文件边界。
+4. **人员与排程 / 自动化与流程**并入五区：需改 `src/nav/nav-groups.json`（文件所有权外）。

@@ -122,3 +122,15 @@ AI 入口：卡片右上「让助手继续调研」按钮（原型禁用，hover
 | 连接中断 | 开发任务 | 重连后从上次游标继续，不重复提交；10 分钟未恢复按已取消处理并退回额度 |
 
 `crm-prototype.spec.ts` 逐条点击并断言上面那句关键文案——**标签存在而文案缺失等于没演示**，所以断言的是处理方式而不是状态名。
+
+
+## 正式界面闭环（M7，2026-11-09）——原型不是交付
+
+原型六页仍然是 `navHidden` 的演示页，**不进入任何业务菜单，也不算「收敛」**。正式闭环跑在核心模块的真实页面上：
+
+- 入口：`/backend/customers/companies`（销售业务区「公司」）→ 公司详情 `/backend/customers/companies/<id>`。
+- 记录跟进：详情页 Notes 区 → `POST /api/customers/comments`，**真实落库**（`customers.activities.manage`），employee 可写；验证后已删除测试记录。
+- 生成草稿：详情页右上「写邮件」→「保存草稿」→ `POST /api/messages` + `isDraft:true` + `objects:[{entityModule:"customers",entityType:"company",entityId}]`，**草稿落库、不外发**（返回 `isDraft:true`、`sentAt:null`，drafts 文件夹 `status:"draft"`）；验证后已删除。
+- 不引入 `leadgen_*` 迁移；原型页的数据仍是静态占位，两者不要混用同一口径。
+
+同日的主侧栏收敛（22 个「创建 X」对象级菜单项下沉到列表页操作区，员工可见减少 10 条）见 `01-entry-map.md` §11。
