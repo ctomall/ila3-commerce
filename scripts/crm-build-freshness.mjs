@@ -27,10 +27,53 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
+import { createHash } from 'node:crypto'
 
 const arg = (name) => {
   const at = process.argv.indexOf(name)
   return at === -1 ? null : process.argv[at + 1]
+}
+
+
+// A digest of every runtime-relevant file's CONTENT. mtime is not evidence: a file can be
+// edited and its mtime rolled back, and a tool that rewrites identical content bumps it.
+// The stamp records this digest at build time; the freshness gate recomputes and compares.
+const TREE_RUNTIME_PATTERNS = [/^src\//, /^vendor\//, /^package\.json$/, /^tsconfig(\..*)?\.json$/, /^next\.config\./, /^postcss\.config\./]
+const RUNTIME_ROOT_FILES = ['package.json', 'tsconfig.json', 'next.config.mjs', 'next.config.ts', 'postcss.config.mjs', 'postcss.config.js']
+function isRuntimeFile(rel) {
+  return TREE_RUNTIME_PATTERNS.some((re) => re.test(rel)) && !/__tests__\//.test(rel) && !/\.(test|spec)\.tsx?$/.test(rel)
+}
+function runtimeTreeDigest(root) {
+  const files = []
+  const walk = (dir) => {
+    let entries
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true })
+    } catch {
+      return
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name)
+      if (entry.isDirectory()) {
+        if (['node_modules', '.mercato', '.git', '.next'].includes(entry.name)) continue
+        walk(full)
+        continue
+      }
+      const rel = path.relative(root, full).split(path.sep).join('/')
+      if (isRuntimeFile(rel)) files.push(rel)
+    }
+  }
+  for (const dir of ['src', 'vendor']) if (fs.existsSync(path.join(root, dir))) walk(path.join(root, dir))
+  for (const file of RUNTIME_ROOT_FILES) {
+    const full = path.join(root, file)
+    if (fs.existsSync(full) && isRuntimeFile(file)) files.push(file)
+  }
+  files.sort()
+  const hash = createHash('sha256')
+  for (const file of files) {
+    hash.update(`${file}:${createHash('sha256').update(fs.readFileSync(path.join(root, file))).digest('hex')}\n`)
+  }
+  return { digest: hash.digest('hex'), count: files.length }
 }
 
 const REPO = process.cwd()
@@ -209,6 +252,20 @@ if (!serviceStart || /^n\/a$/i.test(serviceStart)) {
 }
 
 if (notes.length > 0) for (const note of notes) console.log(`[freshness] 注意：${note}`)
+
+// Content, not timestamps. This is the check that a rolled-back mtime cannot evade.
+if (typeof info.treeDigest === 'string' && info.treeDigest !== '') {
+  const current = runtimeTreeDigest(REPO)
+  if (current.digest !== info.treeDigest) {
+    problems.push(
+      `运行树内容与构建记录不一致（构建 ${info.treeDigest.slice(0, 12)} vs 当前 ${current.digest.slice(0, 12)}，${current.count} 个文件）：构建里没有这些改动`,
+    )
+  } else {
+    console.log(`[freshness] 运行树内容与构建记录一致（${current.count} 个文件，digest ${current.digest.slice(0, 12)}）`)
+  }
+} else {
+  notes.push('构建记录里没有 treeDigest（旧构建）：只能退回 mtime 判据，强度较弱')
+}
 
 const distDirs = ['.mercato/next', '.next'].filter((dir) => fs.existsSync(path.join(REPO, dir)))
 if (distDirs.length === 0) {
