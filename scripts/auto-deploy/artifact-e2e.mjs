@@ -114,6 +114,7 @@ async function runNode(script, args, {timeoutMs = 1500000, label = path.basename
 async function main() {
   const releaseDir = path.resolve(argValue('--release', currentReleaseDir()))
   const releaseManifest = JSON.parse(fs.readFileSync(path.join(releaseDir, 'release.json'), 'utf8'))
+  const githubRunId = argValue('--github-run-id', null)
   const sha = argValue('--sha', releaseManifest.sha)
   if (!/^[a-f0-9]{40}$/.test(sha)) throw new Error(`bad sha ${sha}`)
   const seedDirSource = path.resolve(argValue('--seed-release', previousReleaseDir()))
@@ -126,7 +127,8 @@ async function main() {
     sha,
     seedSha: seedManifest.sha,
     startedAt: lib.nowIso(),
-    packageSource: releaseDir,
+    packageSource: githubRunId ? null : releaseDir,
+    githubRunId: githubRunId ? Number(githubRunId) : null,
     seedSource: seedDirSource,
     isolatedRoot: {releases: DRILL_RELEASES, state: DRILL_STATE},
     log: LOG,
@@ -136,37 +138,46 @@ async function main() {
   }
   logLine(`[artifact-e2e] sha=${sha} seed=${seedManifest.sha} base=${BASE}`)
 
-  // 1. Package exactly the way the workflow does.
-  const packageDir = path.join(BASE, 'package')
-  const packed = await runNode(PACKAGE, [
-    '--source',
-    releaseDir,
-    '--out',
-    packageDir,
-    '--repository',
-    'ctomall/ila3-commerce',
-    '--run-id',
-    '42609377937',
-    '--commit',
-    sha,
-    '--checks',
-    'typecheck,unit,build',
-    '--json',
-  ])
-  if (packed.status !== 0) throw new Error(`package-release failed: ${packed.stderr || packed.stdout}`)
-  const packageSummary = JSON.parse(packed.stdout.slice(packed.stdout.indexOf('{')))
-  summary.steps.package = {
-    ok: true,
-    ms: packed.ms,
-    archive: packageSummary.archive,
-    manifest: packageSummary.manifest,
+  // 1. Either package locally exactly the way the workflow does, or (with
+  // --github-run-id) pull the real artifact that workflow run uploaded.
+  let zipFile = null
+  let zipSha = null
+  if (githubRunId) {
+    if (sha === releaseManifest.sha) throw new Error('--github-run-id requires --sha <commit of that run>')
+    summary.steps.github = {runId: Number(githubRunId), artifactName: artifact.artifactName(sha), expectedSha: sha}
+    logLine(`[artifact-e2e] github mode: run=${githubRunId} sha=${sha}`)
+  } else {
+    const packageDir = path.join(BASE, 'package')
+    const packed = await runNode(PACKAGE, [
+      '--source',
+      releaseDir,
+      '--out',
+      packageDir,
+      '--repository',
+      'ctomall/ila3-commerce',
+      '--run-id',
+      '42609377937',
+      '--commit',
+      sha,
+      '--checks',
+      'typecheck,unit,build',
+      '--json',
+    ])
+    if (packed.status !== 0) throw new Error(`package-release failed: ${packed.stderr || packed.stdout}`)
+    const packageSummary = JSON.parse(packed.stdout.slice(packed.stdout.indexOf('{')))
+    summary.steps.package = {
+      ok: true,
+      ms: packed.ms,
+      archive: packageSummary.archive,
+      manifest: packageSummary.manifest,
+    }
+    zipFile = artifact.createArtifactZip({
+      dir: packageDir,
+      zipFile: path.join(BASE, 'mercato-release.zip'),
+    })
+    zipSha = lib.sha256File(zipFile)
+    summary.steps.zip = {file: zipFile, bytes: fs.statSync(zipFile).size, sha256: zipSha}
   }
-  const zipFile = artifact.createArtifactZip({
-    dir: packageDir,
-    zipFile: path.join(BASE, 'mercato-release.zip'),
-  })
-  const zipSha = lib.sha256File(zipFile)
-  summary.steps.zip = {file: zipFile, bytes: fs.statSync(zipFile).size, sha256: zipSha}
 
   // 2. Seed: a tiny HTTP stand-in with a valid build stamp. It only exists so the
   // switch/rollback target is a real directory+symlink pair; the artifact release
@@ -210,34 +221,30 @@ http.createServer((req, res) => {
   summary.steps.seed = {dir: seedDir, sha: seedManifest.sha, pid: seedProcess.pid, kind: 'http-standin'}
 
   // 3. Deploy the artifact into the isolated root.
-  const deploy = await runNode(
-    DEPLOY,
-    [
-      '--drill',
-      '--skip-ci-gate',
-      '--pid-mode',
-      '--from-artifact',
-      '--artifact-file',
-      zipFile,
-      '--artifact-sha256',
-      zipSha,
-      '--artifact-run-id',
-      '42609377937',
-      '--install-dir',
-      path.join(DRILL_RELEASES, sha),
-      '--target-port',
-      String(TARGET_PORT),
-      '--candidate-port',
-      String(CANDIDATE_PORT),
-      '--timeout',
-      '180000',
-      '--sha',
-      sha,
-      '--manual',
-      '--json',
-    ],
-    {timeoutMs: 1500000, label: 'deploy-from-artifact'},
-  )
+  const deployArgs = [
+    '--drill',
+    '--skip-ci-gate',
+    '--pid-mode',
+    '--from-artifact',
+    '--artifact-run-id',
+    githubRunId ? String(githubRunId) : '42609377937',
+    '--install-dir',
+    path.join(DRILL_RELEASES, sha),
+    '--target-port',
+    String(TARGET_PORT),
+    '--candidate-port',
+    String(CANDIDATE_PORT),
+    '--timeout',
+    '180000',
+    '--artifact-timeout',
+    '1200000',
+    '--sha',
+    sha,
+    '--manual',
+    '--json',
+  ]
+  if (!githubRunId) deployArgs.push('--artifact-file', zipFile, '--artifact-sha256', zipSha)
+  const deploy = await runNode(DEPLOY, deployArgs, {timeoutMs: 1500000, label: 'deploy-from-artifact'})
   const latest = JSON.parse(fs.readFileSync(path.join(DRILL_STATE, 'latest.json'), 'utf8'))
   const installed = path.join(DRILL_RELEASES, sha)
   const installedRelease = fs.existsSync(path.join(installed, 'release.json'))
