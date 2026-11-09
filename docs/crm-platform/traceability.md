@@ -73,7 +73,7 @@
 
 | 结论 | 支撑 |
 |---|---|
-| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → 21/21，0 SKIP（`verify/` 下最新一份） |
+| 代码门禁全绿 | `node scripts/crm-verify-all.mjs --full` → **22 道门**；发布级判定看报告头部的「发布级门禁」行与「范围」行，不要只看 PASS 计数（第 47 轮 22/22 全绿见 `verify-2026-11-09T02-44-32.md`；第 49 轮起报告同时记 flags 与工作树状态） |
 | 既有报价修复未回归 | `crm-quote-regression` 4 pass + 1 已知 |
 | 授权基线未退化 | `crm-security-probe` 14 例 |
 | M4 尚不能通过 | 7 条对抗只有 3 条可跑，4 条缺 fixture |
