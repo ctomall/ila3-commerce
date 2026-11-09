@@ -55,7 +55,7 @@ node scripts/crm-verify-all.mjs --only migration-drill --full   # 只跑某一�
 
 截图证据位于仓库外 `/home/pro/dsh/shots/*.png`（`proto-*.png`、`crm-*.png`），文档中的文件名对应这里的绝对路径。
 
-`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **14 suites / 143 tests** · `migration-drill` **20 阶段全过 + 8 条负向对照** · `mutation` **7/7 变异被杀** · `restore-drill` **13.6 MB / 恢复 4.8 s / 314 表 / 6 项行数一致** · `build-freshness` **运行中的服务 = 当前源码** · `contract` **契约自洽且零碰撞** · `nav-nesting` **5 条已知未嵌套入口与白名单一致** · `test:integration` **3/3**（此前是 `No tests found` exit 1） · `yarn build` BUILD_OK（2026-11-09 00:03 重建，录得 commit `5e82006`；构建后 `login` 200）。
+`verify-patches` 11 patch / 23 target · `patches:budget` 11/15 · `ui-regression` 18/18 · 对比度 **12/12**（修前是「10/10」但每主题只测到 5 个样本）· jest **15 suites / 161 tests** · `migration-drill` **20 阶段全过 + 8 条负向对照** · `mutation` **7/7 变异被杀** · `restore-drill` **13.6 MB / 恢复 4.8 s / 314 表 / 6 项行数一致** · `build-freshness` **运行中的服务 = 当前源码** · `contract` **契约自洽且零碰撞** · M4-3 `crm.find_companies` **运行时注册并端到端实测** · `nav-nesting` **5 条已知未嵌套入口与白名单一致** · `test:integration` **3/3**（此前是 `No tests found` exit 1） · `yarn build` BUILD_OK（2026-11-09 00:03 重建，录得 commit `5e82006`；构建后 `login` 200）。
 
 ## 纪律
 

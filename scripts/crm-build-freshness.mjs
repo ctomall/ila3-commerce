@@ -101,15 +101,20 @@ if (builtCommit && contains.status === 0) {
   }
 }
 
-// ---- 3. uncommitted edits that the build cannot contain
+// ---- 3. deletions the build cannot contain.
+// An uncommitted edit is NOT a problem by itself: a build made from the working tree
+// contains it, which is exactly how this repo is built. What a build can never contain is
+// a file that was deleted afterwards, so only deletions are flagged here — the mtime sweep
+// below owns the "edited after the build" case.
 const dirty = git(['status', '--porcelain']).out
 if (dirty) {
-  const dirtyRuntime = dirty
+  const deletedRuntime = dirty
     .split('\n')
+    .filter((line) => /^\s*D|^D/.test(line))
     .map((line) => line.slice(3).trim())
     .filter((file) => file && isRuntime(file))
-  if (dirtyRuntime.length > 0) {
-    problems.push(`工作树里还有未提交的运行时改动：${dirtyRuntime.slice(0, 5).join(', ')}`)
+  if (deletedRuntime.length > 0) {
+    problems.push(`构建之后删除了运行时文件（构建里还在）：${deletedRuntime.slice(0, 5).join(', ')}`)
   }
 }
 

@@ -66,7 +66,7 @@
 | M4-0b | 对抗执行器（12 条） | `scripts/crm-m4-harness.mjs` + `poc/<日期>-m4/` | 5 pass · 1 弱通过 · 0 fail · 5 blocked · 1 invalid | doing |
 | M4-0c | 执行手册 | `05a-m4-runbook.md` | 前置检查 + fixture + 7 维命令 + 回滚 + 四份交付物 | done |
 | M4-2 | 隔离 DSH 数据/执行环境（会话/订阅/任务/文件/记忆/凭据/浏览器态） | 同上 | 7 类隔离逐条证据 | todo |
-| M4-3 | 一个 CRM 只读工具 | 同上 | 工具声明 + 授权点 | todo |
+| M4-3 | 一个 CRM 只读工具 | `12-crm-tool.md` | **已完成**：`crm.find_companies`（`src/modules/crm_tools/`，18 测）+ 运行时注册实测（97 工具内含它）；端到端七项：401 / 200 明文数据 / scope 回显 / 注入 tenantId 400 / limit 500 → 400 / 未知工具 400 / employee 角色 200。端到端跑出并修掉两个单测抓不到的缺陷（knex 占位符、ORM 解密被绕过）| done（403 路径缺 fixture）|
 | M4-4 | 对抗用例：猜 ID / 直连 API / 伪造操作者 / 子 Agent 扩权 / 撤权后在途任务 | `crm-m4-harness.mjs` | 已跑的记 pass/弱通过；缺 fixture 的记 blocked，**不计入通过** | doing |
 | M4-5 | 插件分三类（每用户能力/实例全局/高权限）并处置共享实例 | 同上 | 分类表 + 不可信的隔离处置 | todo |
 

@@ -188,6 +188,10 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'settings_home', from: '@app' },
   // M3 prototype pages (navHidden, non-production demo).
   { id: 'crm_prototype', from: '@app' },
+  // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no
+  // migrations — only a module-root ai-tools.ts that the generator folds into the
+  // ai-assistant tool registry.
+  { id: 'crm_tools', from: '@app' },
   // Table-style directory of registered AI agents.
   { id: 'agent_directory', from: '@app' },
   // agent_orchestrator moved to the enterprise catalog — enabled below behind

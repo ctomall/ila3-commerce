@@ -8,7 +8,7 @@
 |---|---|---|---|---|
 | A1 | 入口收敛 | `01-entry-map.md`；改名去重（2 组 → 0）；`nav-groups` 分组；C5 复核 | `crm-nav-baseline`（152/150/74，重名 0）；`entries.md`；`01` §6.1 | done（C5 定位为上游元数据问题，不加补丁） |
 | A2 | 中文业务流程与视觉 | 六页原型（含 8 类状态）；i18n 补键；英文残留扫描 | `proto-*.png`（含 `proto-tasks-cancelled.png`）；`crm-i18n-sweep`；`appendix/i18n-residual.md` | done（原型层） |
-| A3 | 员工专属助手 | 绑定模型（员工/助手/策略版本/状态） | `03-dsh-contract.md` §1；`leadgen_employee_bindings` 设计（未建表） | partial |
+| A3 | 员工专属助手 | 绑定模型 + 一个已实现的只读工具 | `03-dsh-contract.md` §1；`12-crm-tool.md`：`crm.find_companies` 运行时注册并端到端实测（scope 来自会话、注入 tenantId 被拒、返回明文）；每员工隔离仍待 M4 路线 | partial |
 | A4 | CRM 权限控制 DSH 工具与插件 | 五因子交集；工具集取交集；插件三类；发送身份门拒绝时写结构化日志 | `02` §2；`03` §3.5；`outbound-bridge` 修复（`ownership_rejected` 日志 + `action_logs` 审计行，23 目标） | partial（M4 未执行） |
 | A5 | 数据与执行隔离 | 7 维隔离要求；DSH profile/凭据/记忆分区 | `03` §5；`05-security-poc.md` §3 | blocked（无每员工 DSH 运行时） |
 | A6 | 获客审核入库 | 候选/证据/验证表设计 + 确定性验证实现 | `03a`；`src/lib/leadgen/verification.ts`（19 测） | partial（无存储） |
