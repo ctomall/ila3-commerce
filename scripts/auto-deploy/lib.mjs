@@ -8,11 +8,17 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
 import crypto from 'node:crypto'
 import {spawn, spawnSync} from 'node:child_process'
 
 export const APP_DIR = process.env.ILA3_APP_DIR || '/home/pro/apps/mercato'
-export const RELEASE_ROOT = process.env.ILA3_RELEASE_ROOT || '/home/pro/releases/mercato'
+// On a CI runner there is no /home/pro: packaging runs there and used to die with
+// EACCES: mkdir '/home/pro/releases/mercato'. The runner gets a temporary root; the
+// deployment host keeps the real one.
+export const RELEASE_ROOT =
+  process.env.ILA3_RELEASE_ROOT ||
+  (process.env.CI ? path.join(os.tmpdir(), 'ila3-releases') : '/home/pro/releases/mercato')
 export const STATE_DIR = process.env.ILA3_STATE_DIR || '/home/pro/.local/state/ila3-deploy'
 export const LOCK_PATH = process.env.ILA3_LOCK_PATH || path.join(STATE_DIR, 'deploy.lock')
 export const CHECKER_STATE_DIR = path.join(APP_DIR, '.mercato', 'auto-deploy')
