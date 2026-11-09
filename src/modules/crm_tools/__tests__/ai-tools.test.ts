@@ -62,6 +62,13 @@ describe('buildFindCompaniesQuery', () => {
     expect(where.organizationId).toBe('org-1')
   })
 
+  it('excludes companies the CRM has soft-deleted on the parent entity', () => {
+    // customer_companies has no deleted_at: the flag lives on customer_entities, so a
+    // query that only filters its own columns would keep returning deleted companies.
+    const { where } = buildFindCompaniesQuery(scope, {})
+    expect(where.entity).toEqual({ deletedAt: null })
+  })
+
   it('adds no filter when the query is blank', () => {
     expect(buildFindCompaniesQuery(scope, {}).where.$or).toBeUndefined()
     expect(buildFindCompaniesQuery(scope, { query: '   ' }).where.$or).toBeUndefined()
@@ -146,7 +153,7 @@ describe('the tool declaration', () => {
       Record<string, unknown>,
       { limit: number },
     ]
-    expect(where).toMatchObject({ tenantId: 'ten-9', organizationId: 'org-9' })
+    expect(where).toMatchObject({ tenantId: 'ten-9', organizationId: 'org-9', entity: { deletedAt: null } })
     expect(options.limit).toBe(MAX_LIMIT)
     expect(result.companies[0]).toMatchObject({ id: 'c1', name: 'Acme' })
     expect(result.scope.tenantId).toBe('ten-9')

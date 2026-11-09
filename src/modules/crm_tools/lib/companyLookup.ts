@@ -85,6 +85,10 @@ export function buildFindCompaniesQuery(scope: ToolScope, input: FindCompaniesIn
   const where: Record<string, unknown> = {
     tenantId: scope.tenantId,
     organizationId: scope.organizationId,
+    // Soft deletion lives on the parent `customer_entities` row, not on this table, so a
+    // company the CRM has deleted is still physically present here. Without this nested
+    // filter the assistant would keep answering with deleted companies.
+    entity: { deletedAt: null },
   }
   if (trimmed !== '') {
     const pattern = `%${trimmed}%`
