@@ -190,9 +190,9 @@ describe('whatsapp adapter', () => {
     const limited = createWhatsAppAdapter({
       fetchImpl: (async () => new Response(JSON.stringify({error: {code: 4, message: 'rate limit'}}), {status: 429})) as unknown as typeof fetch,
     })
-    const failed = await limited.sendMessage({content: {text: 'hello'}, credentials, metadata: {to: '1555'}, scope: {tenantId: 't', organizationId: 'o'}} as never)
-    expect(failed.status).toBe('failed')
-    expect(failed.metadata).toMatchObject({transient: true})
+    await expect(
+      limited.sendMessage({content: {text: 'hello'}, credentials, metadata: {to: '1555'}, scope: {tenantId: 't', organizationId: 'o'}} as never),
+    ).rejects.toMatchObject({transient: true, status: 429})
   })
 
   it('uses the template payload when metadata carries a template', async () => {
@@ -211,6 +211,22 @@ describe('whatsapp adapter', () => {
     } as never)
     expect(sentBody.type).toBe('template')
     expect((sentBody.template as Record<string, unknown>).name).toBe('quote_followup')
+  })
+
+  it('resolves the recipient from the inbound thread ref when metadata.to is absent', async () => {
+    let sentTo = ''
+    const adapterWithFetch = createWhatsAppAdapter({
+      fetchImpl: (async (_url: string, init: {body?: string}) => {
+        sentTo = JSON.parse(init.body as string).to
+        return new Response(JSON.stringify({messages: [{id: 'wamid.R'}]}), {status: 200})
+      }) as unknown as typeof fetch,
+    })
+    const result = await adapterWithFetch.sendMessage({content: {text: 'hi'}, credentials, metadata: {thread_id: '15550001111'}, scope: {tenantId: 't', organizationId: 'o'}} as never)
+    expect(result.status).toBe('sent')
+    expect(sentTo).toBe('15550001111')
+    await expect(
+      adapterWithFetch.sendMessage({content: {text: 'hi'}, credentials, metadata: {thread_id: 'outbound:abc'}, scope: {tenantId: 't', organizationId: 'o'}} as never),
+    ).resolves.toMatchObject({status: 'failed', error: 'WHATSAPP_RECIPIENT_REQUIRED'})
   })
 
   it('reports missing credentials at validation time', async () => {

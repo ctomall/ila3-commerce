@@ -122,7 +122,16 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
       if (!credentials.accessToken || !credentials.phoneNumberId) {
         return {externalMessageId: '', status: 'failed', error: 'WHATSAPP_CREDENTIALS_MISSING'}
       }
-      const to = typeof input.metadata?.to === 'string' ? (input.metadata.to as string) : ''
+      // The hub passes `metadata.to` only when the adapter declared
+      // provider-native recipients; for a reply into an inbound thread it passes
+      // the thread ref, which IS the customer wa_id. A brand-new outbound thread
+      // is ref'd as `outbound:<uuid>` and carries no recipient — refuse instead
+      // of guessing (ADR-005 G7).
+      const metadata = (input.metadata ?? {}) as Record<string, unknown>
+      const explicitTo = typeof metadata.to === 'string' ? metadata.to : ''
+      const threadRef = typeof metadata.thread_id === 'string' ? metadata.thread_id : ''
+      const threadTo = threadRef && !threadRef.startsWith('outbound:') && !threadRef.includes(':') ? threadRef : ''
+      const to = explicitTo || threadTo
       if (!to) return {externalMessageId: '', status: 'failed', error: 'WHATSAPP_RECIPIENT_REQUIRED'}
       const template = input.metadata?.template as MetaTemplate | undefined
       const body = template
@@ -139,14 +148,12 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
         return {externalMessageId: result.externalMessageId, status: 'sent'}
       } catch (error) {
         if (error instanceof MetaGraphError) {
-          return {
-            externalMessageId: '',
-            status: 'failed',
-            error: `${error.code}: ${error.message}`,
-            metadata: {transient: error.transient, httpStatus: error.status},
-          }
+          // Throw so the hub's classifyOutboundError sees the explicit
+          // transient/status hint; a returned `failed` result is re-thrown as a
+          // plain Error and loses that classification.
+          throw error
         }
-        return {externalMessageId: '', status: 'failed', error: 'WHATSAPP_SEND_FAILED', metadata: {transient: true}}
+        throw new Error('WHATSAPP_SEND_FAILED')
       }
     },
 
