@@ -20,6 +20,7 @@ import { BrowserTelemetry } from '@open-mercato/telemetry/browser'
 import { resolveBrowserTelemetryConfig } from '@open-mercato/telemetry/browser/server'
 import { DemoFeedbackWidget } from '@/components/DemoFeedbackWidget'
 import { BackendHeaderChrome } from '@/components/BackendHeaderChrome'
+import { CrmSidebarNav } from '@/modules/crm_navigation/widgets/injection/sidebar-nav/widget'
 
 function collectStaticSettingsPathPrefixes(): string[] {
   const prefixes = new Set<string>()
@@ -144,7 +145,7 @@ export default async function BackendLayout({
             organizationId={auth?.orgId ?? null}
           />
         )}
-        adminNavApi="/api/auth/admin/nav"
+        adminNavApi="/api/crm_navigation/navigation"
         version={DISPLAY_VERSION}
         hideFooter={hideBackendFooter}
         settingsPathPrefixes={collectStaticSettingsPathPrefixes()}
@@ -153,6 +154,7 @@ export default async function BackendLayout({
         profileSections={[]}
         profileSectionTitle={translate('profile.page.title', 'Profile')}
         profilePathPrefixes={profilePathPrefixes}
+        mobileSidebarSlot={<CrmSidebarNav variant="mobile" />}
       >
         <PageInjectionBoundary path={path} context={injectionContext}>
           {children}

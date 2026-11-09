@@ -91,6 +91,13 @@
         "node_modules/@open-mercato/core/dist/modules/communication_channels/subscribers/outbound-bridge.js"
       ],
       "reason": "Files compiled from the private mirror packages/** source of truth, stored in vendor/open-mercato/prebuilt (not dist/: git ignores dist). One installer, one marker per target, content guards per file."
+    },
+    {
+      "id": "nav-empty-search",
+      "script": "scripts/patches/apply-nav-empty-search.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:nav-empty-search] */",
+      "reason": "The CRM rail replaces the group list, so the built-in nav search would filter an empty list; hide it when there are no groups."
     }
   ]
 }
