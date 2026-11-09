@@ -98,3 +98,13 @@
 - 定：每个 PASS 行写入该门禁自己 stdout 里的摘要行（门禁可用 `evidence: /re/` 指名要哪一行，否则取最后一条非 `RESULT:` 行）；报告头始终记录工作树干净/脏及未提交项。
 - 定：`--require-clean` 为发布级开关，脏树直接判失败；`--require-no-skip` 仍然生效。两者一起用才是"提交级证据"。
 - 定：跳过项永远不计入通过，这条不变。
+
+## D25 每员工 DSH profile 的派生规则与边界
+
+- 现状：03 契约 §5 要求"每员工独立 profile"（会话/产物/记忆/浏览器/凭据），但仓里没有任何代码派生这个对象——隔离只是文档属性。
+- 定：`src/lib/dsh/profile.ts` 是唯一派生处，纯函数、同一输入同一结果（可事后审计）。工具集 = 运行时报告的已授权工具 ∩ 助手上限 ∩ 调用方请求；越界请求**不静默裁掉**，进 `dropped` 并带原因（`not-in-assistant-ceiling` / `not-granted` / `outside-request`）。
+- 定：四个根目录用身份元组的 sha256 前 32 位做 key。**路径里不出现任何 userId**，包括本人的——泄露面比"只含自己的 id"更小，且便于断言。
+- 定：`wideningAttempt(parent, child)` 返回子集里父集没有的工具，**不自动修剪**。子 agent 请求父集外的工具是提权尝试，要能被记录，而不是被悄悄纠正。
+- 定：`revoke()` 失败关闭：工具清零、`revoked=true`、身份保留（审计还要能定位到人）。
+- 为什么不是"框架已经保证了子集"：`AiAgentExtension` 有 `appendAllowedTools` 与 `replaceAllowedTools`，注册表本身**不做**子集校验（实测：`src/modules/example/ai-agents.ts` 声明的扩展给 `customers.account_assistant` 追加了一个工具）。交集必须在这里发生，不能假设上游会做。
+- 边界写清楚：本层只证"名字是对的"。DSH 是否按这些根目录隔离、运行中的子 agent 是否触达不到 profile 外的工具、文件系统权限是否互不可读——**都未证**，M4 用例 4/6 的运行时部分仍 blocked。

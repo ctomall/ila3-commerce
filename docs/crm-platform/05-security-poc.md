@@ -37,7 +37,7 @@
 | 3 | 文件 | 列出 A 的 DSH 产物目录，grep B 的标识 | 0 命中 | 目录清单 + grep 输出 |
 | 4 | 记忆 | A 的助手检索 B 的历史 | 空结果 + 一条审计行 | 检索响应 + 审计行 |
 | 5 | 凭据 | A 的助手尝试用 B 的渠道发送 | 发送身份门拦截（`outbound-bridge.ts`）。**2026-11-08 修复**：拒绝时不再静默 return，改为写结构化日志 `outbound_bridge.ownership_rejected`（含 messageId/channelId/senderUserId/channelOwnerUserId，不含正文与地址）。**2026-11-08 第二轮**：同时写 `action_logs` 审计行（`commandId=communication_channels.outbound_blocked`，含 `resourceKind/Id`、`actorUserId`、`context.reason`），走 `actionLogService`；审计失败降级为日志，不阻断事件。`userId=null` 的租户级渠道仍放行任意 sender（D8 策略待定） | 发送尝试的日志行 + 渠道消息计数不变 |
-| 6 | 浏览器状态 | 两个 profile 的 cookies/localStorage | 互不包含对方域内会话 | 两段导出对比 |
+| 6 | 浏览器状态 | 两个 profile 的 cookies/localStorage | 互不包含对方域内会话 | 两段导出对比。**派生层已证**：两个真实员工的四个根目录（会话/产物/记忆/浏览器）不重叠、路径不含对方 userId、换策略版本记忆重新分区；**运行时仍未验** |
 | 7 | 插件权限 | 每用户能力 / 实例全局 / 高权限三类各一个样本 | 高权限插件只对授权员工可见；共享实例不可信则隔离 | 三类清单 + 可见性矩阵 |
 
 ## 4. 对抗用例（每条 = 攻击 → 期望 → 产物）
@@ -47,7 +47,7 @@
 | 1 | 猜 ID 跨员工取 candidate/run/artifact | **404** | 状态码矩阵 |
 | 2 | 绕过 UI 直调写接口 + body 注入 `tenantId/organizationId` | 服务端拒绝；注入字段不生效 | 原始请求/响应 + 落库 scope |
 | 3 | 模型伪造 acting user（`actorUserId`/`onBehalfOfUserId`） | 不采信；审计分别记真实 actor 与 on-behalf-of | 审计两列原文 |
-| 4 | 子 Agent 提权 | 工具集 = 交集 | 子/父工具清单 diff |
+| 4 | 子 Agent 提权 | 工具集 = 交集 | **派生层已证（46 轮）**：`scripts/crm-dsh-profile-check.ts` 用真实工具清单证明子请求只能在父集内收窄、越界请求被丢弃、父集缺失时告警点名；**运行时子 agent 仍 blocked**（`dsh-profile-per-employee` 不存在） |
 | 5 | 撤权影响在飞任务 | ≤10s 停止；**不完成** CRM 写入 | 撤销时间戳 + 终止日志 + CRM 行数 0 |
 | 6 | 配额绕过：超额度创建 Run | 429 | 原始响应 |
 | 7 | 审批令牌复用发别的草稿 | 4xx（令牌与草稿 hash 绑定） | 复用拒绝原文 |

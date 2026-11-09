@@ -75,3 +75,10 @@
 关掉之后的复核运行：`verify/verify-2026-11-09T02-09-05.md` — `--full --require-clean --require-no-skip`，21/21 通过、0 跳过、工作树干净、退出码 0、提交 `f243c3b`（此前的 `01-58-45`/`02-03-59` 两次是同参数的中间运行，后一次起于脏树因此按新规则自带"脏"标记）。每一行都带该门禁自己的观测（如 `m4-harness` 的 `pass 5 · pass-weak 2 · fail 0 · blocked 4 · invalid 1`、`restore-drill` 的 `columns 4076 / indexes 1027 / constraints 3005 / sequences 53`）。
 
 顺带暴露的一处口径不实：`i18n-hardcoded` 门描述写着"没有绕过 i18n 的硬编码文案"，实际证据是 `advisory: 153 findings in 294 files`（0 error）。门本身没变，**描述已改成它真正证明的东西**——否则那一行就是在借一个它没做到的说法通过。
+
+
+## 第 46 轮补记：门集从 21 增到 22
+
+新增 `dsh-profile`（`scripts/crm-dsh-profile-check.ts`），把 M4 隔离契约里**可以离开运行时验证的那一层**变成门：每员工工具集必须等于运行时报告的集合、子 agent 只能收窄、两个真实员工的会话/产物/记忆/浏览器根目录不得重叠、撤权必须失败关闭。它跑在真实登录态上（employee 78 / admin 97 个工具），不是合成 fixture。
+
+边界写在门自己的输出和 `03-dsh-contract.md` §5.1 里：**派生层绿了不等于运行时隔离成立**——DSH 是否真按这些根目录隔离、在途 Run 是否 ≤10s 停，仍属未验，M4 用例 4/6 保持 blocked。

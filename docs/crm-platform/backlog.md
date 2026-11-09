@@ -108,6 +108,7 @@
 | M8-4 | 字典名称 CR 清理的审计与可回滚演练 | 用户批准 | `scripts/crm-dict-cr-audit.mjs`（只读）：19/19 行带尾随 CR、291 条条目 0 CR、同 scope 无撞名；`dict-cr-cleanup.sql` 在事务内干跑六项断言全中、回滚逆操作实测恢复 19 条；生产库仍 19/19 未变 | 待批准执行 |
 | M8-5 | 独立 QA 复核第 25–28 轮新增（三个只读 Agent） | `audit/f-qa-round29.md` | 6 条 P1/P2 可复现缺陷全部当轮修掉并各配负向对照；5 条明确列为"承认但不修"并写进文档；修完单元 143、门禁 16/16 | done |
 | M8-6 | 变异门：证明规则层测试真的会红 | QA 结论 | `scripts/crm-mutation-check.mjs`：7 个变异全部被杀；存活/锚点失效都让门失败；改源在 finally 按 SHA-256 还原 + exit 兜底；三条路径实测 | done |
+| M8-9 | 每员工 DSH profile 派生 + 隔离不变量（M4 派生层） | `src/lib/dsh/profile.ts`、`scripts/crm-dsh-profile-check.ts`（第 22 道门） | 用真实登录态的工具清单当输入：employee 78 / admin 97 个工具与运行时逐个一致；子请求越界被丢弃并记原因；父集为空时 78 个全部被提权告警点名；两个真实员工 key 不同、四个根目录无重叠、路径不含任一方 userId；换策略版本记忆重新分区；撤权失败关闭。**运行时隔离（DSH 是否真按这些根目录隔离、在途 Run 是否 ≤10s 停）仍未验 → 用例 4/6 仍 blocked** | done（派生层） |
 | M8-8 | 报告自带证据：PASS 行不再是空话，且记录工作树 | 本轮 | `crm-verify-all.mjs`：PASS 行写入该门禁自己的摘要行（可 `evidence: /re/` 指名），报告头记工作树干净/脏与未提交项；新增 `--require-clean`，脏树判失败（实测 exit 1）。同时复核并按反向证据关掉 QA 挂账 D2/D6/D13–D15/D17–D19/D21/D22；D17 本轮实测：给 `postcss.config.mjs` 加一行 → 新鲜度门 exit 1，还原 → PASS。剩 D16（无路由可挂）、D20（带写权限仍可伪造，未签名）仍开 | done |
 | M8-7 | 构建新鲜度门：验证「跑着的就是当前源码」 | 本轮 | 构建记录 `03427c5@20:04` 落后于 HEAD，但 dist 里已含 20:08 提交的内容（构建先于提交，属正常）。判据因此改为：运行时文件**内容**在构建后变过、或进程启动早于构建，两条各有负向对照。顺手发现变异门改写源码会顶掉 mtime，与新鲜度门互相打架，已改为还原时保留 mtime。随后真重建（BUILD_OK，commit `5e82006`），21 门全绿 | done |
 
@@ -130,7 +131,7 @@
 | M4 对抗用例 | `scripts/crm-m4-harness.mjs` | 5 通过 / 2 弱通过 / 4 阻塞 / 1 用例无效（阻塞项见 M4 表） |
 | 导航基线 | `scripts/crm-nav-baseline.mjs` | 152 / 150 / 74，重名 0 |
 | 英语残留 | `scripts/crm-i18n-sweep.mjs` | 界面无结构英文，命中均为数据 |
-| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 21/21 通过，0 SKIP（PASS/FAIL/SKIP 分开计）；PASS 行自带门禁摘要，报告头记工作树，`--require-clean` 脏树即失败 |
+| 全量汇总 | `scripts/crm-verify-all.mjs` | `--full` 22/22 通过，0 SKIP（PASS/FAIL/SKIP 分开计）；PASS 行自带门禁摘要，报告头记工作树，`--require-clean` 脏树即失败 |
 | 接口契约 | `scripts/crm-contract-check.mjs` | 16 操作 / 14 路径，自洽且与线上 676 条无撞车 |
 | 导航嵌套 | `scripts/crm-nav-nesting-check.mjs` | 5 个「有父未嵌套」+ 1 个无父页面 |
 | robots 合规 | `src/lib/leadgen/robots.ts` | 11 测试（含 RFC 9309 分组合并） |
