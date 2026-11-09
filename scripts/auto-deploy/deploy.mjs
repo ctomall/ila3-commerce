@@ -1,0 +1,509 @@
+/**
+ * Isolated deploy executor.
+ *
+ * Both entry points use the same flock:
+ *   node scripts/auto-deploy/deploy.mjs --auto     # timer
+ *   node scripts/auto-deploy/deploy.mjs --manual   # operator
+ *
+ * Sequence: flock -> CI gate -> isolated release build -> candidate health on a
+ * spare port -> atomic symlink switch -> post-switch health -> rollback on failure.
+ * A dirty development worktree is recorded, never used as a build source.
+ */
+import fs from 'node:fs'
+import path from 'node:path'
+import {fileURLToPath} from 'node:url'
+import {
+  ACTIVE_FILE,
+  CURRENT_LINK,
+  LOCK_PATH,
+  LOGS_DIR,
+  PREVIOUS_LINK,
+  RELEASE_ROOT,
+  STATE_DIR,
+  atomicSymlink,
+  enforceFlock,
+  ensureDirs,
+  makeRunId,
+  nowIso,
+  persistRun,
+  pidAlive,
+  readJson,
+  readLink,
+  resolveSha,
+  runStreaming,
+  sleep,
+  tailLines,
+  waitExit,
+  worktreeDirty,
+  writeJsonAtomic,
+} from './lib.mjs'
+import {runGate} from './ci-gate.mjs'
+import {buildRelease, verifyRelease} from './release.mjs'
+import {checkRelease, checkRunning} from './health.mjs'
+
+const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
+const PRODUCTION_PORT = 3000
+
+function parseArgs(argv) {
+  const args = {
+    mode: 'manual',
+    drill: false,
+    skipCiGate: false,
+    pidMode: false,
+    targetPort: Number(process.env.ILA3_TARGET_PORT || 3000),
+    candidatePort: Number(process.env.ILA3_CANDIDATE_PORT || 3100),
+    candidateCheckPort: null,
+    timeoutMs: Number(process.env.ILA3_HEALTH_TIMEOUT_MS || 120000),
+    releaseDir: null,
+    sha: null,
+    injectPostSwitchFailure: false,
+    allowProduction: false,
+    allowFirstDeploy: false,
+    allowReplaceMercato: false,
+    service: DEFAULT_SERVICE,
+    json: false,
+    force: false,
+  }
+  for (let i = 0; i < argv.length; i += 1) {
+    const flag = argv[i]
+    const value = () => argv[++i]
+    if (flag === '--auto') args.mode = 'auto'
+    else if (flag === '--manual') args.mode = 'manual'
+    else if (flag === '--drill') args.drill = true
+    else if (flag === '--skip-ci-gate') args.skipCiGate = true
+    else if (flag === '--pid-mode') args.pidMode = true
+    else if (flag === '--target-port') args.targetPort = Number(value())
+    else if (flag === '--candidate-port') args.candidatePort = Number(value())
+    else if (flag === '--candidate-check-port') args.candidateCheckPort = Number(value())
+    else if (flag === '--timeout') args.timeoutMs = Number(value())
+    else if (flag === '--release-dir') args.releaseDir = value()
+    else if (flag === '--sha') args.sha = value()
+    else if (flag === '--inject-post-switch-failure') args.injectPostSwitchFailure = true
+    else if (flag === '--allow-production') args.allowProduction = true
+    else if (flag === '--allow-first-deploy') args.allowFirstDeploy = true
+    else if (flag === '--allow-replace-mercato') args.allowReplaceMercato = true
+    else if (flag === '--service') args.service = value()
+    else if (flag === '--force') args.force = true
+    else if (flag === '--json') args.json = true
+    else if (flag === '--help' || flag === '-h') args.help = true
+    else throw new Error(`unknown argument ${flag}`)
+  }
+  args.candidateCheckPort = args.candidateCheckPort ?? args.candidatePort
+  return args
+}
+
+function refusal(code, detail) {
+  return Object.assign(new Error(code), {code, detail})
+}
+
+async function systemctl(args, {echo = false, timeoutMs = 120000} = {}) {
+  return runStreaming({
+    cmd: 'systemctl',
+    args,
+    cwd: '/',
+    timeoutMs,
+    echo,
+    label: `systemctl-${args[0]}`,
+    logPath: null,
+  })
+}
+
+function resolveOldRelease(link) {
+  const raw = readLink(link)
+  if (!raw) return null
+  const target = path.isAbsolute(raw) ? raw : path.resolve(RELEASE_ROOT, raw)
+  if (!fs.existsSync(target)) return {target, missing: true}
+  const manifest = readJson(path.join(target, 'release.json'))
+  const stamp = readJson(path.join(target, '.mercato', 'build-info.json'))
+  return {
+    target,
+    missing: false,
+    sha: manifest?.sha || stamp?.commit || null,
+    source: manifest?.source?.method || 'unknown',
+  }
+}
+
+async function startActive({releaseDir, port, sha, timeoutMs, logPath}) {
+  const result = await checkRelease({releaseDir, port, sha, timeoutMs, keep: true, logPath})
+  if (!result.ok) {
+    if (result.pid) {
+      try {
+        process.kill(-result.pid, 'SIGTERM')
+      } catch {
+        /* ignore */
+      }
+    }
+    throw refusal('post-switch-unhealthy', result)
+  }
+  writeJsonAtomic(ACTIVE_FILE, {
+    pid: result.pid,
+    port,
+    releaseDir,
+    sha,
+    startedAt: nowIso(),
+    log: result.log,
+    checks: result.checks,
+  })
+  return result
+}
+
+async function stopActive() {
+  const active = readJson(ACTIVE_FILE)
+  if (!active?.pid) {
+    try {
+      fs.unlinkSync(ACTIVE_FILE)
+    } catch {
+      /* no active record */
+    }
+    return {stopped: false, reason: 'no active record'}
+  }
+  if (pidAlive(active.pid)) {
+    try {
+      process.kill(-active.pid, 'SIGTERM')
+    } catch {
+      try {
+        process.kill(active.pid, 'SIGTERM')
+      } catch {
+        /* ignore */
+      }
+    }
+    if (!(await waitExit(active.pid, 10000))) {
+      try {
+        process.kill(-active.pid, 'SIGKILL')
+      } catch {
+        try {
+          process.kill(active.pid, 'SIGKILL')
+        } catch {
+          /* ignore */
+        }
+      }
+      await waitExit(active.pid, 3000)
+    }
+  }
+  try {
+    fs.unlinkSync(ACTIVE_FILE)
+  } catch {
+    /* ignore */
+  }
+  return {stopped: true, pid: active.pid, port: active.port, releaseDir: active.releaseDir}
+}
+
+async function main() {
+  const rawArgs = process.argv.slice(2)
+  const autoEntry = rawArgs.includes('--auto')
+  process.env.ILA3_DEPLOY_ENTRY = autoEntry ? 'auto' : 'manual'
+  enforceFlock(fileURLToPath(import.meta.url), rawArgs)
+
+  ensureDirs()
+  const args = parseArgs(rawArgs)
+  if (args.help) {
+    console.log(
+      'usage: node scripts/auto-deploy/deploy.mjs (--auto|--manual) [--sha SHA] [--drill --pid-mode --target-port 3200 ...]',
+    )
+    process.exit(0)
+  }
+
+  if (args.targetPort === args.candidatePort) throw new Error('--target-port and --candidate-port must differ')
+  if (args.drill) {
+    if (!args.pidMode) throw new Error('--drill requires --pid-mode')
+    if (args.targetPort === PRODUCTION_PORT) throw new Error('drills must not target production port 3000')
+  }
+  if (args.skipCiGate && !args.drill) throw new Error('--skip-ci-gate is only allowed with --drill')
+  if (args.injectPostSwitchFailure && !args.drill) throw new Error('--inject-post-switch-failure is only allowed with --drill')
+  if (args.releaseDir && !args.drill) throw new Error('--release-dir is only allowed with --drill')
+
+  const isProduction = args.targetPort === PRODUCTION_PORT || !args.pidMode
+  const record = {
+    schema: 1,
+    runId: null,
+    entry: args.mode,
+    drill: args.drill,
+    production: isProduction,
+    startedAt: nowIso(),
+    finishedAt: null,
+    result: 'running',
+    sha: null,
+    targetPort: args.targetPort,
+    candidatePort: args.candidatePort,
+    candidateCheckPort: args.candidateCheckPort,
+    worktreeDirty: null,
+    lock: {path: LOCK_PATH, pid: process.pid, acquiredAt: nowIso()},
+    steps: [],
+    evidence: {},
+  }
+
+  const step = async (name, fn) => {
+    const startedAt = nowIso()
+    try {
+      const value = await fn()
+      record.steps.push({name, ok: true, startedAt, finishedAt: nowIso()})
+      return value
+    } catch (error) {
+      record.steps.push({name, ok: false, startedAt, finishedAt: nowIso(), detail: error?.message || String(error)})
+      throw error
+    }
+  }
+
+  let oldRelease = null
+  let release = null
+  let switched = false
+
+  const rollback = async (reason) => {
+    if (!switched || !oldRelease || oldRelease.missing) {
+      record.rollback = {attempted: false, reason: reason || 'nothing switched'}
+      return false
+    }
+    const startedAt = nowIso()
+    try {
+      atomicSymlink(oldRelease.target, CURRENT_LINK)
+      await stopActive()
+      let health
+      if (args.pidMode) {
+        health = await startActive({
+          releaseDir: oldRelease.target,
+          port: args.targetPort,
+          sha: oldRelease.sha,
+          timeoutMs: args.timeoutMs,
+          logPath: path.join(LOGS_DIR, `${record.runId}-rollback-target.log`),
+        })
+      } else {
+        const restarted = await systemctl(['restart', args.service], {echo: true})
+        const ok = restarted.status === 0
+        health = ok
+          ? await checkRunning({port: args.targetPort, releaseDir: oldRelease.target, sha: oldRelease.sha, timeoutMs: 60000})
+          : {ok: false, checks: [{name: 'systemctl-restart', ok: false, detail: `exit=${restarted.status}`}]}
+      }
+      record.rollback = {
+        attempted: true,
+        at: startedAt,
+        to: oldRelease.target,
+        sha: oldRelease.sha,
+        healthy: Boolean(health?.ok),
+        checks: health?.checks ?? [],
+      }
+      return Boolean(health?.ok)
+    } catch (error) {
+      record.rollback = {
+        attempted: true,
+        at: startedAt,
+        to: oldRelease.target,
+        sha: oldRelease.sha,
+        healthy: false,
+        error: String(error?.message || error),
+        detail: error?.detail ?? null,
+      }
+      return false
+    }
+  }
+
+  try {
+    const sha = await step('resolve-sha', async () => resolveSha(args.sha || 'HEAD'))
+    record.sha = sha
+    record.shortSha = sha.slice(0, 8)
+    record.runId = makeRunId(sha, args.drill ? 'drill-deploy' : 'deploy')
+    record.worktreeDirty = await step('worktree-audit', async () => worktreeDirty())
+    record.evidence.record = path.join(STATE_DIR, 'runs', `${record.runId}.json`)
+
+    if (args.skipCiGate) {
+      record.ciGate = {decision: 'skipped', reason: 'drill-only --skip-ci-gate', allow: false}
+      record.steps.push({name: 'ci-gate', ok: true, startedAt: nowIso(), finishedAt: nowIso(), detail: 'skipped for drill'})
+    } else {
+      const gate = await step('ci-gate', async () => runGate({sha}))
+      record.ciGate = {
+        allow: Boolean(gate.allow),
+        decision: gate.decision,
+        reason: gate.reason,
+        evidence: path.join(STATE_DIR, 'gates', `${sha}.json`),
+      }
+      record.evidence.ciGate = record.ciGate.evidence
+      if (!gate.allow) throw refusal('ci-gate-denied', gate)
+    }
+
+    release = await step('release', async () => {
+      if (args.releaseDir) {
+        const dir = path.resolve(args.releaseDir)
+        const manifest = readJson(path.join(dir, 'release.json'))
+        return {reused: true, dir, manifest, synthetic: true}
+      }
+      return buildRelease({sha, force: args.force})
+    })
+    record.release = {
+      dir: release.dir,
+      reused: release.reused,
+      synthetic: Boolean(release.synthetic),
+      manifest: path.join(release.dir, 'release.json'),
+      sha: release.manifest?.sha ?? sha,
+    }
+    record.evidence.releaseManifest = record.release.manifest
+
+    if (!release.dir || !fs.existsSync(release.dir)) throw refusal('release-missing', release.dir)
+    const verified = verifyRelease(release.dir, sha)
+    if (!verified.ok) throw refusal('release-invalid', verified.reason)
+
+    oldRelease = resolveOldRelease(CURRENT_LINK)
+    record.previous = oldRelease
+
+    const candidateLog = path.join(LOGS_DIR, `${record.runId}-candidate.log`)
+    const candidate = await step('candidate-health', async () =>
+      checkRelease({
+        releaseDir: release.dir,
+        port: args.candidatePort,
+        checkPort: args.candidateCheckPort,
+        sha,
+        timeoutMs: args.timeoutMs,
+        keep: false,
+        logPath: candidateLog,
+      }),
+    )
+    record.candidate = {
+      ok: candidate.ok,
+      port: candidate.port,
+      checkPort: candidate.checkPort,
+      pid: candidate.pid,
+      checks: candidate.checks,
+      log: candidate.log,
+      cleanedUp: Boolean(candidate.cleanedUp),
+    }
+    record.evidence.candidateLog = candidate.log
+    if (!candidate.ok) throw refusal('candidate-unhealthy', candidate)
+
+    if (!oldRelease || oldRelease.missing) {
+      if (!args.allowFirstDeploy) throw refusal('no-current-release', oldRelease)
+    }
+
+    if (isProduction && !args.drill) {
+      if (!(args.allowProduction && process.env.ILA3_ALLOW_PRODUCTION === '1')) {
+        throw refusal(
+          'production-switch-disabled',
+          'production cutover requires --allow-production and ILA3_ALLOW_PRODUCTION=1; the auto-deploy gate has not been enabled',
+        )
+      }
+      if (!args.pidMode) {
+        const cat = await systemctl(['cat', args.service])
+        if (cat.status !== 0) throw refusal('service-not-installed', args.service)
+        const mercatoActive = await systemctl(['is-active', 'mercato.service'])
+        if (mercatoActive.status === 0 && !args.allowReplaceMercato) {
+          throw refusal(
+            'production-slot-occupied',
+            'mercato.service still owns port 3000; refusing to start a second production slot',
+          )
+        }
+        if (args.allowReplaceMercato) {
+          await systemctl(['stop', 'mercato.service'], {echo: true})
+        }
+      }
+    }
+
+    await step('switch', async () => {
+      if (oldRelease && !oldRelease.missing) atomicSymlink(oldRelease.target, PREVIOUS_LINK)
+      atomicSymlink(release.dir, CURRENT_LINK)
+      switched = true
+
+      await stopActive()
+      if (args.pidMode) {
+        await startActive({
+          releaseDir: release.dir,
+          port: args.targetPort,
+          sha,
+          timeoutMs: args.timeoutMs,
+          logPath: path.join(LOGS_DIR, `${record.runId}-target.log`),
+        })
+      } else {
+        const restarted = await systemctl(['restart', args.service], {echo: true})
+        if (restarted.status !== 0) {
+          throw refusal('service-restart-failed', `systemctl restart ${args.service} exit=${restarted.status}`)
+        }
+      }
+
+      if (args.injectPostSwitchFailure) {
+        record.injectedFailure = 'killed newly started target before post-switch health'
+        await stopActive()
+      }
+
+      const post = await checkRunning({
+        port: args.targetPort,
+        releaseDir: release.dir,
+        sha,
+        timeoutMs: 60000,
+      })
+      record.postSwitch = {ok: post.ok, checks: post.checks, waitedMs: post.waitedMs}
+      if (!post.ok) throw refusal('post-switch-unhealthy', post)
+    })
+
+    record.result = 'deployed'
+  } catch (error) {
+    record.error = {code: error?.code || 'failed', message: error?.message || String(error), detail: error?.detail ?? null}
+
+    if (switched) {
+      const recovered = await rollback(record.error.code)
+      record.result = recovered ? 'rolled-back' : 'rollback-failed'
+    } else {
+      const refusalCodes = new Set([
+        'ci-gate-denied',
+        'candidate-unhealthy',
+        'no-current-release',
+        'production-switch-disabled',
+        'production-slot-occupied',
+        'service-not-installed',
+        'release-missing',
+        'release-invalid',
+      ])
+      record.result = refusalCodes.has(record.error.code) ? 'refused' : 'failed'
+      if (oldRelease && !oldRelease.missing && args.pidMode) {
+        const target = await checkRunning({
+          port: args.targetPort,
+          releaseDir: oldRelease.target,
+          sha: oldRelease.sha,
+          timeoutMs: 10000,
+        })
+        record.targetUnchanged = {healthy: target.ok, checks: target.checks}
+      }
+    }
+  } finally {
+    record.finishedAt = nowIso()
+    if (!record.runId) record.runId = makeRunId(record.sha || 'unknown', 'deploy')
+    const file = persistRun(record)
+    record.evidence.record = file
+
+    const summary = {
+      runId: record.runId,
+      result: record.result,
+      sha: record.sha,
+      entry: record.entry,
+      drill: record.drill,
+      production: record.production,
+      targetPort: record.targetPort,
+      candidatePort: record.candidatePort,
+      worktreeDirty: record.worktreeDirty,
+      ciGate: record.ciGate ?? null,
+      release: record.release ?? null,
+      candidate: record.candidate ?? null,
+      postSwitch: record.postSwitch ?? null,
+      rollback: record.rollback ?? null,
+      targetUnchanged: record.targetUnchanged ?? null,
+      error: record.error ?? null,
+      record: file,
+    }
+    if (args.json) console.log(JSON.stringify(summary, null, 2))
+    else {
+      console.log(`[deploy] runId=${record.runId}`)
+      console.log(`[deploy] result=${record.result} sha=${record.sha} entry=${record.entry} drill=${record.drill}`)
+      console.log(`[deploy] record=${file}`)
+      if (record.error) console.log(`[deploy] error=${record.error.code}: ${record.error.message}`)
+      if (record.rollback) console.log(`[deploy] rollback healthy=${record.rollback.healthy} to=${record.rollback.to}`)
+    }
+
+    const exitCode =
+      record.result === 'deployed'
+        ? 0
+        : record.result === 'refused' || record.result === 'rolled-back'
+          ? 2
+          : 3
+    process.exit(exitCode)
+  }
+}
+
+main().catch((error) => {
+  console.error(`[deploy] fatal: ${error?.stack || error}`)
+  process.exit(3)
+})

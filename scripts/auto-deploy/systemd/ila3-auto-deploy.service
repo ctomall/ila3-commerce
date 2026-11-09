@@ -1,0 +1,14 @@
+[Unit]
+Description=ILA3 CRM isolated auto-deploy (CI gate + release build + switch)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pro
+Group=pro
+WorkingDirectory=/home/pro/apps/mercato
+Environment=ILA3_ALLOW_PRODUCTION=1
+ExecStart=/usr/bin/node /home/pro/apps/mercato/scripts/auto-deploy/deploy.mjs --auto
+TimeoutStartSec=5400
+NoNewPrivileges=true

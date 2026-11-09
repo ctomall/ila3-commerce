@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "drillRunId": "drill-20261109070542-49229b70",
+  "sha": "49229b7028b37223c6178eea20c46d3cd5540fb2",
+  "startedAt": "2026-11-09T07:05:42.648Z",
+  "finishedAt": "2026-11-09T07:15:18.045Z",
+  "targetPort": 3200,
+  "candidatePort": 3100,
+  "drills": {
+    "a": {
+      "exitCode": 2,
+      "result": "refused",
+      "errorCode": "candidate-unhealthy",
+      "candidate": {
+        "ok": false,
+        "port": 3100,
+        "checkPort": 3198,
+        "pid": 4078497,
+        "checks": [
+          {
+            "name": "process-alive",
+            "ok": true,
+            "detail": "pid=4078497 exitCode=null"
+          },
+          {
+            "name": "login-200",
+            "ok": false,
+            "detail": "fetch failed"
+          },
+          {
+            "name": "backend-redirects-to-login",
+            "ok": false,
+            "detail": "skipped: /login not ready"
+          },
+          {
+            "name": "build-stamp-commit",
+            "ok": true,
+            "detail": "commit=49229b70 expected=49229b70 status=ok buildId=true"
+          }
+        ],
+        "log": "/home/pro/.local/state/ila3-deploy/logs/drill-deploy-20261109071325-49229b70-candidate.log",
+        "cleanedUp": true
+      },
+      "currentAfter": "/home/pro/releases/mercato/seed-drill-20261109070542-49229b70",
+      "currentUnchanged": true,
+      "targetHealthy": true,
+      "targetChecks": [
+        {
+          "name": "process-alive",
+          "ok": true,
+          "detail": "external process (checked via HTTP)"
+        },
+        {
+          "name": "login-200",
+          "ok": true,
+          "detail": "HTTP 200 in 44ms"
+        },
+        {
+          "name": "backend-redirects-to-login",
+          "ok": true,
+          "detail": "{\"initial\":307,\"location\":\"/api/auth/session/refresh?redirect=/backend\",\"hops\":[\"307 http://127.0.0.1:3200/backend\",\"307 http://127.0.0.1:3200/api/auth/session/refresh?redirect=/backend\",\"200 http://127.0.0.1:3200/login?redirect=%2Fbackend\"],\"final\":{\"url\":\"http://127.0.0.1:3200/login?redirect=%2Fbackend\",\"status\":200}}"
+        },
+        {
+          "name": "build-stamp-commit",
+          "ok": true,
+          "detail": "commit=49229b70 expected=49229b70 status=ok buildId=true"
+        }
+      ],
+      "record": "/home/pro/.local/state/ila3-deploy/runs/drill-deploy-20261109071325-49229b70.json"
+    },
+    "b": {
+      "exitCode": 2,
+      "result": "rolled-back",
+      "errorCode": "post-switch-unhealthy",
+      "injectedFailure": "killed newly started target before post-switch health",
+      "rollback": {
+        "attempted": true,
+        "at": "2026-11-09T07:15:09.307Z",
+        "to": "/home/pro/releases/mercato/seed-drill-20261109070542-49229b70",
+        "sha": "49229b7028b37223c6178eea20c46d3cd5540fb2",
+        "healthy": true,
+        "checks": [
+          {
+            "name": "process-alive",
+            "ok": true,
+            "detail": "pid=4080215 exitCode=null"
+          },
+          {
+            "name": "login-200",
+            "ok": true,
+            "detail": "HTTP 200 in 3293ms"
+          },
+          {
+            "name": "backend-redirects-to-login",
+            "ok": true,
+            "detail": "{\"initial\":307,\"location\":\"/api/auth/session/refresh?redirect=/backend\",\"hops\":[\"307 http://127.0.0.1:3200/backend\",\"307 http://127.0.0.1:3200/api/auth/session/refresh?redirect=/backend\",\"200 http://127.0.0.1:3200/login?redirect=%2Fbackend\"],\"final\":{\"url\":\"http://127.0.0.1:3200/login?redirect=%2Fbackend\",\"status\":200}}"
+          },
+          {
+            "name": "build-stamp-commit",
+            "ok": true,
+            "detail": "commit=49229b70 expected=49229b70 status=ok buildId=true"
+          }
+        ]
+      },
+      "currentAfter": "/home/pro/releases/mercato/seed-drill-20261109070542-49229b70",
+      "rolledBackToSeed": true,
+      "targetHealthy": true,
+      "targetChecks": [
+        {
+          "name": "process-alive",
+          "ok": true,
+          "detail": "external process (checked via HTTP)"
+        },
+        {
+          "name": "login-200",
+          "ok": true,
+          "detail": "HTTP 200 in 40ms"
+        },
+        {
+          "name": "backend-redirects-to-login",
+          "ok": true,
+          "detail": "{\"initial\":307,\"location\":\"/api/auth/session/refresh?redirect=/backend\",\"hops\":[\"307 http://127.0.0.1:3200/backend\",\"307 http://127.0.0.1:3200/api/auth/session/refresh?redirect=/backend\",\"200 http://127.0.0.1:3200/login?redirect=%2Fbackend\"],\"final\":{\"url\":\"http://127.0.0.1:3200/login?redirect=%2Fbackend\",\"status\":200}}"
+        },
+        {
+          "name": "build-stamp-commit",
+          "ok": true,
+          "detail": "commit=49229b70 expected=49229b70 status=ok buildId=true"
+        }
+      ],
+      "record": "/home/pro/.local/state/ila3-deploy/runs/drill-deploy-20261109071343-49229b70.json"
+    }
+  },
+  "cleanup": {
+    "current": "/home/pro/releases/mercato/49229b7028b37223c6178eea20c46d3cd5540fb2",
+    "stopped": {
+      "stopped": true,
+      "pid": 4080215
+    },
+    "seedRemoved": true
+  },
+  "log": "/home/pro/.local/state/ila3-deploy/logs/drill-20261109070542-49229b70.log",
+  "releaseDir": "/home/pro/releases/mercato/49229b7028b37223c6178eea20c46d3cd5540fb2",
+  "seed": {
+    "dir": "/home/pro/releases/mercato/seed-drill-20261109070542-49229b70",
+    "pid": 4078369,
+    "health": [
+      {
+        "name": "process-alive",
+        "ok": true,
+        "detail": "pid=4078369 exitCode=null"
+      },
+      {
+        "name": "login-200",
+        "ok": true,
+        "detail": "HTTP 200 in 5098ms"
+      },
+      {
+        "name": "backend-redirects-to-login",
+        "ok": true,
+        "detail": "{\"initial\":307,\"location\":\"/api/auth/session/refresh?redirect=/backend\",\"hops\":[\"307 http://127.0.0.1:3200/backend\",\"307 http://127.0.0.1:3200/api/auth/session/refresh?redirect=/backend\",\"200 http://127.0.0.1:3200/login?redirect=%2Fbackend\"],\"final\":{\"url\":\"http://127.0.0.1:3200/login?redirect=%2Fbackend\",\"status\":200}}"
+      },
+      {
+        "name": "build-stamp-commit",
+        "ok": true,
+        "detail": "commit=49229b70 expected=49229b70 status=ok buildId=true"
+      }
+    ]
+  },
+  "passed": true
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Run ILA3 CRM isolated auto-deploy every 15 minutes
+Documentation=file:/home/pro/apps/mercato/docs/deployment/auto-deploy.md
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=15min
+RandomizedDelaySec=60
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,24 @@
+[Unit]
+Description=ILA3 CRM release app (serves /home/pro/releases/mercato/current)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pro
+Group=pro
+WorkingDirectory=/home/pro/releases/mercato/current
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/yarn start
+Restart=always
+RestartSec=5
+KillMode=control-group
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ila3-auto-deploy-app
+
+[Install]
+WantedBy=multi-user.target
