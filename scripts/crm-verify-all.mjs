@@ -44,7 +44,7 @@ const GATES = [
   { id: 'patches', cmd: 'node scripts/verify-patches.mjs', why: '受管补丁逐个 marker 在位' },
   { id: 'patch-budget', cmd: 'node scripts/check-patch-budget.mjs', why: '补丁条目不超预算' },
   { id: 'unit', cmd: 'yarn test --silent', why: '单元测试（含负向对照过的规则层）', evidence: /^Tests:\s.*\bpassed\b/ },
-  { id: 'quote-regression', cmd: 'node scripts/crm-quote-regression.mjs', why: '既有报价/订单修复未回归', evidence: /\[quote-regression\] \d+\/\d+ passed/ },
+  { id: 'quote-regression', cmd: 'node scripts/crm-quote-regression.mjs --create-fixture', why: '既有报价/订单修复未回归（自建并删除一行 draft 夹具，见 D28）', evidence: /\[quote-regression\] \d+\/\d+ passed/ },
   { id: 'security-probe', cmd: 'node scripts/crm-security-probe.mjs', why: '授权行为与基线一致、零写入', evidence: /\[probe\] \d+\/\d+ as expected/ },
   // M4's isolation contract has a derivation layer that can be proven without a live DSH
   // runtime: does every employee get a toolset equal to what the runtime reports, can a
