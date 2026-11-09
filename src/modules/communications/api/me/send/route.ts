@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
 import type { EntityManager } from '@mikro-orm/postgresql'
 import { z } from 'zod'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
@@ -11,7 +10,6 @@ import {
   releaseSendRequest,
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
-import { evaluateRecipientSupport } from '../../../lib/send-policy'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -177,20 +175,6 @@ export async function POST(req: Request): Promise<Response> {
           { error: policy.message, code: policy.code, lastInboundAt: policy.lastInboundAt },
           { status: 422 },
         )
-      }
-    }
-    // Recipient support is independent of the window: a template send to a
-    // provider-native channel fails in the same email-shaped facade.
-    const channel = await policyEm.findOne(CommunicationChannel, {
-      id: body.channelId,
-      tenantId: auth.tenantId as string,
-      organizationId,
-      deletedAt: null,
-    } as never)
-    if (channel) {
-      const support = evaluateRecipientSupport({channelType: channel.channelType ?? null})
-      if (!support.supported) {
-        return NextResponse.json({ error: support.message, code: support.code }, { status: 422 })
       }
     }
   }

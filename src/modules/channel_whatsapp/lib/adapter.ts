@@ -114,7 +114,20 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
     async convertOutbound(input) {
       // Media/template conversion is a later slice (ADR-005 G3/G4); the adapter
       // refuses to pretend otherwise by sending only the text body.
-      return {content: {text: input.body, bodyFormat: 'text'}}
+      //
+      // The hub hands the recipient and any template intent through
+      // `channelMetadata` (send-as-user stores them on the link, deliver-outbound
+      // re-injects `to` for provider-native adapters). They must survive into
+      // `metadata`, because that is what the hub passes to sendMessage — dropping
+      // them here is exactly the G7 shape where a chat send has no addressee.
+      const channelMetadata = (input.channelMetadata ?? {}) as Record<string, unknown>
+      return {
+        content: {text: input.body, bodyFormat: 'text'},
+        metadata: {
+          ...(typeof channelMetadata.to === 'string' ? {to: channelMetadata.to} : {}),
+          ...(channelMetadata.template ? {template: channelMetadata.template} : {}),
+        },
+      }
     },
 
     async sendMessage(input: SendMessageInput): Promise<SendMessageResult> {

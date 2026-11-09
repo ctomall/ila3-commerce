@@ -457,15 +457,20 @@ describe('customer-service window policy', () => {
     }
   }
 
-  it('refuses provider-native channels while the facade is email-only (G8)', async () => {
+  it('sends to a provider-native recipient through the hub within the window (G8 closed)', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()
     useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))))
     const { POST } = await import('../api/me/send/route')
     const res = await POST(new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }))
-    expect(res.status).toBe(422)
-    await expect(res.json()).resolves.toMatchObject({ code: 'OUTBOUND_RECIPIENT_UNSUPPORTED' })
-    expect(send).not.toHaveBeenCalled()
+    expect(res.status).toBe(202)
+    expect(send).toHaveBeenCalledTimes(1)
+    const call = (send.mock.calls as unknown as Array<[unknown, unknown, Record<string, unknown>]>)[0]
+    const input = call[2]
+    // The wa_id travels unchanged: the hub validates it against the adapter's
+    // provider-native recipient shape, not against an e-mail regex.
+    expect(input.to).toEqual(['+15550001111'])
+    await expect(res.json()).resolves.toMatchObject({providerKey: 'whatsapp', enqueuedForDelivery: true})
   })
 
   it('rejects free-form text after the window with WINDOW_CLOSED and never calls the hub', async () => {
@@ -480,22 +485,23 @@ describe('customer-service window policy', () => {
     expect(send).not.toHaveBeenCalled()
   })
 
-  it('still records template intent in the metadata for future providers', async () => {
-    // Provider-native outbound is blocked by the hub facade (G8), so the route
-    // refuses before the facade; the template intent is covered by the policy
-    // tests and will reach channelMetadata once G8 is fixed.
+  it('skips the window for a template send and hands the template to the hub', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()
     useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 30 * 60 * 60 * 1000))))
     const { POST } = await import('../api/me/send/route')
+    const template = {name: 'quote_followup', language: 'zh_CN'}
     const res = await POST(
       new Request('http://localhost/api/communications/me/send', {
         method: 'POST',
-        body: JSON.stringify({ ...base, template: { name: 'quote_followup', language: 'zh_CN' } }),
+        body: JSON.stringify({...base, template}),
       }),
     )
-    expect(res.status).toBe(422)
-    expect(send).not.toHaveBeenCalled()
+    expect(res.status).toBe(202)
+    expect(send).toHaveBeenCalledTimes(1)
+    const call = (send.mock.calls as unknown as Array<[unknown, unknown, Record<string, unknown>]>)[0]
+    const input = call[2]
+    expect((input.channelMetadata as Record<string, unknown>).template).toEqual(template)
   })
 
   it('email channels are not windowed', async () => {

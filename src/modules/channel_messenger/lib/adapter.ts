@@ -115,7 +115,17 @@ export function createMessengerAdapter(options: MessengerAdapterOptions = {}): C
     },
 
     async convertOutbound(input) {
-      return {content: {text: input.body, bodyFormat: 'text'}}
+      // Same contract as the WhatsApp adapter: carry the provider-native
+      // recipient (and any template intent) into `metadata`, the only field the
+      // hub forwards to sendMessage.
+      const channelMetadata = (input.channelMetadata ?? {}) as Record<string, unknown>
+      return {
+        content: {text: input.body, bodyFormat: 'text'},
+        metadata: {
+          ...(typeof channelMetadata.to === 'string' ? {to: channelMetadata.to} : {}),
+          ...(channelMetadata.template ? {template: channelMetadata.template} : {}),
+        },
+      }
     },
 
     async sendMessage(input: SendMessageInput): Promise<SendMessageResult> {

@@ -46,26 +46,3 @@ export function evaluateSendPolicy(input: SendPolicyInput): SendPolicyResult {
   }
 }
 
-
-/**
- * The installed `sendAsUser` facade is email-shaped: it passes `externalEmail`
- * into the messages compose command, whose validator requires an email address.
- * Handing it a WhatsApp wa_id or a Messenger PSID fails with an internal compose
- * error (observed in the round-17 drill). Until the hub gains a provider-native
- * recipient field (ADR-006 / G8), refuse clearly instead of returning a 500 or
- * queueing a send that can never leave the hub.
- */
-export function evaluateRecipientSupport(input: {
-  channelType: string | null
-}): {supported: true} | {supported: false; code: 'OUTBOUND_RECIPIENT_UNSUPPORTED'; message: string} {
-  const type = (input.channelType || '').toLowerCase()
-  if (type === 'whatsapp' || type === 'messenger') {
-    return {
-      supported: false,
-      code: 'OUTBOUND_RECIPIENT_UNSUPPORTED',
-      message:
-        'The hub send-as-user facade only accepts email recipients today; provider-native WhatsApp/Messenger outbound needs the G8 hub change or a provider-owned send path',
-    }
-  }
-  return {supported: true}
-}
