@@ -149,22 +149,6 @@ export const enabledModules: ModuleEntry[] = [
           'backend:/backend/warranty_claims/vendor-policies/create': { metadata: { navHidden: true } },
           'backend:/backend/warranty_claims/troubleshooting-guides/create': { metadata: { navHidden: true } },
           'backend:/backend/users/create': { metadata: { navHidden: true } },
-          // Configuration screens that already live in the settings area. Without this
-          // they render twice: once under a "管理后台"-style group and once behind the
-          // settings gear, so a salesperson sees two paths to the same screen (measured:
-          // 11 duplicate hrefs). Hiding the main-nav entry leaves the settings path — the
-          // canonical one — untouched.
-          'backend:/backend/webhooks': { metadata: { navHidden: true } },
-          'backend:/backend/integrations': { metadata: { navHidden: true } },
-          'backend:/backend/data-sync': { metadata: { navHidden: true } },
-          'backend:/backend/payment-gateways': { metadata: { navHidden: true } },
-          'backend:/backend/config/sales': { metadata: { navHidden: true } },
-          'backend:/backend/config/translations': { metadata: { navHidden: true } },
-          'backend:/backend/config/scheduled-jobs': { metadata: { navHidden: true } },
-          'backend:/backend/config/wms': { metadata: { navHidden: true } },
-          'backend:/backend/users': { metadata: { navHidden: true } },
-          'backend:/backend/audit-logs': { metadata: { navHidden: true } },
-          'backend:/backend/docs': { metadata: { navHidden: true } },
           'backend:/backend/roles/create': { metadata: { navHidden: true } },
           'backend:/backend/currencies/create': { metadata: { navHidden: true } },
           'backend:/backend/exchange-rates/create': { metadata: { navHidden: true } },
