@@ -29,6 +29,9 @@ const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(outFlag === -1 ? 'docs/crm-platform/verify' : process.argv[outFlag + 1])
 
 const GATES = [
+  // First on purpose: every browser-facing gate below talks to a running server, and a
+  // server older than the source makes all of them verify yesterday's code.
+  { id: 'build-freshness', cmd: 'node scripts/crm-build-freshness.mjs', why: '运行中的服务对应当前源码且进程晚于构建' },
   { id: 'patches', cmd: 'node scripts/verify-patches.mjs', why: '受管补丁逐个 marker 在位' },
   { id: 'patch-budget', cmd: 'node scripts/check-patch-budget.mjs', why: '补丁条目不超预算' },
   { id: 'unit', cmd: 'yarn test --silent', why: '单元测试（含负向对照过的规则层）' },

@@ -148,6 +148,11 @@ for (const mutation of MUTATIONS) {
     continue
   }
 
+  // Preserve the original mtime across the mutation: rewriting the file and restoring
+  // identical content still bumps mtime, and the build-freshness gate reads mtime. Without
+  // this the two gates fight each other and the freshness gate reports a stale build
+  // after every mutation run.
+  const mtimeBefore = fs.statSync(abs).mtime
   const mutated = original.replace(mutation.find, mutation.replace)
   fs.writeFileSync(abs, mutated)
   mutationsApplied += 1
@@ -157,6 +162,11 @@ for (const mutation of MUTATIONS) {
     outcome = runTest(mutation.test)
   } finally {
     fs.writeFileSync(abs, original)
+    try {
+      fs.utimesSync(abs, mtimeBefore, mtimeBefore)
+    } catch {
+      /* mtime restoration is hygiene, not correctness */
+    }
   }
 
   const restoredOkay = sha(fs.readFileSync(abs, 'utf8')) === sha(original)
