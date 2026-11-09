@@ -1224,6 +1224,13 @@ export async function installFromArtifact({
   } catch (error) {
     writeFailure(error)
     fs.rmSync(staging, {recursive: true, force: true})
+    // Failed downloads/installs also accumulate zips; keep the newest two for
+    // audit and drop the rest so a flapping CI cannot fill the volume.
+    try {
+      pruneArtifactCache()
+    } catch {
+      /* best effort */
+    }
     throw error
   }
 }

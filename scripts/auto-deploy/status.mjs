@@ -62,7 +62,7 @@ async function main() {
           status: manifest.status,
           createdAt: manifest.createdAt,
           source: manifest.source?.method ?? null,
-          installer: manifest.artifact ? 'ci-artifact' : 'git-worktree',
+          installer: manifest.source?.method === 'ci-artifact' ? 'ci-artifact' : 'git-worktree',
           artifactHuman: manifest.artifact?.totalHuman,
         }
       : null,

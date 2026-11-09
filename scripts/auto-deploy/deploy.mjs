@@ -48,6 +48,17 @@ import {checkRelease, checkRunning} from './health.mjs'
 const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
 const PRODUCTION_PORT = 3000
 
+/**
+ * Where a release directory comes from:
+ *  - explicit --from-artifact -> CI package
+ *  - explicit --build-locally  -> local release.mjs build
+ *  - drill / synthetic target   -> keep the pre-artifact behaviour
+ *  - everything else            -> CI package (production default)
+ */
+export function useArtifactPath(args) {
+  return Boolean(args.fromArtifact || (!args.buildLocally && !args.drill && !args.releaseDir))
+}
+
 function parseArgs(argv) {
   const args = {
     mode: 'manual',
@@ -293,7 +304,7 @@ async function main() {
   // Default path: production pulls the CI package. Local builds are an explicit
   // fallback (`--build-locally`), and drills keep their previous behaviour unless
   // they ask for the artifact path.
-  args.useArtifact = args.fromArtifact || (!args.buildLocally && !args.drill && !args.releaseDir)
+  args.useArtifact = useArtifactPath(args)
   if (args.injectPostSwitchFailure && !args.drill) throw new Error('--inject-post-switch-failure is only allowed with --drill')
   if (args.releaseDir && !args.drill) throw new Error('--release-dir is only allowed with --drill')
 
@@ -685,7 +696,9 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error(`[deploy] fatal: ${error?.stack || error}`)
-  process.exit(3)
-})
+if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
+  main().catch((error) => {
+    console.error(`[deploy] fatal: ${error?.stack || error}`)
+    process.exit(3)
+  })
+}

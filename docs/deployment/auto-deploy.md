@@ -78,7 +78,7 @@ deploy.mjs  ── flock -n /home/pro/.local/state/ila3-deploy/deploy.lock
 ```bash
 cd /home/pro/apps/mercato
 
-# 单测（48 项：artifact 13 + 既有 35）
+# 单测（52 项：artifact 13 + 默认路径 4 + 既有 35）
 node --test scripts/auto-deploy/*.test.mjs
 
 # CI 门槛（只读；0=allow，2=deny，3=gate error）
@@ -185,6 +185,8 @@ manifest 放在 tar **外面**是刻意的：tar 自己的 sha256 是 manifest �
 6. 解包后逐文件重算 sha256，并用实际文件重算内容摘要，必须等于 manifest.sha256。
 
 任何一步不一致 → 抛 `ArtifactError`，写 `failed/<sha>-<runId>.json`，清理 staging，`current` 不变，退出码 2（`refused`）。
+
+用真实 GitHub 元数据验证过这条信任链：run `42609377937` 的 artifact（旧格式 `next-build-*`，973,384,312 字节）下载后本地重算 sha256 = `942c6675…2477`，与 GitHub API 返回的 `digest` 完全一致。证据：`drills/artifact-digest-proof.json`、`logs/artifact-digest-proof-20261109.log`。新格式 `mercato-release-<sha>` 由更新后的 workflow 产出，push 后走同一段代码。
 
 ## 7. 安全解包
 
@@ -322,7 +324,8 @@ node scripts/auto-deploy/deploy.mjs --manual --build-locally --sha "$(git rev-pa
 - **环境文件**：`.env*` 不入包，安装时从开发目录复制。轮换密钥后需要重建 release 或手工同步。
 - **构建产物路径**：`package-release.mjs` 从 checkout 读取 `.mercato/next` 和 `.mercato/generated`；CI 必须先 `yarn generate` + `yarn build`，否则打包直接失败（build stamp/generate 校验）。
 - **候选只验证 HTTP 就绪**：不启动 queue worker/scheduler，不验证后台任务；候选与生产共用数据库，健康检查只发 GET。
-- **下载缓存**：`artifacts/<sha>/<runId>/` 只保留最近 2 份（每份约 0.7–0.9 GB），超出自动删除；证据里的下载日志仍保留在 `logs/`。
+- **下载缓存**：`artifacts/<sha>/<runId>/` 只保留最近 2 份（每份约 0.2–0.9 GB），无论成功或失败都会裁剪；证据里的下载/失败日志仍保留在 `logs/` 与 `failed/`。
+- **下载超时**：整包下载默认 15 分钟（`ILA3_ARTIFACT_TIMEOUT_MS` 或 drill 的 `--artifact-timeout`）。本机到 GitHub 的带宽较慢时只影响下载阶段，超时会 `refused` 且不碰 `current`。
 - **外部依赖 GitHub API**：需要 `actions:read` 权限的 token（`/home/pro/.config/ila3/github-token`）；API 不可达时 artifact 路径拒绝，不会退回现场构建。
 - **flock 是进程级**：只覆盖本机同一路径的 `deploy.mjs`；绕过脚本直接改 symlink 不在保护范围。
 - **prune 只认 40 位 hex 目录**：artifact 安装的 release 目录同样是 `<sha>`，与现场构建一致；staging（`.staging-*`）与演练目录永不被当成 release 删除。
@@ -331,13 +334,14 @@ node scripts/auto-deploy/deploy.mjs --manual --build-locally --sha "$(git rev-pa
 
 | 交付 | 证据 |
 | --- | --- |
-| 单测 | `node --test scripts/auto-deploy/*.test.mjs`（48/48） |
+| 单测 | `node --test scripts/auto-deploy/*.test.mjs`（52/52） |
 | CI 门槛拒绝 | `gates/<sha>.json`、`logs/` |
 | CI 打包 | workflow run 的 `dist/release-manifest.json`；本地 `node scripts/auto-deploy/package-release.mjs ... --json` 输出 |
 | 下载/校验/安装 | `runs/<runId>.json` 的 `release`、`release.json` 的 `artifact` 块、`logs/<runId>-artifact*.log` |
 | 候选健康 | `logs/<runId>-candidate.log`、`runs/<runId>.json` 的 `candidate` |
 | 切换/回滚 | `runs/<runId>.json` 的 `postSwitch` / `rollback` |
 | 产物链失败演练 | `drills/artifact-latest.json`、`drills/<drillRunId>/`、`logs/<drillRunId>.log` |
+| 真实 GitHub digest 交叉校验 | `drills/artifact-digest-proof.json`、`logs/artifact-digest-proof-20261109.log` |
 | 真实产物 e2e | `drills/artifact-e2e-latest.json`、`drills/<drillRunId>/`、`logs/artifact-e2e-*.log` |
 | 原有失败演练 | `drills/latest.json` |
 | 只读状态 | `node scripts/auto-deploy/status.mjs` |
