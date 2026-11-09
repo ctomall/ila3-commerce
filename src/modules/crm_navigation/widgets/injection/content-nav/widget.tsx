@@ -75,16 +75,33 @@ function ContentNav() {
         { href: '/backend/sales/quotes', label: t('crmNav.related.allQuotes', '全部报价') },
       )
     }
+    const tabs = catalog?.customers.tabs?.length ? catalog.customers.tabs : SCENE_MAP.customers.tabs
     return (
-      <nav aria-label={t('crmNav.relatedAria', '关联对象')} className="mb-4 flex flex-wrap items-center gap-2 text-xs">
-        <span className="text-muted-foreground">{t('crmNav.relatedLabel', '关联')}</span>
-        {related.filter((link) => allowed(link.href.split('?')[0])).map((link) => (
-          <Link key={link.href} href={link.href} className={pillClass()}>
-            {link.label}
-            <ArrowUpRight className="size-3.5" aria-hidden />
-          </Link>
-        ))}
-      </nav>
+      <div className="mb-4 flex flex-col gap-2 border-b pb-3">
+        {/* The entity tabs stay visible on a record so the detail page still
+            belongs to the same customer scene and Back returns to the list. */}
+        <nav aria-label={t('crmNav.customers.aria', '客户视图')} className="flex flex-wrap gap-1">
+          {tabs
+            .filter((tab) => allowed(tab.href))
+            .map((tab) => {
+              const active = pathname === tab.href || pathname.startsWith(`${tab.href}/`)
+              return (
+                <Link key={tab.id} href={tab.href} aria-current={active ? 'page' : undefined} className={tabClass(active)}>
+                  {t(`crmNav.customers.tab.${tab.id}`, tab.label)}
+                </Link>
+              )
+            })}
+        </nav>
+        <nav aria-label={t('crmNav.relatedAria', '关联对象')} className="flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-muted-foreground">{t('crmNav.relatedLabel', '关联')}</span>
+          {related.filter((link) => allowed(link.href.split('?')[0])).map((link) => (
+            <Link key={link.href} href={link.href} className={pillClass()}>
+              {link.label}
+              <ArrowUpRight className="size-3.5" aria-hidden />
+            </Link>
+          ))}
+        </nav>
+      </div>
     )
   }
 

@@ -74,6 +74,7 @@ async function sidebarSnapshot(page) {
       groupHeaders: groups.length,
       nestedLists: nav ? nav.querySelectorAll('ul ul').length : 0,
       searchVisible: search ? getComputedStyle(search).display !== 'none' && search.getBoundingClientRect().width > 0 : false,
+      topbarAiTriggers: Array.from(document.querySelectorAll('header [data-ai-launcher-trigger], header [data-ai-launcher-trigger-mobile]')).filter((element) => element.getBoundingClientRect().width > 0).length,
       text: (aside?.innerText ?? '').slice(0, 400),
     }
   })
@@ -239,6 +240,7 @@ for (const role of ROLES) {
     check(`${role} no group headers`, sidebar.groupHeaders === 0, `headers=${sidebar.groupHeaders}`)
     check(`${role} no nested rail tree`, sidebar.nestedLists === 0, `nested=${sidebar.nestedLists}`)
     check(`${role} rail search hidden`, sidebar.searchVisible === false, `visible=${sidebar.searchVisible}`)
+    check(`${role} single AI entry`, sidebar.topbarAiTriggers === 0, `topbarTriggers=${sidebar.topbarAiTriggers}`)
     if (EXPECT_SHA) check(`${role} build sha in footer`, footer.includes(EXPECT_SHA), footer.slice(0, 80))
   }
 
@@ -263,6 +265,8 @@ for (const role of ROLES) {
     check(`${role} customer page ready`, customersReady.ok, customersReady.ok ? `text=${customersReady.mainTextLength}` : customersReady.error)
     check(`${role} customer table loaded`, customersTableReady && !customersState.loadingTable, `rows=${customersState.rows} loading=${customersState.loadingTable}`)
     check(`${role} customer content not blank`, customersState.rows > 0 && customersState.mainTextLength > 150, `rows=${customersState.rows} text=${customersState.mainTextLength}`)
+    const customerCrumb = await page.evaluate(() => (document.querySelector('nav[aria-label="Breadcrumb"]')?.innerText ?? '').replace(/\s+/g, ' ').trim())
+    check(`${role} customer breadcrumb`, customerCrumb.includes('公司'), customerCrumb)
     check(`${role} customer tabs`, customers.tabs.join('/') === '公司/联系人/商机', customers.tabs.join('/'))
     check(`${role} customer scene highlighted`, customers.active === 'page', `aria-current=${customers.active}`)
 
@@ -294,14 +298,18 @@ for (const role of ROLES) {
       })
       const related = await page.evaluate(() => {
         const nav = document.querySelector('nav[aria-label="关联对象"]')
+        const tabs = document.querySelector('nav[aria-label="客户视图"]')
         return {
           present: Boolean(nav),
+          tabs: Array.from(tabs?.querySelectorAll('a') ?? []).map((a) => (a.textContent ?? '').trim()),
+          activeTab: tabs?.querySelector('[aria-current="page"]')?.textContent?.trim() ?? null,
           links: Array.from(nav?.querySelectorAll('a') ?? []).map((a) => ({ label: (a.textContent ?? '').trim(), href: a.getAttribute('href') })),
         }
       })
       await shot('company-detail')
       results.push({ role, surface: 'company-detail', ...related, ready: detailReady.ok })
       check(`${role} record related nav`, detailReady.ok && related.present && related.links.length > 0, JSON.stringify(related.links))
+      check(`${role} detail keeps customer tabs`, related.tabs.join('/') === '公司/联系人/商机' && related.activeTab === '公司', `tabs=${related.tabs.join('/')} active=${related.activeTab}`)
       check(`${role} related nav self-describes scope`, related.links.some((link) => link.label === '全部联系人') && related.links.some((link) => link.label === '全部任务'), JSON.stringify(related.links))
       check(`${role} related nav uses list filter`, related.links.some((link) => link.href?.includes('companyId=')), JSON.stringify(related.links))
     } else {
@@ -324,6 +332,8 @@ for (const role of ROLES) {
   await shot('business')
   results.push({ role, surface: 'business', ...business, ready: businessReady.ok })
   if (MODE === 'verify') {
+    const businessCrumb = await page.evaluate(() => (document.querySelector('nav[aria-label="Breadcrumb"]')?.innerText ?? '').replace(/\s+/g, ' ').trim())
+    check(`${role} business breadcrumb`, businessCrumb.includes('业务'), businessCrumb)
     check(`${role} business home ready`, businessReady.ok, businessReady.ok ? `text=${businessReady.mainTextLength}` : businessReady.error)
     check(`${role} business home is a summary`, business.entryLinks === 0 && business.nestedLists === 0, `entryLinks=${business.entryLinks} nested=${business.nestedLists}`)
     check(`${role} business home fits first screen`, business.scrollHeight <= business.viewportHeight + 48, `scroll=${business.scrollHeight} viewport=${business.viewportHeight}`)
@@ -375,6 +385,8 @@ for (const role of ROLES) {
   await shot('manage')
   results.push({ role, surface: 'manage', ...manage, ready: manageReady.ok })
   if (MODE === 'verify') {
+    const manageCrumb = await page.evaluate(() => (document.querySelector('nav[aria-label="Breadcrumb"]')?.innerText ?? '').replace(/\s+/g, ' ').trim())
+    check(`${role} manage breadcrumb`, manageCrumb.includes('管理中心'), manageCrumb)
     check(`${role} management ready`, manageReady.ok, manageReady.ok ? `text=${manageReady.mainTextLength}` : manageReady.error)
     check(`${role} management search`, manage.search, `search=${manage.search}`)
     check(`${role} management categories`, manage.categories.length > 0, manage.categories.join(','))
