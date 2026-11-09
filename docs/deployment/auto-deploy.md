@@ -1,8 +1,8 @@
 # CRM 隔离自动部署（auto-deploy）
 
-> 状态（2026-11-09 12:22）：**发布默认路径已从“生产机现场构建”切到“CI 出完整发布包 → 可信校验 → 安全解包 → 安装”。** `deploy.mjs` 在非演练模式下默认走 `--from-artifact`；现场构建 `release.mjs` 保留为显式 `--build-locally` fallback。统一入口 `entry.mjs`（systemd 两个入口都走它）显式传入 `--from-artifact`。
+> 状态（2026-11-09 12:38）：**发布默认路径已从“生产机现场构建”切到“CI 出完整发布包 → 可信校验 → 安全解包 → 安装”。** `deploy.mjs` 在非演练模式下默认走 `--from-artifact`；现场构建 `release.mjs` 保留为显式 `--build-locally` fallback。统一入口 `entry.mjs`（systemd 两个入口都走它）显式传入 `--from-artifact`。
 >
-> 本轮改动尚未 push 到 `origin/main`，因此 GitHub 上还没有“新格式”发布包的 run：现有 run `42609377937`（commit `7860993`）上传的是旧格式 `next-build-*` 目录包。CI 与生产使用同一个打包脚本（`package-release.mjs`），本地 e2e 演练验证了从打包、下载校验、解包、安装到候选健康/切换的完整链路；真机下载 GitHub 新包要等该 commit push 后产生 run。**在 CI 产出新 artifact 之前，生产仍应使用 `--build-locally`，否则会按设计拒绝。**
+> 产物链已随 `7a38b7f` 进入 `origin/main`，并触发了 build-artifact run `42616956527`（commit `de1843f`）。该 run 暴露并已修复一个真实的 CI 缺陷：`createReleasePackage()` 误调部署专用的 `ensureDirs()`，在 runner 上 `mkdir /home/pro/releases/mercato` 触发 EACCES，run 在 “Package release artifact” 步骤失败（之前的 typecheck/test/build 全绿）。修复提交 `1e89e74`（打包不创建生产 state/release 目录）尚未 push；**push 后需要等待一个新的 build-artifact run 成功，默认 artifact 路径才真正可用。在此之前，生产发布必须显式 `--build-locally`，否则会按设计拒绝。** 旧 run `42609377937`（commit `7860993`）上传的是旧格式 `next-build-*` 目录包，不可用于新链路。
 >
 > 失败演练：`artifact-drill.mjs` 7 项全部通过（sha 不匹配 / manifest 与 run 元数据不一致 / 路径穿越 / 下载 404 / 下载超时 / 部署级 404 / 部署级超时，后两项均验证旧版本仍在运行）；原有候选失败与回滚演练仍通过。真实 2.4 GB release 的 e2e（打包 → 安装 → 候选 → 切换）也通过：tar.gz 225.5 MiB / 14,296 文件 / 33 个包内符号链接，`yarn install` 115.6 s，候选与切换后健康均通过，`source.method=ci-artifact`。证据见 §11。
 
