@@ -21,6 +21,14 @@ function makeRelease(root, sha, padding = 1024) {
   return dir
 }
 
+test('releaseInUse finds a live process whose cwd is inside the release', async () => {
+  const {releaseInUse} = await import('./lib.mjs')
+  // This test process runs with the repository as its cwd, so the helper must
+  // resolve a pid for that directory (and none for a path nobody runs from).
+  assert.match(String(releaseInUse(process.cwd())), /^\d+$/)
+  assert.equal(releaseInUse('/nonexistent-release-dir-for-test'), null)
+})
+
 test('pruneReleases keeps current and previous and removes every other release', () => {
   const root = tempRoot()
   const a = makeRelease(root, SHA_A)

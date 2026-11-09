@@ -67,13 +67,21 @@ export async function POST(req: NextRequest) {
   // deployed. This makes an accidental click, a replayed request or a stale tab
   // fail instead of restarting production.
   const repo = await readRepoInfo()
-  const expected = repo.shortCommit ?? ''
+  // The confirmation echoes the commit that is RUNNING (build-info of the release
+  // directory), not the checkout HEAD: after a push those differ, and only the
+  // running commit proves what an upgrade would replace.
+  const expected = (repo.runningCommit ?? repo.commit ?? repo.shortCommit ?? '').toLowerCase()
+  const shortExpected = expected.slice(0, 8)
   const provided = typeof body.confirm === 'string' ? body.confirm.trim().toLowerCase() : ''
-  if (!expected || provided !== expected.toLowerCase()) {
+  const confirmed =
+    expected.length >= 7 &&
+    provided.length >= 7 &&
+    (expected === provided || expected.startsWith(provided) || (shortExpected && provided.startsWith(shortExpected)))
+  if (!expected || !confirmed) {
     return NextResponse.json(
       {
         error: 'confirmation required',
-        detail: `send {"confirm":"${expected}"} — the short commit currently deployed`,
+        detail: `send {"confirm":"${shortExpected}"} — the short commit currently deployed`,
       },
       { status: 409 },
     )

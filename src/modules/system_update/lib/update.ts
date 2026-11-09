@@ -9,11 +9,54 @@
 import { execFile } from 'node:child_process'
 import { promisify } from 'node:util'
 import fs from 'node:fs/promises'
+import fsSync from 'node:fs'
 import path from 'node:path'
 
 const execFileAsync = promisify(execFile)
 
 export const APP_DIR = process.env.ILA3_APP_DIR?.trim() || process.cwd()
+
+/**
+ * Pick the first candidate directory that is a real git checkout.
+ *
+ * Production serves from `/home/pro/releases/mercato/<sha>`, installed from the
+ * CI artifact, which deliberately carries no `.git`. Repo facts (origin/main,
+ * the short commit the confirmation echoes) therefore come from the checkout the
+ * release pipeline reads, not from the release directory. Pure so it is testable.
+ */
+export function pickRepoDir(
+  candidates: Array<string | null | undefined>,
+  hasGit: (dir: string) => boolean,
+): string | null {
+  for (const candidate of candidates) {
+    const dir = typeof candidate === 'string' ? candidate.trim() : ''
+    if (!dir) continue
+    try {
+      if (hasGit(dir)) return dir
+    } catch {
+      // unreadable candidate: keep looking
+    }
+  }
+  return null
+}
+
+function hasGit(dir: string): boolean {
+  try {
+    return fsSync.existsSync(path.join(dir, '.git'))
+  } catch {
+    return false
+  }
+}
+
+/** The checkout used for repository facts; falls back to APP_DIR when none. */
+export function resolveRepoDir(): string {
+  return (
+    pickRepoDir(
+      [process.env.ILA3_REPO_DIR, APP_DIR, '/home/pro/apps/mercato'],
+      hasGit,
+    ) ?? APP_DIR
+  )
+}
 export const STATE_DIR = path.join(APP_DIR, '.mercato', 'system-update')
 export const STATE_FILE = path.join(STATE_DIR, 'state.json')
 export const REQUEST_FILE = path.join(STATE_DIR, 'request.json')
@@ -80,9 +123,9 @@ export function normalizeRef(raw: unknown): string | null {
   return value
 }
 
-async function git(args: string[], timeout = 8000): Promise<string> {
+async function git(args: string[], timeout = 8000, cwd = APP_DIR): Promise<string> {
   const { stdout } = await execFileAsync('git', args, {
-    cwd: APP_DIR,
+    cwd,
     timeout,
     maxBuffer: 4 * 1024 * 1024,
   })
@@ -90,20 +133,21 @@ async function git(args: string[], timeout = 8000): Promise<string> {
 }
 
 export async function readRepoInfo(): Promise<RepoInfo> {
+  const repoDir = resolveRepoDir()
   try {
-    await fs.access(path.join(APP_DIR, '.git'))
+    await fs.access(path.join(repoDir, '.git'))
   } catch {
     return { isRepo: false }
   }
   const [branch, commit, subject, committedAt, remote, dirty] = await Promise.all([
-    git(['rev-parse', '--abbrev-ref', 'HEAD']).catch(() => ''),
-    git(['rev-parse', 'HEAD']).catch(() => ''),
-    git(['log', '-1', '--pretty=%s']).catch(() => ''),
-    git(['log', '-1', '--pretty=%cI']).catch(() => ''),
-    git(['remote', 'get-url', 'origin']).catch(() => ''),
-    git(['status', '--porcelain']).catch(() => ''),
+    git(['rev-parse', '--abbrev-ref', 'HEAD'], 8000, repoDir).catch(() => ''),
+    git(['rev-parse', 'HEAD'], 8000, repoDir).catch(() => ''),
+    git(['log', '-1', '--pretty=%s'], 8000, repoDir).catch(() => ''),
+    git(['log', '-1', '--pretty=%cI'], 8000, repoDir).catch(() => ''),
+    git(['remote', 'get-url', 'origin'], 8000, repoDir).catch(() => ''),
+    git(['status', '--porcelain'], 8000, repoDir).catch(() => ''),
   ])
-  const tags = await git(['tag', '--list', 'pre-update-*', '--sort=-creatordate'])
+  const tags = await git(['tag', '--list', 'pre-update-*', '--sort=-creatordate'], 8000, repoDir)
     .then((out) => out.split('\n').filter(Boolean).slice(0, 5))
     .catch(() => [])
   // Version surface: the app version from package.json plus the release tags a person
@@ -112,10 +156,10 @@ export async function readRepoInfo(): Promise<RepoInfo> {
     .readFile(path.join(APP_DIR, 'package.json'), 'utf8')
     .then((raw) => String((JSON.parse(raw) as { version?: string }).version ?? ''))
     .catch(() => '')
-  const releaseTags = await git(['tag', '--list', 'v*', '--sort=-v:refname'])
+  const releaseTags = await git(['tag', '--list', 'v*', '--sort=-v:refname'], 8000, repoDir)
     .then((out) => out.split('\n').filter(Boolean).slice(0, 12))
     .catch(() => [])
-  const nearestTag = await git(['describe', '--tags', '--abbrev=0']).catch(() => '')
+  const nearestTag = await git(['describe', '--tags', '--abbrev=0'], 8000, repoDir).catch(() => '')
   const releaseLabel = [nearestTag, commit ? commit.slice(0, 8) : ''].filter(Boolean).join(' ')
   // The running build's own stamp; it travels with the build directory through swaps.
   const buildInfo = await fs

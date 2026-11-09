@@ -82,6 +82,11 @@ describe('mapDeploymentRun', () => {
     expect(run?.error?.text).not.toContain('[object Object]')
   })
 
+  it('maps the no-op redeploy result to already-current', () => {
+    const run = mapDeploymentRun({ ...refused, result: 'already-current' })
+    expect(run?.result).toBe('already-current')
+  })
+
   it('accepts a string error and maps an unknown result explicitly', () => {
     const run = mapDeploymentRun({ runId: 'x', result: 'weird', error: 'boom' })
     expect(run?.result).toBe('unknown')

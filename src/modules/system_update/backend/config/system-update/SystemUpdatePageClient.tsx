@@ -84,6 +84,7 @@ type StatusPayload = {
 
 const RESULT_LABEL: Record<DeployResult, string> = {
   deployed: '已部署',
+  'already-current': '已是最新（未重启）',
   refused: '已拒绝',
   failed: '失败',
   'rolled-back': '已回滚',
@@ -93,7 +94,7 @@ const RESULT_LABEL: Record<DeployResult, string> = {
 }
 
 function resultVariant(result: DeployResult) {
-  if (result === 'deployed') return 'success' as const
+  if (result === 'deployed' || result === 'already-current') return 'success' as const
   if (result === 'refused' || result === 'rolled-back' || result === 'running') {
     return 'warning' as const
   }
@@ -179,7 +180,13 @@ export default function SystemUpdatePageClient() {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         ref: refInput.trim() || undefined,
-        confirm: payload?.repo?.shortCommit ?? payload?.deployment?.running?.shortSha ?? '',
+        // Echo the RUNNING commit (what the upgrade would replace); the checkout
+        // HEAD may already be ahead of it after a push.
+        confirm:
+          payload?.deployment?.running?.shortSha ??
+          payload?.repo?.runningCommit?.slice(0, 8) ??
+          payload?.repo?.shortCommit ??
+          '',
       }),
     })
     setBusy(false)

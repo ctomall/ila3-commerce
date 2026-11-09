@@ -280,7 +280,7 @@ export function protectedReleases({root = RELEASE_ROOT, currentLink, previousLin
 }
 
 /** First pid whose cwd is inside `dir`, or null. Guards against deleting a release in use. */
-function releaseInUse(dir) {
+export function releaseInUse(dir) {
   let entries
   try {
     entries = fs.readdirSync('/proc')

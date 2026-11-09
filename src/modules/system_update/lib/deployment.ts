@@ -19,6 +19,7 @@
 
 export type DeployResult =
   | 'deployed'
+  | 'already-current'
   | 'refused'
   | 'failed'
   | 'rolled-back'
@@ -131,6 +132,7 @@ export type DeploymentStatus = {
 
 const KNOWN_RESULTS: ReadonlySet<string> = new Set<DeployResult>([
   'deployed',
+  'already-current',
   'refused',
   'failed',
   'rolled-back',

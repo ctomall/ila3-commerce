@@ -227,6 +227,22 @@ manifest 放在 tar **外面**是刻意的：tar 自己的 sha256 是 manifest �
 - 回滚：post-switch 失败 → `current` → `previous`，重启旧 release 并复验健康；回滚失败 `result=rollback-failed`，退出码 3。
 - 生产保护不变：目标端口 3000 / systemd 模式默认拒绝，需 `--allow-production` + `ILA3_ALLOW_PRODUCTION=1`；`mercato.service` 仍占用 3000 时拒绝第二生产槽，除非显式 `--allow-replace-mercato`。
 
+### 9.1 同 SHA 不重启（2026-11-09 修复）
+
+定时器每 15 分钟跑一次；在没有新提交时，旧逻辑仍会走 `switch` + `systemctl restart`，
+等于每 15 分钟重启一次生产（13:34–14:52 观察到 6 次，`ActiveEnterTimestamp` 每次跟着变）。
+
+现在 `deploy.mjs` 在 release 校验之后先判断：
+
+- `current` 指向的 release `sha` 与目标 `sha` 相同，且不是 `--drill`、不是 `--force`；
+- 对**正在服务**的端口复验（`/login` 200、`/backend`→`/login`、磁盘 build stamp 匹配该 sha），并记录 `/proc/<pid>/cwd` 命中该 release 的 pid。
+
+两项都成立 → `result=already-current`，不切换 symlink、不重启、退出码 0；
+升级页面把这条记录显示为「已是最新（未重启）」。健康复验不通过则照常进入候选/切换/回滚流程。
+
+手工入口的确认值也改成**正在运行的 commit**（release 的 build-info），而不是 checkout HEAD：
+推送后两者会不同，只有运行中的 commit 才能证明升级要替换掉什么。
+
 ## 10. 现场构建 fallback
 
 `release.mjs` 保留原逻辑：`git worktree add --detach <sha>` → `yarn install --frozen-lockfile` → `nice -n 10 yarn build` → 校验 build stamp。只有在以下情况显式使用：

@@ -13,33 +13,7 @@ import fs from 'node:fs'
 import {spawnSync} from 'node:child_process'
 import path from 'node:path'
 import {fileURLToPath} from 'node:url'
-import {
-  ACTIVE_FILE,
-  CURRENT_LINK,
-  LOCK_PATH,
-  LOGS_DIR,
-  PREVIOUS_LINK,
-  RELEASE_ROOT,
-  STATE_DIR,
-  atomicSymlink,
-  enforceFlock,
-  ensureDirs,
-  makeRunId,
-  nowIso,
-  persistRun,
-  pruneReleases,
-  killTree,
-  pidAlive,
-  readJson,
-  readLink,
-  resolveSha,
-  runStreaming,
-  sleep,
-  tailLines,
-  waitExit,
-  worktreeDirty,
-  writeJsonAtomic,
-} from './lib.mjs'
+import {ACTIVE_FILE, CURRENT_LINK, LOCK_PATH, LOGS_DIR, PREVIOUS_LINK, RELEASE_ROOT, STATE_DIR, atomicSymlink, enforceFlock, ensureDirs, makeRunId, nowIso, persistRun, pruneReleases, killTree, pidAlive, readJson, readLink, resolveSha, runStreaming, sleep, tailLines, waitExit, worktreeDirty, writeJsonAtomic, releaseInUse} from './lib.mjs'
 import {runGate} from './ci-gate.mjs'
 import {buildRelease, verifyRelease} from './release.mjs'
 import {installFromArtifact} from './artifact.mjs'
@@ -471,6 +445,38 @@ async function main() {
     oldRelease = resolveOldRelease(CURRENT_LINK)
     record.previous = oldRelease
 
+    // A sha that is already serving must not be redeployed. The timer fires every
+    // 15 minutes; before this guard, every tick switched the symlink and ran
+    // `systemctl restart`, so production restarted on each tick even with no new
+    // commit (six restarts 13:34-14:52 on 2026-11-09). The live process is the
+    // authority: the running app must report this release and this sha.
+    if (
+      oldRelease &&
+      !oldRelease.missing &&
+      oldRelease.sha === sha &&
+      !args.drill &&
+      !args.force
+    ) {
+      const live = await step('live-release-health', async () =>
+        checkRunning({
+          port: args.targetPort,
+          releaseDir: release.dir,
+          sha,
+          timeoutMs: 30000,
+        }),
+      )
+      // A pid whose cwd is inside the release proves the release is what the host
+      // is actually running; /proc may be unreadable elsewhere, so record it but
+      // do not make the guard depend on it.
+      const livePid = releaseInUse(release.dir)
+      record.liveHealth = {ok: live.ok, pid: livePid, checks: live.checks, port: args.targetPort}
+      if (live.ok) {
+        record.result = 'already-current'
+        record.prune = pruneOrphans()
+        return
+      }
+    }
+
     const candidateLog = path.join(LOGS_DIR, `${record.runId}-candidate.log`)
     const candidate = await step('candidate-health', async () =>
       checkRelease({
@@ -666,6 +672,7 @@ async function main() {
       release: record.release ?? null,
       installer: record.release?.installer ?? null,
       candidate: record.candidate ?? null,
+      liveHealth: record.liveHealth ?? null,
       postSwitch: record.postSwitch ?? null,
       rollback: record.rollback ?? null,
       targetUnchanged: record.targetUnchanged ?? null,
@@ -687,7 +694,7 @@ async function main() {
     }
 
     const exitCode =
-      record.result === 'deployed'
+      record.result === 'deployed' || record.result === 'already-current'
         ? 0
         : record.result === 'refused' || record.result === 'rolled-back'
           ? 2
