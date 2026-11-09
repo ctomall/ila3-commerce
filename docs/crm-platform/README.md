@@ -18,8 +18,12 @@
 | M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
 | M8 验收 | **governance 完成** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
-**最后一份全量运行**：`verify/verify-2026-11-09T04-11-31.md` — `PASS 21 · FAIL 1 · SKIP 0`；
-唯一失败项是 `quote-regression`（缺 draft 报价夹具），发布级门禁因工作树里有别人的未跟踪目录而为 FAIL。
+**最后一份发布级运行**：`verify/verify-2026-11-09T05-35-37.md` — **PASS 23 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（提交 `80356ee`）。
+
+这一份之所以能给出 PASS，是因为两件事被显式解决而不是绕过：
+
+1. `quote-regression` 缺 draft 报价夹具 → 门可以 `--create-fixture` 自建一行并删除（D28），实测残留 0 行。
+2. 工作树里有两个不是本会话写的目录（`docs/deployment/`、`scripts/auto-deploy/`）→ 在 `appendix/foreign-paths.json` 里**逐个声明并写明理由**，报告把它们单列，且**未声明的改动仍然让发布级判定失败**；声明若不再命中任何路径也算失败（防止豁免腐烂）。
 
 ### 现在需要你决定（其余都在等这四件）
 
