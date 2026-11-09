@@ -8,6 +8,7 @@ import {
   readRepoInfo,
   readState,
 } from '../../lib/update'
+import { reconcileLiveness } from '../../lib/liveness'
 
 export const metadata = {
   GET: { requireAuth: true },
@@ -29,11 +30,17 @@ export async function GET(req: NextRequest) {
     isUpdateUnitRunning(),
   ])
 
+  // A `running` record whose unit is gone is a dead build, not a live one: the process
+  // that would have written the final state is the one that died. The record is kept and
+  // the display is derived, so the page cannot show "running" for a failed update.
+  const reconciled = reconcileLiveness(state, { unitActive, now: new Date() })
+
   return NextResponse.json({
     enabled: isSelfUpdateEnabled(),
     canManage: isSuperAdmin(auth),
     unitActive,
-    state,
+    state: reconciled.state,
+    stateDerived: reconciled.derived,
     repo,
     log,
   })
