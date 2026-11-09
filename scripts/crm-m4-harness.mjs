@@ -45,6 +45,11 @@ const openapi = await fetch(`${BASE}/api/docs/openapi`, { headers: { cookie: coo
   .then((r) => (r.ok ? r.json() : { paths: {} }))
   .catch(() => ({ paths: {} }))
 const paths = Object.keys(openapi.paths ?? {})
+// The tool registry is the only way to know which tools a session can actually call.
+const toolNames = await fetch(`${BASE}/api/ai_assistant/tools`, { headers: { cookie: cookies.superadmin } })
+  .then((r) => (r.ok ? r.json() : { tools: [] }))
+  .then((d) => (Array.isArray(d.tools) ? d.tools.map((t) => t?.name).filter((n) => typeof n === 'string') : []))
+  .catch(() => [])
 const fixtures = {
   'leadgen-api': paths.some((p) => p.includes('/leadgen/')),
   'employee-B': Boolean(cookies.admin && cookies.employee),
@@ -52,7 +57,10 @@ const fixtures = {
   // second organization, which does not exist yet.
   'second-organization': false,
   'dsh-profile-per-employee': false,
-  'probe-tool': false,
+  // A tool that reports the actor the runtime actually resolved. `context_whoami` exists
+  // in the ai-assistant package, so this is discoverable rather than assumed.
+  'probe-tool': toolNames.includes('context_whoami'),
+  'tool-execute': paths.includes('/ai_assistant/tools/execute'),
   'existing-quote': paths.includes('/sales/quotes/convert'),
 }
 
@@ -64,6 +72,11 @@ async function http({ role, method = 'GET', url, body }) {
   if (body !== undefined) headers['content-type'] = 'application/json'
   const res = await fetch(`${BASE}${url}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), redirect: 'manual' })
   return { status: res.status, text: (await res.text()).slice(0, 200) }
+}
+
+/** Direct tool execution: deterministic, no model call. */
+async function executeTool({ role, toolName, args }) {
+  return http({ role, method: 'POST', url: '/api/ai_assistant/tools/execute', body: { toolName, args } })
 }
 
 /**
@@ -162,12 +175,57 @@ const cases = [
   {
     id: 3.1,
     attack: '模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId）',
-    expected: '审计记录真实 actor，注入值不生效',
-    // Proving this needs a tool that reports the resolved actor. Until then it is a gap,
-    // not a pass — the earlier "identity forgery pass" only proved an unknown agent 404s.
-    requires: ['probe-tool'],
-    run: null,
-    judge: null,
+    expected: '运行时按真实会话解析 actor，注入值不生效',
+    path: '/ai_assistant/tools/execute',
+    // `context_whoami` reports the resolved context, which is what this case always
+    // needed: an unknown-agent 404 never proved that a forged actor is ignored.
+    requires: ['probe-tool', 'tool-execute'],
+    run: async () => {
+      const forged = {
+        actorUserId: '00000000-0000-0000-0000-000000000001',
+        userId: '00000000-0000-0000-0000-000000000002',
+        onBehalfOfUserId: '00000000-0000-0000-0000-000000000003',
+      }
+      // `http()` truncates to 200 chars for the matrix, which makes a tool response
+      // unparseable (the full context includes ~112 features). Pull the whole body here
+      // and return only the resolved actor, so the matrix stays readable.
+      const call = async (args) => {
+        const res = await fetch(`${BASE}/api/ai_assistant/tools/execute`, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', cookie: cookies.employee ?? '' },
+          body: JSON.stringify({ toolName: 'context_whoami', args }),
+        })
+        const full = await res.text()
+        let userId = null
+        try {
+          userId = JSON.parse(full)?.result?.userId ?? null
+        } catch {
+          userId = null
+        }
+        return { status: res.status, userId, bytes: full.length }
+      }
+      const baseline = await call({})
+      const injected = await call(forged)
+      return {
+        status: injected.status,
+        text: JSON.stringify({ resolvedUserId: injected.userId, baselineUserId: baseline.userId, responseBytes: injected.bytes }),
+        baseline: { status: baseline.status, userId: baseline.userId },
+        forgedValues: Object.values(forged),
+      }
+    },
+    judge: (r) => {
+      if (r.status !== 200 || r.baseline.status !== 200) return false
+      let actual = null
+      try {
+        actual = JSON.parse(r.text)?.resolvedUserId ?? null
+      } catch {
+        actual = null
+      }
+      const baseline = r.baseline.userId
+      // Same actor with and without the forged fields, and it is not one of the forgeries.
+      return Boolean(actual) && actual === baseline && !r.forgedValues.includes(actual)
+    },
+    weakReason: '证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核',
   },
   {
     id: 4,
@@ -282,7 +340,7 @@ const md = [
   '',
   '| fixture | 是否存在 | 说明 |',
   '|---|---|---|',
-  ...Object.entries(fixtures).map(([k, v]) => `| \`${k}\` | ${v ? '有' : '**无**'} | ${k === 'leadgen-api' ? 'leadgen 路由未部署（迁移未批准）' : k === 'second-organization' ? '只有一个租户一个组织' : k === 'dsh-profile-per-employee' ? '没有每员工 DSH 运行时' : k === 'probe-tool' ? '未注册越权探针工具' : ''} |`),
+  ...Object.entries(fixtures).map(([k, v]) => `| \`${k}\` | ${v ? '有' : '**无**'} | ${k === 'leadgen-api' ? 'leadgen 路由未部署（迁移未批准）' : k === 'second-organization' ? '只有一个租户一个组织' : k === 'dsh-profile-per-employee' ? '没有每员工 DSH 运行时' : k === 'probe-tool' ? 'context_whoami 是否在运行时工具表里' : k === 'tool-execute' ? '/ai_assistant/tools/execute 是否在 openapi 里' : ''} |`),
   '',
   '> **阻塞不等于通过。** 只有 `pass` 才算 M4 有证据；`blocked` 的用例在 fixture 到位前不能计入验收。',
 ]

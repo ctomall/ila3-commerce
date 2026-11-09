@@ -63,7 +63,7 @@
 |---|---|---|---|---|
 | M4-1 | 两个测试员工、两个专属助手 | `05-security-poc.md` §2 | 计划已写；执行待路线确认 | blocked |
 | M4-0 | 安全基线与探针脚本 | `scripts/crm-security-probe.mjs` + `poc/` | 14 例 / 14 符合 / 5 张表零写入；**脚本现在会 exit 1**（负向对照：改期望 → exit 1） | done |
-| M4-0b | 对抗执行器（12 条） | `scripts/crm-m4-harness.mjs` + `poc/<日期>-m4/` | 5 pass · 1 弱通过 · 0 fail · 5 blocked · 1 invalid | doing |
+| M4-0b | 对抗执行器（12 条） | `scripts/crm-m4-harness.mjs` + `poc/<日期>-m4/` | **5 pass · 2 弱通过 · 0 fail · 4 blocked · 1 invalid**；#3.1 伪造操作者已由 `context_whoami` 探针执行（注入三个 actor 字段后解析出的 id 与基线一致），fixture 由「未注册探针工具」变为「运行时工具表里查到」 | doing |
 | M4-0c | 执行手册 | `05a-m4-runbook.md` | 前置检查 + fixture + 7 维命令 + 回滚 + 四份交付物 | done |
 | M4-2 | 隔离 DSH 数据/执行环境（会话/订阅/任务/文件/记忆/凭据/浏览器态） | 同上 | 7 类隔离逐条证据 | todo |
 | M4-3 | 一个 CRM 只读工具 | `12-crm-tool.md` | **已完成**：`crm.find_companies`（`src/modules/crm_tools/`，18 测）+ 运行时注册实测（97 工具内含它）；端到端七项：401 / 200 明文数据 / scope 回显 / 注入 tenantId 400 / limit 500 → 400 / 未知工具 400 / employee 角色 200。端到端跑出并修掉两个单测抓不到的缺陷（knex 占位符、ORM 解密被绕过）| done（403 路径缺 fixture）|
