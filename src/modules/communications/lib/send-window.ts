@@ -4,7 +4,6 @@ import {
   ExternalConversation,
   ExternalMessage,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
-import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
 import { evaluateSendPolicy, type SendPolicyResult } from './send-policy'
 
 export type WindowCheckInput = {
@@ -26,11 +25,14 @@ export type WindowCheckInput = {
  * and this check must not become an existence oracle that differs from it.
  */
 export async function checkCustomerWindow(input: WindowCheckInput): Promise<SendPolicyResult> {
+  // Exact organization match, mirroring sendAsUser: a null-inclusive lookup could
+  // find a channel the facade then 404s, turning this policy check into a
+  // different existence oracle than the hub's own.
   const channel = await input.em.findOne(CommunicationChannel, {
     id: input.channelId,
     tenantId: input.tenantId,
+    organizationId: input.organizationId,
     deletedAt: null,
-    ...channelOrgScopeWhere(input.organizationId),
   } as FilterQuery<CommunicationChannel>)
   if (!channel) return {allowed: true, reason: 'no_window'}
   if (channel.userId != null && channel.userId !== input.actorUserId) {
@@ -45,7 +47,7 @@ export async function checkCustomerWindow(input: WindowCheckInput): Promise<Send
     channelId: channel.id,
     externalConversationId: input.recipient,
     tenantId: input.tenantId,
-    ...channelOrgScopeWhere(input.organizationId),
+    organizationId: input.organizationId,
   } as FilterQuery<ExternalConversation>)
   let lastInboundAt: Date | null = null
   if (conversation) {
@@ -55,7 +57,7 @@ export async function checkCustomerWindow(input: WindowCheckInput): Promise<Send
         conversationId: conversation.id,
         direction: 'inbound',
         tenantId: input.tenantId,
-        ...channelOrgScopeWhere(input.organizationId),
+        organizationId: input.organizationId,
       } as FilterQuery<ExternalMessage>,
       {orderBy: {createdAt: 'desc'}},
     )
