@@ -1,8 +1,14 @@
 import { NextResponse } from 'next/server'
+import type { EntityManager } from '@mikro-orm/postgresql'
 import { z } from 'zod'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import { readJsonSafe } from '@open-mercato/shared/lib/http/readJsonSafe'
+import {
+  claimSendRequest,
+  completeSendRequest,
+  releaseSendRequest,
+} from '../../../lib/send-request'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -106,8 +112,16 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const container = await createRequestContainer()
-  const send = container.resolve<SendAsUserFacade>('communicationChannelsSendAsUser')
-  if (typeof send !== 'function') {
+  let send: SendAsUserFacade | null = null
+  try {
+    const resolved = container.resolve<SendAsUserFacade>('communicationChannelsSendAsUser')
+    if (typeof resolved === 'function') send = resolved
+  } catch {
+    // communication_channels is an optional module: without it there is no
+    // facade, and a 500 would misreport an installation state as a crash.
+    send = null
+  }
+  if (!send) {
     return NextResponse.json(
       { error: 'Communication channel sending is unavailable' },
       { status: 503 },
@@ -115,6 +129,52 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const organizationId = (auth as { orgId?: string | null }).orgId ?? null
+
+  // Idempotency: reserve the caller's key before the hub runs. A retry after a
+  // timeout replays the first result instead of sending a second message.
+  let dedupeEm: EntityManager | null = null
+  let claimId: string | null = null
+  if (body.clientRequestId) {
+    try {
+      dedupeEm = (container.resolve('em') as EntityManager).fork()
+    } catch {
+      return NextResponse.json(
+        { error: 'Idempotency store unavailable; retry without clientRequestId' },
+        { status: 503 },
+      )
+    }
+    const claim = await claimSendRequest(dedupeEm, {
+      tenantId: auth.tenantId as string,
+      organizationId,
+      userId: auth.sub as string,
+      clientRequestId: body.clientRequestId,
+      channelId: body.channelId,
+    })
+    if (claim.state === 'replay') {
+      return NextResponse.json(
+        {
+          messageId: claim.messageId,
+          threadId: claim.messageThreadId,
+          channelId: claim.channelId,
+          clientRequestId: body.clientRequestId,
+          enqueuedForDelivery: true,
+          replayed: true,
+        },
+        { status: 200 },
+      )
+    }
+    if (claim.state === 'in_flight') {
+      return NextResponse.json(
+        {
+          error: 'A send with this clientRequestId is still in flight',
+          clientRequestId: body.clientRequestId,
+        },
+        { status: 409 },
+      )
+    }
+    claimId = claim.id
+  }
+
   const channelMetadata = body.clientRequestId
     ? { ...(body.channelMetadata ?? {}), clientRequestId: body.clientRequestId }
     : body.channelMetadata
@@ -137,12 +197,24 @@ export async function POST(req: Request): Promise<Response> {
   )
 
   if (!result.ok) {
+    // Definite refusal: free the key so a corrected retry can proceed. A 5xx is
+    // NOT released — the outcome is unknown and a blind retry could double-send.
+    if (dedupeEm && claimId && result.status < 500) {
+      await releaseSendRequest(dedupeEm, claimId)
+    }
     return NextResponse.json(
       result.fieldErrors
         ? { error: result.error, fieldErrors: result.fieldErrors }
         : { error: result.error },
       { status: result.status },
     )
+  }
+
+  if (dedupeEm && claimId) {
+    await completeSendRequest(dedupeEm, claimId, {
+      messageId: result.messageId,
+      messageThreadId: result.threadId,
+    })
   }
 
   return NextResponse.json(
