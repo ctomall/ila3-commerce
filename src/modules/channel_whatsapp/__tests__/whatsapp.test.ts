@@ -250,3 +250,42 @@ describe('provider registration', () => {
     expect(registry.hasChannelAdapter('whatsapp-business')).toBe(true)
   })
 })
+
+
+describe('graph auth classification', () => {
+  const reauthFetch = (status: number, code: number) =>
+    (async () => new Response(JSON.stringify({error: {code, message: 'token invalid'}}), {status})) as unknown as typeof fetch
+
+  it('reports expired-token codes as reauth with a 401 classification status', async () => {
+    const {classifyOutboundError, isReauthError} = await import('@open-mercato/core/modules/communication_channels/lib/error-classification')
+    for (const [status, code] of [[400, 190], [400, 463], [401, 0]] as Array<[number, number]>) {
+      try {
+        await sendWhatsAppMessage({phoneNumberId: 'p', accessToken: 't', body: {}, fetchImpl: reauthFetch(status, code)})
+        throw new Error('expected MetaGraphError')
+      } catch (error) {
+        expect(error).toBeInstanceOf(MetaGraphError)
+        const classification = classifyOutboundError(error)
+        expect(classification.status).toBe(401)
+        expect(isReauthError(classification)).toBe(true)
+        expect(classification.transient).toBe(false)
+      }
+    }
+  })
+
+  it('still treats 429 as transient and a plain 400 as permanent', async () => {
+    const {classifyOutboundError, isReauthError} = await import('@open-mercato/core/modules/communication_channels/lib/error-classification')
+    try {
+      await sendWhatsAppMessage({phoneNumberId: 'p', accessToken: 't', body: {}, fetchImpl: reauthFetch(429, 4)})
+    } catch (error) {
+      const classification = classifyOutboundError(error)
+      expect(classification.transient).toBe(true)
+      expect(isReauthError(classification)).toBe(false)
+    }
+    try {
+      await sendWhatsAppMessage({phoneNumberId: 'p', accessToken: 't', body: {}, fetchImpl: reauthFetch(400, 131026)})
+    } catch (error) {
+      expect(classifyOutboundError(error).transient).toBe(false)
+      expect(isReauthError(classifyOutboundError(error))).toBe(false)
+    }
+  })
+})

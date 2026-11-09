@@ -7,18 +7,32 @@
  * worker retries them), everything else is a permanent refusal.
  */
 export class MetaGraphError extends Error {
+  /** Classification status the hub reads: reauth codes are reported as 401. */
   readonly status: number
+  /** Raw Graph HTTP status, kept for logs. */
+  readonly httpStatus: number
   readonly code: string
   readonly transient: boolean
+  readonly reauth: boolean
 
-  constructor(status: number, code: string, message: string, transient: boolean) {
-    super(message)
+  constructor(status: number, code: string, message: string, transient: boolean, reauth = false) {
+    super(reauth ? `requires_reauth: ${message}` : message)
     this.name = 'MetaGraphError'
-    this.status = status
+    this.httpStatus = status
+    this.status = reauth ? 401 : status
     this.code = code
     this.transient = transient
+    this.reauth = reauth
   }
 }
+
+/**
+ * Graph auth failures that mean the stored token is dead. WhatsApp/Messenger
+ * return these as HTTP 400 with a body code, so the hub's `isReauthError` (which
+ * keys on status 401 or `requires_reauth`) would otherwise treat them as a
+ * permanent validation error and never prompt the operator to reconnect.
+ */
+const REAUTH_CODES = new Set(['190', '102', '463', '467'])
 
 export type GraphSendResult = {externalMessageId: string}
 
@@ -57,8 +71,9 @@ export async function sendWhatsAppMessage(input: SendGraphInput): Promise<GraphS
     const errorNode = (parsed.error ?? {}) as Record<string, unknown>
     const code = String(errorNode.code ?? errorNode.type ?? `HTTP_${response.status}`)
     const message = String(errorNode.message ?? text.slice(0, 200) ?? 'graph request failed')
-    const transient = response.status === 429 || response.status >= 500 || code === '131056'
-    throw new MetaGraphError(response.status, code, message, transient)
+    const reauth = response.status === 401 || REAUTH_CODES.has(code)
+    const transient = !reauth && (response.status === 429 || response.status >= 500 || code === '131056')
+    throw new MetaGraphError(response.status, code, message, transient, reauth)
   }
   const messages = parsed.messages as Array<Record<string, unknown>> | undefined
   // WhatsApp Cloud API returns messages[0].id; Messenger returns message_id.
