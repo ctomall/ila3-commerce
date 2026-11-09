@@ -24,6 +24,8 @@ const STATE_COPY: Record<string, string> = {
   duplicate: '这家公司已存在：归属人 王倩，最近更新 3 天前。原型只显示这一句，不展示对方的客户资料。',
   conflict: '这条记录已被他人更新（版本 7 → 8）。请刷新后重试，你的修改没有覆盖对方的内容。',
   cancelled: '任务已取消（Run cancelled）：额度已退回，之后不会再有新候选提交。',
+  disconnected:
+    '连接中断：任务已暂停，重连后从上次游标继续，不会重复提交同一批候选。若 10 分钟内未恢复，任务按「已取消」处理并退回额度。',
 }
 
 function useDemoState(initial = 'ready', options: Array<{ id: string; label: string }> = STATE_OPTIONS) {
@@ -34,7 +36,11 @@ function useDemoState(initial = 'ready', options: Array<{ id: string; label: str
   return { state, switcher }
 }
 
-const TASK_STATE_OPTIONS = [...STATE_OPTIONS, { id: 'cancelled', label: '已取消' }]
+const TASK_STATE_OPTIONS = [
+  ...STATE_OPTIONS,
+  { id: 'cancelled', label: '已取消' },
+  { id: 'disconnected', label: '连接中断' },
+]
 
 function StateBanner({ state }: { state: string }) {
   if (state === 'ready') return null

@@ -90,6 +90,40 @@ test.describe('CRM 原型六页', () => {
     }
   })
 
+  /**
+   * 目标原文要求原型覆盖：无权限 / 空 / 错误 / 预算 / 重复 / 并发冲突 / 发送未知 / 断线取消。
+   * 这八项此前只写在文档表格里，浏览器从未点过。每条都断言那句"为什么这样处理"，而不是只断言
+   * 状态标签存在——标签存在而文案缺失，等于没演示。
+   */
+  test('八个边界状态都能在原型里点到，且文案说明了处理方式', async ({ page }) => {
+    const clickState = async (label: string) => {
+      await page.getByRole('button', { name: label, exact: true }).first().click()
+    }
+
+    await page.goto('/backend/prototype/tasks')
+    await clickState('空')
+    await expect(page.getByText(/还没有数据/).first()).toBeVisible()
+    await clickState('错误')
+    await expect(page.getByText(/加载失败/).first()).toBeVisible()
+    await clickState('无权限')
+    await expect(page.getByText(/404 而不是 403/).first()).toBeVisible()
+    await clickState('额度耗尽')
+    await expect(page.getByText(/12 \/ 12/).first()).toBeVisible()
+    await clickState('重复')
+    await expect(page.getByText(/已存在/).first()).toBeVisible()
+    await clickState('并发冲突')
+    await expect(page.getByText(/版本 7 → 8/).first()).toBeVisible()
+    await clickState('连接中断')
+    await expect(page.getByText(/重连后从上次游标继续/).first()).toBeVisible()
+    await clickState('已取消')
+    await expect(page.getByText(/额度已退回/).first()).toBeVisible()
+
+    // 发送未知在草稿页，且必须强调"先查不重发"，否则复制这条文案的人会写成一个重发按钮。
+    await page.goto('/backend/prototype/drafts')
+    await clickState('发送未知')
+    await expect(page.getByText(/先查询，不重发/).first()).toBeVisible()
+  })
+
   test('真实后台页没有原型横幅，侧边导航也没有原型入口', async ({ page }) => {
     const response = await page.goto('/backend')
     expect(response?.status()).toBe(200)
