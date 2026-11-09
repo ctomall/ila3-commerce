@@ -392,11 +392,16 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
       conversations: [{ id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo' }],
       channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private', capabilities: {fileSharing: true, realtimePush: false} }],
       messages: [
-        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', senderDisplayName: '客户', providerTimestamp: createdAt, createdAt,
-          channelPayload: {_meta: {media: {id: 'media-1', kind: 'document', mimeType: 'application/pdf', fileName: '报价单.pdf'}}} },
+        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', senderDisplayName: '客户', providerTimestamp: createdAt, createdAt },
         { id: 'em-2', direction: 'outbound', externalMessageId: 'ext-2', senderIdentifier: 'me@example.test', senderDisplayName: '我', providerTimestamp: null, createdAt: new Date('2026-11-09T10:05:00Z') },
       ],
-      links: [{ externalMessageId: 'em-1', messageId: 'msg-1', deliveryStatus: 'delivered', channelContentType: 'text/plain' }],
+      links: [{
+        externalMessageId: 'em-1',
+        messageId: 'msg-1',
+        deliveryStatus: 'delivered',
+        channelContentType: 'application/pdf',
+        channelPayload: {_meta: {media: {id: 'media-1', kind: 'document', mimeType: 'application/pdf', fileName: '报价单.pdf'}}},
+      }],
     })
     useContainer(() => undefined, em)
     const { GET } = await import('../api/me/threads/[id]/messages/route')

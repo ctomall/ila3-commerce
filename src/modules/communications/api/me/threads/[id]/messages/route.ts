@@ -132,7 +132,7 @@ export async function GET(
       deliveryStatus: link?.deliveryStatus ?? null,
       channelContentType: link?.channelContentType ?? null,
       /** Attachment metadata only; bytes are never downloaded (G3). */
-      media: extractMediaSummary((message as {channelPayload?: unknown}).channelPayload),
+      media: extractMediaSummary(link?.channelPayload),
     }
   })
 
