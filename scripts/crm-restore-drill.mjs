@@ -130,6 +130,7 @@ try {
   if (dbName === srcDb) throw new DrillError('refusing to restore over the source database')
   record('guards', true, `target ${dbName} != source ${srcDb}; ${mask(withDb(srcUrl, dbName))}`)
 
+  const sourceBefore = `${count(srcDb, `select count(*) from information_schema.tables where table_schema='public'`)}|${count(srcDb, `select count(*) from users`)}`
   const exists = sudoPsql('postgres', `select 1 from pg_database where datname = '${dbName}'`) === '1'
   if (exists && !reuse) {
     fail('guards.exists', `database ${dbName} already exists; pass --reuse or choose another name`)
@@ -201,8 +202,16 @@ try {
   const migrationRows = count(dbName, 'select count(*) from mikro_orm_migrations_sales')
   record('compare.bookkeeping', migrationRows > 0, `${migrationRows} migration bookkeeping rows survived`)
 
-  const sourceFingerprint = `${srcTables}|${count(srcDb, `select count(*) from users`)}`
-  record('source.guard', true, `source still ${sourceFingerprint} (read-only drill)`)
+  // Compare, do not announce: this used to record(true) unconditionally, so it was a line
+  // of text rather than a check.
+  const sourceAfter = `${srcTables}|${count(srcDb, `select count(*) from users`)}`
+  record(
+    'source.guard',
+    sourceAfter === sourceBefore,
+    sourceAfter === sourceBefore
+      ? `source unchanged (${sourceAfter}, read-only drill)`
+      : `source MOVED during the drill: ${sourceBefore} -> ${sourceAfter}`,
+  )
 } catch (error) {
   // Every thrown failure must land in `failedPhases`. A guard refusal that only printed
   // "FAILED" still exited 0 — the exact "a gate that cannot go red" defect this project

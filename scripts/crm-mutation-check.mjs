@@ -161,6 +161,8 @@ function acquireLock() {
   return true
 }
 
+// file -> true; also used by the crash-recovery step above
+const MUTATION_FILES = Object.fromEntries(MUTATIONS.map((m) => [m.file, true]))
 const originals = new Map()
 let mutationsApplied = 0
 
@@ -183,7 +185,22 @@ if (!acquireLock()) {
   console.error('[mutation] RESULT: FAIL — 另一个变异门正在运行（.mercato/mutation.lock），拒绝并发执行')
   process.exit(1)
 }
-fs.rmSync(BACKUP_DIR, { recursive: true, force: true })
+// A previous run killed mid-mutation (SIGKILL cannot be caught) leaves mutated source and a
+// backup nobody reads. Restore first, and say so: silently deleting the backup, which is
+// what this used to do, turns the next run into "INVALID anchor" against corrupted source.
+if (fs.existsSync(BACKUP_DIR)) {
+  const recovered = []
+  for (const name of fs.readdirSync(BACKUP_DIR)) {
+    const target = Object.keys(MUTATION_FILES).find((file) => path.basename(file) === name)
+    if (!target) continue
+    fs.writeFileSync(path.join(ROOT, target), fs.readFileSync(path.join(BACKUP_DIR, name)))
+    recovered.push(target)
+  }
+  if (recovered.length > 0) {
+    console.log(`[mutation] 检测到上次运行中断，已从备份恢复 ${recovered.length} 个文件：${recovered.join(', ')}`)
+  }
+  fs.rmSync(BACKUP_DIR, { recursive: true, force: true })
+}
 fs.mkdirSync(BACKUP_DIR, { recursive: true })
 
 const results = []
