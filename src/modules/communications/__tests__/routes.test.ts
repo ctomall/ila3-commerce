@@ -46,6 +46,17 @@ function createFakeEm(rows: {
   const findOne = jest.fn(async (entity: unknown, where: Row) => {
     if (entity === ExternalConversation) return (rows.conversations ?? [])[0] ?? null
     if (entity === CommunicationChannel) return (rows.channels ?? [])[0] ?? null
+    if (entity === CommunicationChannel) {
+      const candidate = (rows.channels ?? [])[0] ?? null
+      if (!candidate) return null
+      if (where.id && candidate.id !== where.id) return null
+      return candidate
+    }
+    if (entity === ExternalMessage) {
+      const list = rows.messages ?? []
+      const inbound = list.filter((row) => !where.direction || row.direction === where.direction)
+      return inbound[0] ?? null
+    }
     if (entity === SendRequest) {
       const candidates = [...(rows.sendRequests ?? []), ...created]
       if (where.id) return candidates.find((row) => row.id === where.id) ?? null
@@ -405,4 +416,75 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
 // runtime helper ever stops being importable under jest.
 it('has a working NextResponse helper', () => {
   expect(NextResponse.json({ ok: true }).status).toBe(200)
+})
+
+describe('customer-service window policy', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+  const base = {
+    channelId: '11111111-1111-4111-8111-111111111111',
+    to: ['+15550001111'],
+    subject: 'hi',
+    body: { plain: 'hello' },
+  }
+  const sendOk = () =>
+    jest.fn(async () => ({ ok: true as const, messageId: 'm1', threadId: 't1', channelId: 'ch1', providerKey: 'whatsapp' }))
+
+  function waRows(lastInbound: Date | null) {
+    return {
+      channels: [{ id: '11111111-1111-4111-8111-111111111111', userId: 'u1', channelType: 'whatsapp', providerKey: 'whatsapp-business' }],
+      conversations: [{ id: 'conv-1', channelId: '11111111-1111-4111-8111-111111111111', externalConversationId: '+15550001111' }],
+      messages: lastInbound ? [{ id: 'em-1', direction: 'inbound', conversationId: 'conv-1', createdAt: lastInbound }] : [],
+    }
+  }
+
+  it('allows free-form text within 24h of the last inbound message', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))))
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }))
+    expect(res.status).toBe(202)
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  it('rejects free-form text after the window with WINDOW_CLOSED and never calls the hub', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 30 * 60 * 60 * 1000))))
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }))
+    expect(res.status).toBe(422)
+    const payload = await res.json()
+    expect(payload.code).toBe('WINDOW_CLOSED')
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('allows a template send outside the window', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 30 * 60 * 60 * 1000))))
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({ ...base, template: { name: 'quote_followup', language: 'zh_CN' } }),
+      }),
+    )
+    expect(res.status).toBe(202)
+    const [, , input] = send.mock.calls[0] as unknown as [unknown, unknown, Record<string, unknown>]
+    expect((input.channelMetadata as Record<string, unknown>).template).toEqual({ name: 'quote_followup', language: 'zh_CN' })
+  })
+
+  it('email channels are not windowed', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm({
+      channels: [{ id: '11111111-1111-4111-8111-111111111111', userId: 'u1', channelType: 'email' }],
+    }))
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }))
+    expect(res.status).toBe(202)
+  })
 })

@@ -9,6 +9,7 @@ import {
   completeSendRequest,
   releaseSendRequest,
 } from '../../../lib/send-request'
+import { checkCustomerWindow } from '../../../lib/send-window'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -40,6 +41,17 @@ const bodySchema = z.object({
    * durable de-duplication is added in a follow-up slice.
    */
   clientRequestId: z.string().min(8).max(128).optional(),
+  /**
+   * Approved provider template (WhatsApp/Messenger). Template sends are allowed
+   * outside the 24h customer-service window; free-form text is not.
+   */
+  template: z
+    .object({
+      name: z.string().min(1).max(512),
+      language: z.string().min(1).max(32),
+      components: z.array(z.unknown()).max(20).optional(),
+    })
+    .optional(),
   channelMetadata: z.record(z.string(), z.unknown()).optional(),
 })
 
@@ -129,15 +141,51 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const organizationId = (auth as { orgId?: string | null }).orgId ?? null
+  const hasTemplate = Boolean(body.template) || Boolean(body.channelMetadata && body.channelMetadata.template)
+
+  let requestEm: EntityManager | null = null
+  const forkEm = (): EntityManager | null => {
+    if (requestEm) return requestEm
+    try {
+      requestEm = (container.resolve('em') as EntityManager).fork()
+    } catch {
+      requestEm = null
+    }
+    return requestEm
+  }
+
+  // Provider customer-service window: WhatsApp/Messenger allow free-form text
+  // only within 24h of the customer's last inbound message. Refuse early so the
+  // caller can switch to an approved template, instead of queueing a send the
+  // platform will reject.
+  if (!hasTemplate) {
+    const policyEm = forkEm()
+    if (policyEm) {
+      const policy = await checkCustomerWindow({
+        em: policyEm,
+        tenantId: auth.tenantId as string,
+        organizationId,
+        actorUserId: auth.sub as string,
+        channelId: body.channelId,
+        recipient: body.to[0],
+        hasTemplate,
+      })
+      if (!policy.allowed) {
+        return NextResponse.json(
+          { error: policy.message, code: policy.code, lastInboundAt: policy.lastInboundAt },
+          { status: 422 },
+        )
+      }
+    }
+  }
 
   // Idempotency: reserve the caller's key before the hub runs. A retry after a
   // timeout replays the first result instead of sending a second message.
   let dedupeEm: EntityManager | null = null
   let claimId: string | null = null
   if (body.clientRequestId) {
-    try {
-      dedupeEm = (container.resolve('em') as EntityManager).fork()
-    } catch {
+    dedupeEm = forkEm()
+    if (!dedupeEm) {
       return NextResponse.json(
         { error: 'Idempotency store unavailable; retry without clientRequestId' },
         { status: 503 },
@@ -175,9 +223,12 @@ export async function POST(req: Request): Promise<Response> {
     claimId = claim.id
   }
 
-  const channelMetadata = body.clientRequestId
-    ? { ...(body.channelMetadata ?? {}), clientRequestId: body.clientRequestId }
-    : body.channelMetadata
+  const templateMetadata = body.template ?? (body.channelMetadata?.template as Record<string, unknown> | undefined)
+  const channelMetadata = {
+    ...(body.channelMetadata ?? {}),
+    ...(templateMetadata ? { template: templateMetadata } : {}),
+    ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),
+  }
 
   const result = await send(
     container,
