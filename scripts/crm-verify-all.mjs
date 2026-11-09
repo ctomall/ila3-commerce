@@ -50,7 +50,7 @@ const GATES = [
   // runtime: does every employee get a toolset equal to what the runtime reports, can a
   // child only narrow, are two employees' session/artifact/memory/browser roots disjoint,
   // and does revocation fail closed. The runtime half stays unproven and is labelled here.
-  { id: 'dsh-profile', cmd: 'npx tsx scripts/crm-dsh-profile-check.ts', why: '每员工 profile 派生：工具集=运行时、子集不变宽、两员工根目录不重叠、撤权失败关闭（运行时隔离仍未验）', evidence: /\[dsh-profile\] (RESULT|\d+) / },
+  { id: 'dsh-profile', cmd: 'npx tsx scripts/crm-dsh-profile-check.ts', why: '每员工 profile 派生+落盘：工具集=运行时、子集不变宽、目录 0700 且跨 OS 用户读被拒、撤权失败关闭（DSH 运行时隔离仍未验）', evidence: /\[dsh-profile\] (RESULT|\d+) / },
   { id: 'm4-harness', cmd: 'node scripts/crm-m4-harness.mjs', why: 'M4 对抗用例（阻塞项单独报）', evidence: /\[m4\] pass \d+/ },
   // The leadgen OpenAPI draft lints itself (features, idempotency, 429/409, no body
   // identity) and checks it does not collide with a live path. It existed and passed;
