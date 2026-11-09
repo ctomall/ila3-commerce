@@ -2,11 +2,13 @@ import { describe, expect, it, jest } from '@jest/globals'
 
 import {
   buildFindCompaniesQuery,
+  filterByQuery,
   COMPANY_LOOKUP_FEATURE,
   DEFAULT_LIMIT,
   findCompaniesInputSchema,
   MAX_LIMIT,
   requireToolScope,
+  SEARCH_SCAN_LIMIT,
   shapeCompanyRecords,
 } from '../lib/companyLookup'
 
@@ -69,20 +71,20 @@ describe('buildFindCompaniesQuery', () => {
     expect(where.entity).toEqual({ deletedAt: null })
   })
 
-  it('adds no filter when the query is blank', () => {
-    expect(buildFindCompaniesQuery(scope, {}).where.$or).toBeUndefined()
-    expect(buildFindCompaniesQuery(scope, { query: '   ' }).where.$or).toBeUndefined()
+  it('never pushes a text search into SQL: the columns are ciphertext at rest', () => {
+    const { where, searching, scanLimit, options } = buildFindCompaniesQuery(scope, { query: 'nord' })
+    expect(where.$or).toBeUndefined()
+    expect(JSON.stringify(where)).not.toContain('$ilike')
+    expect(searching).toBe(true)
+    expect(scanLimit).toBe(SEARCH_SCAN_LIMIT)
+    expect(options.limit).toBe(SEARCH_SCAN_LIMIT)
   })
 
-  it('searches name, brand and domain with a bracketed pattern', () => {
-    const { where } = buildFindCompaniesQuery(scope, { query: 'nord' })
-    const or = where.$or as Array<Record<string, { $ilike: string }>>
-    expect(or).toHaveLength(3)
-    for (const clause of or) {
-      const [field] = Object.keys(clause)
-      expect(['legalName', 'brandName', 'domain']).toContain(field)
-      expect(clause[field].$ilike).toBe('%nord%')
-    }
+  it('does not widen the scan when there is no query', () => {
+    const { searching, scanLimit, options } = buildFindCompaniesQuery(scope, { limit: 7 })
+    expect(searching).toBe(false)
+    expect(scanLimit).toBe(7)
+    expect(options.limit).toBe(7)
   })
 
   it('falls back to the default limit and clamps a bypassed cap', () => {
@@ -90,6 +92,25 @@ describe('buildFindCompaniesQuery', () => {
     expect(buildFindCompaniesQuery(scope, { limit: MAX_LIMIT }).options.limit).toBe(MAX_LIMIT)
     // Even if a caller bypasses the schema, the clamp holds.
     expect(buildFindCompaniesQuery(scope, { limit: 5000 }).options.limit).toBe(MAX_LIMIT)
+  })
+})
+
+describe('filterByQuery', () => {
+  const rows = [
+    { id: '1', name: 'Harborview Analytics', domain: 'harborviewanalytics.com', websiteUrl: null, industry: 'Software', sizeBucket: null },
+    { id: '2', name: 'Copperleaf Design', domain: 'copperleaf.design', websiteUrl: null, industry: 'Interior Design', sizeBucket: null },
+  ]
+
+  it('matches name, domain and industry case-insensitively', () => {
+    expect(filterByQuery(rows, 'HAR').map((r) => r.id)).toEqual(['1'])
+    expect(filterByQuery(rows, 'copperleaf.design').map((r) => r.id)).toEqual(['2'])
+    expect(filterByQuery(rows, 'interior').map((r) => r.id)).toEqual(['2'])
+  })
+
+  it('returns everything for a blank query and nothing for a miss', () => {
+    expect(filterByQuery(rows, '')).toHaveLength(2)
+    expect(filterByQuery(rows, '   ')).toHaveLength(2)
+    expect(filterByQuery(rows, 'zzz-nothing')).toHaveLength(0)
   })
 })
 
@@ -144,6 +165,7 @@ describe('the tool declaration', () => {
     }
     const result = (await tool.handler({ limit: MAX_LIMIT }, context)) as {
       companies: Array<{ id: string; name: string }>
+      scanned: number
       scope: { tenantId: string }
     }
     expect(find).toHaveBeenCalledTimes(1)
@@ -156,6 +178,7 @@ describe('the tool declaration', () => {
     expect(where).toMatchObject({ tenantId: 'ten-9', organizationId: 'org-9', entity: { deletedAt: null } })
     expect(options.limit).toBe(MAX_LIMIT)
     expect(result.companies[0]).toMatchObject({ id: 'c1', name: 'Acme' })
+    expect(result.scanned).toBe(1)
     expect(result.scope.tenantId).toBe('ten-9')
   })
 })

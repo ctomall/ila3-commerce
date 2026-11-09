@@ -68,7 +68,7 @@ for (const { route, method, op } of operations) {
   }
 
   // 4) identity must never come from the request body
-  const bodySchema = op.requestBody?.content?.['application/json']?.schema
+  const bodySchema = resolveSchema(op.requestBody?.content?.['application/json']?.schema)
   if (bodySchema) {
     walk(bodySchema, (node, trail) => {
       for (const key of FORBIDDEN_BODY_KEYS) {
@@ -123,10 +123,27 @@ try {
     const json = await live.json()
     livePaths = Object.keys(json.paths ?? {})
   } else {
-    notes.push(`live openapi returned ${live.status}; collision check skipped`)
+    // "Collision check skipped" must not coexist with "no collision": that pair is how a
+    // gate ends up green while the tested property was never observed.
+    problems.push(`live openapi returned ${live.status}: cannot prove the draft avoids existing paths`)
   }
 } catch (error) {
-  notes.push(`live openapi unreachable (${String(error).slice(0, 60)}); collision check skipped`)
+  problems.push(`live openapi unreachable (${String(error).slice(0, 60)}): cannot prove the draft avoids existing paths`)
+}
+
+// `requestBody.schema` may be a $ref; checking only inline `properties` let a referenced
+// schema carry tenantId straight through the rule.
+function resolveSchema(schema) {
+  let current = schema
+  for (let depth = 0; depth < 5 && current && typeof current === 'object'; depth++) {
+    const ref = current.$ref
+    if (typeof ref !== 'string' || !ref.startsWith('#/')) return current
+    current = ref
+      .slice(2)
+      .split('/')
+      .reduce((node, key) => (node && typeof node === 'object' ? node[key] : undefined), spec)
+  }
+  return current
 }
 
 for (const { route } of operations) {
@@ -138,7 +155,8 @@ console.log(`[contract] ${operations.length} operation(s), ${Object.keys(spec.pa
 console.log(`[contract] live paths seen: ${livePaths.length}`)
 for (const note of notes) console.log(`[contract] note: ${note}`)
 if (ok) {
-  console.log('[contract] OK: draft satisfies its own rules (features, idempotency, no body identity, 429/409, no collision)')
+  const collisionClaim = livePaths.length > 0 ? 'no collision' : 'collision check NOT RUN'
+  console.log(`[contract] OK: draft satisfies its own rules (features, idempotency, no body identity, 429/409, ${collisionClaim})`)
 } else {
   for (const problem of problems) console.error(`[contract] FAIL ${problem}`)
   console.error(`[contract] ${problems.length} problem(s)`)

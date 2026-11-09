@@ -36,3 +36,32 @@
 ## 三、结论
 
 三份报告一共给出 6 条精确复现的 P1/P2，全部在当轮修掉并各自配了负向对照（改坏会红）；另有 5 条被明确列为"承认但不修"。修完后：单元 **14 suites / 143 tests**，全量门禁 **16/16 PASS · 0 SKIP**。
+
+## 第 36 轮复核（五道门 + verify-all）· 已修与未修
+
+第二个独立 Agent 构造了 20+ 个状态，证明"五道门都有 exit 0 但结论错的路径"。**已修**：
+
+| # | 缺陷 | 修法 | 对照 |
+|---|---|---|---|
+| D1 [P0] | 变异门把**任何非零退出**当"测试抓到"；yarn 不在 PATH 时 7/7 全 PASS | 先断言测试文件存在；ENOENT / 编译错 / 超时一律 INVALID；只有输出含 jest 失败标记才算 killed | 无 yarn → `killed 0 · invalid 7` → exit 1；正常 → 7 killed |
+| D7 [P0] | 两个变异门并发会写坏工作树 | `.mercato/mutation.lock` 独占锁（15 分钟视为过期） | 第二个实例直接 exit 1 |
+| D8 [P1] | `--only` 拼错 → 0 个门运行 + exit 0 | 至少匹配 1 个门，否则报错并列可用 id | 拼错 → exit 1 |
+| D9 [P1] | PASS 只看退出码，脚本打印 FAIL 但 exit 0 被记"通过" | 输出含 `RESULT: FAIL` 即判失败 | 假门 `RESULT: FAIL` + exit 0 → 计 FAIL |
+| D3 [P1] | `build.mjs` 先写时间戳再构建，失败也留着 → 旧 dist + 新记录 = PASS | 时间戳带 `status`（building/ok/failed）；门拒绝非 ok；且要求产物目录存在 | 伪造 failed 戳 → exit 1 |
+| D4/D5 [P1] | 拿不到 systemctl 仍宣称"进程晚于构建"；本地时间被按错误时区解析 | 缺启动时间直接判 FAIL；改用 `--timestamp=unix` 的 `@epoch` | 真实服务 → PASS；解析失败时该分支曾实测 exit 1 |
+| D10 [P1] | contract 在线上不可达时跳过碰撞检查，仍宣称 "no collision" | 不可达即 FAIL；OK 行改为 `collision check NOT RUN` | 不可达 → exit 1 |
+| D11 [P1] | `$ref` 请求体绕过"body 不得带 tenantId" | 解析 `$ref` 后再查 | `$ref` + tenantId → FAIL |
+| D12 [P1] | restore 的 dump 在 /tmp 权限 0644，SIGKILL 后残留 | 写 0600；SIGINT/SIGTERM 清理 | 运行结束无残留 |
+
+**未修，仍开着**（写在 `backlog` 与本节，不当已解决）：
+
+| # | 缺陷 |
+|---|---|
+| D2 | 内容比对只对 mtime 晚于构建的文件生效；把 mtime 回拨即绕过。彻底修需要构建时记录运行树哈希 |
+| D6 | SIGKILL 后源码留在变异态；磁盘 backup 写了但从不读取（下次运行先删） |
+| D13/D14/D15 | nav-nesting 只比 href 集合：`parent`/`title`/`group` 变化、child 挂错父级、roots 数漂移都不红（全量门集里 `nav-baseline` 兜底） |
+| D16 | contract 注释声称"跨租户读 404 而非 403"，代码里没实现 |
+| D17 | `postcss.config.*` 在运行时模式里但不被扫描 |
+| D18/D19 | restore 只比表数与 6 个行数：丢索引/FK/sequence、值损坏都 PASS；`source.guard` 无条件 PASS |
+| D20 | `build-info.json` 未跟踪未签名，改一个字段就能翻转结论 |
+| D21/D22 | verify-all 的 PASS 行 note 恒空、报告不记录工作树脏 |

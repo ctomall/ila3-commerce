@@ -93,18 +93,72 @@ const MUTATIONS = [
 
 const sha = (text) => createHash('sha256').update(text).digest('hex')
 
+/**
+ * "The suite went red" must mean the suite RAN and failed.
+ *
+ * An earlier version treated any non-zero exit as a kill, so a missing `yarn`, a renamed
+ * test file, a transform error or a timeout all counted as proof — seven mutations, seven
+ * "killed", exit 0, with no test executed at all. An independent review constructed that
+ * state by taking `yarn` off PATH. So: preflight the runner, then require the output to
+ * look like a jest failure before calling it a kill.
+ */
 function runTest(testPath) {
+  if (!fs.existsSync(path.join(ROOT, testPath))) {
+    return { verdict: 'invalid', reason: `test file not found: ${testPath}` }
+  }
+  let out = ''
   try {
-    execFileSync('yarn', ['test', '--silent', testPath], {
+    out = execFileSync('yarn', ['test', '--silent', testPath], {
       cwd: ROOT,
       encoding: 'utf8',
       timeout: 300_000,
       stdio: VERBOSE ? 'inherit' : 'pipe',
     })
-    return { red: false }
+    return { verdict: 'survived', reason: 'suite passed with the mutation applied' }
   } catch (error) {
-    return { red: true, output: `${error.stdout ?? ''}${error.stderr ?? ''}` }
+    out = `${error.stdout ?? ''}${error.stderr ?? ''}`
+    const message = String(error?.message ?? '')
+    if (/ENOENT/.test(message) || /command not found/i.test(out)) {
+      return { verdict: 'invalid', reason: 'the test runner is not available (ENOENT)' }
+    }
+    if (/Cannot find module|Transform failed|SyntaxError|TSError/i.test(out)) {
+      return { verdict: 'invalid', reason: 'the mutation broke compilation, not a test assertion' }
+    }
+    if (/timed out|ETIMEDOUT/i.test(message)) {
+      return { verdict: 'invalid', reason: 'the test run timed out' }
+    }
+    // Jest prints a "● " bullet per failing assertion and a Tests: summary.
+    const looksLikeJestFailure = /●/.test(out) || /Tests:\s+\d+ failed/.test(out)
+    if (!looksLikeJestFailure) {
+      return { verdict: 'invalid', reason: `non-zero exit without a jest failure: ${out.trim().split('\n').slice(-1)[0]?.slice(0, 120)}` }
+    }
+    return { verdict: 'killed', reason: 'jest reported a failing assertion' }
   }
+}
+
+/** One runner at a time: two copies used to read each other's mutated source. */
+function acquireLock() {
+  const lockDir = path.join(ROOT, '.mercato', 'mutation.lock')
+  fs.mkdirSync(path.dirname(lockDir), { recursive: true })
+  try {
+    fs.mkdirSync(lockDir)
+  } catch {
+    const stale = (() => {
+      try {
+        return Date.now() - fs.statSync(lockDir).mtimeMs > 15 * 60 * 1000
+      } catch {
+        return false
+      }
+    })()
+    if (!stale) return false
+    fs.rmSync(lockDir, { recursive: true, force: true })
+    try {
+      fs.mkdirSync(lockDir)
+    } catch {
+      return false
+    }
+  }
+  return true
 }
 
 const originals = new Map()
@@ -125,6 +179,10 @@ function restoreAll() {
 
 process.on('exit', restoreAll)
 
+if (!acquireLock()) {
+  console.error('[mutation] RESULT: FAIL — 另一个变异门正在运行（.mercato/mutation.lock），拒绝并发执行')
+  process.exit(1)
+}
 fs.rmSync(BACKUP_DIR, { recursive: true, force: true })
 fs.mkdirSync(BACKUP_DIR, { recursive: true })
 
@@ -177,18 +235,23 @@ for (const mutation of MUTATIONS) {
     break
   }
 
-  if (outcome.red) {
-    results.push({ ...mutation, status: 'killed', detail: '测试变红' })
+  if (outcome.verdict === 'killed') {
+    results.push({ ...mutation, status: 'killed', detail: outcome.reason })
     console.log(`KILLED  ${mutation.id} — ${mutation.why} 被测试钉住`)
-  } else {
-    results.push({ ...mutation, status: 'survived', detail: '测试仍然全绿' })
+  } else if (outcome.verdict === 'survived') {
+    results.push({ ...mutation, status: 'survived', detail: outcome.reason })
     console.log(`SURVIVED ${mutation.id} — ${mutation.why} **没有任何测试发现**`)
+    failed += 1
+  } else {
+    results.push({ ...mutation, status: 'invalid', detail: outcome.reason })
+    console.log(`INVALID ${mutation.id} — ${outcome.reason}`)
     failed += 1
   }
 }
 
 restoreAll()
 fs.rmSync(BACKUP_DIR, { recursive: true, force: true })
+fs.rmSync(path.join(ROOT, '.mercato', 'mutation.lock'), { recursive: true, force: true })
 
 const killed = results.filter((r) => r.status === 'killed').length
 const survived = results.filter((r) => r.status === 'survived').length

@@ -64,6 +64,10 @@ if (!fs.existsSync(BUILD_INFO)) {
 }
 
 const info = JSON.parse(fs.readFileSync(BUILD_INFO, 'utf8'))
+if (info.status && info.status !== 'ok') {
+  console.log(`FAIL  构建记录状态是 ${JSON.stringify(info.status)}，不是 "ok"：上一次构建没有成功`)
+  process.exit(1)
+}
 const builtAt = new Date(info.builtAt)
 if (Number.isNaN(builtAt.getTime())) {
   console.log(`FAIL  build-info.builtAt 无法解析：${JSON.stringify(info.builtAt)}`)
@@ -180,23 +184,36 @@ if (newer.length > 0) {
 // ---- 5. the process must be younger than the build
 let serviceStart = arg('--service-start')
 if (serviceStart === null) {
-  const show = spawnSync('systemctl', ['show', 'mercato', '-p', 'ActiveEnterTimestamp', '--value'], { encoding: 'utf8' })
-  serviceStart = (show.stdout || '').trim()
+  // Epoch seconds, not the human string: `Mon 2026-11-09 08:27:42 CST` parses to the wrong
+  // instant under any timezone but the one that produced it.
+  const show = spawnSync('systemctl', ['show', 'mercato', '-p', 'ActiveEnterTimestamp', '--timestamp=unix', '--value'], {
+    encoding: 'utf8',
+  })
+  // systemd prints epoch seconds as `@1794185985`; the leading @ is part of the format.
+  const epoch = (show.stdout || '').trim().replace(/^@/, '')
+  if (/^\d+$/.test(epoch) && Number(epoch) > 0) serviceStart = new Date(Number(epoch) * 1000).toISOString()
 }
 if (!serviceStart || /^n\/a$/i.test(serviceStart)) {
-  notes.push('拿不到服务启动时间（没有 systemd 或单元未运行），这一项未校验')
+  // Skipping this check while still printing "the process is newer than the build" is the
+  // same lie as a gate that never runs. On a machine without systemd, pass --service-start.
+  problems.push('拿不到服务启动时间（没有 systemd 或单元未运行）：无法证明进程晚于构建，用 --service-start 显式给出')
 } else {
   const startedAt = new Date(serviceStart)
   if (Number.isNaN(startedAt.getTime())) {
     notes.push(`服务启动时间无法解析：${JSON.stringify(serviceStart)}`)
   } else if (startedAt.getTime() < builtAt.getTime()) {
     problems.push(`服务在 ${serviceStart} 启动，早于 ${info.builtAt} 的构建：进程跑的是旧构建（需要 restart）`)
-  } else {
+  } else if (startedAt.getTime() >= builtAt.getTime()) {
     console.log(`[freshness] 服务启动 ${serviceStart}，晚于构建 ✓`)
   }
 }
 
 if (notes.length > 0) for (const note of notes) console.log(`[freshness] 注意：${note}`)
+
+const distDirs = ['.mercato/next', '.next'].filter((dir) => fs.existsSync(path.join(REPO, dir)))
+if (distDirs.length === 0) {
+  problems.push('找不到构建产物目录（.mercato/next 或 .next）：记录说构建成功，但没有可运行的产物')
+}
 
 if (problems.length > 0) {
   console.log(`\n[freshness] RESULT: FAIL — ${problems.length} 个问题`)

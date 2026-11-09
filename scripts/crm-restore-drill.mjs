@@ -103,6 +103,20 @@ const PROBES = [
   ['mikro_orm_migrations_sales', 'select count(*) from mikro_orm_migrations_sales'],
 ]
 
+// SIGKILL cannot be caught, but SIGINT/SIGTERM can, and those are what Ctrl-C and systemd
+// send. Without this a cancelled drill leaves a full database dump in /tmp.
+const dumpPaths = new Set()
+for (const signal of ['SIGINT', 'SIGTERM']) {
+  process.on(signal, () => {
+    for (const file of dumpPaths) {
+      try {
+        fs.unlinkSync(file)
+      } catch {}
+    }
+    process.exit(130)
+  })
+}
+
 const startedAt = new Date()
 let reportPath = null
 
@@ -126,10 +140,16 @@ try {
 
   // ---- 1. dump, the way an operator would before a migration
   const dumpPath = path.join(os.tmpdir(), `crm-restore-drill-${process.pid}.dump`)
+  dumpPaths.add(dumpPath)
   const dumpStart = Date.now()
   const dump = spawnSync('pg_dump', [srcUrl, '-Fc', '-f', dumpPath], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 })
   const dumpMs = Date.now() - dumpStart
   if (dump.status !== 0) fail('dump', `pg_dump failed: ${(dump.stderr || '').trim().slice(0, 300)}`)
+  // The dump holds the whole database. pg_dump writes it with the process umask (0644 by
+  // default), which on a shared /tmp means any local user can read it.
+  try {
+    fs.chmodSync(dumpPath, 0o600)
+  } catch {}
   const bytes = fs.statSync(dumpPath).size
   if (bytes === 0) fail('dump', 'pg_dump produced an empty archive')
   const digest = createHash('sha256').update(fs.readFileSync(dumpPath)).digest('hex')

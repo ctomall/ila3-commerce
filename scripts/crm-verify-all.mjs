@@ -76,6 +76,13 @@ const GATES = [
   { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78 },
 ]
 
+// A typo in --only used to run zero gates and exit 0 — the greenest possible lie.
+if (ONLY && !GATES.some((gate) => ONLY.has(gate.id))) {
+  console.error(`[crm-verify] --only 没有匹配任何门：${[...ONLY].join(', ')}`)
+  console.error(`[crm-verify] 可用：${GATES.map((g) => g.id).join(', ')}`)
+  process.exit(1)
+}
+
 const results = []
 for (const gate of GATES) {
   if (ONLY && !ONLY.has(gate.id)) continue
@@ -93,7 +100,10 @@ for (const gate of GATES) {
     console.log(`SKIP ${gate.id.padEnd(16)} ${duration}s`)
     continue
   }
-  const ok = run.status === 0
+  // Exit code alone is not evidence: a gate that prints `RESULT: FAIL` and forgets to exit
+  // non-zero would be reported as a pass. The house convention is that terminal line.
+  const terminalFail = /^RESULT:\s*FAIL\b/im.test(output)
+  const ok = run.status === 0 && !terminalFail
   const firstBad = output
     .split('\n')
     .find((line) => /FAIL|错误|error|失败|needs review|not found/i.test(line) && line.trim())
@@ -102,7 +112,11 @@ for (const gate of GATES) {
     status: ok ? 'PASS' : 'FAIL',
     duration,
     code: run.status,
-    note: ok ? '' : (firstBad || output.trim().split('\n').slice(-2).join(' ')).slice(0, 160),
+    note: ok
+      ? ''
+      : terminalFail && run.status === 0
+        ? '脚本打印了 RESULT: FAIL 却以 0 退出'
+        : (firstBad || output.trim().split('\n').slice(-2).join(' ')).slice(0, 160),
   })
   console.log(`${ok ? 'PASS' : 'FAIL'} ${gate.id.padEnd(16)} ${duration}s`)
 }

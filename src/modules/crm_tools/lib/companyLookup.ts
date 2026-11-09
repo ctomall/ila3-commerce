@@ -19,6 +19,13 @@ export const COMPANY_LOOKUP_FEATURE = 'customers.companies.view'
 /** Hard cap. A model asking for 10 000 rows gets 20, not an error it can learn to out-argue. */
 export const MAX_LIMIT = 20
 export const DEFAULT_LIMIT = 5
+/**
+ * How many rows a search may scan. Company names and domains are encrypted at rest, so
+ * Postgres cannot do the matching: an `ilike` runs against ciphertext and never hits. The
+ * search therefore fetches a bounded page and filters in memory, and reports how many rows
+ * it looked at so nobody mistakes a bounded scan for an exhaustive one.
+ */
+export const SEARCH_SCAN_LIMIT = 200
 
 export type ToolScope = {
   tenantId: string
@@ -77,6 +84,10 @@ export type CompanyRow = {
 export type CompanyQuery = {
   where: Record<string, unknown>
   options: { limit: number; orderBy: Record<string, 'asc' | 'desc'> }
+  /** Row cap for the fetch. Equals `options.limit` unless this is a search. */
+  scanLimit: number
+  /** True when the caller asked for a text search, which has to happen in memory. */
+  searching: boolean
 }
 
 export function buildFindCompaniesQuery(scope: ToolScope, input: FindCompaniesInput): CompanyQuery {
@@ -90,15 +101,26 @@ export function buildFindCompaniesQuery(scope: ToolScope, input: FindCompaniesIn
     // filter the assistant would keep answering with deleted companies.
     entity: { deletedAt: null },
   }
-  if (trimmed !== '') {
-    const pattern = `%${trimmed}%`
-    where.$or = [
-      { legalName: { $ilike: pattern } },
-      { brandName: { $ilike: pattern } },
-      { domain: { $ilike: pattern } },
-    ]
+  const searching = trimmed !== ''
+  return {
+    where,
+    // The column values are ciphertext at rest, so a SQL `ilike` can never match. Searching
+    // therefore fetches a bounded page and filters it in JS — see `filterByQuery`.
+    options: { limit: searching ? SEARCH_SCAN_LIMIT : limit, orderBy: { legalName: 'asc' } },
+    scanLimit: searching ? SEARCH_SCAN_LIMIT : limit,
+    searching,
   }
-  return { where, options: { limit, orderBy: { legalName: 'asc' } } }
+}
+
+/** Case-insensitive match over the decrypted fields the tool already returns. */
+export function filterByQuery(rows: CompanyRow[], query: string | undefined): CompanyRow[] {
+  const needle = (query ?? '').trim().toLowerCase()
+  if (needle === '') return rows
+  return rows.filter((row) =>
+    [row.name, row.domain, row.websiteUrl, row.industry].some(
+      (value) => typeof value === 'string' && value.toLowerCase().includes(needle),
+    ),
+  )
 }
 
 /** Whatever the ORM hands back, narrowed to the fields this tool promises. */

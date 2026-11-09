@@ -19,6 +19,7 @@ import type { AiToolDefinition, McpToolContext } from '@open-mercato/ai-assistan
 import {
   buildFindCompaniesQuery,
   COMPANY_LOOKUP_FEATURE,
+  filterByQuery,
   findCompaniesInputSchema,
   requireToolScope,
   shapeCompanyRecords,
@@ -28,6 +29,8 @@ import {
 
 export type FindCompaniesResult = {
   companies: CompanyRow[]
+  /** How many rows the search actually looked at; equal to the returned count when not searching. */
+  scanned: number
   /** Echoed so a reviewer can see which scope answered, without trusting the model's words. */
   scope: { tenantId: string; organizationId: string }
   note: string
@@ -45,13 +48,18 @@ const findCompaniesTool: AiToolDefinition = defineAiTool<unknown, FindCompaniesR
   async handler(input, context: McpToolContext) {
     const scope = requireToolScope(context)
     const parsed: FindCompaniesInput = findCompaniesInputSchema.parse(input ?? {})
-    const { where, options } = buildFindCompaniesQuery(scope, parsed)
+    const { where, options, searching } = buildFindCompaniesQuery(scope, parsed)
     const em = context.container.resolve<EntityManager>('em')
     // Through the ORM on purpose: company names and domains are encrypted at rest and the
     // ORM is what decrypts them. Raw SQL here returned ciphertext to the model.
     const records = await em.find(CustomerCompanyProfile, where, options)
+    const shaped = shapeCompanyRecords(records)
+    // The LIKE cannot run in Postgres (ciphertext), so the search happens here, over a
+    // bounded page. `scanned` says how bounded.
+    const companies = filterByQuery(shaped, parsed.query).slice(0, Math.min(parsed.limit ?? 5, 20))
     return {
-      companies: shapeCompanyRecords(records),
+      companies,
+      scanned: shaped.length,
       scope,
       note: '只读查询；结果受调用者自身的 tenant/organization 与 customers.companies.view 权限约束',
     }

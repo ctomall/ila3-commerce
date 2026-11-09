@@ -24,6 +24,10 @@ const info = {
   version: String(pkg.version ?? ''),
   commit: git(['rev-parse', '--short=8', 'HEAD']),
   builtAt: new Date().toISOString(),
+  // Written before the build so other tools can see progress, but a reader must check
+  // this: a failed build used to leave a stamp that looked like a successful one, and the
+  // freshness gate then reported "the build is current" next to an old dist directory.
+  status: 'building',
 }
 
 const distDir = process.env.OM_DIST_DIR?.trim() || '.mercato/next'
@@ -41,4 +45,12 @@ const result = spawnSync('yarn', ['run', 'build:inner'], {
     NEXT_PUBLIC_BUILD_SHA: info.commit,
   },
 })
+if (result.status === 0) {
+  info.status = 'ok'
+  fs.writeFileSync(target, `${JSON.stringify(info, null, 2)}\n`)
+} else {
+  info.status = 'failed'
+  fs.writeFileSync(target, `${JSON.stringify(info, null, 2)}\n`)
+  console.error('[build] FAILED — the stamp is marked status:"failed" so the freshness gate refuses it')
+}
 process.exit(result.status ?? 1)
