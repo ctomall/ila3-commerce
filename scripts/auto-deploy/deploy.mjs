@@ -18,6 +18,8 @@ import {runGate} from './ci-gate.mjs'
 import {buildRelease, verifyRelease} from './release.mjs'
 import {installFromArtifact} from './artifact.mjs'
 import {checkRelease, checkRunning} from './health.mjs'
+import {preflightMigrations} from './migration-preflight.mjs'
+import {waitForDrain} from './worker-drain.mjs'
 
 const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
 const PRODUCTION_PORT = 3000
@@ -61,6 +63,9 @@ function parseArgs(argv) {
     service: DEFAULT_SERVICE,
     json: false,
     force: false,
+    skipMigrationPreflight: false,
+    allowDestructiveMigrations: false,
+    drainTimeoutMs: Number(process.env.ILA3_DRAIN_TIMEOUT_MS || 20000),
   }
   for (let i = 0; i < argv.length; i += 1) {
     const flag = argv[i]
@@ -90,6 +95,9 @@ function parseArgs(argv) {
     else if (flag === '--allow-first-deploy') args.allowFirstDeploy = true
     else if (flag === '--allow-replace-mercato') args.allowReplaceMercato = true
     else if (flag === '--service') args.service = value()
+    else if (flag === '--skip-migration-preflight') args.skipMigrationPreflight = true
+    else if (flag === '--allow-destructive-migrations') args.allowDestructiveMigrations = true
+    else if (flag === '--drain-timeout-ms') args.drainTimeoutMs = Number(value())
     else if (flag === '--force') args.force = true
     else if (flag === '--json') args.json = true
     else if (flag === '--help' || flag === '-h') args.help = true
@@ -265,6 +273,9 @@ async function main() {
     if (args.targetPort === PRODUCTION_PORT) throw new Error('drills must not target production port 3000')
   }
   if (args.skipCiGate && !args.drill) throw new Error('--skip-ci-gate is only allowed with --drill')
+  if (args.skipMigrationPreflight && !args.drill) throw new Error('--skip-migration-preflight is only allowed with --drill')
+  if (args.allowDestructiveMigrations && !args.drill) throw new Error('--allow-destructive-migrations is only allowed with --drill')
+  if (!Number.isFinite(args.drainTimeoutMs) || args.drainTimeoutMs < 0) throw new Error('--drain-timeout-ms must be a non-negative number')
   if (args.fromArtifact && args.buildLocally) throw new Error('--from-artifact and --build-locally are mutually exclusive')
   if (args.artifactFile && args.artifactUrl) throw new Error('--artifact-file and --artifact-url are mutually exclusive')
   for (const flag of ['artifactFile', 'artifactUrl', 'installDir', 'artifactRepo']) {
@@ -475,6 +486,36 @@ async function main() {
         record.prune = pruneOrphans()
         return
       }
+    }
+
+    // Gate 1 — migration preflight: refuse a cutover whose NEW migrations are not
+    // expand-safe. Compared against the release currently serving, so a long-lived
+    // destructive migration is not re-judged on every deploy.
+    if (!args.skipMigrationPreflight) {
+      const preflight = await step('migration-preflight', async () =>
+        preflightMigrations({
+          releaseDir: release.dir,
+          baselineDir: oldRelease && !oldRelease.missing ? oldRelease.target : null,
+          allowDestructive: args.allowDestructiveMigrations,
+        }),
+      )
+      record.migrationPreflight = preflight
+      if (!preflight.ok) throw refusal('migration-preflight-failed', preflight)
+    }
+
+    // Gate 2 — worker drain: wait for the RUNNING release's local queues to have
+    // no ready job before switching. Data lives under the old release's
+    // .mercato/queue (QUEUE_BASE_DIR is cwd-relative in production), so draining
+    // the new directory would always look empty. Leftovers are recorded, never
+    // silently dropped.
+    const drainDir = oldRelease && !oldRelease.missing ? oldRelease.target : null
+    if (drainDir && fs.existsSync(drainDir)) {
+      const drain = await step('worker-drain', async () =>
+        waitForDrain({appDir: drainDir, timeoutMs: args.drainTimeoutMs}),
+      )
+      record.workerDrain = drain
+    } else {
+      record.workerDrain = {drained: true, reason: 'no previous release to drain'}
     }
 
     const candidateLog = path.join(LOGS_DIR, `${record.runId}-candidate.log`)
