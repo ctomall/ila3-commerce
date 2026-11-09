@@ -1,0 +1,115 @@
+{
+ "schema": 1,
+ "drillRunId": "artifact-rollback-drill-20261109160324-7e1157c9",
+ "kind": "artifact-rollback",
+ "oldSha": "ff263ca7ac4138337360a7cfe18688c253302c32",
+ "newSha": "7e1157c936a8f6ba90f478d66ce3c13b71c55681",
+ "startedAt": "2026-11-09T16:03:24.170Z",
+ "finishedAt": "2026-11-09T16:04:33.157Z",
+ "isolatedRoot": {
+  "releases": "/tmp/mercato-artifact-rollback-XQhqOf/releases",
+  "state": "/tmp/mercato-artifact-rollback-XQhqOf/state"
+ },
+ "ports": {
+  "target": 3210,
+  "candidate": 3110
+ },
+ "log": "/home/pro/.local/state/ila3-deploy/logs/artifact-rollback-drill-20261109160324-7e1157c9.log",
+ "scenario": {
+  "previous": {
+   "dir": "/tmp/mercato-artifact-rollback-XQhqOf/releases/ff263ca7ac4138337360a7cfe18688c253302c32",
+   "pid": 327360,
+   "healthy": true,
+   "checks": [
+    {
+     "name": "process-alive",
+     "ok": true,
+     "detail": "pid=327360 exitCode=null"
+    },
+    {
+     "name": "login-200",
+     "ok": true,
+     "detail": "HTTP 200 in 1037ms"
+    },
+    {
+     "name": "backend-redirects-to-login",
+     "ok": true,
+     "detail": "{\"initial\":302,\"location\":\"/login?redirect=/backend\",\"hops\":[\"302 http://127.0.0.1:3210/backend\",\"200 http://127.0.0.1:3210/login?redirect=/backend\"],\"final\":{\"url\":\"http://127.0.0.1:3210/login?redirect=/backend\",\"status\":200}}"
+    },
+    {
+     "name": "build-stamp-commit",
+     "ok": true,
+     "detail": "commit=ff263ca7 expected=ff263ca7 status=ok buildId=true"
+    }
+   ]
+  },
+  "deploy": {
+   "exitCode": 2,
+   "runId": "drill-deploy-20261109160326-7e1157c9",
+   "result": "rolled-back",
+   "errorCode": "post-switch-unhealthy",
+   "injectedFailure": "killed newly started target before post-switch health",
+   "postSwitchOk": false,
+   "rollback": {
+    "attempted": true,
+    "at": "2026-11-09T16:04:31.582Z",
+    "to": "/tmp/mercato-artifact-rollback-XQhqOf/releases/ff263ca7ac4138337360a7cfe18688c253302c32",
+    "sha": "ff263ca7ac4138337360a7cfe18688c253302c32",
+    "healthy": true,
+    "checks": [
+     {
+      "name": "process-alive",
+      "ok": true,
+      "detail": "pid=328842 exitCode=null"
+     },
+     {
+      "name": "login-200",
+      "ok": true,
+      "detail": "HTTP 200 in 1017ms"
+     },
+     {
+      "name": "backend-redirects-to-login",
+      "ok": true,
+      "detail": "{\"initial\":302,\"location\":\"/login?redirect=/backend\",\"hops\":[\"302 http://127.0.0.1:3210/backend\",\"200 http://127.0.0.1:3210/login?redirect=/backend\"],\"final\":{\"url\":\"http://127.0.0.1:3210/login?redirect=/backend\",\"status\":200}}"
+     },
+     {
+      "name": "build-stamp-commit",
+      "ok": true,
+      "detail": "commit=ff263ca7 expected=ff263ca7 status=ok buildId=true"
+     }
+    ]
+   },
+   "currentAfter": "/tmp/mercato-artifact-rollback-XQhqOf/releases/ff263ca7ac4138337360a7cfe18688c253302c32",
+   "currentRestoredToPrevious": true,
+   "installedDirExists": true,
+   "servingAfterRollback": {
+    "ok": true,
+    "checks": [
+     {
+      "name": "process-alive",
+      "ok": true,
+      "detail": "external process (checked via HTTP)"
+     },
+     {
+      "name": "login-200",
+      "ok": true,
+      "detail": "HTTP 200 in 6ms"
+     },
+     {
+      "name": "backend-redirects-to-login",
+      "ok": true,
+      "detail": "{\"initial\":302,\"location\":\"/login?redirect=/backend\",\"hops\":[\"302 http://127.0.0.1:3210/backend\",\"200 http://127.0.0.1:3210/login?redirect=/backend\"],\"final\":{\"url\":\"http://127.0.0.1:3210/login?redirect=/backend\",\"status\":200}}"
+     },
+     {
+      "name": "build-stamp-commit",
+      "ok": true,
+      "detail": "commit=ff263ca7 expected=ff263ca7 status=ok buildId=true"
+     }
+    ]
+   },
+   "record": "/home/pro/.local/state/ila3-deploy/drills/artifact-rollback-drill-20261109160324-7e1157c9/runs-drill-deploy-20261109160326-7e1157c9.json"
+  }
+ },
+ "cleanup": null,
+ "passed": true
+}

@@ -243,6 +243,13 @@ manifest 放在 tar **外面**是刻意的：tar 自己的 sha256 是 manifest �
 手工入口的确认值也改成**正在运行的 commit**（release 的 build-info），而不是 checkout HEAD：
 推送后两者会不同，只有运行中的 commit 才能证明升级要替换掉什么。
 
+副作用要知道：既然同 SHA 不再重启，**改 `.env` 不会自动生效**，需要显式
+`sudo systemctl restart ila3-auto-deploy-app.service`。这是刻意的取舍——每 15 分钟无条件重启更糟。
+
+生产实测（`runs/`）：`deploy-20261109152240`（`deployed`，15:25:18 重启一次换到 7e1157c）之后，
+`deploy-20261109152651`（manual）、`deploy-20261109153823`、`deploy-20261109155331` 均为
+`already-current`，`ActiveEnterTimestamp` 保持 15:25:18。
+
 ## 10. 现场构建 fallback
 
 `release.mjs` 保留原逻辑：`git worktree add --detach <sha>` → `yarn install --frozen-lockfile` → `nice -n 10 yarn build` → 校验 build stamp。只有在以下情况显式使用：
@@ -293,6 +300,28 @@ node scripts/auto-deploy/release.mjs --sha <full-sha>
 - 结果 `deployed`、`installer=ci-artifact`、`source.method=ci-artifact`、`noLocalBuildOutput=true`；隔离 root 清理，生产 `current`/`previous` 未变。
 
 证据：`drills/artifact-e2e-latest.json`（`drillRunId=artifact-e2e-20261109124541-c5e525f3`）、`drills/artifact-e2e-20261109124541-c5e525f3/`、`logs/artifact-e2e-*.log`。
+
+## 11.1 artifact 路径的回滚演练（2026-11-09）
+
+共享回滚演练（drill.mjs）覆盖的是 executor 的切换/回滚骨架；artifact 安装完成、symlink 切换后
+目标被杀这条组合此前没有独立证据。新增 `artifact-rollback-drill.mjs`：
+
+```bash
+node scripts/auto-deploy/artifact-rollback-drill.mjs
+```
+
+- 在 `/tmp` 下独立 `ILA3_RELEASE_ROOT` + `ILA3_STATE_DIR` 里造两个 release（上一版 + 由 artifact 安装的新版），
+  使用假 Next 入口（只回答 `/login` 200、`/backend` 302），不碰 3000、不碰生产 release root；
+- 先起“上一版”并验证健康，再释放端口，然后 `deploy.mjs --drill --pid-mode --from-artifact
+  --inject-post-switch-failure`：候选健康 → 切换 → 注入杀死新版 → 切换后健康失败 → 回滚到上一版并复验；
+- 判定：`exit=2`、`result=rolled-back`、`error=post-switch-unhealthy`、`rollback.healthy=true`、
+  `current` 指回旧 release、旧 release 重新 `/login` 200、artifact 安装目录确实存在（证明确实切换过）。
+
+2026-11-09 结果：`passed=true`（`newSha=7e1157c`、`oldSha=ff263ca`），
+证据 `~/.local/state/ila3-deploy/drills/artifact-rollback-latest.json`；
+文档副本 `docs/deployment/drill-evidence-2026-11-09-artifact-rollback.json`。
+
+注意它证明的是 **executor 的 artifact 切换/回滚逻辑**；真实 Next 进程的重启由生产发布本身证明。
 
 ## 12. 启用 / 停用
 
