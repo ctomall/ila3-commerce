@@ -242,6 +242,8 @@ export const enabledModules: ModuleEntry[] = [
   // WhatsApp Cloud API adapter (ADR-005). Registers with the hub; inert until
   // an admin connects a tenant-wide channel with credentials.
   { id: 'channel_whatsapp', from: '@app' },
+  // Facebook Page Messenger adapter (ADR-005). Same Meta webhook security model.
+  { id: 'channel_messenger', from: '@app' },
   // P1: named 工作台 entry pointing at the existing /backend dashboard.
   { id: 'workbench', from: '@app' },
   // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no

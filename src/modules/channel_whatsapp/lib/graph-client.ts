@@ -61,7 +61,8 @@ export async function sendWhatsAppMessage(input: SendGraphInput): Promise<GraphS
     throw new MetaGraphError(response.status, code, message, transient)
   }
   const messages = parsed.messages as Array<Record<string, unknown>> | undefined
-  const id = messages?.[0]?.id
+  // WhatsApp Cloud API returns messages[0].id; Messenger returns message_id.
+  const id = messages?.[0]?.id ?? parsed.message_id
   if (typeof id !== 'string' || id.length === 0) {
     throw new MetaGraphError(response.status, 'NO_MESSAGE_ID', 'graph response has no message id', false)
   }
