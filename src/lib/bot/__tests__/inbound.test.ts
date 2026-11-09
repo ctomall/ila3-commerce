@@ -132,24 +132,52 @@ describe('handleInbound', () => {
     }
   })
 
-  it('redacts sensitive fields on a group read and keeps them in a direct message', () => {
-    const group = handleInbound(event({ chat: 'group' }), context())
+  it('renders a group read from the allow-listed summary and keeps direct text for a dm', () => {
+    const group = handleInbound(
+      event({ chat: 'group' }),
+      context({ summary: { kind: 'company', id: 'c-1', fields: { name: 'Acme', industry: '制造' } } }),
+    )
     expect(group.allowed).toBe(true)
     if (group.allowed) {
-      expect(group.text).not.toContain('ops@acme.test')
-      expect(group.text).toContain('已隐藏')
+      expect(group.text).toContain('Acme')
+      expect(group.text).toContain('制造')
     }
     const dm = handleInbound(event(), context())
     if (dm.allowed) expect(dm.text).toContain('ops@acme.test')
   })
 
-  it('keeps an explicitly allowed field in a group', () => {
-    const result = handleInbound(event({ chat: 'group' }), context({ allowInGroup: ['email'] }))
+  it('refuses a group read that supplies raw text instead of a summary', () => {
+    // The old path redacted whatever blob it was handed. A group chat now needs a
+    // structured summary, so "no record text leaves the CRM" is a property of the code.
+    const result = handleInbound(event({ chat: 'group' }), context())
+    expect(result).toMatchObject({ allowed: false, reason: 'group_render_required' })
+  })
+
+  it('drops fields that are not on the allow-list instead of rendering them', () => {
+    const result = handleInbound(
+      event({ chat: 'group' }),
+      context({
+        summary: {
+          kind: 'company',
+          id: 'c-1',
+          fields: { name: 'Acme', notes: '联系人 ops@acme.test，报价 12000 元', address: '某路 1 号' },
+        },
+      }),
+    )
     expect(result.allowed).toBe(true)
     if (result.allowed) {
-      expect(result.text).toContain('ops@acme.test')
-      expect(result.text).not.toContain('+86')
+      expect(result.text).toContain('Acme')
+      expect(result.text).not.toContain('ops@acme.test')
+      expect(result.text).not.toContain('某路')
     }
+  })
+
+  it('refuses an unknown record kind rather than dumping its fields', () => {
+    const result = handleInbound(
+      event({ chat: 'group' }),
+      context({ summary: { kind: 'invoice' as never, id: 'x', fields: { name: 'Acme' } } }),
+    )
+    expect(result).toMatchObject({ allowed: false, reason: 'group_render_rejected' })
   })
 
   it('refuses when the atomic claim loses the race, even if the snapshot says unseen', () => {

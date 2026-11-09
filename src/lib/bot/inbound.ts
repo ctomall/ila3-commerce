@@ -17,11 +17,11 @@
 import {
   canAct,
   isReplay,
-  redactForGroup,
   verifySignature,
   type BotBinding,
   type SignedEvent,
 } from './guard'
+import { renderGroupSummary, type RecordSummary } from './group-view'
 
 export type InboundAction = 'read' | 'write' | 'approve' | 'send'
 
@@ -39,6 +39,8 @@ export type RejectReason =
   | 'binding_revoked'
   | 'employee_inactive'
   | 'group_unsafe_action'
+  | 'group_render_required'
+  | 'group_render_rejected'
 
 export type InboundContext = {
   secret: string
@@ -59,9 +61,15 @@ export type InboundContext = {
    * SETNX), and false means "someone else already had this one".
    */
   claimNonce: (nonce: string) => boolean
-  /** Text the bot resolved from CRM data; redacted when the chat is a group. */
+  /**
+   * Text the bot resolved from CRM data. Used for direct messages only: a group chat must
+   * pass `summary` instead, because free text cannot be checked against a field allow-list.
+   */
   text: string
-  allowInGroup?: Array<'email' | 'phone' | 'amount'>
+  /**
+   * Structured, allow-listed rendering for a group chat. Required for `chat === 'group'`.
+   */
+  summary?: RecordSummary
 }
 
 export type InboundAudit = {
@@ -120,7 +128,13 @@ export function handleInbound(event: InboundEvent, context: InboundContext): Inb
   })
   if (!act.allowed) return refuse(act.reason)
 
-  // Only a group read reaches this point with text leaving the CRM; redact there.
-  const text = event.chat === 'group' ? redactForGroup(context.text, context.allowInGroup ?? []) : context.text
-  return { allowed: true, text, audit: audit('allowed', null) }
+  // A group chat renders a structured summary, not caller-supplied free text: redaction is
+  // a blacklist and a blacklist over an arbitrary blob cannot promise "no record text".
+  if (event.chat === 'group') {
+    if (!context.summary) return refuse('group_render_required')
+    const rendered = renderGroupSummary(context.summary)
+    if (!rendered.ok) return refuse('group_render_rejected')
+    return { allowed: true, text: rendered.text, audit: audit('allowed', null) }
+  }
+  return { allowed: true, text: context.text, audit: audit('allowed', null) }
 }

@@ -43,7 +43,24 @@ Bot 是**共享表面**：群里可能有不属于本公司的成员。所以默
 
 ## 4. 群聊脱敏
 
-`redactForGroup` 默认隐藏邮箱、电话、金额，替换为 `〔email 已隐藏〕` 这类标记；需要展示时必须**显式放行字段**。原始内容只留在 CRM 私有视图里。
+群聊**不允许直接把一段文本丢进去**。第 58 轮起，`chat === 'group'` 的事件必须提供**结构化摘要**（`RecordSummary`），由 `renderGroupSummary()` 按 `kind` 的字段白名单渲染：
+
+| kind | 允许出现在群里的字段 |
+|---|---|
+| company | name, industry, statusLabel, ownerDisplayName, updatedAt |
+| person | displayName, companyName, roleLabel, updatedAt |
+| deal | title, stageLabel, amountBand, ownerDisplayName, updatedAt |
+| quote | quoteNumber, statusLabel, amountBand, validUntil |
+| task | title, statusLabel, dueDate |
+
+规则与理由：
+
+- **未提供摘要 → 拒绝**（`group_render_required`），不再对裸文本做"尽力脱敏"。黑名单盖不住客户名、地址、备注、IBAN；"不返回记录原文"必须是结构性的，而不是正则表。
+- **白名单外字段直接丢弃**，并在返回值里列出丢了哪些（`dropped`）。联系人姓名、地址、备注、备注类字段都不在表里——群里说"这家公司"，不说"这个联系人"。
+- **记录 id 只渲染前 8 位**：群里不该能靠机器人枚举 id。
+- **白名单字段的值仍然过一层 `redactForGroup`**：`name` 里完全可能写着 `Acme（ops@acme.test）`。字段名可信不代表内容可信。
+- 未知 `kind` → 拒绝（`group_render_rejected`），不"兜底全渲染"。
+- 单聊不走这条路：私聊里返回正文是产品需求，脱敏只作为附加层。
 
 **先归一化再匹配（第 56 轮）**：一个值写到全角 `ｏｐｓ＠ａｃｍｅ．ｔｅｓｔ`、或被换行切成两截，对人眼还是同一个值。因此 `redactForGroup` 先做 NFKC 折叠宽度、把连续空白折成单个空格，再跑模式；返回的也是归一化后的文本——**保留原格式的脱敏器就是可以绕过的脱敏器**。邮箱模式在 `@` 与点号两侧容忍空白，所以"换行切成两截"会被重新拼起来匹配。
 
