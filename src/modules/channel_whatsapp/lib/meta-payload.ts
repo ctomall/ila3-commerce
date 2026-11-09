@@ -1,0 +1,175 @@
+/**
+ * WhatsApp Cloud API payload helpers.
+ *
+ * Pure parsing/normalisation: no network, no database. The adapter and its
+ * future dedicated webhook route both use these so that message and status
+ * handling stay identical to what the tests exercise.
+ */
+
+export type MetaMedia = {
+  id: string
+  mimeType?: string
+  fileName?: string
+  caption?: string
+}
+
+export type MetaMessageEvent = {
+  externalMessageId: string
+  from: string
+  timestamp: Date
+  type: string
+  text?: string
+  media?: MetaMedia
+  raw: Record<string, unknown>
+}
+
+export type MetaStatusEvent = {
+  externalMessageId: string
+  recipientId: string
+  status: 'sent' | 'delivered' | 'read' | 'failed'
+  timestamp: Date
+  errors?: Array<{ code?: number; title?: string; message?: string }>
+  raw: Record<string, unknown>
+}
+
+type MetaChange = {
+  field?: string
+  value?: {
+    messaging_product?: string
+    metadata?: { phone_number_id?: string; display_phone_number?: string }
+    contacts?: Array<{ wa_id?: string; profile?: { name?: string } }>
+    messages?: Array<Record<string, unknown>>
+    statuses?: Array<Record<string, unknown>>
+  }
+}
+
+function timestampToDate(value: unknown): Date {
+  const seconds = Number(value)
+  if (Number.isFinite(seconds) && seconds > 0) return new Date(seconds * 1000)
+  return new Date()
+}
+
+function readMedia(message: Record<string, unknown>, type: string): MetaMedia | undefined {
+  const node = message[type]
+  if (!node || typeof node !== 'object') return undefined
+  const media = node as Record<string, unknown>
+  const id = typeof media.id === 'string' ? media.id : ''
+  if (!id) return undefined
+  return {
+    id,
+    mimeType: typeof media.mime_type === 'string' ? media.mime_type : undefined,
+    fileName: typeof media.filename === 'string' ? media.filename : undefined,
+    caption: typeof media.caption === 'string' ? media.caption : undefined,
+  }
+}
+
+const MEDIA_TYPES = new Set(['image', 'audio', 'video', 'document', 'sticker'])
+
+/** Split one webhook body into message and status events (may contain both). */
+export function parseMetaEvents(payload: unknown): { messages: MetaMessageEvent[]; statuses: MetaStatusEvent[] } {
+  const messages: MetaMessageEvent[] = []
+  const statuses: MetaStatusEvent[] = []
+  const root = payload as { entry?: Array<{ changes?: MetaChange[] }> } | null
+  for (const entry of root?.entry ?? []) {
+    for (const change of entry.changes ?? []) {
+      const value = change?.value
+      if (!value) continue
+      for (const raw of value.messages ?? []) {
+        const type = typeof raw.type === 'string' ? raw.type : 'unknown'
+        const event: MetaMessageEvent = {
+          externalMessageId: typeof raw.id === 'string' ? raw.id : '',
+          from: typeof raw.from === 'string' ? raw.from : '',
+          timestamp: timestampToDate(raw.timestamp),
+          type,
+          raw,
+        }
+        if (type === 'text' && raw.text && typeof raw.text === 'object') {
+          const text = (raw.text as Record<string, unknown>).body
+          if (typeof text === 'string') event.text = text
+        }
+        if (type === 'button' && raw.button && typeof raw.button === 'object') {
+          const text = (raw.button as Record<string, unknown>).text
+          if (typeof text === 'string') event.text = text
+        }
+        if (type === 'interactive' && raw.interactive && typeof raw.interactive === 'object') {
+          const interactive = raw.interactive as Record<string, unknown>
+          const reply = interactive.button_reply ?? interactive.list_reply
+          if (reply && typeof reply === 'object' && typeof (reply as Record<string, unknown>).title === 'string') {
+            event.text = (reply as Record<string, unknown>).title as string
+          }
+        }
+        if (MEDIA_TYPES.has(type)) event.media = readMedia(raw, type)
+        if (event.externalMessageId && event.from) messages.push(event)
+      }
+      for (const raw of value.statuses ?? []) {
+        const status = typeof raw.status === 'string' ? raw.status : ''
+        if (!['sent', 'delivered', 'read', 'failed'].includes(status)) continue
+        statuses.push({
+          externalMessageId: typeof raw.id === 'string' ? raw.id : '',
+          recipientId: typeof raw.recipient_id === 'string' ? raw.recipient_id : '',
+          status: status as MetaStatusEvent['status'],
+          timestamp: timestampToDate(raw.timestamp),
+          errors: Array.isArray(raw.errors)
+            ? (raw.errors as Array<Record<string, unknown>>).map((error) => ({
+                code: typeof error.code === 'number' ? error.code : undefined,
+                title: typeof error.title === 'string' ? error.title : undefined,
+                message: typeof error.message === 'string' ? error.message : undefined,
+              }))
+            : undefined,
+          raw,
+        })
+      }
+    }
+  }
+  return {messages, statuses}
+}
+
+/** Human-readable body for a normalized inbound message. */
+export function describeInbound(event: MetaMessageEvent): { body: string; contentType: string } {
+  if (event.text) return {body: event.text, contentType: 'text/plain'}
+  if (event.media) {
+    const label = `[${event.type}${event.media.fileName ? `: ${event.media.fileName}` : ''}]`
+    return {body: event.media.caption ? `${label} ${event.media.caption}` : label, contentType: event.media.mimeType ?? 'application/octet-stream'}
+  }
+  return {body: `[${event.type}]`, contentType: 'text/plain'}
+}
+
+export function buildTextPayload(to: string, text: string): Record<string, unknown> {
+  return {
+    messaging_product: 'whatsapp',
+    recipient_type: 'individual',
+    to,
+    type: 'text',
+    text: {preview_url: false, body: text},
+  }
+}
+
+export type MetaTemplate = {name: string; language: string; components?: unknown[]}
+
+export function buildTemplatePayload(to: string, template: MetaTemplate): Record<string, unknown> {
+  return {
+    messaging_product: 'whatsapp',
+    to,
+    type: 'template',
+    template: {
+      name: template.name,
+      language: {code: template.language},
+      ...(template.components ? {components: template.components} : {}),
+    },
+  }
+}
+
+
+/** Parse one raw message object (the shape stored on InboundMessage.raw). */
+export function parseSingleMessage(raw: Record<string, unknown>): MetaMessageEvent | null {
+  const wrapped = {entry: [{changes: [{value: {messages: [raw]}}]}]}
+  const parsed = parseMetaEvents(wrapped)
+  return parsed.messages[0] ?? null
+}
+
+/** Parse one raw status object. */
+export function parseSingleStatus(raw: Record<string, unknown>): MetaStatusEvent | null {
+  const wrapped = {entry: [{changes: [{value: {statuses: [raw]}}]}]}
+  const parsed = parseMetaEvents(wrapped)
+  return parsed.statuses[0] ?? null
+}
