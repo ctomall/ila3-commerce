@@ -63,6 +63,7 @@ export function buildAndroidManifest({
   signerSha256 = null,
   notes = [],
   generatedAt = new Date().toISOString(),
+  allowHttp = false,
   verifySigner = readApkIdentity,
 } = {}) {
   if (!apkPath || !fs.existsSync(apkPath)) throw new Error(`apk not found: ${apkPath}`)
@@ -74,7 +75,10 @@ export function buildAndroidManifest({
     throw new Error('minVersionCode must be an integer between 1 and versionCode')
   }
   if (!Number.isInteger(percent) || percent < 1 || percent > 100) throw new Error('rolloutPercent must be 1..100')
-  if (!url || !/^https:\/\//.test(url)) throw new Error('url must be an https URL')
+  // https is the contract; http is allowed only for an explicit isolated drill.
+  if (!url || !(allowHttp ? /^https?:\/\// : /^https:\/\//).test(url)) {
+    throw new Error(allowHttp ? 'url must be http(s) for a drill' : 'url must be an https URL')
+  }
 
   const size = fs.statSync(apkPath).size
   const sha256 = sha256File(apkPath)
@@ -161,6 +165,7 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(im
       url: arg('--url'),
       signerSha256: arg('--signer'),
       notes: (arg('--notes', '') || '').split('|').filter(Boolean),
+      allowHttp: args.includes('--allow-http'),
     })
     if (!result.ok) {
       console.error(result.error)
