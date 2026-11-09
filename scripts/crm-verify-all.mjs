@@ -188,9 +188,12 @@ const treeLabel = worktree.known
   : `未知（git status 失败：${worktree.error}）`
 
 const lines = [
-  '# 全量验证结果',
+  ONLY ? '# 子集验证结果（不是全量）' : '# 全量验证结果',
   '',
   `时间：${new Date().toISOString()} · 模式：${FULL ? '--full' : '快速集'} · 提交：\`${head()}\``,
+  // A subset run proves a subset. Without this line the report reads exactly like a full
+  // one — same table, same "全部通过" — and gets quoted as if the other gates had run.
+  ONLY ? `范围：**仅 ${[...ONLY].sort().join(', ')}**（${results.filter((r) => r.status !== 'SKIP').length}/${GATES.length} 道门，不是全量）` : `范围：全部 ${GATES.length} 道门`,
   `工作树：${treeLabel}`,
   '',
   `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length}`,

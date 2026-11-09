@@ -255,10 +255,20 @@ for (const mutation of MUTATIONS) {
   }
   const original = originals.get(mutation.file)
 
-  if (!original.includes(mutation.find)) {
+  const occurrences = original.split(mutation.find).length - 1
+  if (occurrences === 0) {
     // An anchor that no longer matches means the gate is checking nothing.
     results.push({ ...mutation, status: 'invalid', detail: 'anchor text not found in the source' })
     console.log(`INVALID ${mutation.id} — 锚点已不存在，门在空转`)
+    failed += 1
+    continue
+  }
+  if (occurrences > 1) {
+    // `replace` only rewrites the first match, so a duplicated anchor can mutate a comment
+    // (or another branch) and leave the code under test untouched. That is INVALID, not
+    // SURVIVED: the run proves nothing about the behaviour named in `why`.
+    results.push({ ...mutation, status: 'invalid', detail: `anchor text matches ${occurrences} places in the source` })
+    console.log(`INVALID ${mutation.id} — 锚点在源码里出现 ${occurrences} 次，无法确定会改到哪一处`)
     failed += 1
     continue
   }
