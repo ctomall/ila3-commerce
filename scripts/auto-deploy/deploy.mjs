@@ -20,6 +20,7 @@ import {installFromArtifact} from './artifact.mjs'
 import {checkRelease, checkRunning} from './health.mjs'
 import {preflightMigrations} from './migration-preflight.mjs'
 import {waitForDrain} from './worker-drain.mjs'
+import {carryoverQueues} from './queue-carryover.mjs'
 
 const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
 const PRODUCTION_PORT = 3000
@@ -609,6 +610,22 @@ async function main() {
       if (!post.ok) throw refusal('post-switch-unhealthy', post)
     })
 
+    // Gate 2b — carryover: the new release starts with an empty queue directory
+    // (QUEUE_BASE_DIR is cwd-relative), so jobs drained-but-unfinished in the old
+    // release are moved now that the new one is healthy. Errors are recorded, not
+    // thrown: a rollback is worse than stranded jobs that stay auditable in the
+    // old release's sidecar.
+    if (oldRelease && !oldRelease.missing && path.resolve(oldRelease.target) !== path.resolve(release.dir)) {
+      const carry = await step('queue-carryover', async () =>
+        carryoverQueues({
+          fromAppDir: oldRelease.target,
+          toAppDir: release.dir,
+          runId: record.runId,
+        }),
+      )
+      record.queueCarryover = carry
+    }
+
     record.result = 'deployed'
     record.prune = pruneOrphans()
   } catch (error) {
@@ -622,6 +639,7 @@ async function main() {
       // switch, and the old release is left running untouched.
       const refusalCodes = new Set([
         'ci-gate-denied',
+        'migration-preflight-failed',
         'candidate-unhealthy',
         'no-current-release',
         'production-switch-disabled',
@@ -715,6 +733,9 @@ async function main() {
       candidate: record.candidate ?? null,
       liveHealth: record.liveHealth ?? null,
       postSwitch: record.postSwitch ?? null,
+      migrationPreflight: record.migrationPreflight ?? null,
+      workerDrain: record.workerDrain ?? null,
+      queueCarryover: record.queueCarryover ?? null,
       rollback: record.rollback ?? null,
       targetUnchanged: record.targetUnchanged ?? null,
       prune: record.prune ?? null,
