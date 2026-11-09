@@ -55,7 +55,56 @@ async function post(cookie, apiPath, body) {
   return { status: res.status, json, text }
 }
 
-const quoteId = arg('--quote') ?? psql("select id from sales_quotes where status = 'draft' order by created_at desc limit 1")
+/**
+ * A self-created fixture, only with --create-fixture.
+ *
+ * The regression needs one draft quote and the table may hold none (the last one was
+ * consumed by a business action on 2026-11-09). Creating and deleting one row is a data
+ * write, so it is never implicit: without the flag the gate fails with the reason and the
+ * two ways forward.
+ *
+ * The scope comes from an existing quote (`insert ... select tenant_id, organization_id`)
+ * rather than being typed in: a hand-written scope is how a fixture ends up in a
+ * tenant/organization combination that exists nowhere, and the resulting 403 looks like a
+ * product bug. That mistake was made once while building this.
+ */
+const CREATE_FIXTURE = process.argv.includes('--create-fixture')
+const psqlExec = (sql) => {
+  try {
+    return execFileSync(
+      'bash',
+      ['-lc', `cd /home/pro/apps/mercato && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -c ${JSON.stringify(sql)}`],
+      { encoding: 'utf8' },
+    ).trim()
+  } catch (error) {
+    return `__ERROR__ ${String(error).slice(0, 200)}`
+  }
+}
+
+const existingDraft = psql("select id from sales_quotes where status = 'draft' order by created_at desc limit 1")
+let quoteId = arg('--quote') ?? existingDraft
+let fixtureId = null
+if ((!quoteId || quoteId.startsWith('__ERROR__')) && CREATE_FIXTURE) {
+  const created = psqlExec(
+    "insert into sales_quotes (id, tenant_id, organization_id, quote_number, currency_code, status, created_at, updated_at) " +
+      "select gen_random_uuid(), tenant_id, organization_id, 'FIXTURE-QR-' || to_char(now(), 'YYYYMMDDHH24MISS'), 'CNY', 'draft', now(), now() " +
+      "from sales_quotes limit 1 returning id",
+  )
+  if (created.startsWith('__ERROR__') || created === '') {
+    console.error(`[quote-regression] 无法创建夹具：${created}`)
+    process.exit(1)
+  }
+  fixtureId = created.split('\n')[0].trim()
+  quoteId = fixtureId
+  console.log(`[quote-regression] 夹具已创建 ${fixtureId}（--create-fixture，结束时删除）`)
+  const cleanup = () => {
+    const out = psqlExec(`delete from sales_quotes where id = '${fixtureId}'`)
+    const left = psql("select count(*) from sales_quotes where quote_number like 'FIXTURE-QR-%'")
+    console.log(`[quote-regression] 夹具已删除 ${fixtureId}${out.startsWith('__ERROR__') ? `（删除失败：${out}）` : ''}，残留 ${left} 行`)
+  }
+  process.on('exit', cleanup)
+  for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => process.exit(130))
+}
 if (!quoteId || quoteId.startsWith('__ERROR__')) {
   // A bare "cannot resolve" is unactionable. Print what the table actually holds, so the
   // next person sees whether the fixture was consumed, never existed, or was never a draft.

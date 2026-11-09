@@ -136,7 +136,10 @@
 - 定：门失败时必须打印 `status` 分布与两条可行路径（`--quote <uuid>` 或自建夹具），不能只丢一句 `cannot resolve a draft quote`。本轮已实现。
 - 定：**不把 `status IS NULL` 当成 draft**。那行报价没有状态条目，把它当草稿去跑 convert/send 是在猜；门宁可不跑。
 - 定：**不让这个门在缺夹具时静默跳过**。跳过不计入通过（`--require-no-skip` 会红），缺夹具就红，红得可解释。
-- 待批：允许脚本自建夹具——`POST /api/sales/quotes` 建一条最小草稿 → 跑回归 → `DELETE` 撤销。属数据写入，需用户明确同意后实现；在此之前，发布级运行需要有人手工提供 `--quote`。
+- 已实现（第 59 轮）：`--create-fixture` 开关。不带开关时行为不变（缺夹具即红、打印分布与两条路径）；带开关时用 `insert … select tenant_id, organization_id from sales_quotes limit 1` **从现有行复制作用域**建一行最小 draft，跑完在 `process.on('exit')` 里按 id 删除，并打印残留计数。
+- 定：**作用域绝不手写**。手工填 tenant/organization 曾经把一行插进一个不存在的租户组合，结果 convert 返回 403、看起来像产品故障。只能从现有行复制。
+- 定：夹具写入属数据写入，因此**默认关闭**，只在显式 `--create-fixture` 时发生；生产库不适用（该门只跑本地/演练环境）。
+- 已实测（第 59 轮）：`--create-fixture` → 创建 1 行 → `5/5 passed`（含真实 409「报价单当前状态为『draft』…」）→ 删除 → 残留 0 行。首次尝试因 scope 写错留下过一行，已按 `quote_number like 'FIXTURE-QR-%'` 清理并核对回 1 行。
 
 ## D29 Bot 入站的门禁顺序是安全属性，不是实现细节
 
