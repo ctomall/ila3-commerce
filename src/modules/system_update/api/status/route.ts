@@ -9,6 +9,7 @@ import {
   readState,
 } from '../../lib/update'
 import { reconcileLiveness } from '../../lib/liveness'
+import { readDeploymentStatus } from '../../lib/deployment-reader'
 
 export const metadata = {
   GET: { requireAuth: true },
@@ -23,11 +24,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'unauthorized' }, { status: 401 })
   }
 
-  const [repo, state, log, unitActive] = await Promise.all([
+  const [repo, state, log, unitActive, deployment] = await Promise.all([
     readRepoInfo(),
     readState(),
     readLogTail(),
     isUpdateUnitRunning(),
+    readDeploymentStatus(),
   ])
 
   // A `running` record whose unit is gone is a dead build, not a live one: the process
@@ -39,9 +41,12 @@ export async function GET(req: NextRequest) {
     enabled: isSelfUpdateEnabled(),
     canManage: isSuperAdmin(auth),
     unitActive,
+    // Compatibility surface: the legacy updater's request state, reconciled for
+    // liveness. `deployment` below is the authoritative release record.
     state: reconciled.state,
     stateDerived: reconciled.derived,
     repo,
     log,
+    deployment,
   })
 }

@@ -9,6 +9,7 @@ import {
   readState,
   requestSelfUpdate,
 } from '../../lib/update'
+import { isDeployLockHeld } from '../../lib/deployment-reader'
 
 export const metadata = {
   POST: { requireAuth: true },
@@ -82,6 +83,18 @@ export async function POST(req: NextRequest) {
   if (current?.status === 'running' || (await isUpdateUnitRunning())) {
     return NextResponse.json(
       { error: 'already running', state: current },
+      { status: 409 },
+    )
+  }
+
+  // The real release chain (`ila3-auto-deploy`) takes the same flock. Refuse here
+  // instead of starting a transient unit that would only exit with "locked out".
+  if ((await isDeployLockHeld()) === true) {
+    return NextResponse.json(
+      {
+        error: 'deployment running',
+        detail: 'ila3-auto-deploy currently holds deploy.lock; wait for the release record to settle',
+      },
       { status: 409 },
     )
   }
