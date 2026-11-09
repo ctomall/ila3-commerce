@@ -70,6 +70,23 @@ if (!quoteId || quoteId.startsWith('__ERROR__')) {
   process.exit(1)
 }
 
+// A caller-supplied id is a claim; check it before the run spends a login on it.
+if (arg('--quote')) {
+  const resolved = psql(
+    `select coalesce(status, '<null>') || '|' || case when deleted_at is null then 'live' else 'deleted' end from sales_quotes where id = '${quoteId}'`,
+  )
+  if (resolved.startsWith('__ERROR__') || resolved === '') {
+    console.error(`[quote-regression] --quote ${quoteId} 不存在（或读取失败：${resolved}）`)
+    process.exit(1)
+  }
+  const [status, lifecycle] = resolved.split('|')
+  if (status !== 'draft' || lifecycle !== 'live') {
+    console.error(`[quote-regression] --quote ${quoteId} 不能用作夹具：status=${status}、${lifecycle}`)
+    console.error('[quote-regression] 回归要跑 convert/send，夹具必须是未删除的 status=draft 报价')
+    process.exit(1)
+  }
+}
+
 const cred = credentials().get('superadmin')
 const cookie = await loginWithRetry(BASE, cred, { role: 'superadmin' })
 
