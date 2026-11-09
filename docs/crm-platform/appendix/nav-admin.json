@@ -1,370 +1,37 @@
 {
   "groups": [
     {
-      "id": "sales",
-      "name": "客户与销售",
-      "defaultName": "客户与销售",
+      "id": "workbench",
+      "name": "工作台",
+      "defaultName": "工作台",
       "items": [
         {
-          "id": "/backend/customers/companies",
-          "href": "/backend/customers/companies",
-          "title": "公司",
-          "defaultTitle": "公司",
+          "id": "/backend/workbench",
+          "href": "/backend/workbench",
+          "title": "工作台",
+          "defaultTitle": "工作台",
           "enabled": true,
-          "iconName": "building2",
-          "order": 10
+          "pageContext": "main",
+          "order": 5
         },
         {
-          "id": "/backend/customers/deals",
-          "href": "/backend/customers/deals",
-          "title": "商机",
-          "defaultTitle": "商机",
+          "id": "/backend/profile/communication-channels",
+          "href": "/backend/profile/communication-channels",
+          "title": "我的通信渠道",
+          "defaultTitle": "我的通信渠道",
           "enabled": true,
-          "iconName": "briefcase",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/customers/deals/map",
-              "href": "/backend/customers/deals/map",
-              "title": "商机地图",
-              "defaultTitle": "商机地图",
-              "enabled": true,
-              "order": 10
-            },
-            {
-              "id": "/backend/customers/deals/pipeline",
-              "href": "/backend/customers/deals/pipeline",
-              "title": "销售漏斗",
-              "defaultTitle": "销售漏斗",
-              "enabled": true,
-              "order": 10
-            }
-          ]
+          "pageContext": "profile",
+          "order": 20
         },
         {
-          "id": "/backend/customer-tasks",
-          "href": "/backend/customer-tasks",
-          "title": "客户相关任务",
-          "defaultTitle": "客户相关任务",
+          "id": "/backend/profile/notification-preferences",
+          "href": "/backend/profile/notification-preferences",
+          "title": "通知偏好",
+          "defaultTitle": "通知偏好",
           "enabled": true,
-          "iconName": "clipboard-list",
-          "order": 10
-        },
-        {
-          "id": "/backend/calendar",
-          "href": "/backend/calendar",
-          "title": "日历",
-          "defaultTitle": "日历",
-          "enabled": true,
-          "iconName": "calendar",
-          "order": 10
-        },
-        {
-          "id": "/backend/customers/people",
-          "href": "/backend/customers/people",
-          "title": "联系人",
-          "defaultTitle": "联系人",
-          "enabled": true,
-          "iconName": "users",
-          "order": 10
-        },
-        {
-          "id": "/backend/config/customers/deals",
-          "href": "/backend/config/customers/deals",
-          "title": "商机设置",
-          "defaultTitle": "商机设置",
-          "enabled": true,
-          "order": 50
-        },
-        {
-          "id": "/backend/sales/quotes",
-          "href": "/backend/sales/quotes",
-          "title": "报价单",
-          "defaultTitle": "报价单",
-          "enabled": true,
-          "iconName": "shopping-cart",
-          "order": 40
-        },
-        {
-          "id": "/backend/sales/orders",
-          "href": "/backend/sales/orders",
-          "title": "订单",
-          "defaultTitle": "订单",
-          "enabled": true,
-          "iconName": "receipt",
-          "order": 40
-        },
-        {
-          "id": "/backend/sales/channels",
-          "href": "/backend/sales/channels",
-          "title": "销售渠道",
-          "defaultTitle": "销售渠道",
-          "enabled": true,
-          "iconName": "globe",
-          "order": 40,
-          "children": [
-            {
-              "id": "/backend/sales/channels/offers",
-              "href": "/backend/sales/channels/offers",
-              "title": "渠道报价",
-              "defaultTitle": "渠道报价",
-              "enabled": true,
-              "order": 40
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "catalog",
-      "name": "商品与库存",
-      "defaultName": "商品与库存",
-      "items": [
-        {
-          "id": "/backend/catalog/products",
-          "href": "/backend/catalog/products",
-          "title": "产品与服务",
-          "defaultTitle": "产品与服务",
-          "enabled": true,
-          "iconName": "package",
+          "pageContext": "profile",
           "order": 30
         },
-        {
-          "id": "/backend/catalog/prices",
-          "href": "/backend/catalog/prices",
-          "title": "价格规则",
-          "defaultTitle": "价格规则",
-          "enabled": true,
-          "iconName": "tag",
-          "order": 30
-        },
-        {
-          "id": "/backend/catalog/categories",
-          "href": "/backend/catalog/categories",
-          "title": "分类",
-          "defaultTitle": "分类",
-          "enabled": true,
-          "iconName": "folder-tree",
-          "order": 30
-        },
-        {
-          "id": "/backend/wms",
-          "href": "/backend/wms",
-          "title": "运营看板",
-          "defaultTitle": "运营看板",
-          "enabled": true,
-          "iconName": "warehouse",
-          "order": 45,
-          "children": [
-            {
-              "id": "/backend/wms/inventory",
-              "href": "/backend/wms/inventory",
-              "title": "库存",
-              "defaultTitle": "库存",
-              "enabled": true,
-              "iconName": "boxes",
-              "order": 100
-            },
-            {
-              "id": "/backend/wms/warehouses",
-              "href": "/backend/wms/warehouses",
-              "title": "仓库",
-              "defaultTitle": "仓库",
-              "enabled": true,
-              "iconName": "warehouse",
-              "order": 110
-            },
-            {
-              "id": "/backend/wms/zones",
-              "href": "/backend/wms/zones",
-              "title": "库区",
-              "defaultTitle": "库区",
-              "enabled": true,
-              "iconName": "layers",
-              "order": 120
-            },
-            {
-              "id": "/backend/wms/locations",
-              "href": "/backend/wms/locations",
-              "title": "库位",
-              "defaultTitle": "库位",
-              "enabled": true,
-              "iconName": "map-pinned",
-              "order": 125
-            },
-            {
-              "id": "/backend/wms/lots",
-              "href": "/backend/wms/lots",
-              "title": "批次",
-              "defaultTitle": "批次",
-              "enabled": true,
-              "iconName": "layers",
-              "order": 130
-            },
-            {
-              "id": "/backend/wms/movements",
-              "href": "/backend/wms/movements",
-              "title": "出入库记录",
-              "defaultTitle": "出入库记录",
-              "enabled": true,
-              "iconName": "truck",
-              "order": 140
-            },
-            {
-              "id": "/backend/wms/reservations",
-              "href": "/backend/wms/reservations",
-              "title": "库存预留",
-              "defaultTitle": "库存预留",
-              "enabled": true,
-              "iconName": "clipboard-list",
-              "order": 150
-            }
-          ]
-        },
-        {
-          "id": "/backend/checkout/pay-links",
-          "href": "/backend/checkout/pay-links",
-          "title": "支付链接",
-          "defaultTitle": "支付链接",
-          "enabled": true,
-          "iconName": "ticket",
-          "order": 80
-        },
-        {
-          "id": "/backend/checkout/templates",
-          "href": "/backend/checkout/templates",
-          "title": "结账模板",
-          "defaultTitle": "结账模板",
-          "enabled": true,
-          "iconName": "file-text",
-          "order": 81
-        },
-        {
-          "id": "/backend/checkout/transactions",
-          "href": "/backend/checkout/transactions",
-          "title": "交易记录",
-          "defaultTitle": "交易记录",
-          "enabled": true,
-          "iconName": "receipt-text",
-          "order": 82
-        }
-      ]
-    },
-    {
-      "id": "fulfillment",
-      "name": "履约与售后",
-      "defaultName": "履约与售后",
-      "items": [
-        {
-          "id": "/backend/warranty_claims",
-          "href": "/backend/warranty_claims",
-          "title": "保修工单",
-          "defaultTitle": "保修工单",
-          "enabled": true,
-          "iconName": "shield-check",
-          "order": 40,
-          "children": [
-            {
-              "id": "/backend/warranty_claims/vendor-policies",
-              "href": "/backend/warranty_claims/vendor-policies",
-              "title": "供应商政策",
-              "defaultTitle": "供应商政策",
-              "enabled": true,
-              "iconName": "truck",
-              "order": 40
-            },
-            {
-              "id": "/backend/warranty_claims/settings",
-              "href": "/backend/warranty_claims/settings",
-              "title": "保修工单设置",
-              "defaultTitle": "保修工单设置",
-              "enabled": true,
-              "iconName": "settings",
-              "order": 40
-            },
-            {
-              "id": "/backend/warranty_claims/registrations",
-              "href": "/backend/warranty_claims/registrations",
-              "title": "保修登记",
-              "defaultTitle": "保修登记",
-              "enabled": true,
-              "iconName": "badge-check",
-              "order": 40
-            },
-            {
-              "id": "/backend/warranty_claims/troubleshooting-guides",
-              "href": "/backend/warranty_claims/troubleshooting-guides",
-              "title": "排障指南",
-              "defaultTitle": "排障指南",
-              "enabled": true,
-              "iconName": "help-circle",
-              "order": 40
-            }
-          ]
-        },
-        {
-          "id": "/backend/eudr",
-          "href": "/backend/eudr",
-          "title": "EUDR 概览",
-          "defaultTitle": "EUDR 概览",
-          "enabled": true,
-          "iconName": "gauge",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/eudr/product-mappings",
-              "href": "/backend/eudr/product-mappings",
-              "title": "产品映射",
-              "defaultTitle": "产品映射",
-              "enabled": true,
-              "iconName": "package",
-              "order": 10
-            },
-            {
-              "id": "/backend/eudr/plots",
-              "href": "/backend/eudr/plots",
-              "title": "地块",
-              "defaultTitle": "地块",
-              "enabled": true,
-              "iconName": "map",
-              "order": 10
-            },
-            {
-              "id": "/backend/eudr/statements",
-              "href": "/backend/eudr/statements",
-              "title": "声明",
-              "defaultTitle": "声明",
-              "enabled": true,
-              "iconName": "file-text",
-              "order": 10
-            },
-            {
-              "id": "/backend/eudr/evidence-submissions",
-              "href": "/backend/eudr/evidence-submissions",
-              "title": "证据提交",
-              "defaultTitle": "证据提交",
-              "enabled": true,
-              "iconName": "files",
-              "order": 10
-            },
-            {
-              "id": "/backend/eudr/risk-assessments",
-              "href": "/backend/eudr/risk-assessments",
-              "title": "风险评估",
-              "defaultTitle": "风险评估",
-              "enabled": true,
-              "iconName": "shield-alert",
-              "order": 10
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "people",
-      "name": "人员与排程",
-      "defaultName": "人员与排程",
-      "items": [
         {
           "id": "/backend/resources/resource-types",
           "href": "/backend/resources/resource-types",
@@ -515,10 +182,349 @@
       ]
     },
     {
-      "id": "finance",
-      "name": "财务与规则",
-      "defaultName": "财务与规则",
+      "id": "sales",
+      "name": "销售业务",
+      "defaultName": "销售业务",
       "items": [
+        {
+          "id": "/backend/customers/companies",
+          "href": "/backend/customers/companies",
+          "title": "公司",
+          "defaultTitle": "公司",
+          "enabled": true,
+          "iconName": "building2",
+          "order": 10
+        },
+        {
+          "id": "/backend/customers/deals",
+          "href": "/backend/customers/deals",
+          "title": "商机",
+          "defaultTitle": "商机",
+          "enabled": true,
+          "iconName": "briefcase",
+          "order": 10,
+          "children": [
+            {
+              "id": "/backend/customers/deals/map",
+              "href": "/backend/customers/deals/map",
+              "title": "商机地图",
+              "defaultTitle": "商机地图",
+              "enabled": true,
+              "order": 10
+            },
+            {
+              "id": "/backend/customers/deals/pipeline",
+              "href": "/backend/customers/deals/pipeline",
+              "title": "销售漏斗",
+              "defaultTitle": "销售漏斗",
+              "enabled": true,
+              "order": 10
+            }
+          ]
+        },
+        {
+          "id": "/backend/customer-tasks",
+          "href": "/backend/customer-tasks",
+          "title": "客户相关任务",
+          "defaultTitle": "客户相关任务",
+          "enabled": true,
+          "iconName": "clipboard-list",
+          "order": 10
+        },
+        {
+          "id": "/backend/calendar",
+          "href": "/backend/calendar",
+          "title": "日历",
+          "defaultTitle": "日历",
+          "enabled": true,
+          "iconName": "calendar",
+          "order": 10
+        },
+        {
+          "id": "/backend/customers/people",
+          "href": "/backend/customers/people",
+          "title": "联系人",
+          "defaultTitle": "联系人",
+          "enabled": true,
+          "iconName": "users",
+          "order": 10
+        },
+        {
+          "id": "/backend/config/customers/deals",
+          "href": "/backend/config/customers/deals",
+          "title": "商机设置",
+          "defaultTitle": "商机设置",
+          "enabled": true,
+          "order": 50
+        },
+        {
+          "id": "/backend/sales/quotes",
+          "href": "/backend/sales/quotes",
+          "title": "报价单",
+          "defaultTitle": "报价单",
+          "enabled": true,
+          "iconName": "shopping-cart",
+          "order": 40
+        },
+        {
+          "id": "/backend/sales/orders",
+          "href": "/backend/sales/orders",
+          "title": "订单",
+          "defaultTitle": "订单",
+          "enabled": true,
+          "iconName": "receipt",
+          "order": 40
+        },
+        {
+          "id": "/backend/sales/channels",
+          "href": "/backend/sales/channels",
+          "title": "销售渠道",
+          "defaultTitle": "销售渠道",
+          "enabled": true,
+          "iconName": "globe",
+          "order": 40,
+          "children": [
+            {
+              "id": "/backend/sales/channels/offers",
+              "href": "/backend/sales/channels/offers",
+              "title": "渠道报价",
+              "defaultTitle": "渠道报价",
+              "enabled": true,
+              "order": 40
+            }
+          ]
+        },
+        {
+          "id": "/backend/catalog/products",
+          "href": "/backend/catalog/products",
+          "title": "产品与服务",
+          "defaultTitle": "产品与服务",
+          "enabled": true,
+          "iconName": "package",
+          "order": 30
+        },
+        {
+          "id": "/backend/catalog/prices",
+          "href": "/backend/catalog/prices",
+          "title": "价格规则",
+          "defaultTitle": "价格规则",
+          "enabled": true,
+          "iconName": "tag",
+          "order": 30
+        },
+        {
+          "id": "/backend/catalog/categories",
+          "href": "/backend/catalog/categories",
+          "title": "分类",
+          "defaultTitle": "分类",
+          "enabled": true,
+          "iconName": "folder-tree",
+          "order": 30
+        },
+        {
+          "id": "/backend/wms",
+          "href": "/backend/wms",
+          "title": "运营看板",
+          "defaultTitle": "运营看板",
+          "enabled": true,
+          "iconName": "warehouse",
+          "order": 45,
+          "children": [
+            {
+              "id": "/backend/wms/inventory",
+              "href": "/backend/wms/inventory",
+              "title": "库存",
+              "defaultTitle": "库存",
+              "enabled": true,
+              "iconName": "boxes",
+              "order": 100
+            },
+            {
+              "id": "/backend/wms/warehouses",
+              "href": "/backend/wms/warehouses",
+              "title": "仓库",
+              "defaultTitle": "仓库",
+              "enabled": true,
+              "iconName": "warehouse",
+              "order": 110
+            },
+            {
+              "id": "/backend/wms/zones",
+              "href": "/backend/wms/zones",
+              "title": "库区",
+              "defaultTitle": "库区",
+              "enabled": true,
+              "iconName": "layers",
+              "order": 120
+            },
+            {
+              "id": "/backend/wms/locations",
+              "href": "/backend/wms/locations",
+              "title": "库位",
+              "defaultTitle": "库位",
+              "enabled": true,
+              "iconName": "map-pinned",
+              "order": 125
+            },
+            {
+              "id": "/backend/wms/lots",
+              "href": "/backend/wms/lots",
+              "title": "批次",
+              "defaultTitle": "批次",
+              "enabled": true,
+              "iconName": "layers",
+              "order": 130
+            },
+            {
+              "id": "/backend/wms/movements",
+              "href": "/backend/wms/movements",
+              "title": "出入库记录",
+              "defaultTitle": "出入库记录",
+              "enabled": true,
+              "iconName": "truck",
+              "order": 140
+            },
+            {
+              "id": "/backend/wms/reservations",
+              "href": "/backend/wms/reservations",
+              "title": "库存预留",
+              "defaultTitle": "库存预留",
+              "enabled": true,
+              "iconName": "clipboard-list",
+              "order": 150
+            }
+          ]
+        },
+        {
+          "id": "/backend/checkout/pay-links",
+          "href": "/backend/checkout/pay-links",
+          "title": "支付链接",
+          "defaultTitle": "支付链接",
+          "enabled": true,
+          "iconName": "ticket",
+          "order": 80
+        },
+        {
+          "id": "/backend/checkout/templates",
+          "href": "/backend/checkout/templates",
+          "title": "结账模板",
+          "defaultTitle": "结账模板",
+          "enabled": true,
+          "iconName": "file-text",
+          "order": 81
+        },
+        {
+          "id": "/backend/checkout/transactions",
+          "href": "/backend/checkout/transactions",
+          "title": "交易记录",
+          "defaultTitle": "交易记录",
+          "enabled": true,
+          "iconName": "receipt-text",
+          "order": 82
+        },
+        {
+          "id": "/backend/warranty_claims",
+          "href": "/backend/warranty_claims",
+          "title": "保修工单",
+          "defaultTitle": "保修工单",
+          "enabled": true,
+          "iconName": "shield-check",
+          "order": 40,
+          "children": [
+            {
+              "id": "/backend/warranty_claims/vendor-policies",
+              "href": "/backend/warranty_claims/vendor-policies",
+              "title": "供应商政策",
+              "defaultTitle": "供应商政策",
+              "enabled": true,
+              "iconName": "truck",
+              "order": 40
+            },
+            {
+              "id": "/backend/warranty_claims/settings",
+              "href": "/backend/warranty_claims/settings",
+              "title": "保修工单设置",
+              "defaultTitle": "保修工单设置",
+              "enabled": true,
+              "iconName": "settings",
+              "order": 40
+            },
+            {
+              "id": "/backend/warranty_claims/registrations",
+              "href": "/backend/warranty_claims/registrations",
+              "title": "保修登记",
+              "defaultTitle": "保修登记",
+              "enabled": true,
+              "iconName": "badge-check",
+              "order": 40
+            },
+            {
+              "id": "/backend/warranty_claims/troubleshooting-guides",
+              "href": "/backend/warranty_claims/troubleshooting-guides",
+              "title": "排障指南",
+              "defaultTitle": "排障指南",
+              "enabled": true,
+              "iconName": "help-circle",
+              "order": 40
+            }
+          ]
+        },
+        {
+          "id": "/backend/eudr",
+          "href": "/backend/eudr",
+          "title": "EUDR 概览",
+          "defaultTitle": "EUDR 概览",
+          "enabled": true,
+          "iconName": "gauge",
+          "order": 10,
+          "children": [
+            {
+              "id": "/backend/eudr/product-mappings",
+              "href": "/backend/eudr/product-mappings",
+              "title": "产品映射",
+              "defaultTitle": "产品映射",
+              "enabled": true,
+              "iconName": "package",
+              "order": 10
+            },
+            {
+              "id": "/backend/eudr/plots",
+              "href": "/backend/eudr/plots",
+              "title": "地块",
+              "defaultTitle": "地块",
+              "enabled": true,
+              "iconName": "map",
+              "order": 10
+            },
+            {
+              "id": "/backend/eudr/statements",
+              "href": "/backend/eudr/statements",
+              "title": "声明",
+              "defaultTitle": "声明",
+              "enabled": true,
+              "iconName": "file-text",
+              "order": 10
+            },
+            {
+              "id": "/backend/eudr/evidence-submissions",
+              "href": "/backend/eudr/evidence-submissions",
+              "title": "证据提交",
+              "defaultTitle": "证据提交",
+              "enabled": true,
+              "iconName": "files",
+              "order": 10
+            },
+            {
+              "id": "/backend/eudr/risk-assessments",
+              "href": "/backend/eudr/risk-assessments",
+              "title": "风险评估",
+              "defaultTitle": "风险评估",
+              "enabled": true,
+              "iconName": "shield-alert",
+              "order": 10
+            }
+          ]
+        },
         {
           "id": "/backend/currencies",
           "href": "/backend/currencies",
@@ -579,81 +585,9 @@
       ]
     },
     {
-      "id": "automation",
-      "name": "自动化与流程",
-      "defaultName": "自动化与流程",
-      "items": [
-        {
-          "id": "/backend/definitions",
-          "href": "/backend/definitions",
-          "title": "工作流定义",
-          "defaultTitle": "工作流定义",
-          "enabled": true,
-          "iconName": "workflow",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/definitions/create",
-              "href": "/backend/definitions/create",
-              "title": "创建工作流定义",
-              "defaultTitle": "创建工作流定义",
-              "enabled": true,
-              "order": 10
-            },
-            {
-              "id": "/backend/definitions/visual-editor",
-              "href": "/backend/definitions/visual-editor",
-              "title": "工作流可视化编辑器",
-              "defaultTitle": "工作流可视化编辑器",
-              "enabled": true,
-              "order": 10
-            }
-          ]
-        },
-        {
-          "id": "/backend/instances",
-          "href": "/backend/instances",
-          "title": "工作流实例",
-          "defaultTitle": "工作流实例",
-          "enabled": true,
-          "iconName": "wrench",
-          "order": 20,
-          "children": [
-            {
-              "id": "/backend/instances/failure-queue",
-              "href": "/backend/instances/failure-queue",
-              "title": "失败队列",
-              "defaultTitle": "失败队列",
-              "enabled": true,
-              "iconName": "triangle-alert",
-              "order": 20
-            }
-          ]
-        },
-        {
-          "id": "/backend/work-inbox",
-          "href": "/backend/work-inbox",
-          "title": "工作收件箱",
-          "defaultTitle": "工作收件箱",
-          "enabled": true,
-          "iconName": "inbox",
-          "order": 30
-        },
-        {
-          "id": "/backend/events",
-          "href": "/backend/events",
-          "title": "工作流事件",
-          "defaultTitle": "工作流事件",
-          "enabled": true,
-          "iconName": "activity",
-          "order": 40
-        }
-      ]
-    },
-    {
-      "id": "comms",
-      "name": "内容与通信",
-      "defaultName": "内容与通信",
+      "id": "resources",
+      "name": "资料中心",
+      "defaultName": "资料中心",
       "items": [
         {
           "id": "/backend/documents",
@@ -722,60 +656,75 @@
       ]
     },
     {
-      "id": "settings.sections.directory",
-      "name": "组织与租户",
-      "defaultName": "组织与租户",
+      "id": "admin",
+      "name": "管理后台",
+      "defaultName": "管理后台",
       "items": [
         {
-          "id": "/backend/directory/branding",
-          "href": "/backend/directory/branding",
-          "title": "组织品牌",
-          "defaultTitle": "组织品牌",
+          "id": "/backend/definitions",
+          "href": "/backend/definitions",
+          "title": "工作流定义",
+          "defaultTitle": "工作流定义",
           "enabled": true,
-          "pageContext": "settings",
-          "order": 0
+          "iconName": "workflow",
+          "order": 10,
+          "children": [
+            {
+              "id": "/backend/definitions/create",
+              "href": "/backend/definitions/create",
+              "title": "创建工作流定义",
+              "defaultTitle": "创建工作流定义",
+              "enabled": true,
+              "order": 10
+            },
+            {
+              "id": "/backend/definitions/visual-editor",
+              "href": "/backend/definitions/visual-editor",
+              "title": "工作流可视化编辑器",
+              "defaultTitle": "工作流可视化编辑器",
+              "enabled": true,
+              "order": 10
+            }
+          ]
         },
         {
-          "id": "/backend/directory/organizations",
-          "href": "/backend/directory/organizations",
-          "title": "组织",
-          "defaultTitle": "组织",
+          "id": "/backend/instances",
+          "href": "/backend/instances",
+          "title": "工作流实例",
+          "defaultTitle": "工作流实例",
           "enabled": true,
-          "pageContext": "settings",
-          "order": 1
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.featureToggles",
-      "name": "功能开关",
-      "defaultName": "功能开关",
-      "items": [
-        {
-          "id": "/backend/feature-toggles/global",
-          "href": "/backend/feature-toggles/global",
-          "title": "全局开关",
-          "defaultTitle": "全局开关",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 1
+          "iconName": "wrench",
+          "order": 20,
+          "children": [
+            {
+              "id": "/backend/instances/failure-queue",
+              "href": "/backend/instances/failure-queue",
+              "title": "失败队列",
+              "defaultTitle": "失败队列",
+              "enabled": true,
+              "iconName": "triangle-alert",
+              "order": 20
+            }
+          ]
         },
         {
-          "id": "/backend/feature-toggles/overrides",
-          "href": "/backend/feature-toggles/overrides",
-          "title": "覆盖项",
-          "defaultTitle": "覆盖项",
+          "id": "/backend/work-inbox",
+          "href": "/backend/work-inbox",
+          "title": "工作收件箱",
+          "defaultTitle": "工作收件箱",
           "enabled": true,
-          "pageContext": "settings",
-          "order": 2
-        }
-      ]
-    },
-    {
-      "id": "backend.nav.externalSystems",
-      "name": "外部系统",
-      "defaultName": "外部系统",
-      "items": [
+          "iconName": "inbox",
+          "order": 30
+        },
+        {
+          "id": "/backend/events",
+          "href": "/backend/events",
+          "title": "工作流事件",
+          "defaultTitle": "工作流事件",
+          "enabled": true,
+          "iconName": "activity",
+          "order": 40
+        },
         {
           "id": "/backend/webhooks",
           "href": "/backend/webhooks",
@@ -831,39 +780,43 @@
               "order": 55
             }
           ]
-        }
-      ]
-    },
-    {
-      "id": "customer_accounts.settings.section",
-      "name": "客户门户",
-      "defaultName": "客户门户",
-      "items": [
+        },
         {
-          "id": "/backend/customer_accounts/users",
-          "href": "/backend/customer_accounts/users",
-          "title": "客户用户",
-          "defaultTitle": "客户用户",
+          "id": "/backend/directory/branding",
+          "href": "/backend/directory/branding",
+          "title": "组织品牌",
+          "defaultTitle": "组织品牌",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 0
+        },
+        {
+          "id": "/backend/directory/organizations",
+          "href": "/backend/directory/organizations",
+          "title": "组织",
+          "defaultTitle": "组织",
           "enabled": true,
           "pageContext": "settings",
           "order": 1
         },
         {
-          "id": "/backend/customer_accounts/roles",
-          "href": "/backend/customer_accounts/roles",
-          "title": "客户角色",
-          "defaultTitle": "客户角色",
+          "id": "/backend/feature-toggles/global",
+          "href": "/backend/feature-toggles/global",
+          "title": "全局开关",
+          "defaultTitle": "全局开关",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 1
+        },
+        {
+          "id": "/backend/feature-toggles/overrides",
+          "href": "/backend/feature-toggles/overrides",
+          "title": "覆盖项",
+          "defaultTitle": "覆盖项",
           "enabled": true,
           "pageContext": "settings",
           "order": 2
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.dataDesigner",
-      "name": "数据设计器",
-      "defaultName": "数据设计器",
-      "items": [
+        },
         {
           "id": "/backend/entities/system",
           "href": "/backend/entities/system",
@@ -890,14 +843,7 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 3
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.moduleConfigs",
-      "name": "模块配置",
-      "defaultName": "模块配置",
-      "items": [
+        },
         {
           "id": "/backend/config/sales",
           "href": "/backend/config/sales",
@@ -1136,14 +1082,7 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 433
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.system",
-      "name": "系统",
-      "defaultName": "系统",
-      "items": [
+        },
         {
           "id": "/backend/config/system-status",
           "href": "/backend/config/system-status",
@@ -1179,30 +1118,7 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 3
-        }
-      ]
-    },
-    {
-      "id": "appShell.sidebarCustomizationGroup",
-      "name": "自定义",
-      "defaultName": "自定义",
-      "items": [
-        {
-          "id": "/backend/sidebar-customization",
-          "href": "/backend/sidebar-customization",
-          "title": "自定义侧边栏",
-          "defaultTitle": "自定义侧边栏",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 1
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.auth",
-      "name": "身份认证",
-      "defaultName": "身份认证",
-      "items": [
+        },
         {
           "id": "/backend/users",
           "href": "/backend/users",
@@ -1247,39 +1163,7 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 5
-        }
-      ]
-    },
-    {
-      "id": "profile.sections.account",
-      "name": "账户",
-      "defaultName": "账户",
-      "items": [
-        {
-          "id": "/backend/profile/communication-channels",
-          "href": "/backend/profile/communication-channels",
-          "title": "我的通信渠道",
-          "defaultTitle": "我的通信渠道",
-          "enabled": true,
-          "pageContext": "profile",
-          "order": 20
         },
-        {
-          "id": "/backend/profile/notification-preferences",
-          "href": "/backend/profile/notification-preferences",
-          "title": "通知偏好",
-          "defaultTitle": "通知偏好",
-          "enabled": true,
-          "pageContext": "profile",
-          "order": 30
-        }
-      ]
-    },
-    {
-      "id": "backend.nav.security",
-      "name": "安全",
-      "defaultName": "安全",
-      "items": [
         {
           "id": "/backend/audit-logs",
           "href": "/backend/audit-logs",
@@ -1288,14 +1172,7 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 160
-        }
-      ]
-    },
-    {
-      "id": "backend.nav.developers",
-      "name": "开发者",
-      "defaultName": "开发者",
-      "items": [
+        },
         {
           "id": "/backend/docs",
           "href": "/backend/docs",
@@ -1304,6 +1181,33 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 1000
+        },
+        {
+          "id": "/backend/customer_accounts/users",
+          "href": "/backend/customer_accounts/users",
+          "title": "客户用户",
+          "defaultTitle": "客户用户",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 1
+        },
+        {
+          "id": "/backend/customer_accounts/roles",
+          "href": "/backend/customer_accounts/roles",
+          "title": "客户角色",
+          "defaultTitle": "客户角色",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 2
+        },
+        {
+          "id": "/backend/sidebar-customization",
+          "href": "/backend/sidebar-customization",
+          "title": "自定义侧边栏",
+          "defaultTitle": "自定义侧边栏",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 1
         }
       ]
     }
