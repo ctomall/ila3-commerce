@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { headers } from 'next/headers'
+import { describeMedia } from '../../../lib/media'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 
 type ThreadRow = {
@@ -20,6 +21,7 @@ type MessageRow = {
   messageId: string | null
   deliveryStatus: string | null
   createdAt: string
+  media: {kind: string; fileName?: string; mimeType?: string; externalId?: string; downloaded: false} | null
 }
 
 type ThreadDetail = {
@@ -121,6 +123,11 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                         <span>{when(item.createdAt)}</span>
                       </div>
                       <p className="mt-1 break-all text-xs text-muted-foreground">平台消息号：{item.externalMessageId}</p>
+                      {item.media ? (
+                        <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                          {describeMedia(item.media)}（媒体下载待 G3，不在本切片伪造本地文件）
+                        </p>
+                      ) : null}
                     </article>
                   ))}
                   {detail.items.length === 0 ? <p className="text-sm text-muted-foreground">该会话暂无消息。</p> : null}

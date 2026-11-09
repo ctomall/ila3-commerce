@@ -10,6 +10,7 @@ import {
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
+import { extractMediaSummary } from '../../../../../lib/media'
 
 export const metadata = {
   path: '/communications/me/threads/[id]/messages',
@@ -130,6 +131,8 @@ export async function GET(
       messageId: link?.messageId ?? null,
       deliveryStatus: link?.deliveryStatus ?? null,
       channelContentType: link?.channelContentType ?? null,
+      /** Attachment metadata only; bytes are never downloaded (G3). */
+      media: extractMediaSummary((message as {channelPayload?: unknown}).channelPayload),
     }
   })
 
@@ -156,6 +159,8 @@ export async function GET(
       displayName: channel.displayName,
       status: channel.status,
       visibility: channel.visibility === 'shared' ? 'shared' : 'private',
+      /** Drives capability gating in the inbox (media/template). */
+      capabilities: (channel.capabilities as Record<string, unknown> | undefined) ?? {},
     },
     items,
     nextAfter,

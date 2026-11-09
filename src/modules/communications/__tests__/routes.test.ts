@@ -390,9 +390,10 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     const createdAt = new Date('2026-11-09T10:00:00Z')
     const em = createFakeEm({
       conversations: [{ id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo' }],
-      channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private' }],
+      channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private', capabilities: {fileSharing: true, realtimePush: false} }],
       messages: [
-        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', senderDisplayName: '客户', providerTimestamp: createdAt, createdAt },
+        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', senderDisplayName: '客户', providerTimestamp: createdAt, createdAt,
+          channelPayload: {_meta: {media: {id: 'media-1', kind: 'document', mimeType: 'application/pdf', fileName: '报价单.pdf'}}} },
         { id: 'em-2', direction: 'outbound', externalMessageId: 'ext-2', senderIdentifier: 'me@example.test', senderDisplayName: '我', providerTimestamp: null, createdAt: new Date('2026-11-09T10:05:00Z') },
       ],
       links: [{ externalMessageId: 'em-1', messageId: 'msg-1', deliveryStatus: 'delivered', channelContentType: 'text/plain' }],
@@ -403,7 +404,13 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     expect(res.status).toBe(200)
     const payload = await res.json()
     expect(payload.items).toHaveLength(1)
-    expect(payload.items[0]).toMatchObject({ id: 'em-1', messageId: 'msg-1', deliveryStatus: 'delivered' })
+    expect(payload.items[0]).toMatchObject({
+      id: 'em-1',
+      messageId: 'msg-1',
+      deliveryStatus: 'delivered',
+      media: {kind: 'document', fileName: '报价单.pdf', mimeType: 'application/pdf', externalId: 'media-1', downloaded: false},
+    })
+    expect(payload.channel.capabilities).toMatchObject({fileSharing: true})
     expect(payload.nextAfter).toBe(createdAt.toISOString())
   })
 
