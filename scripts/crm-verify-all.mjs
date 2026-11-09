@@ -211,10 +211,14 @@ const pathOf = (entry) => entry.replace(/^\s*\S+\s+/, '')
 const gateOutputs = afterEntries.filter((entry) => GATE_OUTPUT.test(pathOf(entry)))
 const manual = afterEntries.filter((entry) => !GATE_OUTPUT.test(pathOf(entry)))
 const releaseGrade = REQUIRE_CLEAN && REQUIRE_NO_SKIP && !ONLY
-const releaseGate =
+// A run that never claimed release grade cannot pass as one. Printing PASS here made the
+// summary disagree with the header line that says 发布级：否 (caught by re-reading the
+// report straight after writing it).
+const releaseOk =
   fail.length === 0 &&
   !(REQUIRE_NO_SKIP && skip.length > 0) &&
   !(REQUIRE_CLEAN && (treeDirty || manual.length > 0))
+const releaseVerdict = releaseGrade ? (releaseOk ? 'PASS' : 'FAIL') : '不适用（非发布级运行）'
 
 const lines = [
   ONLY ? '# 子集验证结果（不是全量）' : '# 全量验证结果',
@@ -229,7 +233,7 @@ const lines = [
     manual.length > 0 ? `，**其他改动 ${manual.length} 项**（${manual.slice(0, 4).join(' / ')}）` : '，无其他改动'
   }`,
   '',
-  `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length} · 发布级门禁：${releaseGate ? 'PASS' : 'FAIL'}`,
+  `PASS ${pass.length} · FAIL ${fail.length} · SKIP ${skip.length} · 发布级门禁：${releaseVerdict}`,
   '',
   '| 门禁 | 状态 | 耗时 | 说明 |',
   '|---|---|---|---|',
@@ -262,8 +266,8 @@ if (REQUIRE_CLEAN && manual.length > 0) {
   console.log(`[crm-verify] --require-clean: 本次运行改动了 ${manual.length} 个非门产物文件，结果不算提交级证据`)
   for (const entry of manual.slice(0, 10)) console.log(`  ${entry}`)
 }
-console.log(`[crm-verify] 发布级门禁：${releaseGate ? 'PASS' : 'FAIL'}`)
-process.exit(releaseGate ? 0 : 1)
+console.log(`[crm-verify] 发布级门禁：${releaseVerdict}`)
+process.exit(releaseOk ? 0 : 1)
 
 function head() {
   const run = spawnSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' })
