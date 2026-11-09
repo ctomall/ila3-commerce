@@ -91,6 +91,23 @@
         "node_modules/@open-mercato/core/dist/modules/communication_channels/subscribers/outbound-bridge.js"
       ],
       "reason": "Files compiled from the private mirror packages/** source of truth, stored in vendor/open-mercato/prebuilt (not dist/: git ignores dist). One installer, one marker per target, content guards per file."
+    },
+    {
+      "id": "send-as-user-provider-native",
+      "script": "scripts/patches/apply-send-as-user-provider-native.mjs",
+      "targets": [
+        "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
+        "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js"
+      ],
+      "marker": "/* [patched:provider-native-recipient] */",
+      "reason": "ADR-006 A: validate the recipient against the adapter recipientFormat, compose chat messages without a fabricated externalEmail, and hand the stored provider-native recipient to the adapter (G7/G8)."
+    },
+    {
+      "id": "send-as-user-team-channel",
+      "script": "scripts/patches/apply-send-as-user-team-channel.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
+      "marker": "/* [patched:team-channel-send] */",
+      "reason": "Team-send policy A: team-visible channels are sendable by non-owners with per-send attribution; private channels stay owner-only."
     }
   ]
 }
