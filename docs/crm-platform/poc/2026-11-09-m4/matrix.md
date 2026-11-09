@@ -1,6 +1,6 @@
 # M4 对抗用例执行记录
 
-生成时间：2026-11-09T03:55:24.324Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-09T04:06:48.637Z · 目标：http://127.0.0.1:3000
 
 共 12 例 · 通过 5 · 弱通过 2 · 失败 0 · 无法执行（缺 fixture）4 · **用例无效 1**
 
@@ -27,8 +27,8 @@
 |---|---|---|
 | `leadgen-api` | **无** | leadgen 路由未部署（迁移未批准） |
 | `employee-B` | 有 |  |
-| `second-organization` | **未探测（写死 false）** | 只有一个租户一个组织；此值未探测 |
-| `dsh-profile-per-employee` | **未探测（写死 false）** | 没有每员工 DSH 运行时；此值未探测（派生层已由 dsh-profile 门证明，运行时仍缺） |
+| `second-organization` | **无** | probed：organizations 表只有 1 行，所有用户也在同一组织 |
+| `dsh-profile-per-employee` | **无** | probed：没有配置 DSH_PROFILE_ROOT 且目录不存在——派生层已由 dsh-profile 门证明，运行时仍缺 |
 | `probe-tool` | 有 | context_whoami 是否在运行时工具表里 |
 | `tool-execute` | 有 | /ai_assistant/tools/execute 是否在 openapi 里 |
 | `existing-quote` | 有 |  |

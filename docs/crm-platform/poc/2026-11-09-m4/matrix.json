@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-09T03:55:24.324Z",
+  "generatedAt": "2026-11-09T04:06:48.637Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -66,7 +66,7 @@
       "expected": "200 且 items 为空或全部属于本人",
       "requires": [],
       "status": "pass-weak",
-      "weakReason": "当前没有任何会话，列表为空时通过只能算弱证据；有会话后必须重跑",
+      "weakReason": "列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor",
       "detail": "200 {\"items\":[],\"nextCursor\":null}"
     },
     {

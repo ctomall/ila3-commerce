@@ -43,3 +43,14 @@
 - 5 条 profile 变异锚点各自唯一；变异门不会把"没跑测试"计成击杀。
 - `dsh-profile` 门在 sudo 不可用 / 角色不足时会红，不是 SKIP；`denied` 只认 `Permission denied`。
 - 变异门新增的唯一性校验：这条是**我自己在第 49 轮自查发现**的（锚点重复会改成注释），已一并修掉。
+
+## 第 50 轮追补：又关掉两条
+
+| # | 级别 | 原缺陷 | 本轮处置 | 证据 |
+|---|---|---|---|---|
+| B-P2-1 | P2 | 两个 fixture 写死 `false`，blocked 不是测量结果 | 改成真探测：`second-organization` 读 `organizations` 行数（现为 1 → 无）；`dsh-profile-per-employee` 检查 `DSH_PROFILE_ROOT` 且目录存在（现无 → 缺）。matrix 的说明写明"probed"与探测方式 | matrix 第 30–31 行 |
+| B-P2-3 | P2 | case 1.4 的 judge 不比较 `item.ownerUserId` 与当前员工，空列表与"全是自己的"都无法区分 | judge 改成与 `context_whoami` 解析出的真实 `userId` 比较；空列表记弱，非空必须逐个相等；`http()` 允许按需放大响应上限（200 字符装不下列表） | 本次 `PASS-WEAK #1.4 — 200 {"items":[],"nextCursor":null}`；若将来出现他人会话，该用例会红 |
+
+改这一条时我自己写错过 URL（少写 `/api`），`1.4` 立刻从弱通过变成 404 HTML 失败——门红了才发现。**改完必须重跑，不能只看 diff。**
+
+仍开：D16（无路由可挂）、`dsh-profile-per-employee` 运行时、m4 那行的"部分覆盖"语义、门产物写在 git 里、过期数字。

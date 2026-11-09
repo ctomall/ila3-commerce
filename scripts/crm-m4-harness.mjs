@@ -59,9 +59,12 @@ const fixtures = {
   'leadgen-api': paths.some((p) => p.includes('/leadgen/')),
   'employee-B': Boolean(cookies.admin && cookies.employee),
   // Two employees in one organization is not cross-employee isolation: the fixture is a
-  // second organization, which does not exist yet.
-  'second-organization': false,
-  'dsh-profile-per-employee': false,
+  // second organization. Probed, not assumed (it was a literal `false`, so the matrix
+  // read like a measurement while nothing measured it — QA finding B-P2-1).
+  'second-organization': (psqlCount('organizations') ?? 0) > 1,
+  // A per-employee DSH runtime exists when the app is configured with a profile root that
+  // is actually on disk. Nothing else would make "runtime isolation" testable.
+  'dsh-profile-per-employee': Boolean(process.env.DSH_PROFILE_ROOT) && fs.existsSync(process.env.DSH_PROFILE_ROOT),
   // A tool that reports the actor the runtime actually resolved. `context_whoami` exists
   // in the ai-assistant package, so this is discoverable rather than assumed.
   'probe-tool': toolNames.includes('context_whoami'),
@@ -70,16 +73,31 @@ const fixtures = {
 }
 
 /** Fixtures whose value came from an actual check, not a constant. */
-const PROBED = new Set(['leadgen-api', 'employee-B', 'probe-tool', 'tool-execute', 'existing-quote'])
+const PROBED = new Set(['leadgen-api', 'employee-B', 'probe-tool', 'tool-execute', 'existing-quote', 'second-organization', 'dsh-profile-per-employee'])
+
+// The actor the runtime resolves for the same session the cases use.
+const selfUserId = await whoamiUserId('employee')
 
 const before = psqlCount('customer_entities')
 
-async function http({ role, method = 'GET', url, body }) {
+async function http({ role, method = 'GET', url, body, limit = 200 }) {
   const headers = { accept: 'application/json' }
   if (role !== 'anon') headers.cookie = cookies[role] ?? ''
   if (body !== undefined) headers['content-type'] = 'application/json'
   const res = await fetch(`${BASE}${url}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), redirect: 'manual' })
-  return { status: res.status, text: (await res.text()).slice(0, 200) }
+  // 200 characters is enough to show a refusal, not enough to parse a list. Judges that
+  // must read JSON ask for more (case 1.4 used to judge a truncated body).
+  return { status: res.status, text: (await res.text()).slice(0, limit) }
+}
+
+/** The actor the runtime actually resolves, so an ownership judge compares against a fact. */
+async function whoamiUserId(role) {
+  const response = await http({ role, method: 'POST', url: '/api/ai_assistant/tools/execute', body: { toolName: 'context_whoami', args: {} }, limit: 200000 })
+  try {
+    return JSON.parse(response.text)?.result?.userId ?? null
+  } catch {
+    return null
+  }
 }
 
 /** Direct tool execution: deterministic, no model call. */
@@ -135,17 +153,28 @@ const cases = [
     expected: '200 且 items 为空或全部属于本人',
     path: '/ai_assistant/ai/conversations',
     requires: [],
-    weakReason: '当前没有任何会话，列表为空时通过只能算弱证据；有会话后必须重跑',
-    run: () => http({ role: 'employee', url: '/api/ai_assistant/ai/conversations' }),
-    judge: (r) => {
-      if (r.status !== 200) return false
+    weakReason:
+      '列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor',
+    run: async () => {
+      const response = await http({ role: 'employee', url: '/api/ai_assistant/ai/conversations', limit: 200000 })
+      let items = null
       try {
-        const json = JSON.parse(r.text)
-        const items = Array.isArray(json.items) ? json.items : []
-        return items.every((item) => item.ownerUserId === undefined || item.ownerUserId === null)
+        const json = JSON.parse(response.text)
+        items = Array.isArray(json.items) ? json.items : Array.isArray(json) ? json : null
       } catch {
-        return false
+        items = null
       }
+      return { ...response, items, selfUserId }
+    },
+    judge: (r) => {
+      if (r.status !== 200 || r.items === null) return false
+      // The old judge accepted any item whose ownerUserId was null/undefined and never
+      // compared it against the caller: it passed on an empty list and would have failed a
+      // conversation that legitimately belonged to the employee. Compare against the actor
+      // context_whoami actually resolves (QA finding B-P2-3).
+      if (r.items.length === 0) return true
+      if (!r.selfUserId) return false
+      return r.items.every((item) => item?.ownerUserId === r.selfUserId)
     },
   },
   {
@@ -362,9 +391,9 @@ const md = [
       k === 'leadgen-api'
         ? 'leadgen 路由未部署（迁移未批准）'
         : k === 'second-organization'
-          ? '只有一个租户一个组织；此值未探测'
+          ? 'probed：organizations 表只有 1 行，所有用户也在同一组织'
           : k === 'dsh-profile-per-employee'
-            ? '没有每员工 DSH 运行时；此值未探测（派生层已由 dsh-profile 门证明，运行时仍缺）'
+            ? 'probed：没有配置 DSH_PROFILE_ROOT 且目录不存在——派生层已由 dsh-profile 门证明，运行时仍缺'
             : k === 'probe-tool'
               ? 'context_whoami 是否在运行时工具表里'
               : k === 'tool-execute'
