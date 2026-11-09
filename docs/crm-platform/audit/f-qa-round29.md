@@ -72,6 +72,6 @@
 | D19 | `source.guard` 无条件 PASS | 改为比较演练前后源库指纹 | 源库变动 → FAIL（`e0356f3`） |
 | D21/D22 | verify-all 的 PASS 行 note 恒空、报告不记录工作树脏 | PASS 行写门禁自己的摘要行；报告头记工作树状态；`--require-clean` 脏树即失败 | 本轮实测：脏树 + `--require-clean` → exit 1，报告头写"**脏**（7 项未提交…）" |
 
-关掉之后的复核运行：`verify/verify-2026-11-09T01-58-45.md` — `--full --require-clean --require-no-skip`，21/21 通过、0 跳过、工作树干净、提交 `9fa6618`。每一行都带该门禁自己的观测（如 `m4-harness` 的 `pass 5 · pass-weak 2 · fail 0 · blocked 4 · invalid 1`、`restore-drill` 的 `columns 4076 / indexes 1027 / constraints 3005 / sequences 53`）。
+关掉之后的复核运行：`verify/verify-2026-11-09T02-09-05.md` — `--full --require-clean --require-no-skip`，21/21 通过、0 跳过、工作树干净、退出码 0、提交 `f243c3b`（此前的 `01-58-45`/`02-03-59` 两次是同参数的中间运行，后一次起于脏树因此按新规则自带"脏"标记）。每一行都带该门禁自己的观测（如 `m4-harness` 的 `pass 5 · pass-weak 2 · fail 0 · blocked 4 · invalid 1`、`restore-drill` 的 `columns 4076 / indexes 1027 / constraints 3005 / sequences 53`）。
 
 顺带暴露的一处口径不实：`i18n-hardcoded` 门描述写着"没有绕过 i18n 的硬编码文案"，实际证据是 `advisory: 153 findings in 294 files`（0 error）。门本身没变，**描述已改成它真正证明的东西**——否则那一行就是在借一个它没做到的说法通过。
