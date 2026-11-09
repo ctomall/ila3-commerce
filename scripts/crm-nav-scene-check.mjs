@@ -134,6 +134,22 @@ for (const role of ROLES) {
   const lost = [...authorized].filter((href) => !covered.has(href))
   for (const href of lost) push(role, `authorized entry has no reachable home: ${href}`)
 
+  const businessHrefs = (crm.business?.categories ?? []).flatMap((category) => itemHrefs([...category.items]))
+  for (const href of businessHrefs) {
+    if (href.endsWith('/settings') || href.startsWith('/backend/config/')) {
+      push(role, `settings page left in the daily business surface: ${href}`)
+    }
+  }
+  const manageHrefs = new Set((crm.manage?.categories ?? []).flatMap((category) => itemHrefs([...category.items])))
+  if (role === 'admin') {
+    for (const href of ['/backend/staff/time-tracking/settings', '/backend/warranty_claims/settings']) {
+      if (!manageHrefs.has(href)) push(role, `moved settings page missing from the management centre: ${href}`)
+    }
+  }
+  const utilityIds = (crm.utility ?? []).map((entry) => entry.id)
+  if (utilityIds.includes('manage') && (crm.manage?.categories ?? []).length === 0) push(role, 'management entry rendered without management content')
+  if (utilityIds.includes('account') && (crm.personal?.items ?? []).length === 0) push(role, 'account entry rendered without account content')
+
   const sceneChecks = []
   for (const scene of crm.scenes ?? []) {
     if (!scene.href) {

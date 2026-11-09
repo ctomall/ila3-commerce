@@ -36,6 +36,7 @@ export type SceneMap = {
     tabs: Array<{ id: string; label: string; href: string }>
     related: Array<{ id: string; label: string; hrefs: string[] }>
   }
+  businessPinned: string[]
   businessCategories: Array<{ id: string; label: string; order: number }>
   manageCategories: Array<{ id: string; label: string; order: number }>
   entries: Record<string, SceneMapEntry>
@@ -239,16 +240,21 @@ export function buildCrmNavigation(payload: CoreNavPayload, map: SceneMap = SCEN
   const features = new Set(Array.isArray(payload.grantedFeatures) ? payload.grantedFeatures : [])
   const scenes: CrmSceneLink[] = map.scenes
     .filter((scene) => {
+      // Strict: a scene appears only when the authorized payload proves it has
+      // content. There is deliberately no "all scenes" fallback for an empty
+      // grant set — that would turn a permissions regression into a UI leak.
       if (scene.id === 'assistant') return features.has('ai_assistant.view')
+      if (scene.id === 'workbench') return surface('workbench').length > 0
       if (scene.id === 'customers') return tabs.length > 0 || customerField('followup').length > 0 || customerField('insights').length > 0
       if (scene.id === 'business') return business.length > 0
       if (scene.id === 'messages') return messages.length > 0
-      return true
+      return false
     })
     .sort((a, b) => a.order - b.order)
     .map(({ id, label, order, href, action, icon }) => ({ id, label, order, href, action, icon }))
 
-  const utility = map.utility.filter((item) => (item.id === 'manage' ? manage.length > 0 : true))
+  // Same rule for the bottom entries: no static fallback, only authorized content.
+  const utility = map.utility.filter((item) => (item.id === 'manage' ? manage.length > 0 : personal.length > 0))
 
   return {
     scenes,
@@ -266,6 +272,41 @@ export function buildCrmNavigation(payload: CoreNavPayload, map: SceneMap = SCEN
     actions: [...new Set(actions)].sort(),
     authorized: [...seen].sort(),
   }
+}
+
+/**
+ * Read the app catalogue from a backend chrome payload.
+ *
+ * Returns `null` for "not the CRM payload" (old shell, failed request, or a
+ * payload without `crm`). Callers must not substitute a default catalogue:
+ * loading, failure and an explicitly empty authorization are three different
+ * states and only the third is rendered as an empty rail.
+ */
+export function readCrmCatalog(payload: unknown): CrmCatalog | null {
+  if (!payload || typeof payload !== 'object') return null
+  const candidate = (payload as { crm?: unknown }).crm
+  if (!candidate || typeof candidate !== 'object') return null
+  const catalog = candidate as CrmCatalog
+  return Array.isArray(catalog.scenes) && Array.isArray(catalog.utility) ? catalog : null
+}
+
+export type CrmRailState = {
+  state: 'loading' | 'error' | 'ready'
+  scenes: CrmSceneLink[]
+  utility: Array<{ id: 'manage' | 'account'; label: string; href: string; icon: string }>
+}
+
+/**
+ * Resolve the rail from the three real states.
+ *
+ * - loading: no scenes yet (skeleton), never the full static list;
+ * - error: no scenes (retry affordance owned by the caller);
+ * - ready: exactly what the authorized catalogue says, including an empty list.
+ */
+export function selectRail(catalog: CrmCatalog | null, isLoading: boolean): CrmRailState {
+  if (catalog) return { state: 'ready', scenes: catalog.scenes, utility: catalog.utility }
+  if (isLoading) return { state: 'loading', scenes: [], utility: [] }
+  return { state: 'error', scenes: [], utility: [] }
 }
 
 /** Navigation is hidden from the rail; this says whether an entry is still reachable. */

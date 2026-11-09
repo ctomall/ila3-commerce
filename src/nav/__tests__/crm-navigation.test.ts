@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { describe, expect, it } from '@jest/globals'
-import { buildCrmNavigation, SCENE_MAP, type CoreNavPayload } from '../crm-navigation'
+import { buildCrmNavigation, readCrmCatalog, SCENE_MAP, selectRail, type CoreNavPayload } from '../crm-navigation'
 
 const APPENDIX = path.resolve(__dirname, '../../../docs/crm-platform/appendix')
 
@@ -45,7 +45,7 @@ function payload(overrides: Partial<CoreNavPayload> = {}): CoreNavPayload {
 describe('buildCrmNavigation', () => {
   it('buckets authorized entries into scenes and management categories', () => {
     const catalog = buildCrmNavigation(payload())
-    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['workbench', 'assistant', 'customers'])
+    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['assistant', 'customers'])
     expect(catalog.customers.tabs.map((tab) => tab.id)).toEqual(['companies', 'people', 'deals'])
     expect(catalog.business.categories).toEqual([])
     expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
@@ -107,11 +107,19 @@ describe('buildCrmNavigation', () => {
     expect(JSON.stringify(catalog.business)).not.toContain('/backend/brand-new/thing')
   })
 
+  it('renders no scenes or utility entries for an empty grant set', () => {
+    const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }))
+    expect(catalog.scenes).toEqual([])
+    expect(catalog.utility).toEqual([])
+    expect(catalog.unknown).toEqual([])
+  })
+
   it('hides scenes the caller has no entries for', () => {
     const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [] }))
-    // Workbench is a real page and the AI entry is feature-gated, not payload-gated.
-    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['workbench', 'assistant'])
-    expect(catalog.utility.map((entry) => entry.id)).toEqual(['account'])
+    // Only the feature-gated AI scene remains: workbench has no authorized
+    // entry in this payload, and the account entry has no profile content.
+    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['assistant'])
+    expect(catalog.utility).toEqual([])
   })
 
   it('does not repeat an href across surfaces', () => {
@@ -125,6 +133,25 @@ describe('buildCrmNavigation', () => {
       ...catalog.customers.insights.map((entry) => entry.href),
     ]
     expect(new Set(rendered).size).toBe(rendered.length)
+  })
+})
+
+describe('selectRail', () => {
+  it('never substitutes the full scene list while loading or after a failure', () => {
+    expect(selectRail(null, true)).toEqual({ state: 'loading', scenes: [], utility: [] })
+    expect(selectRail(null, false)).toEqual({ state: 'error', scenes: [], utility: [] })
+  })
+
+  it('treats an explicitly empty authorized catalogue as ready and empty', () => {
+    const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }))
+    expect(selectRail(catalog, false)).toEqual({ state: 'ready', scenes: [], utility: [] })
+  })
+
+  it('reads only a real CRM payload', () => {
+    expect(readCrmCatalog(null)).toBeNull()
+    expect(readCrmCatalog({ groups: [] })).toBeNull()
+    expect(readCrmCatalog({ crm: { scenes: [] } })).toBeNull()
+    expect(readCrmCatalog({ crm: { scenes: [], utility: [] } })).toEqual({ scenes: [], utility: [] })
   })
 })
 
@@ -162,6 +189,23 @@ describe('scene map', () => {
     for (const spec of Object.values(SCENE_MAP.entries)) {
       if (spec.surface !== 'business') continue
       expect(declared.has(spec.category ?? '')).toBe(true)
+    }
+  })
+
+  it('keeps settings pages out of the daily business surface', () => {
+    for (const [href, spec] of Object.entries(SCENE_MAP.entries)) {
+      if (spec.surface !== 'business') continue
+      expect(href).not.toMatch(/\/settings$/)
+      expect(href.startsWith('/backend/config/')).toBe(false)
+    }
+    expect(SCENE_MAP.entries['/backend/staff/time-tracking/settings']?.surface).toBe('manage')
+    expect(SCENE_MAP.entries['/backend/warranty_claims/settings']?.surface).toBe('manage')
+  })
+
+  it('pins only hrefs that are owned by the business surface', () => {
+    expect(SCENE_MAP.businessPinned.length).toBeGreaterThan(0)
+    for (const href of SCENE_MAP.businessPinned) {
+      expect(SCENE_MAP.entries[href]?.surface).toBe('business')
     }
   })
 })

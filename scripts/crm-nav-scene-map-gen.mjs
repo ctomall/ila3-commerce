@@ -45,7 +45,6 @@ const BUSINESS = {
     '/backend/checkout/transactions',
     '/backend/warranty_claims',
     '/backend/warranty_claims/vendor-policies',
-    '/backend/warranty_claims/settings',
     '/backend/warranty_claims/registrations',
     '/backend/warranty_claims/troubleshooting-guides',
     '/backend/eudr',
@@ -71,7 +70,6 @@ const BUSINESS = {
     '/backend/staff/time-tracking/entries',
     '/backend/staff/time-tracking/timesheet',
     '/backend/staff/time-tracking/reports',
-    '/backend/staff/time-tracking/settings',
   ],
   automation: [
     '/backend/definitions',
@@ -143,6 +141,7 @@ const MANAGE = {
     '/backend/config/wms',
     '/backend/config/search',
     '/backend/planner/availability-rulesets',
+    '/backend/staff/time-tracking/settings',
   ],
   ai: [
     '/backend/config/ai-assistant/agents',
@@ -158,7 +157,7 @@ const MANAGE = {
   org: ['/backend/currencies', '/backend/exchange-rates', '/backend/config/currency-fetching'],
   dev: ['/backend/feature-toggles/global', '/backend/feature-toggles/overrides', '/backend/sidebar-customization', '/backend/docs'],
   security: ['/backend/audit-logs'],
-  'business-config': ['/backend/config/customers/deals'],
+  'business-config': ['/backend/config/customers/deals', '/backend/warranty_claims/settings'],
 }
 
 /** Create forms that already have a button on their list page. */
@@ -208,6 +207,14 @@ const map = {
       { id: 'insights', label: '分析视图', hrefs: ['/backend/customers/deals/map', '/backend/customers/deals/pipeline'] },
     ],
   },
+  businessPinned: [
+    '/backend/sales/quotes',
+    '/backend/sales/orders',
+    '/backend/catalog/products',
+    '/backend/wms',
+    '/backend/warranty_claims',
+    '/backend/definitions',
+  ],
   businessCategories: [
     { id: 'sales', label: '销售', order: 10 },
     { id: 'catalog', label: '商品目录', order: 20 },

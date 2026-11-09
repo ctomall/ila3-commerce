@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
-import { buildCrmNavigation, SCENE_MAP, type CoreNavPayload } from '@/nav/crm-navigation'
+import { buildCrmNavigation, SCENE_MAP } from '@/nav/crm-navigation'
+import { fetchCoreNavigation } from '../../lib/core-nav'
 
 /**
  * Backend chrome payload for the CRM five-scene shell.
@@ -32,6 +33,7 @@ export const openApi: OpenApiRouteDoc = {
         { status: 200, description: 'Backend chrome payload with the CRM catalogue attached.' },
         { status: 401, description: 'Unauthenticated.' },
         { status: 502, description: 'The core navigation payload could not be read.' },
+        { status: 504, description: 'The core navigation payload timed out after bounded retries.' },
       ],
     },
   },
@@ -43,29 +45,33 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  let upstream: Response
-  try {
-    const url = new URL('/api/auth/admin/nav', req.url)
-    const headers = new Headers({ accept: 'application/json' })
-    const cookie = req.headers.get('cookie')
-    if (cookie) headers.set('cookie', cookie)
-    upstream = await fetch(url, { headers, cache: 'no-store' })
-  } catch (error) {
-    console.error('[crm_navigation] core nav request failed', error)
-    return NextResponse.json({ error: 'Navigation is unavailable.' }, { status: 502 })
+  const url = new URL('/api/auth/admin/nav', req.url).toString()
+  const timeoutMsRaw = Number(process.env.CRM_NAV_TIMEOUT_MS ?? '')
+  const timeoutMs = Number.isFinite(timeoutMsRaw) && timeoutMsRaw >= 500 ? Math.min(timeoutMsRaw, 15000) : 4000
+  const result = await fetchCoreNavigation({
+    url,
+    cookie: req.headers.get('cookie'),
+    timeoutMs,
+    attempts: 2,
+    onAttempt: (attempt) => {
+      // Sanitized: attempt/status only. No headers, no cookie, no URL query.
+      if (attempt.reason || (attempt.status ?? 0) >= 500) {
+        console.warn('[crm_navigation] core nav attempt', attempt)
+      }
+    },
+  })
+
+  if (!result.ok) {
+    const status = result.reason === 'upstream' && result.status === 401 ? 401 : result.status === 504 ? 504 : 502
+    console.error('[crm_navigation] core nav unavailable', {
+      reason: result.reason,
+      status: result.status,
+      attempts: result.attempts,
+    })
+    return NextResponse.json({ error: 'Navigation is unavailable.' }, { status })
   }
 
-  if (!upstream.ok) {
-    return NextResponse.json({ error: 'Navigation is unavailable.' }, { status: upstream.status === 401 ? 401 : 502 })
-  }
-
-  let payload: CoreNavPayload
-  try {
-    payload = (await upstream.json()) as CoreNavPayload
-  } catch (error) {
-    console.error('[crm_navigation] core nav response was not JSON', error)
-    return NextResponse.json({ error: 'Navigation is unavailable.' }, { status: 502 })
-  }
+  const payload = result.payload
 
   const catalog = buildCrmNavigation(payload, SCENE_MAP)
   if (catalog.unknown.length > 0) {

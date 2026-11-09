@@ -4,16 +4,25 @@ import * as React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { Settings } from 'lucide-react'
+import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider'
 import { useSidebarCollapse } from '@open-mercato/ui/backend/AppShell'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
+import { readCrmCatalog } from '@/nav/crm-navigation'
 
 /** Management centre, pinned in the rail footer above the account entry. */
 function ManageLink() {
   const t = useT()
   const pathname = usePathname() ?? ''
   const { collapsed } = useSidebarCollapse()
+  const { payload } = useBackendChrome()
+  const catalog = readCrmCatalog(payload)
   const active = pathname === '/backend/manage' || pathname.startsWith('/backend/manage/')
   const label = t('crmNav.utility.manage', '管理中心')
+
+  // No static fallback: the entry exists only when the authorized catalogue
+  // says the caller may open it. Loading and failure render nothing here; the
+  // main rail owns their error affordance.
+  if (!catalog || !catalog.utility.some((item) => item.id === 'manage')) return null
 
   return (
     <Link

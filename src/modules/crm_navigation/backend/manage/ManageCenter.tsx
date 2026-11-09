@@ -8,14 +8,7 @@ import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Input } from '@open-mercato/ui/primitives/input'
 import { EmptyState } from '@/components/states/EmptyState'
-import { SCENE_MAP, type CrmCatalog } from '@/nav/crm-navigation'
-
-function readCatalog(payload: unknown): CrmCatalog | null {
-  if (!payload || typeof payload !== 'object') return null
-  const candidate = (payload as { crm?: unknown }).crm
-  if (!candidate || typeof candidate !== 'object') return null
-  return Array.isArray((candidate as CrmCatalog).scenes) ? (candidate as CrmCatalog) : null
-}
+import { readCrmCatalog } from '@/nav/crm-navigation'
 
 function chipClass(active: boolean) {
   return [
@@ -30,7 +23,7 @@ function chipClass(active: boolean) {
 export default function ManageCenter() {
   const t = useT()
   const { payload, isLoading, refresh } = useBackendChrome()
-  const catalog = readCatalog(payload)
+  const catalog = readCrmCatalog(payload)
   const [search, setSearch] = React.useState('')
   const [category, setCategory] = React.useState<string>('all')
 

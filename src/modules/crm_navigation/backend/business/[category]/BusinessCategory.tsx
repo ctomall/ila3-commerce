@@ -7,19 +7,12 @@ import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { EmptyState } from '@/components/states/EmptyState'
-import { SCENE_MAP, type CrmCatalog } from '@/nav/crm-navigation'
-
-function readCatalog(payload: unknown): CrmCatalog | null {
-  if (!payload || typeof payload !== 'object') return null
-  const candidate = (payload as { crm?: unknown }).crm
-  if (!candidate || typeof candidate !== 'object') return null
-  return Array.isArray((candidate as CrmCatalog).scenes) ? (candidate as CrmCatalog) : null
-}
+import { readCrmCatalog, SCENE_MAP } from '@/nav/crm-navigation'
 
 export default function BusinessCategory({ category }: { category: string }) {
   const t = useT()
   const { payload, isLoading } = useBackendChrome()
-  const catalog = readCatalog(payload)
+  const catalog = readCrmCatalog(payload)
   const meta = SCENE_MAP.businessCategories.find((entry) => entry.id === category)
   const section = catalog?.business.categories.find((entry) => entry.id === category)
 

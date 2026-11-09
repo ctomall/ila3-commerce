@@ -92,6 +92,14 @@
       }
     ]
   },
+  "businessPinned": [
+    "/backend/sales/quotes",
+    "/backend/sales/orders",
+    "/backend/catalog/products",
+    "/backend/wms",
+    "/backend/warranty_claims",
+    "/backend/definitions"
+  ],
   "businessCategories": [
     {
       "id": "sales",
@@ -739,8 +747,8 @@
       "disposition": "nav"
     },
     "/backend/staff/time-tracking/settings": {
-      "surface": "business",
-      "category": "team",
+      "surface": "manage",
+      "category": "moduleConfigs",
       "disposition": "nav"
     },
     "/backend/staff/time-tracking/timesheet": {
@@ -769,8 +777,8 @@
       "disposition": "nav"
     },
     "/backend/warranty_claims/settings": {
-      "surface": "business",
-      "category": "fulfillment",
+      "surface": "manage",
+      "category": "business-config",
       "disposition": "nav"
     },
     "/backend/warranty_claims/troubleshooting-guides": {

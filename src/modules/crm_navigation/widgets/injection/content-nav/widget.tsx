@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { ArrowUpRight } from 'lucide-react'
 import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
-import { SCENE_MAP, type CrmCatalog } from '@/nav/crm-navigation'
+import { readCrmCatalog, SCENE_MAP, type CrmCatalog } from '@/nav/crm-navigation'
 
 /**
  * Content-area second level.
@@ -17,13 +17,6 @@ import { SCENE_MAP, type CrmCatalog } from '@/nav/crm-navigation'
  * pages additionally get a small related-record strip; one of its links uses
  * the list's real `companyId` / `personId` filter, not a decorative query.
  */
-
-function readCatalog(payload: unknown): CrmCatalog | null {
-  if (!payload || typeof payload !== 'object') return null
-  const candidate = (payload as { crm?: unknown }).crm
-  if (!candidate || typeof candidate !== 'object') return null
-  return Array.isArray((candidate as CrmCatalog).scenes) ? (candidate as CrmCatalog) : null
-}
 
 function tabClass(active: boolean) {
   return [
@@ -47,7 +40,7 @@ function ContentNav() {
   const t = useT()
   const pathname = usePathname() ?? ''
   const chrome = useBackendChrome()
-  const catalog = readCatalog(chrome.payload)
+  const catalog = readCrmCatalog(chrome.payload)
 
   const detail = pathname.match(/^\/backend\/customers\/(companies|people|deals)\/([^/]+)$/)
   const isCustomers = pathname === '/backend/customers' || pathname.startsWith('/backend/customers/')
@@ -66,20 +59,20 @@ function ContentNav() {
     if (type === 'companies') {
       related.push(
         { href: `/backend/customers/deals?companyId=${id}`, label: t('crmNav.related.deals', '关联商机') },
-        { href: '/backend/customers/people', label: t('crmNav.related.contacts', '联系人') },
-        { href: '/backend/customer-tasks', label: t('crmNav.related.tasks', '任务') },
+        { href: '/backend/customers/people', label: t('crmNav.related.allContacts', '全部联系人') },
+        { href: '/backend/customer-tasks', label: t('crmNav.related.allTasks', '全部任务') },
       )
     } else if (type === 'people') {
       related.push(
         { href: `/backend/customers/deals?personId=${id}`, label: t('crmNav.related.deals', '关联商机') },
-        { href: '/backend/customers/companies', label: t('crmNav.related.companies', '公司') },
-        { href: '/backend/customer-tasks', label: t('crmNav.related.tasks', '任务') },
+        { href: '/backend/customers/companies', label: t('crmNav.related.allCompanies', '全部公司') },
+        { href: '/backend/customer-tasks', label: t('crmNav.related.allTasks', '全部任务') },
       )
     } else {
       related.push(
-        { href: '/backend/customers/companies', label: t('crmNav.related.companies', '公司') },
-        { href: '/backend/customers/people', label: t('crmNav.related.contacts', '联系人') },
-        { href: '/backend/sales/quotes', label: t('crmNav.related.quotes', '报价单') },
+        { href: '/backend/customers/companies', label: t('crmNav.related.allCompanies', '全部公司') },
+        { href: '/backend/customers/people', label: t('crmNav.related.allContacts', '全部联系人') },
+        { href: '/backend/sales/quotes', label: t('crmNav.related.allQuotes', '全部报价') },
       )
     }
     return (

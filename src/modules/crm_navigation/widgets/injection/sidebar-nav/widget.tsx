@@ -17,7 +17,7 @@ import { useSidebarCollapse } from '@open-mercato/ui/backend/AppShell'
 import { AI_ASSISTANT_LAUNCHER_OPEN_EVENT, useAiAssistantAvailable } from '@open-mercato/ui/ai'
 import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
-import { SCENE_MAP, type CrmCatalog, type CrmSceneLink } from '@/nav/crm-navigation'
+import { readCrmCatalog, SCENE_MAP, selectRail, type CrmSceneLink } from '@/nav/crm-navigation'
 
 type Variant = 'desktop' | 'mobile'
 
@@ -64,19 +64,9 @@ function resolveSurface(pathname: string): string | null {
   return best
 }
 
-function readCatalog(payload: unknown): CrmCatalog | null {
-  if (!payload || typeof payload !== 'object') return null
-  const candidate = (payload as { crm?: unknown }).crm
-  if (!candidate || typeof candidate !== 'object') return null
-  const scenes = (candidate as CrmCatalog).scenes
-  return Array.isArray(scenes) ? (candidate as CrmCatalog) : null
-}
-
 function iconFor(name: string | undefined): LucideIcon {
   return (name && ICONS[name]) || LayoutDashboard
 }
-
-const FALLBACK_SCENES: CrmSceneLink[] = SCENE_MAP.scenes.filter((scene) => scene.id !== 'assistant')
 
 export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
   const t = useT()
@@ -84,19 +74,16 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
   const { collapsed } = useSidebarCollapse()
   const aiAvailable = useAiAssistantAvailable()
   const chrome = useBackendChrome()
-  const catalog = readCatalog(chrome.payload)
+  const catalog = readCrmCatalog(chrome.payload)
+  const rail = selectRail(catalog, chrome.isLoading)
   const compact = variant === 'desktop' && collapsed
   const activeSurface = React.useMemo(() => resolveSurface(pathname), [pathname])
 
-  const scenes = React.useMemo(() => {
-    const source = catalog?.scenes?.length ? catalog.scenes : FALLBACK_SCENES
-    return source.filter((scene) => (scene.id === 'assistant' ? aiAvailable : true))
-  }, [aiAvailable, catalog])
-
-  const utility = React.useMemo(() => {
-    const source = catalog?.utility?.length ? catalog.utility : SCENE_MAP.utility
-    return source
-  }, [catalog])
+  const scenes = React.useMemo(
+    () => rail.scenes.filter((scene) => (scene.id === 'assistant' ? aiAvailable : true)),
+    [aiAvailable, rail.scenes],
+  )
+  const utility = rail.utility
 
   const linkClass = (active: boolean) =>
     [
@@ -151,7 +138,7 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
     )
   }
 
-  const renderUtility = (item: (typeof SCENE_MAP.utility)[number]) => {
+  const renderUtility = (item: { id: 'manage' | 'account'; label: string; href: string; icon: string }) => {
     const Icon = iconFor(item.icon)
     const active = item.id === 'manage' ? activeSurface === 'manage' : activeSurface === 'personal'
     const label = t(`crmNav.utility.${item.id}`, item.label)
@@ -171,9 +158,39 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
     )
   }
 
+  if (rail.state === 'error') {
+    return (
+      <div data-crm-nav-state="error" data-crm-scene-nav={variant} className="px-1 py-2">
+        <p className="text-xs text-muted-foreground">{t('crmNav.navLoadFailed', '导航加载失败')}</p>
+        <button
+          type="button"
+          onClick={() => void chrome.refresh()}
+          className="mt-1 text-xs underline focus:outline-none focus-visible:shadow-focus"
+        >
+          {t('crmNav.retry', '重试')}
+        </button>
+      </div>
+    )
+  }
+
   return (
-    <nav aria-label={t('crmNav.mainAria', '主导航')} data-crm-scene-nav={variant} className="flex flex-col gap-1">
-      <ul className="flex flex-col gap-1">{scenes.map(renderItem)}</ul>
+    <nav
+      aria-label={t('crmNav.mainAria', '主导航')}
+      aria-busy={rail.state === 'loading' || undefined}
+      data-crm-scene-nav={variant}
+      data-crm-nav-state={rail.state}
+      data-crm-nav-empty={rail.state === 'ready' && scenes.length === 0 ? 'true' : undefined}
+      className="flex flex-col gap-1"
+    >
+      {rail.state === 'loading' ? (
+        <ul className="flex flex-col gap-1" data-crm-nav-loading="">
+          {[0, 1, 2, 3, 4].map((row) => (
+            <li key={row} aria-hidden className="h-10 animate-pulse rounded-lg bg-muted/60" />
+          ))}
+        </ul>
+      ) : (
+        <ul className="flex flex-col gap-1">{scenes.map(renderItem)}</ul>
+      )}
       {variant === 'mobile' && utility.length > 0 ? (
         <div className="mt-3 border-t pt-3">
           <ul className="flex flex-col gap-1">{utility.map(renderUtility)}</ul>
