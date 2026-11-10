@@ -497,7 +497,7 @@ async function runDesktop(role, context, credentialsMap) {
       await trigger.click().catch(() => {})
       await page.waitForTimeout(500)
       const themeSwitch = page.locator('[data-testid="profile-dropdown"] [role="switch"], [role="menu"] [role="switch"]').first()
-      const themeItemPresent = (await page.locator('[data-testid="profile-dropdown"] [role="menuitem"]').filter({ hasText: 'Theme' }).count()) > 0
+      const themeItemPresent = (await page.locator('[data-testid="profile-dropdown"] [role="menuitem"]').filter({ hasText: /Theme|主题/ }).count()) > 0
       if ((await themeSwitch.count()) > 0) {
         const before = await page.evaluate(() => ({ dark: document.documentElement.classList.contains('dark'), stored: localStorage.getItem('om-theme') }))
         await themeSwitch.click()
@@ -515,13 +515,13 @@ async function runDesktop(role, context, credentialsMap) {
       await gotoReady(page, '/backend/workbench')
       await trigger.click().catch(() => {})
       await page.waitForTimeout(500)
-      const languageButton = page.locator('[data-testid="profile-dropdown"] button').filter({ hasText: 'Language' }).first()
+      const languageButton = page.locator('[data-testid="profile-dropdown"] button').filter({ hasText: /Language|语言/ }).first()
       const languagePresent = (await languageButton.count()) > 0
       if (languagePresent) {
         await languageButton.click()
         await page.waitForTimeout(500)
         const submenu = await page.evaluate(() => ({
-          ariaExpanded: Array.from(document.querySelectorAll('[role="menu"] button')).find((button) => (button.innerText ?? '').includes('Language'))?.getAttribute('aria-expanded') ?? null,
+          ariaExpanded: Array.from(document.querySelectorAll('[role="menu"] button')).find((button) => /Language|语言/.test(button.innerText ?? ''))?.getAttribute('aria-expanded') ?? null,
           options: Array.from(document.querySelectorAll('[role="menu"] button, [role="menu"] a')).map((element) => (element.innerText ?? '').replace(/\s+/g, ' ').trim()).filter((text) => /English|中文|Polski|Español|Deutsch|한국어/i.test(text)).slice(0, 12),
           menuText: (document.querySelector('[role="menu"]')?.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 400),
         }))
@@ -534,7 +534,15 @@ async function runDesktop(role, context, credentialsMap) {
     }
     roleReport.account = account
     const menuText = account.items.map((item) => item.text).join(' | ')
-    check(role, 'account.menu-items', 'account menu exposes Change Password / Theme / Language', /Change Password/.test(menuText) && /Theme/.test(menuText) && /Language/.test(menuText), menuText)
+    check(role, 'account.menu-items', 'account menu exposes Change Password / Theme / Language', /Change Password|修改密码/.test(menuText) && /Theme|主题/.test(menuText) && /Language|语言/.test(menuText), menuText)
+    const localizedMenu =
+      /修改密码/.test(menuText) &&
+      /主题/.test(menuText) &&
+      /语言/.test(menuText) &&
+      !/Change Password/.test(menuText) &&
+      !/\bTheme\b/.test(menuText) &&
+      !/\bLanguage\b/.test(menuText)
+    check(role, 'account.menu-localized', 'zh session shows a localized account menu with no English fallback', localizedMenu, menuText)
     check(role, 'account.change-password-page', 'Change Password page loads (settled, not denied)', Boolean(account.changePassword) && account.changePassword.settled && !DENY_RE.test(account.changePassword.text), JSON.stringify(account.changePassword))
     check(role, 'account.theme-toggle', 'Theme switch toggles the document theme and restores', Boolean(account.theme?.before) && account.theme.before.dark !== account.theme.after?.dark && account.theme.restored?.dark === account.theme.before.dark, JSON.stringify(account.theme))
     check(role, 'account.language-submenu', 'Language opens a locale submenu without writing the locale', Boolean(account.language?.present) && account.language.ariaExpanded === 'true' && account.language.options.length > 0 && account.language.localePostWritten === false, JSON.stringify({ ariaExpanded: account.language?.ariaExpanded, options: account.language?.options }))
