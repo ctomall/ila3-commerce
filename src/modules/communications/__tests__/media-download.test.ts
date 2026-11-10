@@ -8,6 +8,7 @@ import {
   assertSafeMediaUrl,
   downloadMediaByUrl,
   readMessengerAttachment,
+  requiresGraphToken,
   withMessengerMedia,
   downloadWhatsAppMedia,
   fetchWhatsAppMediaMetadata,
@@ -220,4 +221,10 @@ describe('Messenger link attachments', () => {
     expect((next.message as Record<string, unknown>)).toBeDefined()
   })
 })
+
+  it('only the WhatsApp path requires a Graph token', () => {
+    expect(requiresGraphToken('whatsapp')).toBe(true)
+    expect(requiresGraphToken('messenger')).toBe(false)
+    expect(requiresGraphToken('Messenger')).toBe(false)
+  })
 })
