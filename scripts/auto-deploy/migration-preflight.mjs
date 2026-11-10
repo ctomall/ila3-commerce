@@ -32,7 +32,9 @@ const DESTRUCTIVE_PATTERNS = [
 
 const EXPAND_PATTERNS = [
   /^\s*create\s+table\b/i,
-  /^\s*alter\s+table\b[\s\S]*?\badd\s+column\b/i,
+  // Postgres accepts `add [column] "x" type`; the optional keyword was missing, so an
+  // additive column came back "unclassified" (2026-11-10).
+  /^\s*alter\s+table\b[\s\S]*?\badd\s+(column\s+)?"?\w+"?\s/i,
   /^\s*create\s+(unique\s+)?index\b/i,
   /^\s*alter\s+table\b[\s\S]*?\badd\s+constraint\b/i,
   /^\s*create\s+extension\b/i,
@@ -74,13 +76,40 @@ export function classifySql(sql) {
   return { kind, statements: statements.length, expand, destructive, unknown, reasons }
 }
 
-function extractSqlFromTs(source) {
+/**
+ * Body of `up()` only.
+ *
+ * The guard exists to stop irreversible FORWARD changes. `down()` is the sanctioned
+ * rollback path, and a migration that adds a column almost always drops it in `down()`;
+ * scanning the whole file classified that rollback as a destructive forward change and
+ * refused the release (2026-11-10, communications payload_hash: up() was a single
+ * additive statement, down() dropped the same column).
+ */
+function extractUpBody(source) {
+  const start = /up\s*\([^)]*\)[^{]*\{/.exec(source)
+  if (!start) return null
+  const open = start.index + start[0].length - 1
+  let depth = 0
+  for (let i = open; i < source.length; i += 1) {
+    const ch = source[i]
+    if (ch === '{') depth += 1
+    else if (ch === '}') {
+      depth -= 1
+      if (depth === 0) return source.slice(open + 1, i)
+    }
+  }
+  return source.slice(open + 1)
+}
+
+export function extractSqlFromTs(source) {
+  const upBody = extractUpBody(source)
+  const scanTarget = upBody === null ? source : upBody
   const parts = []
   const template = /this\.addSql\(\s*`([\s\S]*?)`\s*[,)]/g
   let match
-  while ((match = template.exec(source)) !== null) parts.push(match[1])
+  while ((match = template.exec(scanTarget)) !== null) parts.push(match[1])
   const quoted = /this\.addSql\(\s*'([\s\S]*?)'\s*[,)]/g
-  while ((match = quoted.exec(source)) !== null) parts.push(match[1])
+  while ((match = quoted.exec(scanTarget)) !== null) parts.push(match[1])
   return parts.join(';\n')
 }
 

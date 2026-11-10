@@ -5,7 +5,7 @@ import os from 'node:os'
 import path from 'node:path'
 import {fileURLToPath} from 'node:url'
 import {spawnSync} from 'node:child_process'
-import {classifySql, preflightMigrations, scanMigrations} from './migration-preflight.mjs'
+import {classifySql, extractSqlFromTs, preflightMigrations, scanMigrations} from './migration-preflight.mjs'
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..')
 
@@ -127,4 +127,21 @@ test('CLI exits 1 for a destructive release so the deploy stage refuses', () => 
   const parsed = JSON.parse(run.stdout)
   assert.equal(parsed.ok, false)
   assert.equal(parsed.blocker.endsWith('Migration1.ts'), true)
+})
+
+test('a rollback drop in down() is not a forward destructive change', () => {
+  const source = [
+    "export class Migration20261110081559_communications extends Migration {",
+    "  override name = 'Migration20261110081559';",
+    '  override up(): void | Promise<void> {',
+    '    this.addSql(`alter table "communications_send_requests" add "payload_hash" text null;`);',
+    '  }',
+    '  override down(): void | Promise<void> {',
+    '    this.addSql(`alter table "communications_send_requests" drop column "payload_hash";`);',
+    '  }',
+    '}',
+  ].join('\n')
+  const sql = extractSqlFromTs(source)
+  assert.equal(sql.includes('drop column'), false, 'down() must not be scanned')
+  assert.equal(classifySql(sql).kind, 'expand')
 })
