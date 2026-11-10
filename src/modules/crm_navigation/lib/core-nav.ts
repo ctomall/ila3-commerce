@@ -31,6 +31,29 @@ export type FetchCoreNavigationOptions = {
 
 const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms))
 
+/**
+ * Base origin the route uses to read its OWN core navigation payload.
+ *
+ * Never the request URL: in production the request arrives as
+ * https://mercato.ila3.top, and a server-side fetch of that host goes out through
+ * Cloudflare, which this box cannot reach — every navigation read then failed
+ * with 502 and the five-scene rail rendered empty for real users (2026-11-10
+ * 01:19). The app always talks to itself over loopback unless an operator sets
+ * CRM_NAV_INTERNAL_ORIGIN explicitly.
+ */
+export function resolveInternalOrigin(env: Record<string, string | undefined> = process.env): string {
+  const explicit = env.CRM_NAV_INTERNAL_ORIGIN?.trim()
+  if (explicit) return explicit.replace(/\/+$/, '')
+  const port = Number(env.PORT ?? '') || 3000
+  return `http://127.0.0.1:${port}`
+}
+
+/** Absolute URL of the core nav endpoint on the internal origin. */
+export function coreNavigationUrl(env: Record<string, string | undefined> = process.env): string {
+  return new URL('/api/auth/admin/nav', resolveInternalOrigin(env)).toString()
+}
+
+
 export async function fetchCoreNavigation(options: FetchCoreNavigationOptions): Promise<CoreNavResult> {
   const {
     url,

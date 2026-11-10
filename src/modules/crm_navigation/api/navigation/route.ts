@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { buildCrmNavigation, SCENE_MAP } from '@/nav/crm-navigation'
-import { fetchCoreNavigation } from '../../lib/core-nav'
+import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
 
 /**
  * Backend chrome payload for the CRM five-scene shell.
@@ -45,7 +45,9 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const url = new URL('/api/auth/admin/nav', req.url).toString()
+  // Internal origin on purpose: the request URL may be the public tunnel host,
+  // which this host cannot reach, and a self-fetch through it failed every nav read.
+  const url = coreNavigationUrl()
   const timeoutMsRaw = Number(process.env.CRM_NAV_TIMEOUT_MS ?? '')
   const timeoutMs = Number.isFinite(timeoutMsRaw) && timeoutMsRaw >= 500 ? Math.min(timeoutMsRaw, 15000) : 4000
   const result = await fetchCoreNavigation({

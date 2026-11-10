@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from '@jest/globals'
-import { fetchCoreNavigation } from '../core-nav'
+import { coreNavigationUrl, fetchCoreNavigation, resolveInternalOrigin } from '../core-nav'
 
 function jsonResponse(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -65,5 +65,20 @@ describe('fetchCoreNavigation', () => {
       onAttempt: (attempt) => seen.push(attempt),
     })
     expect(JSON.stringify(seen)).not.toContain('secret')
+  })
+})
+
+describe('internal origin for the self-fetch', () => {
+  it('defaults to loopback on the app port', () => {
+    expect(resolveInternalOrigin({ PORT: '3000' })).toBe('http://127.0.0.1:3000')
+    expect(resolveInternalOrigin({})).toBe('http://127.0.0.1:3000')
+  })
+
+  it('honours an explicit internal origin and strips trailing slashes', () => {
+    expect(resolveInternalOrigin({ CRM_NAV_INTERNAL_ORIGIN: 'http://10.0.0.5:3100/' })).toBe('http://10.0.0.5:3100')
+  })
+
+  it('builds the core nav URL without ever touching the public request host', () => {
+    expect(coreNavigationUrl({ PORT: '3000' })).toBe('http://127.0.0.1:3000/api/auth/admin/nav')
   })
 })
