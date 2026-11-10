@@ -10,6 +10,9 @@ import {
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
+import { Message } from '@open-mercato/core/modules/messages/data/entities'
+import { sanitizeChannelHtml } from '@open-mercato/core/modules/communication_channels/lib/sanitize-channel-html'
+import { htmlToPlainText } from '@open-mercato/shared/lib/html/htmlToPlainText'
 import { extractMediaSummary } from '../../../../../lib/media'
 
 export const metadata = {
@@ -22,6 +25,41 @@ export const metadata = {
 
 const DEFAULT_LIMIT = 50
 const MAX_LIMIT = 200
+
+type LinkedBodyProjection = {
+  body: string | null
+  bodyText: string | null
+  bodyFormat: 'text' | 'markdown' | 'html' | null
+  subject: string | null
+}
+
+/**
+ * Project the linked platform message for display.
+ *
+ * The hub's `messages.message` row is the only copy of the conversation text,
+ * so the inbox reads it through `MessageChannelLink.messageId` — never a second
+ * store. HTML bodies are sanitized server-side and flattened to plain text: the
+ * response never carries raw HTML that a chat bubble might render directly.
+ * A link whose message row is absent (deleted link, foreign tenant) yields
+ * nulls instead of failing the whole page.
+ */
+function projectLinkedMessage(message: Message | undefined): LinkedBodyProjection {
+  if (!message) return { body: null, bodyText: null, bodyFormat: null, subject: null }
+  const subject =
+    typeof message.subject === 'string' && message.subject.trim() !== '' ? message.subject : null
+  const raw = typeof message.body === 'string' ? message.body : ''
+  const format = String(message.bodyFormat ?? 'text').toLowerCase()
+  if (format === 'html') {
+    return {
+      body: null,
+      bodyText: htmlToPlainText(sanitizeChannelHtml(raw)) || null,
+      bodyFormat: 'html',
+      subject,
+    }
+  }
+  const body = raw === '' ? null : raw
+  return { body, bodyText: body, bodyFormat: format === 'markdown' ? 'markdown' : 'text', subject }
+}
 
 /**
  * GET /api/communications/me/threads/{externalConversationId}/messages
@@ -117,6 +155,29 @@ export async function GET(
     }
   }
 
+  // One batched read (no N+1) for the bodies behind this page's links. Scoped
+  // by tenant, and by the caller's organization plus tenant-wide (null) rows
+  // when the session carries one — the same scope the conversation passed.
+  const linkedMessageIds = [
+    ...new Set(
+      page
+        .map((message) => linkByExternalMessage.get(message.id)?.messageId)
+        .filter((id): id is string => typeof id === 'string' && id.length > 0),
+    ),
+  ]
+  const platformMessages = linkedMessageIds.length
+    ? await em.find(
+        Message,
+        {
+          id: { $in: linkedMessageIds },
+          tenantId,
+          ...(organizationId ? { organizationId: { $in: [organizationId, null] } } : {}),
+          deletedAt: null,
+        } as FilterQuery<Message>,
+      )
+    : []
+  const platformMessageById = new Map(platformMessages.map((message) => [String(message.id), message]))
+
   const items = page.map((message) => {
     const link = linkByExternalMessage.get(message.id)
     return {
@@ -133,6 +194,8 @@ export async function GET(
       channelContentType: link?.channelContentType ?? null,
       /** Attachment metadata only; bytes are never downloaded (G3). */
       media: extractMediaSummary(link?.channelPayload),
+      // Body + subject come from the linked platform message (additive fields).
+      ...projectLinkedMessage(link?.messageId ? platformMessageById.get(link.messageId) : undefined),
     }
   })
 
@@ -174,7 +237,11 @@ export const openApi = {
       summary: 'List message metadata for one visible external conversation',
       tags: ['Communications'],
       responses: [
-        { status: 200, description: 'Message page ordered oldest-first' },
+        {
+          status: 200,
+          description:
+            'Message page ordered oldest-first. Each item additionally carries body/bodyText/bodyFormat/subject from the linked platform message: bodyText is the display text (for bodyFormat=html it is sanitized plain text and body is null, so raw HTML is never returned for chat render); all four are null when no message row is linked.',
+        },
         { status: 401, description: 'Unauthorized' },
         { status: 404, description: 'Conversation not found or not accessible' },
         { status: 422, description: 'Invalid after cursor' },

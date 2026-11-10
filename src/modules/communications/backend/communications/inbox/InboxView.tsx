@@ -22,6 +22,12 @@ type MessageRow = {
   messageId: string | null
   deliveryStatus: string | null
   createdAt: string
+  /** Linked platform message text, projected by the BFF (additive). */
+  body: string | null
+  /** Display text: sanitized plain text for html bodies, body otherwise. */
+  bodyText: string | null
+  bodyFormat: 'text' | 'markdown' | 'html' | null
+  subject: string | null
   media: {kind: string; fileName?: string; mimeType?: string; externalId?: string; downloaded: boolean; attachmentId?: string; fileSize?: number} | null
 }
 
@@ -164,6 +170,16 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                         <span>{item.deliveryStatus ?? '—'}</span>
                         <span>{when(item.createdAt)}</span>
                       </div>
+                      {item.subject ? (
+                        <p className="mt-2 break-words text-sm font-medium text-foreground">{item.subject}</p>
+                      ) : null}
+                      {item.bodyText ?? item.body ? (
+                        // Plain text only: channel HTML was sanitized and flattened
+                        // server-side, so this never needs dangerouslySetInnerHTML.
+                        <p className="mt-1 whitespace-pre-wrap break-words text-sm text-foreground">
+                          {item.bodyText ?? item.body}
+                        </p>
+                      ) : null}
                       <p className="mt-1 break-all text-xs text-muted-foreground">平台消息号：{item.externalMessageId}</p>
                       {item.media ? (
                         <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
