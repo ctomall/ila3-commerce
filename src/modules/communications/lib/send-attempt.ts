@@ -47,3 +47,25 @@ export function attemptAfterResponse(status: number): AttemptAfterResponse {
   if (status === 409) return 'keep'
   return 'keep-unknown'
 }
+
+/**
+ * What to tell the operator after a 2xx. A replay is a recovered result; an
+ * accepted-but-unrecorded send must not look like an ordinary success, because
+ * the ledger is the only thing that makes a retry safe.
+ */
+export function sendSuccessMessage(answer: { replayed?: boolean; ledgerRecorded?: boolean }): {
+  message: string
+  attention: boolean
+} {
+  if (answer.replayed) {
+    return { message: '已取回原发送结果（未重复投递）。', attention: false }
+  }
+  if (answer.ledgerRecorded === false) {
+    return {
+      message:
+        '发送已受理，但幂等台账未记录：请勿用同一 clientRequestId 重试，请联系管理员核对本次发送结果。',
+      attention: true,
+    }
+  }
+  return { message: '已提交投递；平台回执到达后状态会更新。', attention: false }
+}

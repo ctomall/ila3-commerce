@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { attemptAfterResponse, decideAttempt } from '../lib/send-attempt'
+import { attemptAfterResponse, decideAttempt, sendSuccessMessage } from '../lib/send-attempt'
 
 const id = () => 'req-1'
 
@@ -40,5 +40,19 @@ describe('attemptAfterResponse', () => {
     expect(attemptAfterResponse(409)).toBe('keep')
     expect(attemptAfterResponse(500)).toBe('keep-unknown')
     expect(attemptAfterResponse(503)).toBe('keep-unknown')
+  })
+})
+
+describe('sendSuccessMessage', () => {
+  it('marks a replay as a recovered result', () => {
+    expect(sendSuccessMessage({ replayed: true })).toEqual({ message: '已取回原发送结果（未重复投递）。', attention: false })
+  })
+  it('warns when the ledger was not recorded', () => {
+    const result = sendSuccessMessage({ ledgerRecorded: false })
+    expect(result.attention).toBe(true)
+    expect(result.message).toContain('请勿用同一 clientRequestId 重试')
+  })
+  it('is a plain success otherwise', () => {
+    expect(sendSuccessMessage({})).toEqual({ message: '已提交投递；平台回执到达后状态会更新。', attention: false })
   })
 })

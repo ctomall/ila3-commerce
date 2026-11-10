@@ -2,7 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
-import { attemptAfterResponse, decideAttempt, type SendAttempt } from '../../../lib/send-attempt'
+import {
+  attemptAfterResponse,
+  decideAttempt,
+  sendSuccessMessage,
+  type SendAttempt,
+} from '../../../lib/send-attempt'
 
 type Mode = 'text' | 'media' | 'template'
 
@@ -89,18 +94,15 @@ export function ReplyComposer(props: {
         code?: string
         error?: string
         replayed?: boolean
+        ledgerRecorded?: boolean
       }
       if (response.ok) {
         setAttempt(null)
         setText('')
         setMediaLink('')
         setTemplateName('')
-        setStatus({
-          ok: true,
-          message: answer.replayed
-            ? '已取回原发送结果（未重复投递）。'
-            : '已提交投递；平台回执到达后状态会更新。',
-        })
+        const success = sendSuccessMessage(answer)
+        setStatus({ ok: !success.attention, message: success.message })
         router.refresh()
         return
       }
