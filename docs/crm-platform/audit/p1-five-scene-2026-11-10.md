@@ -45,3 +45,14 @@ node scripts/crm-nav-public-host-check.mjs --role admin
 它用真实会话连 127.0.0.1，但带上 `Host: mercato.ila3.top`（以及 `x-forwarded-host/proto`）请求
 `/api/crm_navigation/navigation`，断言 `200`、5 个场景、且不是 502/504——即复现“服务端经公网自取”这个
 只在正式入口出现的条件。当前结果：employee/admin 均 `ok=true`。
+
+## 追加（2026-11-10 06:4x）：公网 URL 同角色截图补上
+
+之前因本机到 Cloudflare 时通时断，截图只能取自 loopback。本次隧道可用时以验收号在
+**https://mercato.ila3.top** 完成登录并截图：
+
+- `p1-public-rail-employee-2026-11-10.png`：公网地址下的侧栏（声明式导航已上线：
+  工作台 / 客户 / 销售 / 商品与库存 / 履约与售后 / 人员与排程 / 沟通与资料 / 自动化与规则，
+  底部 AI助手 / 管理中心 / 个人账户），导航 API 200。
+- 同一会话继续打开 `/backend/customers/companies` 时，页面骨架与表头渲染正常，但数据行在
+  隧道带宽下 60s 内未加载完成，因此没有保留该截图（避免把“骨架”当“列表”）。
