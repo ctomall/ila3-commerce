@@ -98,6 +98,11 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // renders the attachment picker, so both namespaces ship with this area.
   messages: ['messages', 'communication_channels', 'attachments'],
   documents: ['documents', 'attachments'],
+  // Areas whose pages render module components but were never mapped: every t(key, "English")
+  // in them fell back to the English default even though zh.json had the key.
+  warranty_claims: ['warranty_claims', 'customers', 'documents'],
+  phone_calls: ['phone_calls', 'customers'],
+  'work-inbox': ['workflows'],
 }
 
 /** Extract the first segment after /backend. */
