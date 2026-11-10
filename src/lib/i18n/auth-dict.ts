@@ -82,7 +82,7 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // salesperson actually works in.
   // The compose dialog opened from a customer renders the attachment picker
   // (attachments.library.upload.choose), so the area needs the attachments namespace.
-  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments', 'entities'],
+  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments', 'entities', 'customer_accounts'],
   // The order detail renders the related-documents card and the custom-fields empty
   // state; without these namespaces both reached the screen as raw keys.
   sales: ['sales', 'customers', 'documents', 'entities'],
