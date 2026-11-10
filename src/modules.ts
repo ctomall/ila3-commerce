@@ -355,6 +355,15 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'module_directory', from: '@app' },
   // Searchable settings landing page replacing the stock placeholder.
   { id: 'settings_home', from: '@app' },
+  // Bounded loading for installed list surfaces. The installed profile
+  // communication-channels page clears its DataTable loading state only when
+  // `me/channels` settles and passes no abort signal, so a request that never
+  // answers leaves the table on "正在加载表格…" forever. This module decorates the
+  // table's UMES handle (`data-table:communication_channels.profile.channels`) and
+  // turns a wait past the budget into a readable error with a retry exit. It wraps
+  // the installed table instead of replacing the page, so no route/nav contract and
+  // no installed file changes; removing this entry restores the stock behaviour.
+  { id: 'ui_resilience', from: '@app' },
   // M3 prototype pages (navHidden, non-production demo).
   { id: 'crm_prototype', from: '@app' },
   // Employee-facing mobile facade over communication_channels (own-mailbox send,
