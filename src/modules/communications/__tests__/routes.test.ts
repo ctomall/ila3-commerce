@@ -412,6 +412,33 @@ describe('POST /api/communications/me/send', () => {
     expect(res.status).toBe(422)
     expect(em.removed).toHaveLength(1)
   })
+
+  it('keeps the key when the facade outcome is unknown so a retry cannot double-send', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({ ok: false as const, status: 503, error: 'hub unavailable' }))
+    const em = createFakeEm({ sendRequests: [] })
+    useContainer((name) => send, em)
+    const { POST } = await load()
+    const request = () =>
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-network-drop',
+        }),
+      })
+    const first = await POST(request())
+    expect(first.status).toBe(503)
+    // The hub may have accepted the message before the connection dropped; the
+    // claim must survive so the retry replays instead of sending twice.
+    expect(em.removed).toHaveLength(0)
+    const second = await POST(request())
+    expect(second.status).toBe(409)
+    expect(send).toHaveBeenCalledTimes(1)
+  })
 })
 
 describe('GET /api/communications/me/threads', () => {
