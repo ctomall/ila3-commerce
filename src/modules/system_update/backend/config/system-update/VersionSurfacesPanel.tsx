@@ -64,6 +64,14 @@ function summaryText(summary: VersionUpgradeSummary, t: ReturnType<typeof useT>)
   return t('system_update.versions.summary.none', '当前没有可用的升级目标。')
 }
 
+function summaryLabel(summary: VersionUpgradeSummary, t: ReturnType<typeof useT>): string {
+  if (summary === 'mixed') return t('system_update.versions.summary.badge.mixed', '混合升级')
+  if (summary === 'app') return t('system_update.versions.summary.badge.app', '系统更新')
+  if (summary === 'kernel') return t('system_update.versions.summary.badge.kernel', '内核更新')
+  if (summary === 'unknown') return t('system_update.versions.summary.badge.unknown', '检查未完成')
+  return t('system_update.versions.summary.badge.none', '无可用升级')
+}
+
 function summaryVariant(summary: VersionUpgradeSummary): BadgeVariant {
   if (summary === 'mixed') return 'warning'
   if (summary === 'app') return 'info'
@@ -134,11 +142,20 @@ export default function VersionSurfacesPanel({ versions, versionsError }: Props)
         </div>
         <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
           <Badge variant={summaryVariant(summary)} size="sm" dot>
-            {summaryText(summary, t)}
+            {summaryLabel(summary, t)}
           </Badge>
           <span>{t('system_update.versions.field.checkedAt', '检查时间')}: {when(versions.checkedAt)}</span>
         </div>
       </div>
+
+      {summary !== 'none' ? (
+        <Alert
+          status={summary === 'mixed' || summary === 'kernel' ? 'warning' : 'information'}
+          size="sm"
+        >
+          {summaryText(summary, t)}
+        </Alert>
+      ) : null}
 
       <div className="grid gap-4 md:grid-cols-2">
         <article className="rounded-lg border p-4" aria-labelledby="system-update-kernel-title">
