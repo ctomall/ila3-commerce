@@ -38,6 +38,7 @@ import crypto from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { chromium } from 'playwright'
 import { credentials, loginWithRetry } from '../lib/session.mjs'
+import { checkHeaderLabels } from './ia-headers.mjs'
 
 const arg = (name, fallback) => {
   const index = process.argv.indexOf(name)
@@ -440,8 +441,13 @@ async function snapshotShell(page) {
     const links = Array.from(nav?.querySelectorAll('a[href]') ?? []).map(describeLink)
     const groupHeaders = Array.from(nav?.querySelectorAll('[data-sidebar-group="true"]') ?? []).map((element) => {
       const button = element.querySelector('button')
+      const bodyText = (element.innerText ?? '').replace(/\s+/g, ' ').trim()
+      const buttonText = (button?.innerText ?? '').replace(/\s+/g, ' ').trim()
       return {
-        text: (element.innerText ?? '').replace(/\s+/g, ' ').trim().slice(0, 80),
+        // `label` is the header control's own text (button in the stock shell),
+        // never the group body, so label matching cannot succeed on an item name.
+        label: (buttonText || bodyText.split('\n')[0] || '').replace(/\s+/g, ' ').trim(),
+        text: bodyText.slice(0, 120),
         tag: element.tagName.toLowerCase(),
         buttonAriaExpanded: button?.getAttribute('aria-expanded') ?? null,
         hasChevron: Boolean(element.querySelector('svg')),
@@ -757,14 +763,21 @@ function checkExpectedIa(expectedPath, role, catalogue, shell, flat) {
   const multiplyOwned = [...owners.entries()].filter(([, list]) => list.length > 1)
   push('ia.one-owner-per-entry', multiplyOwned.length === 0, JSON.stringify(multiplyOwned.slice(0, 6)))
 
-  // The stock shell must render one header per declared container (the manage hub
-  // may add one more). Label text must match the declared zh label.
+  // The stock shell must render one header per declared container, in every role's
+  // own live catalogue (a narrower employee account legitimately has fewer), plus
+  // at most one manage-hub header. Exact label match; duplicates and unexpected
+  // headers fail the aggregate. The pure predicate lives in ia-headers.mjs.
   if (shell) {
-    const headerTexts = (shell.groupHeaders ?? []).map((header) => header.text)
-    push('ia.shell.headers', headerTexts.length >= liveGroups.length, `${headerTexts.length} headers for ${liveGroups.length} containers`)
-    for (const group of liveGroups) {
-      push(`ia.shell.${group.id}.header`, headerTexts.some((text) => text.includes(group.label)), `no header containing ${group.label}`)
-    }
+    const manageHubLabels = (catalogue.utility ?? [])
+      .filter((entry) => entry?.id === 'manage' && entry.label)
+      .map((entry) => entry.label)
+    const headerResult = checkHeaderLabels({
+      observedLabels: (shell.groupHeaders ?? []).map((header) => header.label ?? header.text),
+      expected: liveGroups.map((group) => ({ id: group.id, label: group.label })),
+      allowedExtraLabels: manageHubLabels,
+    })
+    push(headerResult.aggregate.id, headerResult.aggregate.ok, headerResult.aggregate.detail)
+    for (const entry of headerResult.checks) push(entry.id, entry.ok, entry.detail)
   }
 
   return {
@@ -1515,7 +1528,7 @@ try {
 
   // Screenshot pairing evidence for the visual before/after.
   if (MODE === 'candidate' && baseline?.screenshots) {
-    const baselineNames = new Set(baseline.screenshots.map((shot) => `${shot.role}:${shot.name}`))
+    const baselineNames = new Set(baseline.screenshots.filter((shot) => ROLES.includes(shot.role)).map((shot) => `${shot.role}:${shot.name}`))
     const afterNames = new Set(report.screenshots.map((shot) => `${shot.role}:${shot.name}`))
     const paired = [...baselineNames].filter((name) => afterNames.has(name))
     const missing = [...baselineNames].filter((name) => !afterNames.has(name))

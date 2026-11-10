@@ -109,3 +109,39 @@ the exact deployed artifact.
   highlight but no `aria-current`, and its width transition is 200 ms with no
   `motion-reduce` variant. The candidate gates report both as defects instead of
   patching product source (this harness owns tests and evidence only).
+
+
+## R2 header diagnostics
+
+The declared-container header assertion is a pure predicate in `ia-headers.mjs`
+(exact declared-label match after trim/whitespace collapse, each label exactly once,
+unexpected headers rejected, at most one manage-hub header). The browser harness
+`menu-sidebar-verify.mjs` consumes it for `ia.shell.headers`,
+`ia.shell.<container>.header` and `ia.shell.headers.unexpected`; every passing record
+states `matched header: "<label>"`, and every failing record lists the expected label
+plus the observed header list.
+
+Unit tests (no server needed):
+
+```bash
+node --test scripts/crm-menu-verify/*.test.mjs
+```
+
+Node 24.22.2 does not expand a bare directory for `node --test`; use the glob form above.
+
+Real-browser mutation counterexample (DOM-only, no server write):
+
+```bash
+node scripts/crm-menu-verify/ia-header-negative.mjs \
+  --base http://127.0.0.1:3000 --role admin \
+  --out /storage/artifacts/pro/menu-declaration-audit/verify/r2-negatives/ia-header-negative-prod.json
+```
+
+It requires the unmodified sidebar to pass, then renames one rendered header label and
+removes one header node, requiring the matching per-container check and the aggregate
+to fail in both cases, and the restored DOM to pass again. Exit 0 only when all four
+observations hold.
+
+`scripts/crm-nav-declared-check.mjs --strict` additionally fails when `crm.unknown`,
+`crm.unconfiguredSettings` or `crm.unconfiguredProfile` is non-empty, and when a build
+does not expose those fields at all (an old build cannot prove the bucket is empty).
