@@ -12,6 +12,7 @@ import {
 import { SendRequest } from '../data/entities'
 import { computeSendPayloadHash } from '../lib/send-request'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
+import { Message } from '@open-mercato/core/modules/messages/data/entities'
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({
   getAuthFromRequest: jest.fn(),
@@ -32,6 +33,8 @@ function createFakeEm(rows: {
   links?: Row[]
   mappings?: Row[]
   messages?: Row[]
+  /** Linked platform `messages.message` rows, read through MessageChannelLink. */
+  platformMessages?: Row[]
   sendRequests?: Row[]
   customers?: Row[]
 }) {
@@ -45,6 +48,7 @@ function createFakeEm(rows: {
     if (entity === MessageChannelLink) return rows.links ?? []
     if (entity === ChannelThreadMapping) return rows.mappings ?? []
     if (entity === ExternalMessage) return rows.messages ?? []
+    if (entity === Message) return rows.platformMessages ?? []
     throw new Error('unexpected entity in fake em.find')
   })
   const findOne = jest.fn(async (entity: unknown, where: Row) => {
@@ -424,6 +428,84 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     })
     expect(payload.channel.capabilities).toMatchObject({fileSharing: true})
     expect(payload.nextAfter).toBe(createdAt.toISOString())
+  })
+
+  it('returns the linked message body, subject and tenant-scoped read; unlinked items stay null', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const createdAt = new Date('2026-11-09T10:00:00Z')
+    const em = createFakeEm({
+      conversations: [{ id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo' }],
+      channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private' }],
+      messages: [
+        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', createdAt },
+        { id: 'em-2', direction: 'outbound', externalMessageId: 'ext-2', senderIdentifier: 'me@example.test', createdAt: new Date('2026-11-09T10:05:00Z') },
+      ],
+      links: [
+        { externalMessageId: 'em-1', messageId: 'msg-1', deliveryStatus: 'delivered' },
+        // A dangling link (deleted message / foreign tenant) must not 500 the page.
+        { externalMessageId: 'em-2', messageId: 'msg-missing', deliveryStatus: 'pending' },
+      ],
+      platformMessages: [
+        { id: 'msg-1', subject: '报价', body: '您好，价格是 100 元。', bodyFormat: 'text', tenantId: 't1', organizationId: 'o1', deletedAt: null },
+      ],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages'), params)
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.items[0]).toMatchObject({
+      id: 'em-1',
+      body: '您好，价格是 100 元。',
+      bodyText: '您好，价格是 100 元。',
+      bodyFormat: 'text',
+      subject: '报价',
+    })
+    expect(payload.items[1]).toMatchObject({
+      id: 'em-2',
+      body: null,
+      bodyText: null,
+      bodyFormat: null,
+      subject: null,
+    })
+    const platformRead = (em.find.mock.calls as unknown[][]).find(([entity]) => entity === Message)
+    expect(platformRead).toBeTruthy()
+    const where = platformRead![1] as { tenantId: string; deletedAt: unknown; organizationId?: unknown }
+    expect(where.tenantId).toBe('t1')
+    expect(where.deletedAt).toBeNull()
+    expect(JSON.stringify(where.organizationId)).toContain('o1')
+  })
+
+  it('flattens an html body to sanitized plain text and never returns raw html', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const createdAt = new Date('2026-11-09T10:00:00Z')
+    const em = createFakeEm({
+      conversations: [{ id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo' }],
+      channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private' }],
+      messages: [{ id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'customer@example.test', createdAt }],
+      links: [{ externalMessageId: 'em-1', messageId: 'msg-1', deliveryStatus: 'delivered' }],
+      platformMessages: [{
+        id: 'msg-1',
+        subject: '',
+        body: '<p>Hello <b>世界</b></p><script>alert(1)</script>',
+        bodyFormat: 'html',
+        tenantId: 't1',
+        organizationId: 'o1',
+        deletedAt: null,
+      }],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages'), params)
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.items[0].body).toBeNull()
+    expect(payload.items[0].bodyFormat).toBe('html')
+    expect(payload.items[0].subject).toBeNull()
+    expect(payload.items[0].bodyText).toContain('Hello')
+    expect(payload.items[0].bodyText).toContain('世界')
+    expect(payload.items[0].bodyText).not.toContain('<')
+    expect(payload.items[0].bodyText).not.toContain('alert(1)')
   })
 
   it('rejects a malformed after cursor', async () => {
