@@ -33,16 +33,17 @@ import { CrmSidebarNav } from '../sidebar-nav/widget'
 import manageWidget from '../manage-link/widget'
 
 const emptyCatalog: CrmCatalog = {
-  scenes: [],
+  version: 2,
+  groups: [],
+  railActions: [],
   utility: [],
-  customers: { tabs: [], followup: [], insights: [] },
-  business: { categories: [] },
-  messages: { items: [] },
   manage: { categories: [] },
   personal: { items: [] },
   unknown: [],
+  unconfiguredGroups: [],
   actions: [],
   authorized: [],
+  duplicates: [],
 }
 
 function chrome(payload: unknown, isLoading = false) {
@@ -58,7 +59,10 @@ describe('CrmSidebarNav authorization states', () => {
     const { container } = render(<CrmSidebarNav variant="desktop" />)
     expect(container.querySelector('[data-crm-nav-state="ready"]')).not.toBeNull()
     expect(container.querySelector('[data-crm-nav-empty="true"]')).not.toBeNull()
-    expect(container.querySelectorAll('[data-crm-scene]').length).toBe(0)
+    expect(container.querySelector('[data-crm-nav-empty-message]')?.textContent).toBe(
+      '你的账号暂时没有可用的导航入口。',
+    )
+    expect(container.querySelectorAll('[data-crm-nav-group], [data-crm-rail-action]').length).toBe(0)
   })
 
   it('renders a loading skeleton, not five fake scenes', () => {
@@ -66,15 +70,18 @@ describe('CrmSidebarNav authorization states', () => {
     const { container } = render(<CrmSidebarNav variant="desktop" />)
     expect(container.querySelector('[data-crm-nav-state="loading"]')).not.toBeNull()
     expect(container.querySelector('[data-crm-nav-loading]')).not.toBeNull()
-    expect(container.querySelectorAll('[data-crm-scene]').length).toBe(0)
+    expect(container.querySelectorAll('[data-crm-nav-group], [data-crm-rail-action]').length).toBe(0)
   })
 
-  it('renders an error affordance, not a fallback catalogue', () => {
-    chrome(null, false)
+  it('renders an error affordance, not a fallback catalogue, and retries the payload', () => {
+    const refresh = jest.fn(async () => {})
+    mockChrome = { payload: null, isLoading: false, refresh }
     const { container } = render(<CrmSidebarNav variant="desktop" />)
     expect(container.querySelector('[data-crm-nav-state="error"]')).not.toBeNull()
-    expect(container.querySelectorAll('[data-crm-scene]').length).toBe(0)
+    expect(container.querySelectorAll('[data-crm-nav-group], [data-crm-rail-action]').length).toBe(0)
     expect(screen.getByText('导航加载失败')).toBeTruthy()
+    screen.getByRole('button', { name: '重试' }).click()
+    expect(refresh).toHaveBeenCalledTimes(1)
   })
 
   it('does not render the management entry without authorized management content', () => {

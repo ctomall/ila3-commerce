@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Regression gate: the five-scene navigation route must answer under the PUBLIC host.
+ * Regression gate: the declared navigation route must answer under the PUBLIC host.
  *
  * The route reads its own core-nav payload through the app origin. When that origin came
  * from `req.url` it became https://mercato.ila3.top, which this host cannot reach, so on
@@ -49,8 +49,9 @@ try {
   process.exit(1)
 }
 
-const scenes = body?.crm?.scenes ?? body?.scenes ?? []
-const ok = status === 200 && scenes.length === 5
+const crm = body?.crm ?? null
+const groups = Array.isArray(crm?.groups) ? crm.groups : []
+const ok = status === 200 && crm?.version === 2 && groups.length > 0
 console.log(
   JSON.stringify(
     {
@@ -58,7 +59,8 @@ console.log(
       base: BASE,
       host: HOST,
       status,
-      scenes: scenes.map((scene) => scene.id),
+      crmVersion: crm?.version ?? null,
+      groups: groups.map((group) => group.id),
       // The failure this gate exists for: the route answered 502 because its self-fetch
       // went out through the public host and timed out.
       selfFetchTimedOut: status === 502 || status === 504,

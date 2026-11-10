@@ -145,7 +145,7 @@ export default async function BackendLayout({
             organizationId={auth?.orgId ?? null}
           />
         )}
-        adminNavApi="/api/crm_navigation/navigation"
+        adminNavApi="/api/crm_navigation/navigation?chrome=1"
         version={DISPLAY_VERSION}
         hideFooter={hideBackendFooter}
         settingsPathPrefixes={collectStaticSettingsPathPrefixes()}

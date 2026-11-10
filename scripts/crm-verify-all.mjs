@@ -70,11 +70,11 @@ const GATES = [
   // appendix/nav-nesting.json, and this fails when a sixth appears OR when one is fixed
   // without updating the baseline.
   { id: 'nav-nesting', cmd: 'node scripts/crm-nav-nesting-check.mjs --check', why: '未嵌套入口与白名单一致（多一条或修好一条都红）' },
-  // 2026-11-10: the five-scene rail route fetched its own core-nav payload through the
+  // 2026-11-10: the navigation route fetched its own core-nav payload through the
   // PUBLIC origin, which this host cannot reach, so production answered 502 and the rail
   // rendered empty while a loopback request still worked. This gate sends the public Host
   // header to the loopback app, which is the only shape that reproduces it.
-  { id: 'nav-public-host', cmd: 'node scripts/crm-nav-public-host-check.mjs --role employee', why: '导航自取走内部 origin：带公网 Host 仍返回 200 与 5 个场景', evidence: /"ok": true/ },
+  { id: 'nav-public-host', cmd: 'node scripts/crm-nav-public-host-check.mjs --role employee', why: '导航自取走内部 origin：带公网 Host 仍返回 200 与 v2 声明目录', evidence: /"ok": true/ },
   { id: 'tokens', cmd: 'node scripts/check-token-layers.mjs --strict', why: '设计令牌没有非语义用法' },
   { id: 'i18n-hardcoded', cmd: 'yarn i18n:check-hardcoded', why: '硬编码文案扫描 0 error（advisory 命中单独计数，不当作已清零）', evidence: /\[i18n:check-hardcoded\]/ },
   { id: 'typecheck', cmd: 'yarn typecheck', why: '类型检查（tsc 成功时无输出）', full: true },

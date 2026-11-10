@@ -7,30 +7,14 @@ import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { EmptyState } from '@/components/states/EmptyState'
-import { readCrmCatalog, SCENE_MAP, type CrmCatalog, type CrmNavItem } from '@/nav/crm-navigation'
-
-function countItems(items: CrmNavItem[]): number {
-  return items.reduce((sum, item) => sum + 1 + countItems(item.children ?? []), 0)
-}
-
-function itemLookup(categories: CrmCatalog['business']['categories']) {
-  const map = new Map<string, CrmNavItem>()
-  const add = (items: CrmNavItem[]) => {
-    for (const item of items) {
-      map.set(item.href, item)
-      add(item.children ?? [])
-    }
-  }
-  for (const category of categories) add(category.items)
-  return map
-}
+import { readCrmCatalog } from '@/nav/crm-navigation'
 
 /**
- * Business landing: a small set of common destinations plus category tiles.
+ * Legacy business directory, kept as a direct URL.
  *
- * The full directory (including one level of child pages) lives on the
- * category pages. Putting every entry here would just move the old long tree
- * from the rail into the content area — which was the defect this page fixes.
+ * It is no longer the source of the information architecture: it renders the
+ * same declared groups the rail uses, so a module that declares a page appears
+ * here without this file learning its href.
  */
 export default function BusinessHome() {
   const t = useT()
@@ -51,13 +35,8 @@ export default function BusinessHome() {
     )
   }
 
-  const categories = catalog.business.categories
-  const items = itemLookup(categories)
-  const pinned = SCENE_MAP.businessPinned
-    .map((href) => items.get(href))
-    .filter((item): item is CrmNavItem => Boolean(item))
-    .slice(0, 6)
-  const total = categories.reduce((sum, category) => sum + countItems(category.items), 0)
+  const groups = catalog.groups
+  const total = groups.reduce((sum, group) => sum + group.items.length, 0)
 
   return (
     <div className="flex flex-col gap-5">
@@ -68,7 +47,7 @@ export default function BusinessHome() {
             <h1 className="text-2xl font-bold">{t('crmNav.business.title', '业务')}</h1>
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
-            {t('crmNav.business.description', '先从常用入口开始；完整目录进入分类页，系统设置归管理中心。')}
+            {t('crmNav.business.description', '按当前账号可访问的模块分区浏览；导航入口由模块声明生成。')}
           </p>
         </div>
         <Badge variant="muted" size="sm">
@@ -76,61 +55,47 @@ export default function BusinessHome() {
         </Badge>
       </header>
 
-      {categories.length === 0 ? (
+      {groups.length === 0 ? (
         <EmptyState
           title={t('crmNav.business.empty', '你的账号暂时没有业务入口')}
           description={t('crmNav.business.emptyHint', '功能权限由管理员分配；这里不会显示无法访问的入口。')}
         />
       ) : (
-        <>
-          {pinned.length > 0 ? (
-            <section data-business-pinned="" className="flex flex-col gap-2">
-              <h2 className="text-sm font-semibold">{t('crmNav.business.pinned', '常用入口')}</h2>
-              <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {pinned.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="flex min-h-11 items-center justify-between gap-2 rounded-lg border bg-card px-3 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:shadow-focus"
-                    data-business-pinned-href={item.href}
-                  >
-                    <span className="truncate">{item.label}</span>
-                    <ArrowRight className="size-3.5 shrink-0 text-muted-foreground" aria-hidden />
-                  </Link>
-                ))}
+        <div className="grid gap-3 lg:grid-cols-2">
+          {groups.map((group) => (
+            <section
+              key={group.id}
+              className="rounded-lg border bg-card p-3"
+              data-business-group={group.id}
+            >
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <h2 className="text-sm font-semibold">
+                  {t(group.labelKey ?? `crmNav.group.${group.id}`, group.label)}
+                </h2>
+                <Badge variant="muted" size="sm">{group.items.length}</Badge>
               </div>
+              <ul className="flex flex-col gap-1">
+                {group.items.map((item) => (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className="flex min-h-8 items-center justify-between gap-2 rounded-md px-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:shadow-focus"
+                      data-business-entry={item.href}
+                    >
+                      <span className="truncate">{item.label}</span>
+                      <ArrowRight className="size-3.5 shrink-0" aria-hidden />
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </section>
-          ) : null}
-
-          <section className="flex flex-col gap-2">
-            <h2 className="text-sm font-semibold">{t('crmNav.business.categories', '业务分类')}</h2>
-            <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {categories.map((category) => {
-                const meta = SCENE_MAP.businessCategories.find((entry) => entry.id === category.id)
-                const label = t(`crmNav.business.category.${category.id}`, meta?.label ?? category.label)
-                return (
-                  <Link
-                    key={category.id}
-                    href={`/backend/business/${category.id}`}
-                    className="flex min-h-20 flex-col justify-between gap-2 rounded-lg border bg-card p-3 transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:shadow-focus"
-                    data-business-category={category.id}
-                  >
-                    <span className="text-sm font-semibold">{label}</span>
-                    <span className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-                      {countItems(category.items)} {t('crmNav.business.entriesShort', '项')}
-                      <ArrowRight className="size-3.5" aria-hidden />
-                    </span>
-                  </Link>
-                )
-              })}
-            </div>
-          </section>
-
-          <p className="text-xs text-muted-foreground" data-business-hint="">
-            {t('crmNav.business.hint', '业务首页只放常用入口和分类；完整目录、子页面与页内动作在分类页。系统设置请到管理中心。')}
-          </p>
-        </>
+          ))}
+        </div>
       )}
+
+      <p className="text-xs text-muted-foreground" data-business-hint="">
+        {t('crmNav.business.hint', '这里只展示声明且已授权的入口；系统设置请到管理中心。')}
+      </p>
     </div>
   )
 }

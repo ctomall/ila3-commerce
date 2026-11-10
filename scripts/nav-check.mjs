@@ -16,6 +16,30 @@ const ROOT = process.cwd()
 const BASE = process.env.NAV_CHECK_BASE_URL ?? 'http://127.0.0.1:3000'
 
 /**
+ * The app catalogue is copied into the vendor payload builder by a managed patch.
+ * A stale copy silently keeps the old top-level groups while the source says the
+ * new ones; fail before looking at a live payload.
+ */
+function assertCatalogSync() {
+  const sourcePath = path.join(ROOT, 'src/nav/nav-groups.json')
+  const generatedPath = path.join(
+    ROOT,
+    'node_modules/@open-mercato/core/dist/modules/auth/lib/nav-groups.generated.json',
+  )
+  if (!fs.existsSync(sourcePath)) throw new Error(`missing ${sourcePath}`)
+  if (!fs.existsSync(generatedPath)) throw new Error(`missing ${generatedPath} — run yarn patches:apply`)
+  const source = JSON.parse(fs.readFileSync(sourcePath, 'utf8'))
+  const generated = JSON.parse(fs.readFileSync(generatedPath, 'utf8'))
+  if (JSON.stringify(source) !== JSON.stringify(generated)) {
+    throw new Error('src/nav/nav-groups.json and the vendor-generated copy differ — run yarn patches:apply')
+  }
+  return source.map((group) => group.id)
+}
+
+const EXPECTED_GROUP_IDS = assertCatalogSync()
+const issues = []
+
+/**
  * Credentials come from the environment first (NAV_CHECK_EMAIL / NAV_CHECK_PASSWORD)
  * so this check runs in CI; a local credentials file is only a development
  * fallback and its path can be redirected with NAV_CHECK_CREDENTIALS.
@@ -58,9 +82,14 @@ if (!res.ok) {
 const payload = await res.json()
 const groups = payload.groups ?? []
 const settingsSections = payload.settingsSections ?? []
+for (const group of groups) {
+  const mainItems = (group.items ?? []).filter((item) => item.pageContext !== 'settings' && item.pageContext !== 'admin' && item.pageContext !== 'profile')
+  if (mainItems.length > 0 && !EXPECTED_GROUP_IDS.includes(group.id)) {
+    issues.push(`group ${group.id}: visible main items but not named in src/nav/nav-groups.json`)
+  }
+}
 const zh = JSON.parse(fs.readFileSync(path.join(ROOT, 'src/i18n/zh.json'), 'utf8'))
 
-const issues = []
 let itemCount = 0
 
 // Main groups use `title`; settings sections use `label`/`labelKey`. A page may

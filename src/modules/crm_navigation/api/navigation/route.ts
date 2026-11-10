@@ -1,18 +1,19 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
-import { buildCrmNavigation, SCENE_MAP } from '@/nav/crm-navigation'
+import { buildCrmNavigation } from '@/nav/crm-navigation'
+import { NAV_GROUP_CATALOG } from '@/lib/nav/group-catalog'
 import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
 
 /**
- * Backend chrome payload for the CRM five-scene shell.
+ * Backend chrome payload for the declared CRM navigation.
  *
  * The core endpoint stays the single source of truth for what a caller may see:
- * this route calls it with the caller's own cookies, then re-buckets the result.
+ * this route calls it with the caller's own cookies, then arranges the result.
  * The shell receives no default nav groups (the left rail is rendered by the
- * app-owned scene widget), no settings/profile section rails (so the left rail
- * never turns into a second- or third-level tree), and a `crm` catalogue that
- * the scene pages and the sidebar consume.
+ * app-owned module), no settings/profile section rails (so the rail cannot turn
+ * into a second- or third-level tree), and a `crm` catalogue that the sidebar
+ * and content-area strip consume.
  *
  * `settingsPathPrefixes` / `profilePathPrefixes` are preserved because the shell
  * uses them for organization-scope behaviour; only the section *lists* are
@@ -25,10 +26,10 @@ export const metadata = {
 
 export const openApi: OpenApiRouteDoc = {
   tag: 'CRM Navigation',
-  summary: 'Five-scene CRM navigation and management-centre catalogue',
+  summary: 'Declared CRM navigation and management-centre catalogue',
   methods: {
     GET: {
-      summary: 'Authorized navigation re-bucketed into five scenes, management centre and account area',
+      summary: 'Authorized navigation organized into declared top-level groups, management centre and account area',
       responses: [
         { status: 200, description: 'Backend chrome payload with the CRM catalogue attached.' },
         { status: 401, description: 'Unauthenticated.' },
@@ -70,17 +71,59 @@ export async function GET(req: NextRequest) {
       status: result.status,
       attempts: result.attempts,
     })
+
+    // The shell's injection provider refuses to mount ANY sidebar widget while
+    // the chrome payload is absent. A real 502 therefore produced a blank rail
+    // with no retry affordance. The API keeps its truthful 502 for callers; the
+    // shell explicitly asks for this typed chrome fallback so its provider can
+    // become ready and the app-owned rail can render the error + retry. No
+    // groups are synthesized here.
+    if (req.nextUrl.searchParams.get('chrome') === '1') {
+      return NextResponse.json(
+        {
+          groups: [],
+          settingsSections: [],
+          profileSections: [],
+          settingsPathPrefixes: [],
+          profilePathPrefixes: [],
+          grantedFeatures: [],
+          crm: {
+            version: 2,
+            error: true,
+            groups: [],
+            railActions: [],
+            utility: [],
+            manage: { categories: [] },
+            personal: { items: [] },
+            unknown: [],
+            unconfiguredGroups: [],
+            actions: [],
+            authorized: [],
+            duplicates: [],
+          },
+        },
+        { status: 200 },
+      )
+    }
+
     return NextResponse.json({ error: 'Navigation is unavailable.' }, { status })
   }
 
   const payload = result.payload
 
-  const catalog = buildCrmNavigation(payload, SCENE_MAP)
+  const catalog = buildCrmNavigation(payload, NAV_GROUP_CATALOG)
   if (catalog.unknown.length > 0) {
-    // Explicit ownership is the invariant: a new entry must be mapped, not
-    // absorbed by a catch-all group. The CI check fails on this; production
-    // logs it so a silently-missing entry is visible without a rebuild.
-    console.warn('[crm_navigation] unauthorized or unmapped nav entries:', catalog.unknown)
+    // A declared entry with no usable owner must be visible, not absorbed by a
+    // catch-all. The CI check fails on this; production logs it too.
+    console.warn('[crm_navigation] unauthorized or unowned nav entries:', catalog.unknown)
+  }
+  if (catalog.unconfiguredGroups.length > 0) {
+    // New module groups are still rendered (the shell appends them), but the
+    // app-level catalogue should name them on the next IA pass.
+    console.warn('[crm_navigation] page groups not yet organized:', catalog.unconfiguredGroups)
+  }
+  if (catalog.duplicates.length > 0) {
+    console.warn('[crm_navigation] duplicate daily nav hrefs:', catalog.duplicates)
   }
 
   return NextResponse.json({

@@ -2,8 +2,14 @@ import catalog from '../../nav/nav-groups.json'
 import { applyGroupCatalog as applyGroupCatalogImpl } from '../../nav/logic.js'
 
 /**
- * Group catalogue: how page groups from module metadata collapse into the sidebar
- * sections a person actually sees.
+ * Group catalogue: how page groups declared by modules collapse into the top-level
+ * navigation a person actually sees.
+ *
+ * This is app-level organisation only. It names module page groups (`pageGroupKey`)
+ * and never individual hrefs, so a module that adds a page keeps its own title,
+ * icon, order, permission and visibility. Groups that are not named here are
+ * appended unchanged by the shell extension and reported by the CRM catalogue;
+ * they are never silently dropped.
  *
  * The same rules run inside the shell's payload builder (kept in sync by a managed
  * patch), but the contract lives here: it is data plus a pure function, so the
@@ -12,7 +18,10 @@ import { applyGroupCatalog as applyGroupCatalogImpl } from '../../nav/logic.js'
 export type NavGroupSpec = {
   id: string
   label: string
+  labelKey?: string
   order: number
+  /** Optional high-frequency destination. Falls back to the first authorized item. */
+  landing?: string
   members: string[]
 }
 

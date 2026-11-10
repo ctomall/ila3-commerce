@@ -28,6 +28,7 @@ function ManageLink() {
     <Link
       href="/backend/manage"
       aria-current={active ? 'page' : undefined}
+      aria-label={collapsed ? label : undefined}
       title={collapsed ? label : undefined}
       data-crm-utility="manage"
       className={[
