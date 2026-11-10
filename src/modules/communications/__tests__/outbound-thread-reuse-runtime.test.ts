@@ -283,16 +283,16 @@ function buildPatchedModule(): string {
 function loadModule(absolutePath: string): {
   sendAsUser: (
     container: unknown,
-    actor: typeof actor,
-    input: typeof input,
+    actor: Record<string, unknown>,
+    input: Record<string, unknown>,
   ) => Promise<Record<string, unknown>>
 } {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
   return require(absolutePath) as {
     sendAsUser: (
       container: unknown,
-      actor: typeof actor,
-      input: typeof input,
+      actor: Record<string, unknown>,
+      input: Record<string, unknown>,
     ) => Promise<Record<string, unknown>>
   }
 }
