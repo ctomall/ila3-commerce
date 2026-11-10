@@ -1365,5 +1365,10 @@
   "eudr.productColumn.header": "EUDR",
   "payment_gateways.column.gatewayStatus": "Gateway status",
   "shipping_carriers.column.shippingStatus": "Shipping status",
-  "shipping_carriers.column.trackingStatus": "Tracking status"
+  "shipping_carriers.column.trackingStatus": "Tracking status",
+  "phone_calls.calls.columns.callId": "Call ID",
+  "phone_calls.calls.columns.ingestStatus": "Ingest",
+  "phone_calls.calls.list.title": "Phone Calls",
+  "warranty_claims.ai_assistant.dock.subtitle": "Warranty claims",
+  "warranty_claims.widgets.customerClaims.newClaim": "New claim"
 }

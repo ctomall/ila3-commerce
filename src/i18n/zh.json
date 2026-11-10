@@ -13614,5 +13614,10 @@
   "eudr.productColumn.header": "EUDR",
   "payment_gateways.column.gatewayStatus": "支付通道状态",
   "shipping_carriers.column.shippingStatus": "发货状态",
-  "shipping_carriers.column.trackingStatus": "物流跟踪状态"
+  "shipping_carriers.column.trackingStatus": "物流跟踪状态",
+  "phone_calls.calls.columns.callId": "通话编号",
+  "phone_calls.calls.columns.ingestStatus": "接入状态",
+  "phone_calls.calls.list.title": "通话记录",
+  "warranty_claims.ai_assistant.dock.subtitle": "保修工单",
+  "warranty_claims.widgets.customerClaims.newClaim": "新建工单"
 }
