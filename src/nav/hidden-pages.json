@@ -338,5 +338,10 @@
     "reason": "in-page-action",
     "parent": "/backend/webhooks",
     "evidence": "node_modules/@open-mercato/webhooks/src/modules/webhooks/backend/webhooks/page.tsx:247"
+  },
+  "/backend/communications/channels/connect": {
+    "reason": "in-page-action",
+    "parent": "/backend/communications/inbox",
+    "evidence": "src/modules/communications/backend/communications/channels/connect/page.meta.ts:1 (navHidden; reached from the inbox header link)"
   }
 }
