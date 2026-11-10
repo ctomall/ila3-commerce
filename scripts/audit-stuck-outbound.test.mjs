@@ -33,8 +33,22 @@ test('flags ledger rows claimed but never composed', () => {
   assert.deepEqual(danglingLedger.map((r) => r.id), ['l1'])
 })
 
+test('flags composed ledger rows with no outbound link', () => {
+  const { completedWithoutLink } = classify({
+    now: NOW,
+    minutes: 30,
+    completed: [
+      { id: 'c1', message_id: 'm1', link_id: null, created_at: old(45) },
+      { id: 'c2', message_id: 'm2', link_id: 'l2', created_at: old(45) },
+      { id: 'c3', message_id: 'm3', link_id: null, created_at: old(5) },
+    ],
+  })
+  assert.deepEqual(completedWithoutLink.map((r) => r.id), ['c1'])
+})
+
 test('a clean board reports nothing', () => {
-  const { staleLinks, danglingLedger } = classify({ now: NOW, minutes: 30, links: [], ledger: [] })
+  const { staleLinks, danglingLedger, completedWithoutLink } = classify({ now: NOW, minutes: 30, links: [], ledger: [], completed: [] })
   assert.equal(staleLinks.length, 0)
   assert.equal(danglingLedger.length, 0)
+  assert.equal(completedWithoutLink.length, 0)
 })

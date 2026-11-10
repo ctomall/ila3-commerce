@@ -21,7 +21,7 @@ import pg from 'pg'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const ACTIVE_LINK_STATES = ['queued', 'pending']
 
-export function classify({ links = [], ledger = [], minutes = 30, now = Date.now() }) {
+export function classify({ links = [], ledger = [], completed = [], minutes = 30, now = Date.now() }) {
   const cutoff = now - minutes * 60_000
   const staleLinks = links.filter((row) => {
     if (!ACTIVE_LINK_STATES.includes(row.delivery_status)) return false
@@ -33,7 +33,14 @@ export function classify({ links = [], ledger = [], minutes = 30, now = Date.now
     const at = row.created_at ? new Date(row.created_at).getTime() : NaN
     return Number.isFinite(at) && at < cutoff
   })
-  return { staleLinks, danglingLedger, minutes }
+  // A ledger row that points at a message but has no outbound channel link means
+  // the send was accepted and composed, yet nothing was ever queued for delivery.
+  const completedWithoutLink = completed.filter((row) => {
+    if (!row.message_id || row.link_id) return false
+    const at = row.created_at ? new Date(row.created_at).getTime() : NaN
+    return Number.isFinite(at) && at < cutoff
+  })
+  return { staleLinks, danglingLedger, completedWithoutLink, minutes }
 }
 
 function readDatabaseUrl() {
@@ -65,6 +72,7 @@ async function readFacts(minutes) {
       [ACTIVE_LINK_STATES, minutes],
     )
     let ledger = []
+    let completed = []
     let ledgerAvailable = true
     try {
       const rows = await client.query(
@@ -77,13 +85,26 @@ async function readFacts(minutes) {
         [minutes],
       )
       ledger = rows.rows
+      const composed = await client.query(
+        `select sr.id, sr.client_request_id, sr.message_id, sr.created_at, l.id as link_id
+           from communications_send_requests sr
+           left join message_channel_links l
+             on l.message_id = sr.message_id and l.direction = 'outbound'
+          where sr.message_id is not null
+            and l.id is null
+            and sr.created_at < now() - ($1::int * interval '1 minute')
+          order by sr.created_at
+          limit 200`,
+        [minutes],
+      )
+      completed = composed.rows
     } catch (error) {
       // 42P01 = the ledger table has not been migrated yet; that is reported,
       // not silently treated as "no dangling rows".
       if (error.code === '42P01') ledgerAvailable = false
       else throw error
     }
-    return { links: links.rows, ledger, ledgerAvailable }
+    return { links: links.rows, ledger, completed, ledgerAvailable }
   } finally {
     await client.end()
   }
@@ -105,20 +126,26 @@ export async function main(argv = process.argv.slice(2)) {
     console.error(`audit-stuck-outbound: cannot read database: ${error.message}`)
     return 2
   }
-  const result = classify({ links: facts.links, ledger: facts.ledger, minutes })
+  const result = classify({ links: facts.links, ledger: facts.ledger, completed: facts.completed, minutes })
   const summary = {
     minutes,
     ledgerAvailable: facts.ledgerAvailable,
     staleLinks: result.staleLinks.length,
     danglingLedger: result.danglingLedger.length,
-    rows: { links: result.staleLinks, ledger: result.danglingLedger },
+    completedWithoutLink: result.completedWithoutLink.length,
+    rows: {
+      links: result.staleLinks,
+      ledger: result.danglingLedger,
+      completed: result.completedWithoutLink,
+    },
   }
   if (json) {
     console.log(JSON.stringify(summary, null, 2))
   } else {
     console.log(
       `audit-stuck-outbound: ${summary.staleLinks} stale outbound link(s), ` +
-        `${summary.danglingLedger} dangling ledger row(s) older than ${minutes}m` +
+        `${summary.danglingLedger} dangling ledger row(s), ` +
+        `${summary.completedWithoutLink} composed send(s) without a link older than ${minutes}m` +
         (summary.ledgerAvailable ? '' : ' (ledger table not migrated)'),
     )
     for (const row of result.staleLinks) {
@@ -127,8 +154,15 @@ export async function main(argv = process.argv.slice(2)) {
     for (const row of result.danglingLedger) {
       console.log(`  ledger ${row.id} clientRequestId=${row.client_request_id} since=${row.created_at}`)
     }
+    for (const row of result.completedWithoutLink) {
+      console.log(`  composed ${row.id} clientRequestId=${row.client_request_id} message=${row.message_id}`)
+    }
   }
-  return summary.staleLinks > 0 || summary.danglingLedger > 0 ? (allowStuck ? 0 : 1) : 0
+  return summary.staleLinks > 0 || summary.danglingLedger > 0 || summary.completedWithoutLink > 0
+    ? allowStuck
+      ? 0
+      : 1
+    : 0
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
