@@ -13,9 +13,11 @@ import {
   buildTemplatePayload,
   buildTextPayload,
   describeInbound,
+  normalizeTemplate,
   parseMetaEvents,
   parseSingleMessage,
   parseSingleStatus,
+  MetaTemplateError,
   type MetaTemplate,
 } from './meta-payload'
 import {MetaGraphError, sendWhatsAppMessage} from './graph-client'
@@ -112,8 +114,8 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
     },
 
     async convertOutbound(input) {
-      // Media/template conversion is a later slice (ADR-005 G3/G4); the adapter
-      // refuses to pretend otherwise by sending only the text body.
+      // Media conversion is a later slice (ADR-005 G3); template intent is
+      // carried through (G4) and validated in sendMessage before any request.
       //
       // The hub hands the recipient and any template intent through
       // `channelMetadata` (send-as-user stores them on the link, deliver-outbound
@@ -146,7 +148,20 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
       const threadTo = threadRef && !threadRef.startsWith('outbound:') && !threadRef.includes(':') ? threadRef : ''
       const to = explicitTo || threadTo
       if (!to) return {externalMessageId: '', status: 'failed', error: 'WHATSAPP_RECIPIENT_REQUIRED'}
-      const template = input.metadata?.template as MetaTemplate | undefined
+      // A template is validated before it reaches the network: the hub stores
+      // the caller's object verbatim, and Graph answers a malformed template
+      // with a 400 that tells the operator nothing actionable.
+      let template: MetaTemplate | undefined
+      if (input.metadata?.template !== undefined) {
+        try {
+          template = normalizeTemplate(input.metadata.template)
+        } catch (error) {
+          if (error instanceof MetaTemplateError) {
+            return {externalMessageId: '', status: 'failed', error: error.message}
+          }
+          throw error
+        }
+      }
       const body = template
         ? buildTemplatePayload(to, template)
         : buildTextPayload(to, input.content.text ?? '')

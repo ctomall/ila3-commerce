@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals'
 import crypto from 'node:crypto'
 import {verifyMetaSignature} from '../lib/meta-signature'
-import {buildTemplatePayload, buildTextPayload, describeInbound, parseMetaEvents, parseSingleMessage} from '../lib/meta-payload'
+import {buildTemplatePayload, buildTextPayload, describeInbound, normalizeTemplate, parseMetaEvents, parseSingleMessage} from '../lib/meta-payload'
 import {MetaGraphError, sendWhatsAppMessage} from '../lib/graph-client'
 import {createWhatsAppAdapter} from '../lib/adapter'
 
@@ -287,5 +287,35 @@ describe('graph auth classification', () => {
       expect(classifyOutboundError(error).transient).toBe(false)
       expect(isReauthError(classifyOutboundError(error))).toBe(false)
     }
+  })
+})
+
+
+describe('normalizeTemplate', () => {
+  it('accepts a name + language and forwards components verbatim', () => {
+    const template = normalizeTemplate({
+      name: 'quote_followup',
+      language: 'zh_CN',
+      components: [{type: 'body', parameters: [{type: 'text', text: '张三'}]}],
+    })
+    expect(template).toEqual({
+      name: 'quote_followup',
+      language: 'zh_CN',
+      components: [{type: 'body', parameters: [{type: 'text', text: '张三'}]}],
+    })
+  })
+
+  it('rejects a missing language, an unknown component type and a text parameter without text', () => {
+    expect(() => normalizeTemplate({name: 'x'})).toThrow(/language is required/)
+    expect(() => normalizeTemplate({name: 'x', language: 'en', components: [{type: 'carousel'}]})).toThrow(/must be one of header, body, button/)
+    expect(() =>
+      normalizeTemplate({name: 'x', language: 'en', components: [{type: 'body', parameters: [{type: 'text'}]}]}),
+    ).toThrow(/text is required/)
+  })
+
+  it('rejects a non-text parameter whose payload object is missing', () => {
+    expect(() =>
+      normalizeTemplate({name: 'x', language: 'en', components: [{type: 'header', parameters: [{type: 'image'}]}]}),
+    ).toThrow(/image must be an object/)
   })
 })

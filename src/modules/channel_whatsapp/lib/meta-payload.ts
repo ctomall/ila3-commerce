@@ -146,6 +146,103 @@ export function buildTextPayload(to: string, text: string): Record<string, unkno
 
 export type MetaTemplate = {name: string; language: string; components?: unknown[]}
 
+/**
+ * Template payload validation (ADR-005 G4).
+ *
+ * The BFF accepts a caller-supplied template and the hub stores it on the link
+ * verbatim, so by the time the adapter builds a Graph request the only thing
+ * standing between a typo and a provider 400 is this function. Validating here
+ * turns "Meta rejected it with code 132000" into a local, actionable failure
+ * before any network call — and it never guesses: an unknown component type or
+ * a parameter without its required field is refused, not coerced.
+ */
+export class MetaTemplateError extends Error {
+  readonly code = 'WHATSAPP_TEMPLATE_INVALID'
+  constructor(message: string) {
+    super(message)
+    this.name = 'MetaTemplateError'
+  }
+}
+
+const TEMPLATE_COMPONENT_TYPES = new Set(['header', 'body', 'button'])
+const TEMPLATE_PARAMETER_TYPES = new Set([
+  'text',
+  'image',
+  'document',
+  'video',
+  'location',
+  'currency',
+  'date_time',
+])
+
+function asRecord(value: unknown): Record<string, unknown> | null {
+  return value && typeof value === 'object' && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : null
+}
+
+export function normalizeTemplate(value: unknown): MetaTemplate {
+  const template = asRecord(value)
+  if (!template) throw new MetaTemplateError('template must be an object')
+  const name = template.name
+  if (typeof name !== 'string' || name.trim().length === 0 || name.length > 512) {
+    throw new MetaTemplateError('template.name is required (max 512 characters)')
+  }
+  const language = template.language
+  if (typeof language !== 'string' || language.trim().length === 0 || language.length > 32) {
+    throw new MetaTemplateError('template.language is required (max 32 characters)')
+  }
+  const rawComponents = template.components
+  if (rawComponents === undefined) return {name, language}
+  if (!Array.isArray(rawComponents) || rawComponents.length > 20) {
+    throw new MetaTemplateError('template.components must be an array of at most 20 entries')
+  }
+  const components = rawComponents.map((entry, index) => {
+    const component = asRecord(entry)
+    if (!component) throw new MetaTemplateError(`components[${index}] must be an object`)
+    const type = component.type
+    if (typeof type !== 'string' || !TEMPLATE_COMPONENT_TYPES.has(type)) {
+      throw new MetaTemplateError(
+        `components[${index}].type must be one of header, body, button (got ${String(type)})`,
+      )
+    }
+    const rawParameters = component.parameters
+    if (rawParameters === undefined) return {type}
+    if (!Array.isArray(rawParameters) || rawParameters.length > 10) {
+      throw new MetaTemplateError(`components[${index}].parameters must be an array of at most 10 entries`)
+    }
+    const parameters = rawParameters.map((param, paramIndex) => {
+      const record = asRecord(param)
+      if (!record) throw new MetaTemplateError(`components[${index}].parameters[${paramIndex}] must be an object`)
+      const paramType = record.type
+      if (typeof paramType !== 'string' || !TEMPLATE_PARAMETER_TYPES.has(paramType)) {
+        throw new MetaTemplateError(
+          `components[${index}].parameters[${paramIndex}].type is not a supported parameter type`,
+        )
+      }
+      if (paramType === 'text') {
+        if (typeof record.text !== 'string' || record.text.length === 0) {
+          throw new MetaTemplateError(
+            `components[${index}].parameters[${paramIndex}].text is required for a text parameter`,
+          )
+        }
+        return {type: paramType, text: record.text}
+      }
+      // Non-text parameters carry their media/location object; forward it as-is
+      // after asserting it is an object, so a malformed payload fails here.
+      const payload = record[paramType]
+      if (!asRecord(payload)) {
+        throw new MetaTemplateError(
+          `components[${index}].parameters[${paramIndex}].${paramType} must be an object`,
+        )
+      }
+      return {type: paramType, [paramType]: payload}
+    })
+    return {type, parameters}
+  })
+  return {name, language, components}
+}
+
 export function buildTemplatePayload(to: string, template: MetaTemplate): Record<string, unknown> {
   return {
     messaging_product: 'whatsapp',

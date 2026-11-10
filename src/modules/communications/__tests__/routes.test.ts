@@ -504,6 +504,27 @@ describe('customer-service window policy', () => {
     expect((input.channelMetadata as Record<string, unknown>).template).toEqual(template)
   })
 
+  it('refuses a template on a non-WhatsApp channel instead of queueing it', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(
+      () => send,
+      createFakeEm({
+        channels: [{id: '11111111-1111-4111-8111-111111111111', userId: 'u1', channelType: 'messenger', providerKey: 'messenger'}],
+      }),
+    )
+    const {POST} = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, template: {name: 'quote_followup', language: 'en'}}),
+      }),
+    )
+    expect(res.status).toBe(422)
+    await expect(res.json()).resolves.toMatchObject({code: 'TEMPLATE_UNSUPPORTED'})
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it('email channels are not windowed', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()

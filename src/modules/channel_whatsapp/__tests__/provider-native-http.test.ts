@@ -109,6 +109,59 @@ describe('provider-native outbound over a real HTTP socket', () => {
     })
   })
 
+  it('WhatsApp template: sends type=template with name, language code and body parameters', async () => {
+    requests.length = 0
+    const adapter = createWhatsAppAdapter()
+    const template = {
+      name: 'quote_followup',
+      language: 'zh_CN',
+      components: [{type: 'body', parameters: [{type: 'text', text: '张三'}]}],
+    }
+    const converted = await adapter.convertOutbound({
+      body: '模板发送（会话记录用）',
+      bodyFormat: 'text',
+      channelMetadata: {to: '15550001111', template},
+    })
+    expect(converted.metadata).toMatchObject({to: '15550001111', template})
+
+    const result = await adapter.sendMessage({
+      conversationId: '15550001111',
+      content: converted.content,
+      credentials: {accessToken: 'token-wa', phoneNumberId: 'pn-1', appSecret: 'secret', graphBaseUrl: baseUrl},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: converted.metadata,
+    })
+
+    expect(result).toMatchObject({status: 'sent'})
+    expect(requests).toHaveLength(1)
+    expect(requests[0].path).toBe('/pn-1/messages')
+    expect(requests[0].body).toMatchObject({
+      messaging_product: 'whatsapp',
+      to: '15550001111',
+      type: 'template',
+      template: {
+        name: 'quote_followup',
+        language: {code: 'zh_CN'},
+        components: [{type: 'body', parameters: [{type: 'text', text: '张三'}]}],
+      },
+    })
+  })
+
+  it('refuses an invalid template before any network call', async () => {
+    requests.length = 0
+    const adapter = createWhatsAppAdapter()
+    const result = await adapter.sendMessage({
+      conversationId: '15550001111',
+      content: {text: '', bodyFormat: 'text'},
+      credentials: {accessToken: 'token-wa', phoneNumberId: 'pn-1', appSecret: 'secret', graphBaseUrl: baseUrl},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: {to: '15550001111', template: {name: 'quote_followup'}},
+    })
+    expect(result.status).toBe('failed')
+    expect(result.error).toContain('template.language is required')
+    expect(requests).toHaveLength(0)
+  })
+
   it('refuses to guess a recipient when the hub supplied none', async () => {
     requests.length = 0
     const adapter = createWhatsAppAdapter()

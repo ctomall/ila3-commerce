@@ -10,6 +10,7 @@ import {
   releaseSendRequest,
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
+import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -173,6 +174,27 @@ export async function POST(req: Request): Promise<Response> {
       if (!policy.allowed) {
         return NextResponse.json(
           { error: policy.message, code: policy.code, lastInboundAt: policy.lastInboundAt },
+          { status: 422 },
+        )
+      }
+    }
+    // Template shapes are provider-specific: WhatsApp Cloud API documents an
+    // approved-template payload; this Messenger connector has no equivalent, so
+    // refuse instead of queueing a send the adapter cannot express.
+    if (hasTemplate) {
+      const templateChannel = await policyEm.findOne(CommunicationChannel, {
+        id: body.channelId,
+        tenantId: auth.tenantId as string,
+        organizationId,
+        deletedAt: null,
+      } as never)
+      const channelType = (templateChannel?.channelType ?? '').toLowerCase()
+      if (templateChannel && channelType !== 'whatsapp') {
+        return NextResponse.json(
+          {
+            error: 'Templates are only supported on WhatsApp Business channels in this build',
+            code: 'TEMPLATE_UNSUPPORTED',
+          },
           { status: 422 },
         )
       }
