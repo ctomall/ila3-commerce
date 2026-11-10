@@ -160,6 +160,12 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
       "marker": "/* [patched:outbound-thread-reuse-v2] */",
       "reason": "P6-v2: a reply must reuse the inbound conversation even when its organization_id is null. Add org-scoped-then-tenant-only reads for the parent link/conversation and the conversation upsert, and look up ChannelThreadMapping by (external_conversation_id, tenant_id) — updating it in place — instead of inserting and hitting channel_thread_mappings_ext_conv_uq."
+    },
+    {
+      "id": "tenant-channel-org-scope",
+      "script": "scripts/patches/apply-tenant-channel-org-scope.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/connect-credential-channel.js",
+      "marker": "/* [patched:tenant-channel-org-scope] */"
     }
   ]
 }
