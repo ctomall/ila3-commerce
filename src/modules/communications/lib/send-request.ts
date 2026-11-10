@@ -11,6 +11,27 @@ import { SendRequest } from '../data/entities'
  */
 const IN_FLIGHT_TTL_MS = 2 * 60 * 1000
 
+/**
+ * The idempotency ledger table does not exist. This is a deployment/state
+ * problem (the module migration was not applied), not a caller error, so it is
+ * surfaced as its own type instead of a generic 500: the route answers 503 and
+ * the caller can retry once the database is initialized.
+ */
+export class SendLedgerUnavailableError extends Error {
+  constructor() {
+    super('communications_send_requests is not available')
+    this.name = 'SendLedgerUnavailableError'
+  }
+}
+
+function isUndefinedTable(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    (error as { code?: string }).code === '42P01'
+  )
+}
+
 export type SendPayloadHashInput = {
   channelId: string
   to: string[]
@@ -138,6 +159,18 @@ async function findByKey(em: EntityManager, input: ClaimSendRequestInput): Promi
  * of sending a second message.
  */
 export async function claimSendRequest(
+  em: EntityManager,
+  input: ClaimSendRequestInput,
+): Promise<ClaimSendRequestResult> {
+  try {
+    return await claimSendRequestUnchecked(em, input)
+  } catch (error) {
+    if (isUndefinedTable(error)) throw new SendLedgerUnavailableError()
+    throw error
+  }
+}
+
+async function claimSendRequestUnchecked(
   em: EntityManager,
   input: ClaimSendRequestInput,
 ): Promise<ClaimSendRequestResult> {

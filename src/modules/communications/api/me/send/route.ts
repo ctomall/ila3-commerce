@@ -9,6 +9,7 @@ import {
   completeSendRequest,
   computeSendPayloadHash,
   releaseSendRequest,
+  SendLedgerUnavailableError,
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
@@ -281,14 +282,30 @@ export async function POST(req: Request): Promise<Response> {
         { status: 503 },
       )
     }
-    const claim = await claimSendRequest(dedupeEm, {
-      tenantId: auth.tenantId as string,
-      organizationId,
-      userId: auth.sub as string,
-      clientRequestId: body.clientRequestId,
-      channelId: body.channelId,
-      payloadHash,
-    })
+    let claim: Awaited<ReturnType<typeof claimSendRequest>>
+    try {
+      claim = await claimSendRequest(dedupeEm, {
+        tenantId: auth.tenantId as string,
+        organizationId,
+        userId: auth.sub as string,
+        clientRequestId: body.clientRequestId,
+        channelId: body.channelId,
+        payloadHash,
+      })
+    } catch (error) {
+      if (error instanceof SendLedgerUnavailableError) {
+        // The module migration has not been applied to this database. Do not
+        // send without the ledger: a timeout retry would become a duplicate.
+        return NextResponse.json(
+          {
+            error: '发送暂不可用：数据库尚未完成初始化，请联系管理员后重试',
+            code: 'SEND_LEDGER_UNAVAILABLE',
+          },
+          { status: 503 },
+        )
+      }
+      throw error
+    }
     if (claim.state === 'replay') {
       return NextResponse.json(
         {

@@ -217,6 +217,36 @@ describe('POST /api/communications/me/send', () => {
     expect(res.status).toBe(503)
   })
 
+  it('answers 503 instead of 500 when the send ledger table is missing', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn()
+    const em = createFakeEm({})
+    const original = em.findOne.getMockImplementation()!
+    em.findOne.mockImplementation(async (entity: unknown, where: Row) => {
+      if (entity === SendRequest) {
+        throw Object.assign(new Error('relation "communications_send_requests" does not exist'), { code: '42P01' })
+      }
+      return original(entity, where)
+    })
+    useContainer((name) => send, em)
+    const { POST } = await load()
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-ledger-missing',
+        }),
+      }),
+    )
+    expect(res.status).toBe(503)
+    await expect(res.json()).resolves.toMatchObject({ code: 'SEND_LEDGER_UNAVAILABLE' })
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it('replays the first result when the same clientRequestId already sent', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = jest.fn(async () => ({ ok: true as const }))
