@@ -1,0 +1,849 @@
+{
+  "version": 1,
+  "generatedFrom": [
+    "docs/crm-platform/appendix/nav-admin.json",
+    "docs/crm-platform/appendix/nav-superadmin.json"
+  ],
+  "scenes": [
+    {
+      "id": "workbench",
+      "label": "工作台",
+      "order": 10,
+      "href": "/backend/workbench",
+      "icon": "LayoutDashboard"
+    },
+    {
+      "id": "assistant",
+      "label": "AI助手",
+      "order": 20,
+      "action": "open-ai-assistant",
+      "icon": "Sparkles"
+    },
+    {
+      "id": "customers",
+      "label": "客户",
+      "order": 30,
+      "href": "/backend/customers/companies",
+      "icon": "Users"
+    },
+    {
+      "id": "business",
+      "label": "业务",
+      "order": 40,
+      "href": "/backend/business",
+      "icon": "Briefcase"
+    },
+    {
+      "id": "messages",
+      "label": "消息",
+      "order": 50,
+      "href": "/backend/messages",
+      "icon": "MessageSquare"
+    }
+  ],
+  "utility": [
+    {
+      "id": "manage",
+      "label": "管理中心",
+      "href": "/backend/manage",
+      "icon": "Settings"
+    },
+    {
+      "id": "account",
+      "label": "个人账户",
+      "href": "/backend/profile",
+      "icon": "UserCircle"
+    }
+  ],
+  "customers": {
+    "tabs": [
+      {
+        "id": "companies",
+        "label": "公司",
+        "href": "/backend/customers/companies"
+      },
+      {
+        "id": "people",
+        "label": "联系人",
+        "href": "/backend/customers/people"
+      },
+      {
+        "id": "deals",
+        "label": "商机",
+        "href": "/backend/customers/deals"
+      }
+    ],
+    "related": [
+      {
+        "id": "followup",
+        "label": "跟进",
+        "hrefs": [
+          "/backend/customer-tasks",
+          "/backend/calendar"
+        ]
+      },
+      {
+        "id": "insights",
+        "label": "分析视图",
+        "hrefs": [
+          "/backend/customers/deals/map",
+          "/backend/customers/deals/pipeline"
+        ]
+      }
+    ]
+  },
+  "businessPinned": [
+    "/backend/sales/quotes",
+    "/backend/sales/orders",
+    "/backend/catalog/products",
+    "/backend/wms",
+    "/backend/warranty_claims",
+    "/backend/definitions"
+  ],
+  "businessCategories": [
+    {
+      "id": "sales",
+      "label": "销售",
+      "order": 10
+    },
+    {
+      "id": "catalog",
+      "label": "商品目录",
+      "order": 20
+    },
+    {
+      "id": "inventory",
+      "label": "库存与仓储",
+      "order": 30
+    },
+    {
+      "id": "fulfillment",
+      "label": "履约与售后",
+      "order": 40
+    },
+    {
+      "id": "finance",
+      "label": "财务与规则",
+      "order": 50
+    },
+    {
+      "id": "team",
+      "label": "团队与排程",
+      "order": 60
+    },
+    {
+      "id": "automation",
+      "label": "自动化与流程",
+      "order": 70
+    },
+    {
+      "id": "content",
+      "label": "内容与资料",
+      "order": 80
+    }
+  ],
+  "manageCategories": [
+    {
+      "id": "system",
+      "label": "系统",
+      "order": 10
+    },
+    {
+      "id": "access",
+      "label": "身份与权限",
+      "order": 20
+    },
+    {
+      "id": "portal",
+      "label": "客户门户",
+      "order": 30
+    },
+    {
+      "id": "data",
+      "label": "数据与集成",
+      "order": 40
+    },
+    {
+      "id": "moduleConfigs",
+      "label": "模块配置",
+      "order": 50
+    },
+    {
+      "id": "org",
+      "label": "财务与组织",
+      "order": 60
+    },
+    {
+      "id": "ai",
+      "label": "AI 与助手",
+      "order": 70
+    },
+    {
+      "id": "business-config",
+      "label": "业务配置",
+      "order": 80
+    },
+    {
+      "id": "dev",
+      "label": "开发者与定制",
+      "order": 90
+    },
+    {
+      "id": "security",
+      "label": "安全",
+      "order": 100
+    }
+  ],
+  "entries": {
+    "/backend/api-keys": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/audit-logs": {
+      "surface": "manage",
+      "category": "security",
+      "disposition": "nav"
+    },
+    "/backend/calendar": {
+      "surface": "customers",
+      "tab": "followup",
+      "disposition": "nav"
+    },
+    "/backend/catalog/categories": {
+      "surface": "business",
+      "category": "catalog",
+      "disposition": "nav"
+    },
+    "/backend/catalog/prices": {
+      "surface": "business",
+      "category": "catalog",
+      "disposition": "nav"
+    },
+    "/backend/catalog/products": {
+      "surface": "business",
+      "category": "catalog",
+      "disposition": "nav"
+    },
+    "/backend/checkout/pay-links": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/checkout/templates": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/checkout/transactions": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/communication_channels/channels": {
+      "surface": "messages",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-agents": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/agents": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/allowlist": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/legacy": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/models": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/moderation-flags": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/playground": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/settings": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/ai-assistant/usage": {
+      "surface": "manage",
+      "category": "ai",
+      "disposition": "nav"
+    },
+    "/backend/config/attachments": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/cache": {
+      "surface": "manage",
+      "category": "system",
+      "disposition": "nav"
+    },
+    "/backend/config/catalog": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/currency-fetching": {
+      "surface": "manage",
+      "category": "org",
+      "disposition": "nav"
+    },
+    "/backend/config/customers": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/customers/deals": {
+      "surface": "manage",
+      "category": "business-config",
+      "disposition": "nav"
+    },
+    "/backend/config/customers/pipeline-stages": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/dictionaries": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/encryption": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/module-telemetry": {
+      "surface": "manage",
+      "category": "system",
+      "disposition": "nav"
+    },
+    "/backend/config/modules": {
+      "surface": "manage",
+      "category": "system",
+      "disposition": "nav"
+    },
+    "/backend/config/notifications": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/sales": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/scheduled-jobs": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/search": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/settings": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/system-status": {
+      "surface": "manage",
+      "category": "system",
+      "disposition": "nav"
+    },
+    "/backend/config/system-update": {
+      "surface": "manage",
+      "category": "system",
+      "disposition": "nav"
+    },
+    "/backend/config/translations": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/wms": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/config/workflows": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/currencies": {
+      "surface": "manage",
+      "category": "org",
+      "disposition": "nav"
+    },
+    "/backend/customer_accounts/roles": {
+      "surface": "manage",
+      "category": "portal",
+      "disposition": "nav"
+    },
+    "/backend/customer_accounts/settings": {
+      "surface": "manage",
+      "category": "portal",
+      "disposition": "nav"
+    },
+    "/backend/customer_accounts/settings/domain": {
+      "surface": "manage",
+      "category": "portal",
+      "disposition": "nav"
+    },
+    "/backend/customer_accounts/users": {
+      "surface": "manage",
+      "category": "portal",
+      "disposition": "nav"
+    },
+    "/backend/customer-tasks": {
+      "surface": "customers",
+      "tab": "followup",
+      "disposition": "nav"
+    },
+    "/backend/customers/companies": {
+      "surface": "customers",
+      "tab": "companies",
+      "disposition": "nav"
+    },
+    "/backend/customers/deals": {
+      "surface": "customers",
+      "tab": "deals",
+      "disposition": "nav"
+    },
+    "/backend/customers/deals/map": {
+      "surface": "customers",
+      "tab": "insights",
+      "disposition": "nav"
+    },
+    "/backend/customers/deals/pipeline": {
+      "surface": "customers",
+      "tab": "insights",
+      "disposition": "nav"
+    },
+    "/backend/customers/people": {
+      "surface": "customers",
+      "tab": "people",
+      "disposition": "nav"
+    },
+    "/backend/data-sync": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/definitions": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/definitions/create": {
+      "surface": "workbench",
+      "disposition": "in-page-action"
+    },
+    "/backend/definitions/visual-editor": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/devices": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/directory/branding": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/directory/organizations": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/directory/tenants": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/docs": {
+      "surface": "manage",
+      "category": "dev",
+      "disposition": "nav"
+    },
+    "/backend/documents": {
+      "surface": "business",
+      "category": "content",
+      "disposition": "nav"
+    },
+    "/backend/documents/templates": {
+      "surface": "business",
+      "category": "content",
+      "disposition": "nav"
+    },
+    "/backend/entities/system": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/entities/user": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/eudr": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/eudr/evidence-submissions": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/eudr/plots": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/eudr/product-mappings": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/eudr/risk-assessments": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/eudr/statements": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/events": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/exchange-rates": {
+      "surface": "manage",
+      "category": "org",
+      "disposition": "nav"
+    },
+    "/backend/feature-toggles/global": {
+      "surface": "manage",
+      "category": "dev",
+      "disposition": "nav"
+    },
+    "/backend/feature-toggles/overrides": {
+      "surface": "manage",
+      "category": "dev",
+      "disposition": "nav"
+    },
+    "/backend/inbox-ops": {
+      "surface": "messages",
+      "disposition": "nav"
+    },
+    "/backend/instances": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/instances/failure-queue": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/integrations": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/logs": {
+      "surface": "business",
+      "category": "finance",
+      "disposition": "nav"
+    },
+    "/backend/messages": {
+      "surface": "messages",
+      "disposition": "nav"
+    },
+    "/backend/notifications/user-preferences": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/payment-gateways": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/phone_calls": {
+      "surface": "messages",
+      "disposition": "nav"
+    },
+    "/backend/planner/availability-rulesets": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/profile/change-password": {
+      "surface": "personal",
+      "disposition": "nav"
+    },
+    "/backend/profile/communication-channels": {
+      "surface": "personal",
+      "disposition": "nav"
+    },
+    "/backend/profile/notification-preferences": {
+      "surface": "personal",
+      "disposition": "nav"
+    },
+    "/backend/push_notifications": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/push_notifications/send": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/query-indexes": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/resources/resource-types": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/resources/resource-types/create": {
+      "surface": "workbench",
+      "disposition": "in-page-action"
+    },
+    "/backend/resources/resources": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/roles": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/rules": {
+      "surface": "business",
+      "category": "finance",
+      "disposition": "nav"
+    },
+    "/backend/sales/channels": {
+      "surface": "business",
+      "category": "sales",
+      "disposition": "nav"
+    },
+    "/backend/sales/channels/offers": {
+      "surface": "business",
+      "category": "sales",
+      "disposition": "nav"
+    },
+    "/backend/sales/orders": {
+      "surface": "business",
+      "category": "sales",
+      "disposition": "nav"
+    },
+    "/backend/sales/quotes": {
+      "surface": "business",
+      "category": "sales",
+      "disposition": "nav"
+    },
+    "/backend/sets": {
+      "surface": "business",
+      "category": "finance",
+      "disposition": "nav"
+    },
+    "/backend/sidebar-customization": {
+      "surface": "manage",
+      "category": "dev",
+      "disposition": "nav"
+    },
+    "/backend/staff/leave-requests": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/my-availability": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/my-leave-requests": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/team-members": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/team-roles": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/teams": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/board": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/entries": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/projects": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/reports": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/settings": {
+      "surface": "manage",
+      "category": "moduleConfigs",
+      "disposition": "nav"
+    },
+    "/backend/staff/time-tracking/timesheet": {
+      "surface": "business",
+      "category": "team",
+      "disposition": "nav"
+    },
+    "/backend/storage/attachments": {
+      "surface": "business",
+      "category": "content",
+      "disposition": "nav"
+    },
+    "/backend/users": {
+      "surface": "manage",
+      "category": "access",
+      "disposition": "nav"
+    },
+    "/backend/warranty_claims": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/warranty_claims/registrations": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/warranty_claims/settings": {
+      "surface": "manage",
+      "category": "business-config",
+      "disposition": "nav"
+    },
+    "/backend/warranty_claims/troubleshooting-guides": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/warranty_claims/vendor-policies": {
+      "surface": "business",
+      "category": "fulfillment",
+      "disposition": "nav"
+    },
+    "/backend/webhooks": {
+      "surface": "manage",
+      "category": "data",
+      "disposition": "nav"
+    },
+    "/backend/wms": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/inventory": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/locations": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/lots": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/movements": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/reservations": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/warehouses": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/wms/zones": {
+      "surface": "business",
+      "category": "inventory",
+      "disposition": "nav"
+    },
+    "/backend/work-inbox": {
+      "surface": "business",
+      "category": "automation",
+      "disposition": "nav"
+    },
+    "/backend/workbench": {
+      "surface": "workbench",
+      "disposition": "nav"
+    }
+  }
+}

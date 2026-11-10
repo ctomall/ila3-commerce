@@ -1258,3 +1258,13 @@ aside .pointer-events-none .animate-bounce {
 [data-sidebar-group="true"] > button[aria-expanded] {
   color: var(--muted-foreground);
 }
+
+/* Single AI usage entry
+   The five-scene rail owns the only visible AI entry. The shell also renders a
+   global topbar launcher for the same assistant; hide that duplicate trigger so
+   the navigation has exactly one AI entry. The Cmd/Ctrl+L shortcut still opens
+   the launcher, and page-level AI actions (e.g. table assistants) are untouched. */
+header [data-ai-launcher-trigger],
+header [data-ai-launcher-trigger-mobile] {
+  display: none;
+}

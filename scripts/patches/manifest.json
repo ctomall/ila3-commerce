@@ -108,6 +108,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
       "marker": "/* [patched:team-channel-send] */",
       "reason": "Team-send policy A: team-visible channels are sendable by non-owners with per-send attribution; private channels stay owner-only."
+    },
+    {
+      "id": "nav-empty-search",
+      "script": "scripts/patches/apply-nav-empty-search.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:nav-empty-search] */",
+      "reason": "The CRM rail replaces the group list, so the built-in nav search would filter an empty list; hide it when there are no groups."
     }
   ]
 }

@@ -246,6 +246,8 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'channel_messenger', from: '@app' },
   // P1: named 工作台 entry pointing at the existing /backend dashboard.
   { id: 'workbench', from: '@app' },
+  // Five-scene CRM navigation: left rail, content-area second level, management centre.
+  { id: 'crm_navigation', from: '@app' },
   // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no
   // migrations — only a module-root ai-tools.ts that the generator folds into the
   // ai-assistant tool registry.
