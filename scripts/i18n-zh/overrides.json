@@ -86,6 +86,7 @@
  "configs.config.nav.cache": "缓存",
  "configs.config.nav.moduleTelemetry": "模块遥测",
  "configs.config.nav.systemStatus": "系统状态",
+"crmNav.group.payments": "支付",
  "currencies.create.title": "创建货币",
  "currencies.edit.title": "编辑货币",
  "currencies.fetch.title": "汇率抓取",

@@ -87,14 +87,16 @@ function readBatches() {
     const zhFile = path.join(batchDir, `${id}.zh.txt`)
     if (!fs.existsSync(zhFile)) continue
     const values = new Map()
-    for (const line of fs.readFileSync(sourcePath, 'utf8').split('\n')) {
+    for (const rawLine of fs.readFileSync(sourcePath, 'utf8').split('\n')) {
+      const line = rawLine.replace(/\r+$/, '')
       if (!line.trim()) continue
       const tab = line.indexOf('\t')
       if (tab < 0) continue
       values.set(line.slice(0, tab), line.slice(tab + 1))
     }
     const translations = new Map()
-    for (const line of fs.readFileSync(zhFile, 'utf8').split('\n')) {
+    for (const rawLine of fs.readFileSync(zhFile, 'utf8').split('\n')) {
+      const line = rawLine.replace(/\r+$/, '')
       if (!line.trim()) continue
       const sep = line.indexOf('|')
       if (sep < 0) continue
