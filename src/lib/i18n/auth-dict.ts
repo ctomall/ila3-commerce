@@ -84,7 +84,9 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // (attachments.library.upload.choose), so the area needs the attachments namespace.
   customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments'],
   sales: ['sales', 'customers'],
-  catalog: ['catalog', 'currencies', 'sales'],
+  // Catalog product lists render the EUDR injection column, whose header is a raw
+  // dictionary key (eudr.productColumn.header) — without this it reached the screen.
+  catalog: ['catalog', 'currencies', 'sales', 'eudr'],
   wms: ['wms', 'catalog'],
   checkout: ['checkout', 'sales', 'catalog'],
   staff: ['staff', 'resources'],

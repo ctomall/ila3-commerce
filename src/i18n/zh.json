@@ -13610,5 +13610,9 @@
   "messages.priority.low": "低",
   "messages.priority.normal": "普通",
   "messages.priority.high": "高",
-  "messages.priority.urgent": "紧急"
+  "messages.priority.urgent": "紧急",
+  "eudr.productColumn.header": "EUDR",
+  "payment_gateways.column.gatewayStatus": "支付通道状态",
+  "shipping_carriers.column.shippingStatus": "发货状态",
+  "shipping_carriers.column.trackingStatus": "物流跟踪状态"
 }
