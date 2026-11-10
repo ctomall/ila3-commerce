@@ -82,8 +82,10 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // salesperson actually works in.
   // The compose dialog opened from a customer renders the attachment picker
   // (attachments.library.upload.choose), so the area needs the attachments namespace.
-  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments'],
-  sales: ['sales', 'customers'],
+  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments', 'entities'],
+  // The order detail renders the related-documents card and the custom-fields empty
+  // state; without these namespaces both reached the screen as raw keys.
+  sales: ['sales', 'customers', 'documents', 'entities'],
   // Catalog product lists render the EUDR injection column, whose header is a raw
   // dictionary key (eudr.productColumn.header) — without this it reached the screen.
   catalog: ['catalog', 'currencies', 'sales', 'eudr'],
