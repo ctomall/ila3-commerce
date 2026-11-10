@@ -34,3 +34,18 @@
 ## 结论
 P2 的“客户列表→详情→记录跟进 / 生成草稿”作为**普通业务员**在正式入口已经跑通并有截图与数据库证据；
 草稿仍未外发（`sent_at` 为空）。消息列表在 UI 上看不到草稿是上游缺陷，不影响“草稿已生成”的事实。
+
+## 追加（2026-11-10）：字典裁剪导致的“键名外露”已修
+
+后端路由按区域裁剪 i18n 字典（`src/lib/i18n/auth-dict.ts` 的 `AREA_NAMESPACES`），
+`/backend/customers/*` 当时只保留 `customers`+`sales`，于是客户详情里的
+`documents.relatedDocuments.*`、`workflows.pendingWork.*`、`warranty_claims.customerTab.title`、
+`audit_logs.version_history.*` 直接显示键名；`/backend/messages` 没保留
+`communication_channels`，表头显示 `communication_channels.columns.provider`。
+
+改动（`0055416`）：给 customers 补 `documents/workflows/warranty_claims/audit_logs`，
+给 messages 补 `communication_channels`，并补上 zh.json 里缺的 4 个标签。
+
+上线后实测（生产 `d9ac12d9`，截图 `p2-customer-detail-i18n-2026-11-10.png`、
+`p2-messages-i18n-2026-11-10.png`）：客户详情页 `key 名残留 = 0`，“保修/文件”为中文；
+消息页表头显示“服务商”。
