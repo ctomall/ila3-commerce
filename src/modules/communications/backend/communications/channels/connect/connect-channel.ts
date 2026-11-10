@@ -60,7 +60,7 @@ export function mapConnectError(status: number, serverError: string | null): str
     if (serverError === 'provider_not_tenant_scoped') return '该渠道需要按员工个人方式连接'
     return serverError ?? '请求参数不正确'
   }
-  if (status === 422) return serverError ?? '凭据校验未通过，请检查字段'
+  if (status === 422) return serverError ? `凭据校验未通过：${serverError}` : '凭据校验未通过，请检查字段'
   if (status >= 500) return '服务端暂时不可用，请稍后重试'
   return serverError ?? `连接失败（HTTP ${status}）`
 }
