@@ -34,3 +34,14 @@ employee scenes=5 tabs=3 business=7 manage=6 messages=4 authorized=66 rendered=6
 
 是否收紧由业务决定：若普通业务员不应看到用户名单与集成/支付配置，需要从 employee 角色撤销
 `auth.users.list` 等技术类 feature（属权限数据变更，需批准）；本轮未改。
+
+## 回归门禁（新增）
+
+```bash
+node scripts/crm-nav-public-host-check.mjs --role employee
+node scripts/crm-nav-public-host-check.mjs --role admin
+```
+
+它用真实会话连 127.0.0.1，但带上 `Host: mercato.ila3.top`（以及 `x-forwarded-host/proto`）请求
+`/api/crm_navigation/navigation`，断言 `200`、5 个场景、且不是 502/504——即复现“服务端经公网自取”这个
+只在正式入口出现的条件。当前结果：employee/admin 均 `ok=true`。
