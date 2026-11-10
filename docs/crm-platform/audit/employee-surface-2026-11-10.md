@@ -50,3 +50,21 @@ node scripts/crm-employee-role-tighten.mjs --apply --approval "用户姓名/工�
 `RbacService` 缓存 5 分钟或重启应用立即生效。
 
 本轮只跑了 `--check`，生产权限未改动。
+
+## 附带发现：授权与“浏览器可见特性”的漂移（诊断工具）
+
+`scripts/crm-feature-payload-check.mjs`（只读）对比「角色 ACL 里的具体权限」与「导航 payload 报给浏览器的
+`grantedFeatures`」，并按“该模块是否在 payload 里出现”区分两类：
+
+| 角色 | ACL 条数 | payload 条数 | 真正异常 | 未暴露模块 |
+|---|---|---|---|---|
+| employee | 113 | 117 | `customers.interactions.manage` | `vector.*` |
+| admin | 125 | 300 | — | `vector.*` |
+
+- payload 会把 `x.*` 展开成具体权限，所以条数不能直接比；工具按“具体权限必须出现或被通配覆盖”比较。
+- `vector.*` 属于 payload 里完全没有出现的模块 → 视为“本应用未暴露该模块”，属信息项。
+- **`customers.interactions.manage` 是真异常**：角色持有、API 也放行（POST 返回 400 校验错误而非 403），
+  但 payload 不报。当前 UI 没有因此隐藏按钮（已用真实员工账号核对），但任何**依赖 payload 做显隐**的控件
+  都会“隐藏但接口可调”，这是一类需要上游统一的漂移。
+
+未接入发布级门禁（当前有 1 条已知异常，接入会长期变红）；作为诊断保留，异常清零后再接门禁。
