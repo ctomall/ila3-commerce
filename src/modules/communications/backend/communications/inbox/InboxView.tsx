@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { headers } from 'next/headers'
 import { describeMedia } from '../../../lib/media'
+import { ReplyComposer } from './ReplyComposer'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 
 type ThreadRow = {
@@ -21,7 +22,7 @@ type MessageRow = {
   messageId: string | null
   deliveryStatus: string | null
   createdAt: string
-  media: {kind: string; fileName?: string; mimeType?: string; externalId?: string; downloaded: false} | null
+  media: {kind: string; fileName?: string; mimeType?: string; externalId?: string; downloaded: boolean; attachmentId?: string; fileSize?: number} | null
 }
 
 type ThreadDetail = {
@@ -136,10 +137,22 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                   <p className="text-xs text-muted-foreground">
                     回复身份：{detail.channel.displayName}（{detail.channel.visibility === 'shared' ? '团队共享渠道' : '个人渠道'}）· 服务端会再次校验归属与发送窗口
                   </p>
+                  {['whatsapp', 'messenger', 'email', 'imap', 'gmail'].includes(
+                    (detail.channel.channelType ?? '').toLowerCase(),
+                  ) ? (
+                    <ReplyComposer
+                      channelId={detail.channel.id}
+                      to={detail.conversation.externalConversationId}
+                      subject={detail.conversation.subject ?? ''}
+                      parentMessageId={
+                        [...detail.items].reverse().find((item) => item.direction === 'inbound')?.messageId ?? null
+                      }
+                    />
+                  ) : null}
                   <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
                     {['whatsapp', 'messenger'].includes((detail.channel.channelType ?? '').toLowerCase())
                       ? '客服窗口内可直接回复文本；超出 24 小时窗口需改用已审核模板，服务端会返回 422 WINDOW_CLOSED 而不是让平台拒收。'
-                      : '邮件渠道可在 Android 收件箱回复；网页回复输入将在下一轮接入同一 BFF。'}
+                      : '邮件渠道可在此回复；附件/模板选择器与 Android 共用同一 BFF。'}
                   </p>
                 </footer>
               </>
