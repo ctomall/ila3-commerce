@@ -27,11 +27,11 @@ jest.mock('../lib/outbound-media', () => {
   class OutboundMediaError extends Error {
     code: string
     status: number
-    constructor(message: string, code: string, status: number) {
+    constructor(status: number, code: string, message: string) {
       super(message)
       this.name = 'OutboundMediaError'
-      this.code = code
       this.status = status
+      this.code = code
     }
   }
   return { OutboundMediaError, uploadAttachmentAsMedia: jest.fn() }
@@ -289,7 +289,7 @@ describe('POST /api/communications/me/send', () => {
         name === 'attachmentService' || name === 'integrationCredentialsService' ? {} : send,
       em,
     )
-    upload.mockRejectedValueOnce(new OutboundMediaError('media upload timed out', 'MEDIA_UPLOAD_TIMEOUT', 503))
+    upload.mockRejectedValueOnce(new OutboundMediaError(503, 'MEDIA_UPLOAD_FAILED', 'media upload timed out'))
     const { POST } = await load()
     const request = () =>
       new Request('http://localhost/api/communications/me/send', {
@@ -305,7 +305,7 @@ describe('POST /api/communications/me/send', () => {
       })
     const first = await POST(request())
     expect(first.status).toBe(503)
-    await expect(first.json()).resolves.toMatchObject({ code: 'MEDIA_UPLOAD_TIMEOUT' })
+    await expect(first.json()).resolves.toMatchObject({ code: 'MEDIA_UPLOAD_FAILED' })
     expect(send).not.toHaveBeenCalled()
     // A 5xx upload outcome is unknown: the claim must NOT be released, so the
     // retry is refused as in-flight instead of uploading/sending twice.
