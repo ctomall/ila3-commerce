@@ -10,6 +10,7 @@ import {
   releaseSendRequest,
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
+import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
 import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
 
 function noNewlines(value: string): boolean {
@@ -59,15 +60,19 @@ const bodySchema = z.object({
    */
   media: z
     .object({
-      kind: z.enum(['image', 'audio', 'video', 'document']),
+      /** Inferred from the attachment MIME type when omitted. */
+      kind: z.enum(['image', 'audio', 'video', 'document']).optional(),
       id: z.string().regex(/^\d{1,64}$/).optional(),
       link: z.string().url().optional(),
+      /** A CRM attachment: the BFF uploads its bytes and sends by media id. */
+      attachmentId: z.string().uuid().optional(),
       fileName: z.string().min(1).max(255).optional(),
       caption: z.string().max(1024).optional(),
     })
-    .refine((value) => Boolean(value.id) !== Boolean(value.link), {
-      message: 'media must carry exactly one of id or link',
-    })
+    .refine(
+      (value) => [value.id, value.link, value.attachmentId].filter(Boolean).length === 1,
+      { message: 'media must carry exactly one of id, link or attachmentId' },
+    )
     .optional(),
   channelMetadata: z.record(z.string(), z.unknown()).optional(),
 })
@@ -270,11 +275,73 @@ export async function POST(req: Request): Promise<Response> {
     claimId = claim.id
   }
 
+  // Media by CRM attachment: the bytes live in our storage and Meta cannot fetch
+  // them, so upload first and let the hub/adapter address the result by media id.
+  // Runs AFTER the idempotency claim so a replayed clientRequestId never uploads
+  // twice, and a definite refusal releases the claim like any other 4xx.
+  let resolvedMedia: Record<string, unknown> | undefined = body.media
+    ? {...body.media}
+    : undefined
+  if (body.media?.attachmentId) {
+    const mediaEm = forkEm()
+    if (!mediaEm) {
+      return NextResponse.json(
+        {error: 'Communication channel sending is unavailable', code: 'MEDIA_UPLOAD_FAILED'},
+        {status: 503},
+      )
+    }
+    try {
+      const mediaChannel = await mediaEm.findOne(CommunicationChannel, {
+        id: body.channelId,
+        tenantId: auth.tenantId as string,
+        organizationId,
+        deletedAt: null,
+      } as never)
+      if (!mediaChannel) {
+        if (dedupeEm && claimId) await releaseSendRequest(dedupeEm, claimId)
+        return NextResponse.json(
+          {error: 'Channel not found', code: 'CHANNEL_NOT_FOUND'},
+          {status: 404},
+        )
+      }
+      const attachmentService = container.resolve('attachmentService') as Parameters<
+        typeof uploadAttachmentAsMedia
+      >[0]['attachmentService']
+      const credentialsService = container.resolve('integrationCredentialsService') as Parameters<
+        typeof uploadAttachmentAsMedia
+      >[0]['credentialsService']
+      const resolved = await uploadAttachmentAsMedia({
+        em: mediaEm,
+        auth,
+        attachmentService,
+        credentialsService,
+        channel: {
+          providerKey: mediaChannel.providerKey,
+          organizationId: mediaChannel.organizationId ?? null,
+          tenantId: auth.tenantId as string,
+          userId: mediaChannel.userId ?? null,
+        },
+        attachmentId: body.media.attachmentId,
+        tenantId: auth.tenantId as string,
+        caption: body.media.caption,
+      })
+      resolvedMedia = resolved as unknown as Record<string, unknown>
+    } catch (error) {
+      if (error instanceof OutboundMediaError) {
+        if (dedupeEm && claimId && error.status < 500) {
+          await releaseSendRequest(dedupeEm, claimId)
+        }
+        return NextResponse.json({error: error.message, code: error.code}, {status: error.status})
+      }
+      throw error
+    }
+  }
+
   const templateMetadata = body.template ?? (body.channelMetadata?.template as Record<string, unknown> | undefined)
   const channelMetadata = {
     ...(body.channelMetadata ?? {}),
     ...(templateMetadata ? { template: templateMetadata } : {}),
-    ...(body.media ? { media: body.media } : {}),
+    ...(resolvedMedia ? { media: resolvedMedia } : {}),
     ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),
   }
 
