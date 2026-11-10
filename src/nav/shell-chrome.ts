@@ -50,6 +50,26 @@ export type ShellChrome = {
 /** Stable id for the shell-only group that carries the management hub link. */
 export const SHELL_MANAGE_GROUP_ID = 'crm_navigation.utility'
 
+/**
+ * Documented shell-href aliases: the few declared destinations whose route is a
+ * redirect, so the shell must link to the real destination instead.
+ *
+ * The stock sidebar marks an item active with `pathname === item.href`
+ * (`AppShell.tsx` renderSidebar), so a redirect route is never the pathname and
+ * could never show its active state. `/backend/workbench` is exactly that case:
+ * `src/modules/workbench/backend/workbench/page.tsx` calls `redirect('/backend')`.
+ * Keep this map explicit and tiny — no redirect inference, and the catalogue /
+ * `authorized` data stay unchanged so the declared route remains reachable.
+ */
+export const SHELL_HREF_ALIASES: Readonly<Record<string, string>> = {
+  '/backend/workbench': '/backend',
+}
+
+/** Resolve the href the sidebar should link to for a declared catalogue item. */
+export function shellHref(href: string): string {
+  return SHELL_HREF_ALIASES[href] ?? href
+}
+
 const identityTranslate: ShellTranslate = (_key, fallback) => fallback
 
 function labelOf(
@@ -62,8 +82,10 @@ function labelOf(
 
 function toShellItem(item: CrmNavItem): NonNullable<BackendChromeNavGroup['items']>[number] {
   return {
+    // `id` stays the declared identity (stable menu id / key); `href` is the
+    // real destination the shell renders and matches against the pathname.
     id: item.href,
-    href: item.href,
+    href: shellHref(item.href),
     title: item.label,
     defaultTitle: item.label,
     iconName: item.iconName,

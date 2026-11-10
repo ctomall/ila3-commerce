@@ -33,6 +33,7 @@ jest.mock('next/server', () => ({
 }))
 
 import { GET } from '../route'
+import { shellHref } from '@/nav/shell-chrome'
 
 const payload = {
   groups: [
@@ -94,6 +95,11 @@ describe('CRM navigation chrome route', () => {
       'customers',
       'crm_navigation.utility',
     ])
+    expect(body.groups[0].items[0]).toMatchObject({
+      id: '/backend/workbench',
+      href: '/backend',
+      title: '工作台',
+    })
     expect(body.groups[1].items.map((item: { href: string }) => item.href)).toEqual([
       '/backend/customers/people',
       '/backend/customers/companies',
@@ -137,7 +143,7 @@ describe('CRM navigation chrome route', () => {
     )
 
     expect(new Set(shellHrefs).size).toBe(shellHrefs.length)
-    expect(shellHrefs).toEqual([...dailyHrefs, '/backend/manage'])
+    expect(shellHrefs).toEqual([...dailyHrefs.map((href: string) => shellHref(href)), '/backend/manage'])
   })
 
   it('serves the typed empty chrome fallback when the core navigation is unavailable', async () => {

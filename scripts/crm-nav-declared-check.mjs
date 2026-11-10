@@ -34,6 +34,12 @@ const OUT = arg('--out', null)
 const STRICT = process.argv.includes('--strict')
 const ROLES = (arg('--roles', 'admin,employee')).split(',').filter(Boolean)
 const CATALOG_PATH = path.resolve(process.cwd(), 'src/nav/nav-groups.json')
+// Keep in sync with SHELL_HREF_ALIASES in src/nav/shell-chrome.ts. The only
+// declared destination whose route is a redirect is the workbench entry
+// (src/modules/workbench/backend/workbench/page.tsx redirects to /backend), so
+// the rendered sidebar links to the real destination the shell can mark active.
+const SHELL_HREF_ALIASES = { '/backend/workbench': '/backend' }
+const shellHref = (href) => SHELL_HREF_ALIASES[href] ?? href
 
 const issues = []
 const push = (role, message) => issues.push(`${role}: ${message}`)
@@ -159,7 +165,9 @@ for (const role of ROLES) {
       `shell groups ${JSON.stringify(shellGroups.map((group) => group.id))} != catalogue ${JSON.stringify(expectedShellGroupIds)}`,
     )
   }
-  const expectedShellHrefs = hasManageHub ? [...dailyHrefs, '/backend/manage'] : [...dailyHrefs]
+  const expectedShellHrefs = hasManageHub
+    ? [...dailyHrefs.map(shellHref), '/backend/manage']
+    : dailyHrefs.map(shellHref)
   if (JSON.stringify(shellHrefs) !== JSON.stringify(expectedShellHrefs)) {
     push(role, `shell hrefs differ from catalogue daily + management hub`)
   }

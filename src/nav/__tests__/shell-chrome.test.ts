@@ -1,7 +1,9 @@
 import { describe, expect, it } from '@jest/globals'
 import {
   buildShellChrome,
+  SHELL_HREF_ALIASES,
   SHELL_MANAGE_GROUP_ID,
+  shellHref,
   shellHrefs,
 } from '../shell-chrome'
 import type { CrmCatalog, CrmNavGroup } from '../crm-navigation'
@@ -106,12 +108,32 @@ describe('AppShell chrome mapping', () => {
     ])
   })
 
+  it('renders the declared workbench entry at the real dashboard destination', () => {
+    // `/backend/workbench` only redirects to `/backend`
+    // (src/modules/workbench/backend/workbench/page.tsx), and the stock shell
+    // matches the active item by href === pathname. Link the real destination
+    // while keeping the declared id/title/icon/order.
+    const shell = buildShellChrome(catalog(), translate)
+    const home = shell.groups.find((entry) => entry.id === 'home')!
+
+    expect(home.items[0]).toMatchObject({
+      id: '/backend/workbench',
+      href: '/backend',
+      title: '工作台',
+      defaultTitle: '工作台',
+      iconName: 'Building2',
+      order: 5,
+    })
+    expect(SHELL_HREF_ALIASES).toEqual({ '/backend/workbench': '/backend' })
+    expect(shellHref('/backend/calendar')).toBe('/backend/calendar')
+  })
+
   it('keeps every declared item exactly once and adds only the management hub', () => {
     const shell = buildShellChrome(catalog(), translate)
     const hrefs = shellHrefs(shell)
 
     expect(hrefs).toEqual([
-      '/backend/workbench',
+      '/backend',
       '/backend/customers/companies',
       '/backend/customers/people',
       '/backend/manage',
