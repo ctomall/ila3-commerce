@@ -1,6 +1,6 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-10T06:28:42.603Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-10T07:14:56.453Z · 目标：http://127.0.0.1:3000
 
 用例 14 · 符合预期 14 · 需要复核 0
 
@@ -43,7 +43,7 @@
   ```
 - `GET /api/audit_logs/audit-logs/actions` (admin) → 200
   ```
-  {"items":[{"id":"89fb9c7d-d706-40e0-92ba-e24aa247461b","commandId":"messages.messages.compose","actionLabel":"Create draft message","executionState":"done","actorUserId":"77f676ed-7ab0-4245-a67a-d3b3e
+  {"items":[{"id":"b18a8152-f185-40f4-bd46-22947c42e7c0","commandId":"messages.messages.compose","actionLabel":"Create draft message","executionState":"done","actorUserId":"77f676ed-7ab0-4245-a67a-d3b3e
   ```
 - `GET /api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000` (employee) → 403
   ```

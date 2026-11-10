@@ -95,6 +95,10 @@ const GATES = [
   // M8 asks for a restore drill. It was a hand-run experiment once; now every full run
   // dumps production, restores the archive into a throwaway database and compares.
   { id: 'restore-drill', cmd: 'node scripts/crm-restore-drill.mjs', why: '备份可恢复且结构与内容都一致（比对器每次先自证会红）', full: true, evidence: /^PASS\s+summary/ },
+  // {restore-drill} proves the archive reproduces the schema and rows. This proves the
+  // restored database can actually boot the release: start the app on a spare port against
+  // the scratch database, log in, and read the customer list through the HTTP API.
+  { id: 'restore-boot-drill', cmd: 'node scripts/crm-restore-boot-drill.mjs', why: '最新备份能启动应用、登录并读到客户（不只行数一致）', full: true, evidence: /"passed": true/ },
   { id: 'mutation', cmd: 'node scripts/crm-mutation-check.mjs', why: '规则层测试真的会红（变异击杀）', full: true, evidence: /\[mutation\] killed \d+/ },
   { id: 'migration-drill', cmd: 'node scripts/crm-migration-drill-gate.mjs', why: '待应用迁移在隔离库上可 up/回滚/复现', full: true, skipCode: 78, evidence: /^INFO 演练来源/ },
 ]

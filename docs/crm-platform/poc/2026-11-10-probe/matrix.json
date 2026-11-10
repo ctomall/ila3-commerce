@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T06:28:42.603Z",
+  "generatedAt": "2026-11-10T07:14:56.453Z",
   "base": "http://127.0.0.1:3000",
   "rowCount": {
     "tables": [
@@ -79,7 +79,7 @@
       "expected": "200|403",
       "status": 200,
       "verdict": "as-expected",
-      "body": "{\"items\":[{\"id\":\"89fb9c7d-d706-40e0-92ba-e24aa247461b\",\"commandId\":\"messages.messages.compose\",\"actionLabel\":\"Create draft message\",\"executionState\":\"done\",\"actorUserId\":\"77f676ed-7ab0-4245-a67a-d3b3e2d5170b\",\"actorUserN"
+      "body": "{\"items\":[{\"id\":\"b18a8152-f185-40f4-bd46-22947c42e7c0\",\"commandId\":\"messages.messages.compose\",\"actionLabel\":\"Create draft message\",\"executionState\":\"done\",\"actorUserId\":\"77f676ed-7ab0-4245-a67a-d3b3e2d5170b\",\"actorUserN"
     },
     {
       "role": "employee",
