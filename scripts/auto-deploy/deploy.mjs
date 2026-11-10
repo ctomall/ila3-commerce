@@ -32,7 +32,7 @@ const PRODUCTION_PORT = 3000
  *  - drill / synthetic target   -> keep the pre-artifact behaviour
  *  - everything else            -> CI package (production default)
  */
-export function useArtifactPath(args) {
+export function shouldUseArtifactPath(args) {
   return Boolean(args.fromArtifact || (!args.buildLocally && !args.drill && !args.releaseDir))
 }
 
@@ -290,7 +290,7 @@ async function main() {
   // Default path: production pulls the CI package. Local builds are an explicit
   // fallback (`--build-locally`), and drills keep their previous behaviour unless
   // they ask for the artifact path.
-  args.useArtifact = useArtifactPath(args)
+  args.useArtifact = shouldUseArtifactPath(args)
   if (args.injectPostSwitchFailure && !args.drill) throw new Error('--inject-post-switch-failure is only allowed with --drill')
   if (args.releaseDir && !args.drill) throw new Error('--release-dir is only allowed with --drill')
 

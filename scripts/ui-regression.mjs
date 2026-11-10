@@ -147,8 +147,9 @@ if (!loggedIn && (await page.evaluate(() => !!document.querySelector('#email')))
   await new Promise((r) => setTimeout(r, 2000))
   await page.evaluate(() => { document.cookie = 'om_sidebar_collapsed=0; path=/; max-age=31536000' })
   await page.goto('http://127.0.0.1:3000/backend/customers/companies')
-  await new Promise((r) => setTimeout(r, 1200))
-  const sidebarReady = await waitFor('[data-testid="sidebar"]')
+  // The rail mounts after hydration; 1.2 s was short enough that this check reported
+  // "missing (ready=false)" on a page that does render a 240 px rail.
+  const sidebarReady = await waitFor('[data-testid="sidebar"]', 20000)
   const sidebar = await page.evaluate(() => {
     const inner = document.querySelector('[data-testid="sidebar"]')
     const aside = inner ? inner.closest('aside') : null
@@ -158,7 +159,10 @@ if (!loggedIn && (await page.evaluate(() => !!document.querySelector('#email')))
       h: Math.round(inner.getBoundingClientRect().height),
     } : null
   })
-  await page.goto('http://127.0.0.1:3000/backend/config/customers')
+  // The settings-style table sample moved to the user directory: /backend/config/customers
+  // is now a data-dictionary page of option cards with no sortable column headers, so the
+  // old sampling point reported "no sortable table found" instead of a real defect.
+  await page.goto('http://127.0.0.1:3000/backend/users')
   await new Promise((r) => setTimeout(r, 4000))
   const settingsPage = await page.evaluate(() => {
     const ths = Array.from(document.querySelectorAll('thead th'))
