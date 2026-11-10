@@ -229,7 +229,12 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
       if (!credentials.accessToken) errors.accessToken = 'required'
       if (!credentials.phoneNumberId) errors.phoneNumberId = 'required'
       if (!credentials.appSecret) errors.appSecret = 'required for webhook verification'
-      return Object.keys(errors).length ? {ok: false, errors} : {ok: true}
+      if (Object.keys(errors).length) return {ok: false, errors}
+      // Pin the connected account. The hub's connect command stores this as
+      // `CommunicationChannel.externalIdentifier`, which the webhook route uses
+      // to compare the payload's `metadata.phone_number_id` — the HMAC alone
+      // only proves the Meta app, not which phone number the event belongs to.
+      return {ok: true, externalIdentifier: credentials.phoneNumberId}
     },
   }
 }

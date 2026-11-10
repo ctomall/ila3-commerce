@@ -5,26 +5,14 @@ import { CommunicationChannel } from '@open-mercato/core/modules/communication_c
 import { getCommunicationChannelsQueue } from '@open-mercato/core/modules/communication_channels/lib/queue'
 
 /**
- * CHARACTERIZATION TEST — documents OPEN defect D3, not a regression guard.
+ * Regression for K2-D3 — pin inbound Meta webhooks to the channel account.
  *
- * When D3 is fixed (webhook routing must pin the payload's account identity to
- * the channel), this test MUST BE INVERTED: it currently asserts the event is
- * queued against the wrong tenant's channel.
- *
- * K2 drill — multi-account crosstalk between two tenants that share a Meta app.
- *
- * Both the hub's generic webhook route (`api/post/webhook/[provider]/route.ts:114-147`)
- * and this app's dedicated WhatsApp route (`api/webhook/whatsapp/route.ts:61-89`)
- * select a channel by asking "does THIS channel's appSecret verify the HMAC?".
- * The signature is a property of the Meta APP, not of the phone number/page, so
- * when two tenants connect different numbers under the same app (the normal
- * SaaS shape), every candidate verifies. The first candidate wins, and the
- * payload's own `metadata.phone_number_id` — the only field that says which
- * account the event belongs to — is never consulted.
- *
- * This drill proves the mismatch: a signed event for phone B is accepted and
- * queued against tenant A's channel because it appears first in the candidate
- * list.
+ * The appSecret HMAC proves the Meta APP, not the phone number / Page. Two
+ * tenants can connect different accounts under the same app, so before this fix
+ * the first channel that verified the signature received every event. The
+ * payload's `metadata.phone_number_id` (WhatsApp) / `entry[].id` (Messenger) is
+ * now compared with the candidate channel's `externalIdentifier`; a mismatch
+ * moves on to the next candidate and an unmatched account is rejected.
  */
 
 jest.mock('@open-mercato/shared/lib/di/container', () => ({
@@ -45,34 +33,51 @@ function sign(body: string): string {
   return 'sha256=' + crypto.createHmac('sha256', APP_SECRET).update(body).digest('hex')
 }
 
-const channelA = {
+type Channel = Record<string, unknown>
+
+function channel(overrides: Channel): Channel {
+  return {
+    providerKey: 'whatsapp-business',
+    channelType: 'whatsapp',
+    organizationId: null,
+    userId: null,
+    isActive: true,
+    credentialsRef: 'cred',
+    ...overrides,
+  }
+}
+
+const waChannelA = channel({
   id: 'ch-tenant-a',
-  providerKey: 'whatsapp-business',
-  channelType: 'whatsapp',
   tenantId: 'tenant-a',
-  organizationId: null,
-  userId: null,
-  isActive: true,
-  credentialsRef: 'cred-a',
-}
-
-const channelB = {
+  externalIdentifier: 'PHONE_A',
+})
+const waChannelB = channel({
   id: 'ch-tenant-b',
-  providerKey: 'whatsapp-business',
-  channelType: 'whatsapp',
   tenantId: 'tenant-b',
-  organizationId: null,
-  userId: null,
-  isActive: true,
-  credentialsRef: 'cred-b',
-}
+  externalIdentifier: 'PHONE_B',
+})
+const msChannelA = channel({
+  id: 'ms-tenant-a',
+  providerKey: 'messenger',
+  channelType: 'messenger',
+  tenantId: 'tenant-a',
+  externalIdentifier: 'PAGE_A',
+})
+const msChannelB = channel({
+  id: 'ms-tenant-b',
+  providerKey: 'messenger',
+  channelType: 'messenger',
+  tenantId: 'tenant-b',
+  externalIdentifier: 'PAGE_B',
+})
 
-function setup() {
+function setup(channels: Channel[]) {
   const enqueue = jest.fn(async () => ({ id: 'job' }))
   mockQueue.mockReturnValue({ enqueue } as never)
   const em = {
     find: jest.fn(async (entity: unknown) =>
-      entity === CommunicationChannel ? [channelA, channelB] : [],
+      entity === CommunicationChannel ? channels : [],
     ),
     findOne: jest.fn(async () => null),
     flush: jest.fn(async () => undefined),
@@ -88,14 +93,106 @@ function setup() {
   return { enqueue, em }
 }
 
-describe('K2: Meta webhook routing ignores phone_number_id', () => {
+function whatsappBody(phoneNumberId: string, id = 'wamid.INBOUND') {
+  return JSON.stringify({
+    object: 'whatsapp_business_account',
+    entry: [
+      {
+        id: 'waba-1',
+        changes: [
+          {
+            field: 'messages',
+            value: {
+              messaging_product: 'whatsapp',
+              metadata: { phone_number_id: phoneNumberId, display_phone_number: '+15550002222' },
+              contacts: [{ wa_id: '15550003333', profile: { name: 'Customer' } }],
+              messages: [
+                {
+                  from: '15550003333',
+                  id,
+                  timestamp: '1700000000',
+                  type: 'text',
+                  text: { body: 'hello' },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  })
+}
+
+function messengerBody(pageId: string, mid = 'm_INBOUND') {
+  return JSON.stringify({
+    object: 'page',
+    entry: [
+      {
+        id: pageId,
+        time: 1700000000000,
+        messaging: [
+          {
+            sender: { id: 'PSID_CUSTOMER' },
+            recipient: { id: pageId },
+            timestamp: 1700000000000,
+            message: { mid, text: 'hello' },
+          },
+        ],
+      },
+    ],
+  })
+}
+
+async function postWhatsApp(body: string) {
+  const { POST } = await import('../api/webhook/whatsapp/route')
+  return POST(
+    new Request('http://localhost/api/communications/webhook/whatsapp', {
+      method: 'POST',
+      body,
+      headers: { 'x-hub-signature-256': sign(body) },
+    }),
+  )
+}
+
+async function postMessenger(body: string) {
+  const { POST } = await import('../api/webhook/messenger/route')
+  return POST(
+    new Request('http://localhost/api/communications/webhook/messenger', {
+      method: 'POST',
+      body,
+      headers: { 'x-hub-signature-256': sign(body) },
+    }),
+  )
+}
+
+describe('K2-D3: WhatsApp webhook is pinned to the channel account', () => {
   beforeEach(() => {
     jest.resetAllMocks()
   })
 
-  it('queues an event addressed to phone B against the first verified channel (tenant A)', async () => {
-    const { enqueue } = setup()
-    const body = JSON.stringify({
+  it('queues a PHONE_B event against the PHONE_B channel, not the first candidate', async () => {
+    const { enqueue } = setup([waChannelA, waChannelB])
+    const res = await postWhatsApp(whatsappBody('PHONE_B'))
+
+    expect(res.status).toBe(202)
+    expect(enqueue).toHaveBeenCalledTimes(1)
+    const job = (enqueue.mock.calls[0] as unknown[])[0] as Record<string, unknown>
+    expect(job).toMatchObject({ channelId: 'ch-tenant-b', scope: { tenantId: 'tenant-b' } })
+    expect(job.channelId).not.toBe('ch-tenant-a')
+  })
+
+  it('rejects an event for an account no channel owns, without enqueuing', async () => {
+    const { enqueue } = setup([waChannelA, waChannelB])
+    const res = await postWhatsApp(whatsappBody('PHONE_UNKNOWN'))
+
+    expect(res.status).toBe(401)
+    await expect(res.json()).resolves.toMatchObject({ error: 'verification_failed', detail: 'account' })
+    expect(enqueue).not.toHaveBeenCalled()
+  })
+
+  it('rejects a payload mixing two accounts instead of guessing', async () => {
+    const { enqueue } = setup([waChannelA, waChannelB])
+    const mixed = JSON.stringify({
       object: 'whatsapp_business_account',
       entry: [
         {
@@ -104,42 +201,58 @@ describe('K2: Meta webhook routing ignores phone_number_id', () => {
             {
               field: 'messages',
               value: {
-                messaging_product: 'whatsapp',
-                // The payload says which phone number this event belongs to.
-                metadata: { phone_number_id: 'PHONE_B', display_phone_number: '+15550002222' },
-                contacts: [{ wa_id: '15550003333', profile: { name: 'Customer' } }],
-                messages: [
-                  {
-                    from: '15550003333',
-                    id: 'wamid.INBOUND-FOR-B',
-                    timestamp: '1700000000',
-                    type: 'text',
-                    text: { body: 'hello tenant B' },
-                  },
-                ],
+                metadata: { phone_number_id: 'PHONE_A' },
+                messages: [{ from: '1', id: 'wamid.A', timestamp: '1700000000', type: 'text', text: { body: 'a' } }],
+              },
+            },
+            {
+              field: 'messages',
+              value: {
+                metadata: { phone_number_id: 'PHONE_B' },
+                messages: [{ from: '2', id: 'wamid.B', timestamp: '1700000000', type: 'text', text: { body: 'b' } }],
               },
             },
           ],
         },
       ],
     })
+    const res = await postWhatsApp(mixed)
 
-    const { POST } = await import('../api/webhook/whatsapp/route')
-    const res = await POST(
-      new Request('http://localhost/api/communications/webhook/whatsapp', {
-        method: 'POST',
-        body,
-        headers: { 'x-hub-signature-256': sign(body) },
-      }),
-    )
+    expect(res.status).toBe(401)
+    expect(enqueue).not.toHaveBeenCalled()
+  })
+
+  it('keeps legacy behavior when the channel has no externalIdentifier', async () => {
+    const legacy = channel({ id: 'ch-legacy', tenantId: 'tenant-a', externalIdentifier: null })
+    const { enqueue } = setup([legacy, waChannelB])
+    const res = await postWhatsApp(whatsappBody('PHONE_B'))
+
+    // Cannot prove the account, so the old first-verified-channel behavior is
+    // retained (with a structured warning) until the row is reconnected.
+    expect(res.status).toBe(202)
+    expect((enqueue.mock.calls[0] as unknown[])[0]).toMatchObject({ channelId: 'ch-legacy' })
+  })
+})
+
+describe('K2-D3: Messenger webhook is pinned to the Page account', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('queues a PAGE_B event against the PAGE_B channel', async () => {
+    const { enqueue } = setup([msChannelA, msChannelB])
+    const res = await postMessenger(messengerBody('PAGE_B'))
 
     expect(res.status).toBe(202)
-    expect(enqueue).toHaveBeenCalledTimes(1)
     const job = (enqueue.mock.calls[0] as unknown[])[0] as Record<string, unknown>
-    // Reproduced: the event explicitly targets PHONE_B, but it is queued against
-    // channelA and tenant-a because signature verification cannot tell the two
-    // tenants apart when they share a Meta app.
-    expect(job).toMatchObject({ channelId: 'ch-tenant-a', scope: { tenantId: 'tenant-a' } })
-    expect(job.channelId).not.toBe('ch-tenant-b')
+    expect(job).toMatchObject({ channelId: 'ms-tenant-b', scope: { tenantId: 'tenant-b' } })
+  })
+
+  it('rejects a Page no channel owns', async () => {
+    const { enqueue } = setup([msChannelA, msChannelB])
+    const res = await postMessenger(messengerBody('PAGE_UNKNOWN'))
+
+    expect(res.status).toBe(401)
+    expect(enqueue).not.toHaveBeenCalled()
   })
 })

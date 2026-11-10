@@ -65,9 +65,28 @@ function readMedia(message: Record<string, unknown>, type: string): MetaMedia | 
 
 const MEDIA_TYPES = new Set(['image', 'audio', 'video', 'document', 'sticker'])
 
+/**
+ * Distinct provider account ids (`value.metadata.phone_number_id`) carried by a
+ * webhook body. The HMAC proves the Meta APP, not the phone number; this is the
+ * only field that says which connected account the event belongs to. Returns
+ * every distinct id so a mixed payload can be rejected rather than misrouted.
+ */
+export function readWhatsAppAccountIds(payload: unknown): string[] {
+  const root = payload as
+    | { entry?: Array<{ changes?: Array<{ value?: { metadata?: { phone_number_id?: unknown } } }> }> }
+    | null
+  const ids = new Set<string>()
+  for (const entry of root?.entry ?? []) {
+    for (const change of entry.changes ?? []) {
+      const id = change?.value?.metadata?.phone_number_id
+      if (typeof id === 'string' && id.length > 0) ids.add(id)
+    }
+  }
+  return [...ids]
+}
+
 /** Split one webhook body into message and status events (may contain both). */
-export function parseMetaEvents(payload: unknown): { messages: MetaMessageEvent[]; statuses: MetaStatusEvent[] } {
-  const messages: MetaMessageEvent[] = []
+export function parseMetaEvents(payload: unknown): { messages: MetaMessageEvent[]; statuses: MetaStatusEvent[] } {  const messages: MetaMessageEvent[] = []
   const statuses: MetaStatusEvent[] = []
   const root = payload as { entry?: Array<{ changes?: MetaChange[] }> } | null
   for (const entry of root?.entry ?? []) {

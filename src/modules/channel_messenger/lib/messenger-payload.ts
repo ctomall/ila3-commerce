@@ -27,6 +27,21 @@ function toDate(value: unknown): Date {
   return new Date()
 }
 
+/**
+ * Distinct provider account ids (the Page id on `entry[].id`) carried by a
+ * Messenger webhook body. The HMAC proves the Meta APP, not the Page; this is
+ * what pins an event to the channel that connected the Page. Returns every
+ * distinct id so a mixed payload is rejected rather than misrouted.
+ */
+export function readMessengerAccountIds(payload: unknown): string[] {
+  const root = payload as { entry?: Array<{ id?: unknown }> } | null
+  const ids = new Set<string>()
+  for (const entry of root?.entry ?? []) {
+    if (typeof entry.id === 'string' && entry.id.length > 0) ids.add(entry.id)
+  }
+  return [...ids]
+}
+
 export function parseMessengerEvents(payload: unknown): {messages: MessengerMessage[]; reads: MessengerRead[]} {
   const messages: MessengerMessage[] = []
   const reads: MessengerRead[] = []

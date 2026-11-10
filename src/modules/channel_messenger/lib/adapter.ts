@@ -183,7 +183,11 @@ export function createMessengerAdapter(options: MessengerAdapterOptions = {}): C
       if (!credentials.pageAccessToken) errors.pageAccessToken = 'required'
       if (!credentials.pageId) errors.pageId = 'required'
       if (!credentials.appSecret) errors.appSecret = 'required for webhook verification'
-      return Object.keys(errors).length ? {ok: false, errors} : {ok: true}
+      if (Object.keys(errors).length) return {ok: false, errors}
+      // Pin the connected Page. Stored as `CommunicationChannel.externalIdentifier`
+      // so the webhook route can compare `entry[].id` instead of trusting the
+      // first channel whose app-secret HMAC verifies.
+      return {ok: true, externalIdentifier: credentials.pageId}
     },
   }
 }

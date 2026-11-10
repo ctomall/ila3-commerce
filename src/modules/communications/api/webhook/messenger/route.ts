@@ -1,14 +1,17 @@
 import { NextResponse } from 'next/server'
 import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
+import { createLogger } from '@open-mercato/shared/lib/logger'
 import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
 import {
   COMMUNICATION_CHANNELS_QUEUES,
   getCommunicationChannelsQueue,
 } from '@open-mercato/core/modules/communication_channels/lib/queue'
-import { parseMessengerEvents } from '../../../../channel_messenger/lib/messenger-payload'
+import { parseMessengerEvents, readMessengerAccountIds } from '../../../../channel_messenger/lib/messenger-payload'
 import { createMessengerAdapter } from '../../../../channel_messenger/lib/adapter'
 import { applyMessengerReads } from '../../../../channel_messenger/lib/read-store'
+
+const logger = createLogger('communications').child({component: 'webhook-messenger'})
 
 export const metadata = {
   path: '/communications/webhook/messenger',
@@ -36,6 +39,16 @@ export async function POST(req: Request): Promise<Response> {
   if (raw.length > MAX_BODY_BYTES) return NextResponse.json({error: 'payload_too_large'}, {status: 413})
   if (!raw) return NextResponse.json({error: 'empty_body'}, {status: 400})
 
+  // Parsed once for account pinning, reused by the event splitter after a
+  // channel matches. Invalid JSON falls through to the adapter verifier.
+  let payload: unknown = null
+  try {
+    payload = JSON.parse(raw)
+  } catch {
+    payload = null
+  }
+  const accountIds = payload ? readMessengerAccountIds(payload) : []
+
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
   let credentialsService: CredentialsServiceLike | null = null
@@ -54,6 +67,7 @@ export async function POST(req: Request): Promise<Response> {
 
   let matched: Channel | null = null
   let verificationError: unknown = null
+  let accountMismatch = false
   for (const candidate of candidates as Channel[]) {
     let credentials: Record<string, unknown> = {}
     if (candidate.credentialsRef && credentialsService) {
@@ -76,6 +90,21 @@ export async function POST(req: Request): Promise<Response> {
         scope: {tenantId: candidate.tenantId, organizationId: candidate.organizationId ?? candidate.tenantId},
       })
       if (event.eventType === 'message' || event.eventType === 'status_update') {
+        // The HMAC proves the Meta APP, not the Page. When the payload names its
+        // Page (`entry[].id`), the candidate must own it; a mismatch moves on to
+        // the next candidate instead of misattributing the event.
+        const expectedAccountId = candidate.externalIdentifier?.trim() || null
+        if (accountIds.length > 0 && expectedAccountId) {
+          if (accountIds.some((id) => id !== expectedAccountId)) {
+            accountMismatch = true
+            continue
+          }
+        } else if (accountIds.length > 0) {
+          logger.warn('messenger channel has no external_identifier; accepting without account pin', {
+            channelId: candidate.id,
+            providerAccountIdCount: accountIds.length,
+          })
+        }
         matched = candidate
         break
       }
@@ -86,12 +115,15 @@ export async function POST(req: Request): Promise<Response> {
 
   if (!matched) {
     return NextResponse.json(
-      {error: 'verification_failed', detail: verificationError ? 'signature' : 'no_channel'},
-      {status: 401},
+      {
+        error: 'verification_failed',
+        detail: verificationError ? 'signature' : accountMismatch ? 'account' : 'no_channel',
+      },
+      { status: 401 },
     )
   }
 
-  const parsed = parseMessengerEvents(JSON.parse(raw))
+  const parsed = parseMessengerEvents(payload ?? JSON.parse(raw))
   const scope = {tenantId: matched.tenantId, organizationId: matched.organizationId ?? null}
   let queued = 0
   if (parsed.messages.length) {
