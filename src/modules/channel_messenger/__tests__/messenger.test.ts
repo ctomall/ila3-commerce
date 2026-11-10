@@ -19,6 +19,53 @@ function textWebhook(text = 'hi', psid = 'psid-1'): string {
 
 const credentials = {appSecret: SECRET, pageAccessToken: 'page-token', pageId: 'page-1', graphBaseUrl: 'https://graph.test/v21.0'}
 
+describe('messenger media', () => {
+  it('sends an attachment by public link and maps document to file', async () => {
+    const calls: Array<{url: string; body: string}> = []
+    const adapter = createMessengerAdapter({
+      fetchImpl: (async (url: string, init: {body?: string}) => {
+        calls.push({url, body: String(init.body ?? '')})
+        return new Response(JSON.stringify({message_id: 'mid.MEDIA'}), {status: 200})
+      }) as unknown as typeof fetch,
+    })
+    const result = await adapter.sendMessage({
+      conversationId: 'psid-1',
+      content: {text: '合同见附件', bodyFormat: 'text'},
+      credentials: {pageAccessToken: 't', pageId: 'page-1', appSecret: 's', graphBaseUrl: 'https://graph.test'},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: {to: 'psid-1', media: {kind: 'document', link: 'https://cdn.example.test/c.pdf'}},
+    })
+    expect(result).toMatchObject({status: 'sent', externalMessageId: 'mid.MEDIA'})
+    expect(JSON.parse(calls[0].body)).toMatchObject({
+      recipient: {id: 'psid-1'},
+      message: {attachment: {type: 'file', payload: {url: 'https://cdn.example.test/c.pdf'}}},
+    })
+  })
+
+  it('refuses a media id and a private link without calling Graph', async () => {
+    let called = false
+    const adapter = createMessengerAdapter({
+      fetchImpl: (async () => {
+        called = true
+        return new Response('{}', {status: 200})
+      }) as unknown as typeof fetch,
+    })
+    const base = {
+      conversationId: 'psid-1',
+      content: {text: 'x', bodyFormat: 'text' as const},
+      credentials: {pageAccessToken: 't', pageId: 'page-1', appSecret: 's', graphBaseUrl: 'https://graph.test'},
+      scope: {tenantId: 't1', organizationId: 't1'},
+    }
+    const byId = await adapter.sendMessage({...base, metadata: {to: 'psid-1', media: {kind: 'image', id: '1'}}})
+    expect(byId.status).toBe('failed')
+    expect(String(byId.error)).toContain('public https link')
+    const byPrivate = await adapter.sendMessage({...base, metadata: {to: 'psid-1', media: {kind: 'image', link: 'https://10.0.0.2/x'}}})
+    expect(byPrivate.status).toBe('failed')
+    expect(String(byPrivate.error)).toContain('public host')
+    expect(called).toBe(false)
+  })
+})
+
 describe('parseMessengerEvents', () => {
   it('parses a text message with psid and page id', () => {
     const {messages, reads} = parseMessengerEvents(JSON.parse(textWebhook('hello', 'psid-9')))

@@ -540,12 +540,31 @@ describe('customer-service window policy', () => {
     const mediaRes = await POST(
       new Request('http://localhost/api/communications/me/send', {
         method: 'POST',
-        body: JSON.stringify({...base, media: {kind: 'image', link: 'https://cdn.example.test/a.png'}}),
+        body: JSON.stringify({...base, media: {kind: 'image', id: '123'}}),
       }),
     )
     expect(mediaRes.status).toBe(422)
     await expect(mediaRes.json()).resolves.toMatchObject({code: 'MEDIA_UNSUPPORTED'})
     expect(send).not.toHaveBeenCalled()
+
+    // Messenger accepts a public link but not a provider/media id.
+    const messengerLink = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, media: {kind: 'image', link: 'https://cdn.example.test/a.png'}}),
+      }),
+    )
+    expect(messengerLink.status).toBe(202)
+    expect(send).toHaveBeenCalledTimes(1)
+
+    const messengerId = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, media: {kind: 'image', id: '123'}}),
+      }),
+    )
+    expect(messengerId.status).toBe(422)
+    await expect(messengerId.json()).resolves.toMatchObject({code: 'MEDIA_UNSUPPORTED'})
 
     const conflictRes = await POST(
       new Request('http://localhost/api/communications/me/send', {
@@ -559,7 +578,8 @@ describe('customer-service window policy', () => {
     )
     expect(conflictRes.status).toBe(422)
     await expect(conflictRes.json()).resolves.toMatchObject({code: 'MEDIA_TEMPLATE_CONFLICT'})
-    expect(send).not.toHaveBeenCalled()
+    // Only the allowed Messenger-link send above reached the hub.
+    expect(send).toHaveBeenCalledTimes(1)
   })
 
   it('email channels are not windowed', async () => {

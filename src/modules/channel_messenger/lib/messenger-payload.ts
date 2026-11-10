@@ -89,6 +89,71 @@ export function describeMessengerMessage(message: MessengerMessage): {body: stri
   return {body: '[unsupported]', contentType: 'text/plain'}
 }
 
+export type MessengerOutboundMediaKind = 'image' | 'audio' | 'video' | 'file'
+
+export class MessengerMediaError extends Error {
+  readonly code = 'MESSENGER_MEDIA_INVALID'
+  constructor(message: string) {
+    super(message)
+    this.name = 'MessengerMediaError'
+  }
+}
+
+const MESSENGER_KINDS = new Set(['image', 'audio', 'video', 'document', 'file'])
+
+function isPrivateHost(hostname: string): boolean {
+  const host = hostname.toLowerCase()
+  if (host === 'localhost' || host.endsWith('.localhost')) return true
+  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  if (!ipv4) return false
+  const [a, b] = [Number(ipv4[1]), Number(ipv4[2])]
+  return a === 10 || a === 127 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168)
+}
+
+/**
+ * Messenger media is link-only: the Send API takes `attachment.payload.url` and
+ * fetches it itself. There is no provider media-id store for Pages (message
+ * attachments are a separate, deprecated flow), so this connector accepts only a
+ * public https link and refuses an id or a 404-producing private address instead
+ * of silently sending text.
+ */
+export function normalizeMessengerMedia(value: unknown): {kind: MessengerOutboundMediaKind; url: string} {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    throw new MessengerMediaError('media must be an object')
+  }
+  const record = value as Record<string, unknown>
+  const kind = typeof record.kind === 'string' ? record.kind : ''
+  if (!MESSENGER_KINDS.has(kind)) {
+    throw new MessengerMediaError('media.kind must be one of image, audio, video, document')
+  }
+  if (typeof record.id === 'string' || typeof record.attachmentId === 'string') {
+    throw new MessengerMediaError('Messenger media requires a public https link (no media id upload)')
+  }
+  const rawLink = record.link
+  if (typeof rawLink !== 'string') throw new MessengerMediaError('media.link is required')
+  let url: URL
+  try {
+    url = new URL(rawLink)
+  } catch {
+    throw new MessengerMediaError('media.link must be a valid URL')
+  }
+  if (url.protocol !== 'https:') throw new MessengerMediaError('media.link must use https')
+  if (url.username || url.password) throw new MessengerMediaError('media.link must not carry credentials')
+  if (isPrivateHost(url.hostname)) throw new MessengerMediaError('media.link must be a public host')
+  return {kind: (kind === 'document' ? 'file' : kind) as MessengerOutboundMediaKind, url: url.toString()}
+}
+
+export function buildMessengerMediaPayload(
+  psid: string,
+  media: {kind: MessengerOutboundMediaKind; url: string},
+): Record<string, unknown> {
+  return {
+    recipient: {id: psid},
+    messaging_type: 'RESPONSE',
+    message: {attachment: {type: media.kind, payload: {url: media.url, is_reusable: false}}},
+  }
+}
+
 export function buildMessengerTextPayload(psid: string, text: string): Record<string, unknown> {
   return {
     recipient: {id: psid},

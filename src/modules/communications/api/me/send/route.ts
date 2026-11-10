@@ -217,12 +217,16 @@ export async function POST(req: Request): Promise<Response> {
         deletedAt: null,
       } as never)
       const channelType = (shapedChannel?.channelType ?? '').toLowerCase()
-      if (shapedChannel && channelType !== 'whatsapp') {
+      const messengerLinkOnly =
+        hasMedia && channelType === 'messenger' && typeof body.media?.link === 'string'
+      if (shapedChannel && channelType !== 'whatsapp' && !messengerLinkOnly) {
         return NextResponse.json(
           {
             error: hasTemplate
               ? 'Templates are only supported on WhatsApp Business channels in this build'
-              : 'Media sends are only supported on WhatsApp Business channels in this build',
+              : channelType === 'messenger'
+                ? 'Messenger media requires a public https link (media id upload is not supported)'
+                : 'Media sends are only supported on WhatsApp Business and Messenger channels in this build',
             code: hasTemplate ? 'TEMPLATE_UNSUPPORTED' : 'MEDIA_UNSUPPORTED',
           },
           { status: 422 },

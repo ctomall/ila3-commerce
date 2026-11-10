@@ -11,7 +11,10 @@ import type {
 import {verifyMetaSignature} from '../../channel_whatsapp/lib/meta-signature'
 import {MetaGraphError, sendWhatsAppMessage} from '../../channel_whatsapp/lib/graph-client'
 import {
+  buildMessengerMediaPayload,
   buildMessengerTextPayload,
+  normalizeMessengerMedia,
+  MessengerMediaError,
   describeMessengerMessage,
   parseMessengerEvents,
   type MessengerMessage,
@@ -124,6 +127,7 @@ export function createMessengerAdapter(options: MessengerAdapterOptions = {}): C
         metadata: {
           ...(typeof channelMetadata.to === 'string' ? {to: channelMetadata.to} : {}),
           ...(channelMetadata.template ? {template: channelMetadata.template} : {}),
+          ...(channelMetadata.media ? {media: channelMetadata.media} : {}),
         },
       }
     },
@@ -139,12 +143,26 @@ export function createMessengerAdapter(options: MessengerAdapterOptions = {}): C
       const threadTo = threadRef && !threadRef.startsWith('outbound:') && !threadRef.includes(':') ? threadRef : ''
       const psid = explicitTo || threadTo
       if (!psid) return {externalMessageId: '', status: 'failed', error: 'MESSENGER_RECIPIENT_REQUIRED'}
+      // Media (G3 outbound): Messenger accepts a public link only, and a media
+      // message has no caption field — the text is stored in the CRM but not
+      // delivered with the attachment.
+      let mediaPayload: Record<string, unknown> | null = null
+      if (input.metadata?.media !== undefined) {
+        try {
+          mediaPayload = buildMessengerMediaPayload(psid, normalizeMessengerMedia(input.metadata.media))
+        } catch (error) {
+          if (error instanceof MessengerMediaError) {
+            return {externalMessageId: '', status: 'failed', error: error.message}
+          }
+          throw error
+        }
+      }
       try {
         const result = await sendWhatsAppMessage({
           baseUrl: credentials.graphBaseUrl,
           phoneNumberId: credentials.pageId,
           accessToken: credentials.pageAccessToken,
-          body: buildMessengerTextPayload(psid, input.content.text ?? ''),
+          body: mediaPayload ?? buildMessengerTextPayload(psid, input.content.text ?? ''),
           fetchImpl: options.fetchImpl,
         })
         return {externalMessageId: result.externalMessageId, status: 'sent'}
