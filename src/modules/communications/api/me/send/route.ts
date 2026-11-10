@@ -445,11 +445,24 @@ export async function POST(req: Request): Promise<Response> {
     )
   }
 
+  // The hub already accepted the message. If recording that on the idempotency
+  // ledger fails, failing the request would invite a retry that can send again
+  // once the in-flight lease expires; answer 202 and flag the missing record so
+  // the operator reconciles it instead of retrying.
+  let ledgerRecorded = true
   if (dedupeEm && claimId) {
-    await completeSendRequest(dedupeEm, claimId, {
-      messageId: result.messageId,
-      messageThreadId: result.threadId,
-    })
+    try {
+      await completeSendRequest(dedupeEm, claimId, {
+        messageId: result.messageId,
+        messageThreadId: result.threadId,
+      })
+    } catch (error) {
+      ledgerRecorded = false
+      console.error(
+        '[communications] send accepted but the idempotency ledger was not completed:',
+        error instanceof Error ? error.message : String(error),
+      )
+    }
   }
 
   return NextResponse.json(
@@ -460,6 +473,13 @@ export async function POST(req: Request): Promise<Response> {
       providerKey: result.providerKey,
       clientRequestId: body.clientRequestId ?? null,
       enqueuedForDelivery: true,
+      ledgerRecorded,
+      ...(ledgerRecorded
+        ? {}
+        : {
+            warning:
+              '发送已受理，但幂等台账未记录。请勿用同一 clientRequestId 重试；请联系管理员核对本次发送结果。',
+          }),
     },
     { status: 202 },
   )

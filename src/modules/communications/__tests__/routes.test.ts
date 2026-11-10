@@ -425,6 +425,49 @@ describe('POST /api/communications/me/send', () => {
     expect(em.removed).toHaveLength(1)
   })
 
+  it('answers 202 with a warning when the ledger completion write fails after the hub accepted', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({
+      ok: true as const,
+      messageId: 'm-accepted',
+      threadId: 'th-accepted',
+      channelId: '11111111-1111-4111-8111-111111111111',
+      providerKey: 'imap',
+    }))
+    const em = createFakeEm({ sendRequests: [] })
+    const realFlush = em.flush.getMockImplementation()!
+    let flushes = 0
+    em.flush.mockImplementation(async () => {
+      flushes += 1
+      // First flush is the claim, the second is the completion write.
+      if (flushes === 2) throw new Error('ledger write failed')
+      return realFlush()
+    })
+    useContainer((name) => send, em)
+    const { POST } = await load()
+    const request = () =>
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-ledger-write-fail',
+        }),
+      })
+    const res = await POST(request())
+    expect(res.status).toBe(202)
+    const payload = await res.json()
+    expect(payload).toMatchObject({ messageId: 'm-accepted', ledgerRecorded: false })
+    expect(String(payload.warning)).toContain('请勿用同一 clientRequestId 重试')
+    expect(send).toHaveBeenCalledTimes(1)
+    // A real flush failure leaves the row without messageId (in-flight); this
+    // fake mutates in memory, so only the single send is asserted here. The
+    // in-flight refusal itself is covered by the lease tests.
+    expect(em.persisted).toHaveLength(1)
+  })
+
   it('keeps the key when the facade outcome is unknown so a retry cannot double-send', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = jest.fn(async () => ({ ok: false as const, status: 503, error: 'hub unavailable' }))
