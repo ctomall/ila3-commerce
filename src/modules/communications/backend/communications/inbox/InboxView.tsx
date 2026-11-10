@@ -95,8 +95,8 @@ function loadErrorMessage(status: number, scope: LoadErrorScope): string {
   if (status === 401) return '会话已过期，请重新登录后刷新。'
   if (status === 403) {
     return scope === 'list'
-      ? '当前账号没有全渠道收件箱权限：需要 communication_channels.connect_user_channel，请联系管理员开通。'
-      : '当前账号没有查看该会话的权限：需要 communication_channels.connect_user_channel，请联系管理员开通。'
+      ? '当前账号没有全渠道收件箱权限：需要 communication_channels.view，请联系管理员开通。'
+      : '当前账号没有查看该会话的权限：需要 communication_channels.view，请联系管理员开通。'
   }
   if (status === 0) {
     return scope === 'list' ? '收件箱暂时无法连接服务，请稍后重试。' : '会话暂时无法连接服务，请稍后重试。'

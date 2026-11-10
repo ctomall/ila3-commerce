@@ -12,8 +12,8 @@ describe('inbox thread page metadata', () => {
     expect(metadata.requireAuth).toBe(true)
   })
 
-  it('uses the same feature gate as the inbox list page', () => {
-    expect(metadata.requireFeatures).toEqual(['communication_channels.connect_user_channel'])
+  it('uses the same read gate as the inbox list page', () => {
+    expect(metadata.requireFeatures).toEqual(['communication_channels.view'])
   })
 
   it('does not add a second nav entry for the dynamic detail route', () => {

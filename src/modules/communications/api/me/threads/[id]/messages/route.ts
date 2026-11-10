@@ -19,7 +19,10 @@ export const metadata = {
   path: '/communications/me/threads/[id]/messages',
   GET: {
     requireAuth: true,
-    requireFeatures: ['communication_channels.connect_user_channel'],
+    // Read gate only; a caller needs `view` to read a thread, not the permission
+    // to connect a channel. Per-channel ownership/visibility is still enforced
+    // below, so this grants no new reach.
+    requireFeatures: ['communication_channels.view'],
   },
 }
 

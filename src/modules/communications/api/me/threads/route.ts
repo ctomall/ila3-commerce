@@ -15,10 +15,12 @@ export const metadata = {
   path: '/communications/me/threads',
   GET: {
     requireAuth: true,
-    // Same own-channel feature the hub gates "connect my mailbox" on. Listing is
-    // still narrowed to channels the caller owns plus tenant-wide channels, so a
-    // personal mailbox never appears to another employee.
-    requireFeatures: ['communication_channels.connect_user_channel'],
+    // READ gate, not the "connect my mailbox" gate: reading the inbox must not
+    // require the permission to bind an account. Listing is still narrowed to
+    // channels the caller owns plus tenant-wide channels, so a personal mailbox
+    // never appears to another employee. Reply/bind stay on
+    // `connect_user_channel` until the reply permission split is approved.
+    requireFeatures: ['communication_channels.view'],
   },
 }
 

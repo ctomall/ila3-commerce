@@ -1,6 +1,8 @@
 export const metadata = {
   requireAuth: true,
-  requireFeatures: ['communication_channels.connect_user_channel'],
+  // Read gate: `view` is what the inbox needs. Connecting an account is gated
+  // separately (`connect_user_channel`) and must not be a prerequisite to read.
+  requireFeatures: ['communication_channels.view'],
   pageTitle: '全渠道收件箱',
   pageTitleKey: 'communications.inbox.title',
   // Registered into the existing "沟通与资料" group, beside the messages scene —

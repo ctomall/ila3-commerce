@@ -105,9 +105,11 @@ export const metadata = {
   path: '/communications/me/send',
   POST: {
     requireAuth: true,
-    // Own-mailbox send: the same feature that gates connecting and managing a
-    // personal channel. Ownership is enforced inside the hub facade, so this
-    // feature cannot reach another employee's mailbox.
+    // Own-mailbox send: still gated by the connect feature until the reply
+    // permission split is approved. Changing this to a read-only feature would
+    // let `view` callers send, so it must NOT follow the inbox read gate.
+    // Ownership is enforced inside the hub facade, so this feature cannot reach
+    // another employee's mailbox.
     requireFeatures: ['communication_channels.connect_user_channel'],
   },
 }
