@@ -504,6 +504,22 @@ describe('customer-service window policy', () => {
     expect((input.channelMetadata as Record<string, unknown>).template).toEqual(template)
   })
 
+  it('sends a media message with no text and stores a label body', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))))
+    const {POST} = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, body: {}, media: {kind: 'image', link: 'https://cdn.example.test/a.png'}}),
+      }),
+    )
+    expect(res.status).toBe(202)
+    const call = (send.mock.calls as unknown as Array<[unknown, unknown, Record<string, unknown>]>)[0]
+    expect((call[2].body as Record<string, unknown>).plain).toBe('[image]')
+  })
+
   it('refuses a template on a non-WhatsApp channel instead of queueing it', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()

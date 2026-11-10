@@ -138,11 +138,21 @@ export async function POST(req: Request): Promise<Response> {
     )
   }
 
-  if (!body.body.plain && !body.body.html) {
-    return NextResponse.json(
-      { error: 'Either body.plain or body.html is required' },
-      { status: 422 },
-    )
+  // A media or template message may carry no text: the provider sends the
+  // attachment/template, and only the CRM needs a body to store. Synthesize a
+  // minimal label instead of rejecting a send the provider would accept.
+  const bodyText = body.body.plain ?? ''
+  if (!bodyText && !body.body.html) {
+    if (body.media) {
+      body.body.plain = `[${body.media.kind}]`
+    } else if (body.template) {
+      body.body.plain = `模板 ${body.template.name}`
+    } else {
+      return NextResponse.json(
+        { error: 'Either body.plain or body.html is required' },
+        { status: 422 },
+      )
+    }
   }
 
   const container = await createRequestContainer()
