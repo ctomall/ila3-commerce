@@ -247,4 +247,60 @@ describe('K2-D1: clientRequestId is bound to the request payload', () => {
     await expect(reordered.json()).resolves.toMatchObject({ replayed: true, messageId: 'm-1' })
     expect(send).toHaveBeenCalledTimes(1)
   })
+
+  it('reclaims a stale in-flight row after the lease expires (crashed worker)', async () => {
+    const base = payload()
+    const { em, sendRequests } = createFakeEm([
+      {
+        id: 'sr-stale',
+        tenantId: 't1',
+        userId: 'u1',
+        clientRequestId: 'client-req-0001',
+        channelId: base.channelId,
+        messageId: null,
+        messageThreadId: null,
+        createdAt: new Date(Date.now() - 3 * 60 * 1000),
+      },
+    ])
+    const send = jest.fn(async () => ({
+      ok: true as const,
+      messageId: 'm-2',
+      threadId: 'th-2',
+      channelId: base.channelId,
+      providerKey: 'imap',
+    }))
+    mockContainer.mockResolvedValue(containerWith(em, send) as never)
+
+    const res = await post(base)
+    expect(res.status).toBe(202)
+    await expect(res.json()).resolves.toMatchObject({ messageId: 'm-2' })
+    expect(send).toHaveBeenCalledTimes(1)
+    // The stale row is dropped and replaced by the new claim.
+    expect(sendRequests).toHaveLength(1)
+    expect(sendRequests[0].id).not.toBe('sr-stale')
+    expect(sendRequests[0].createdAt.getTime()).toBeGreaterThan(Date.now() - 60_000)
+  })
+
+  it('keeps answering 409 while the in-flight lease is still live', async () => {
+    const base = payload()
+    const { em, sendRequests } = createFakeEm([
+      {
+        id: 'sr-live',
+        tenantId: 't1',
+        userId: 'u1',
+        clientRequestId: 'client-req-0001',
+        channelId: base.channelId,
+        messageId: null,
+        messageThreadId: null,
+        createdAt: new Date(Date.now() - 30 * 1000),
+      },
+    ])
+    const send = jest.fn(async () => ({ ok: true as const, messageId: 'm-x', threadId: 'th-x', channelId: base.channelId, providerKey: 'imap' }))
+    mockContainer.mockResolvedValue(containerWith(em, send) as never)
+
+    const res = await post(base)
+    expect(res.status).toBe(409)
+    expect(send).not.toHaveBeenCalled()
+    expect(sendRequests).toHaveLength(1)
+  })
 })
