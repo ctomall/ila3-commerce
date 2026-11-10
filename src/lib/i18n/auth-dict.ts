@@ -80,7 +80,7 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // document + workflow cards, so trimming to customers+sales alone left their
   // labels as raw keys ("documents.relatedDocuments.title" etc.) on the page a
   // salesperson actually works in.
-  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs'],
+  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages'],
   sales: ['sales', 'customers'],
   catalog: ['catalog', 'currencies', 'sales'],
   wms: ['wms', 'catalog'],

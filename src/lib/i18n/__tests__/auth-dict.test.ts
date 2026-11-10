@@ -61,6 +61,13 @@ describe('backend route namespaces', () => {
     }
   })
 
+  it('keeps the message composer copy on customer pages', () => {
+    // The customer detail opens the shared message composer, so its keys must survive
+    // the customers trim or the dialog falls back to English on a Chinese deployment.
+    const ns = namespacesForBackendRoute('/backend/customers/companies-v2/abc')
+    expect(ns).toContain('messages')
+  })
+
   it('keeps the communication channel column labels on the messages route', () => {
     const ns = namespacesForBackendRoute('/backend/messages')
     expect(ns).not.toBeNull()
