@@ -1168,6 +1168,32 @@ export async function installFromArtifact({
       throw fail('artifact-install-incomplete', `yarn install completed but ${nextBin} is missing`, {log: installLog})
     }
 
+    // The Next bundle is built with patches applied, but the CLI worker imports
+    // `node_modules/@open-mercato/*/dist` directly: a fresh `yarn install` in the
+    // release restores unpatched files, silently disabling worker-side patches
+    // (outbound unknown handling, inactive-channel terminal state). Re-apply and
+    // assert every manifest marker in the release before it can be switched in.
+    const patchLog = path.join(LOGS_DIR, `${runTag}-artifact-patches.log`)
+    fs.appendFileSync(log, `[${nowIso()}] [artifact-patches] verify-patches --apply in ${staging}\n`)
+    const patchApply = await runStreaming({
+      cmd: process.execPath,
+      args: [path.join(staging, 'scripts', 'verify-patches.mjs'), '--apply'],
+      cwd: staging,
+      env: installEnv(),
+      timeoutMs: 180000,
+      logPath: patchLog,
+      label: 'artifact-patches-apply',
+      echo: true,
+      filter: /(patched|failed|missing|error|Error|ok|OK)/,
+    })
+    if (patchApply.status !== 0) {
+      throw fail('artifact-patches-failed', `managed patch application failed in the release: ${patchApply.tail}`, {
+        exit: patchApply.status,
+        timedOut: patchApply.timedOut,
+        log: patchLog,
+      })
+    }
+
     const envFiles = copyEnvFiles(staging)
     const releaseManifest = {
       schema: 1,
