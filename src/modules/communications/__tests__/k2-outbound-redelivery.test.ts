@@ -10,9 +10,13 @@ import { Message } from '@open-mercato/core/modules/messages/data/entities'
 /**
  * CHARACTERIZATION TEST — documents OPEN defect D2, not a regression guard.
  *
- * When D2 is fixed (an accepted-but-uncommitted send must not be blindly
- * re-sent), this test MUST BE INVERTED: it currently asserts two provider sends
- * and one stored ExternalMessage, which is the buggy behavior.
+ * A managed patch now exists at
+ * `scripts/patches/apply-outbound-attempt-unknown.mjs` (manifest id
+ * `outbound-attempt-unknown`) that marks an accepted-but-uncommitted send
+ * `unknown` instead of retrying. It is deliberately NOT applied yet, so this
+ * test still drives the unpatched installed command and asserts the buggy
+ * behavior. When the patch is approved and applied, this test MUST BE INVERTED:
+ * it must expect one provider send and an `unknown` link, not two sends.
  *
  * K2 drill — provider accepted, local commit failed → retry re-sends.
  *

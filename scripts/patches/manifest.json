@@ -129,6 +129,16 @@
       "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
       "marker": "/* [patched:nav-a11y] */",
       "reason": "Stock AppShell renders the active destination without aria-current and keeps the aside width transition under prefers-reduced-motion; the retired rail had aria-current, so shipping stock as-is is an a11y regression."
+    },
+    {
+      "id": "outbound-attempt-unknown",
+      "script": "scripts/patches/apply-outbound-attempt-unknown.mjs",
+      "targets": [
+        "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js",
+        "node_modules/@open-mercato/core/dist/modules/communication_channels/workers/outbound-delivery.js"
+      ],
+      "marker": "/* [patched:outbound-attempt-unknown] */",
+      "reason": "A provider send whose outcome is unknown (transport failure, or the local commit failed after the provider accepted) must be marked unknown and never blindly retried; a stale attempt marker from a crashed worker is also surfaced for reconciliation instead of re-sending."
     }
   ]
 }
