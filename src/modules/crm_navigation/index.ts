@@ -15,7 +15,7 @@ import type { ModuleInfo } from '@open-mercato/shared/modules/registry'
 export const metadata: ModuleInfo = {
   name: 'crm_navigation',
   title: 'CRM Navigation',
-  version: '0.1.0',
+  version: '0.2.0',
   description:
     'Declared top-level navigation, generic in-content second-level navigation, and a searchable management centre over the authorized backend payload.',
   author: 'Acme Corp',

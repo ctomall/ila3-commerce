@@ -260,8 +260,9 @@ describe('declared CRM catalogue', () => {
     expect(readCrmCatalog({ groups: [] })).toBeNull()
     expect(readCrmCatalog({ crm: { groups: [] } })).toBeNull()
     expect(readCrmCatalog({ crm: { groups: [], utility: [] } })).toBeNull()
-    const payloadShape = { groups: [], railActions: [], utility: [] }
+    const payloadShape = { version: 2, groups: [], railActions: [], utility: [] }
     expect(readCrmCatalog({ crm: payloadShape })).toEqual(payloadShape)
+    expect(readCrmCatalog({ crm: { groups: [], railActions: [], utility: [] } })).toBeNull()
   })
   it('applies the app grouping catalogue before building, without a per-href table', () => {
     const merged = applyGroupCatalog([
@@ -317,6 +318,34 @@ describe('declared CRM catalogue', () => {
       railActions: [],
       utility: [],
     })
+  })
+
+  it('keeps settings-path pages out of daily even when their metadata lacks pageContext', () => {
+    const catalog = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: 'customers',
+            name: '客户',
+            items: [
+              item('公司', '/backend/customers/companies', { order: 110 }),
+              item('商机设置', '/backend/config/customers/deals', { order: 350 }),
+              item('工时设置', '/backend/staff/time-tracking/settings', { order: 900 }),
+            ],
+          },
+        ],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).toEqual([
+      '/backend/customers/companies',
+    ])
+    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
+      '/backend/config/customers/deals',
+      '/backend/staff/time-tracking/settings',
+    ])
   })
 
 })

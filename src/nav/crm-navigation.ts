@@ -119,8 +119,21 @@ function isBackendHref(href: unknown): href is string {
   return typeof href === 'string' && href.startsWith('/backend')
 }
 
+function isSettingsHref(href: string): boolean {
+  // Vendor pages that pre-date the app's settings metadata sometimes declare a
+  // menu group and order but no pageContext (deal settings, time-tracking
+  // settings, warranty settings are live examples). These paths are settings by
+  // product semantics; classify them without an href table so a future page in
+  // the same namespace cannot leak into the daily rail either.
+  return href.startsWith('/backend/config/') || href.endsWith('/settings')
+}
+
+function isSettingsContext(item: PayloadItem): boolean {
+  return item.pageContext === 'settings' || item.pageContext === 'admin' || (isBackendHref(item.href) && isSettingsHref(item.href))
+}
+
 function isDailyContext(item: PayloadItem): boolean {
-  return item.pageContext !== 'settings' && item.pageContext !== 'admin' && item.pageContext !== 'profile'
+  return !isSettingsContext(item) && item.pageContext !== 'profile'
 }
 
 function isEnabled(item: PayloadItem): boolean {
@@ -183,7 +196,8 @@ function collectContextItems(
   const result: CrmNavItem[] = []
   const visit = (entries: PayloadItem[] | undefined) => {
     for (const item of entries ?? []) {
-      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href) && contexts.has(item.pageContext ?? 'main')) {
+      const context = isSettingsContext(item) ? 'settings' : (item.pageContext ?? 'main')
+      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href) && contexts.has(context)) {
         result.push({
           href: item.href,
           label: labelOf(item) || item.href,
@@ -372,7 +386,8 @@ export function readCrmCatalog(payload: unknown): CrmCatalog | null {
   const candidate = (payload as { crm?: unknown }).crm
   if (!candidate || typeof candidate !== 'object') return null
   const catalog = candidate as CrmCatalog
-  return Array.isArray(catalog.groups) &&
+  return catalog.version === 2 &&
+    Array.isArray(catalog.groups) &&
     Array.isArray(catalog.railActions) &&
     Array.isArray(catalog.utility)
     ? catalog

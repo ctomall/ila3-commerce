@@ -69,7 +69,12 @@ function payloadHrefs(payload) {
   }
   for (const section of payload.settingsSections ?? []) walk(section.items, settings)
   for (const section of payload.profileSections ?? []) walk(section.items, profile)
-  return { all, settings, profile }
+  // Vendor settings pages can miss pageContext; the product path rule is part of
+  // the classification contract, so the gate must test the same rule.
+  for (const href of all) {
+    if (href.startsWith('/backend/config/') || href.endsWith('/settings')) settings.push(href)
+  }
+  return { all, settings: [...new Set(settings)], profile }
 }
 
 async function statusOf(url, cookie) {
