@@ -1,0 +1,32 @@
+# ILA3 CRM release app. Serves whatever /home/pro/releases/mercato/current points at;
+# the deploy executor swaps that symlink and restarts this unit.
+#
+# Managed from this repository: `node scripts/auto-deploy/install-units.mjs --check`
+# reports drift, `--apply` installs (needs sudo). Do not hand-edit /etc.
+[Unit]
+Description=ILA3 CRM release app (serves /home/pro/releases/mercato/current)
+After=network-online.target postgresql.service
+Wants=network-online.target
+RequiresMountsFor=/home/pro/releases/mercato /home/pro/apps/mercato
+
+[Service]
+Type=simple
+User=pro
+Group=pro
+WorkingDirectory=/home/pro/releases/mercato/current
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/yarn start
+Restart=always
+RestartSec=5
+KillMode=control-group
+# Graceful shutdown drains the queue workers and the scheduler; on 2026-11-09 23:53
+# that took longer than the old 30s and systemd SIGKILLed the app mid-drain.
+TimeoutStopSec=90
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ila3-auto-deploy-app
+
+[Install]
+WantedBy=multi-user.target
