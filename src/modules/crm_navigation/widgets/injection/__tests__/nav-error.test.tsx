@@ -24,6 +24,8 @@ function catalog(overrides: Partial<CrmCatalog> = {}): CrmCatalog {
     manage: { categories: [] },
     personal: { items: [] },
     unknown: [],
+    unconfiguredSettings: [],
+    unconfiguredProfile: [],
     unconfiguredGroups: [],
     actions: [],
     authorized: [],

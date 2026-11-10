@@ -65,14 +65,10 @@ export type CrmCatalog = {
   personal: { items: CrmNavItem[] }
   /** Authorized entries with no usable owner — reported, never silently kept. */
   unknown: string[]
-  /**
-   * Settings-context entries no `settingsSections` entry claims — diagnostic,
-   * never rendered. Optional in the type only so catalogue literals that predate
-   * this diagnostic keep compiling; `buildCrmNavigation` always sets it.
-   */
-  unconfiguredSettings?: string[]
+  /** Settings-context entries no `settingsSections` entry claims — diagnostic, never rendered. */
+  unconfiguredSettings: string[]
   /** Profile-context entries no `profileSections` entry claims — diagnostic, never rendered. */
-  unconfiguredProfile?: string[]
+  unconfiguredProfile: string[]
   /** Visible page groups that the app-level catalogue has not organised yet. */
   unconfiguredGroups: string[]
   /** Create/import entries that belong in a page toolbar, not the navigation. */
