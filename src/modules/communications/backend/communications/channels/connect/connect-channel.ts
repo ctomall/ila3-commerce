@@ -38,6 +38,7 @@ export const PROVIDERS: ProviderDef[] = [
       { key: 'pageAccessToken', label: 'Page access token', description: '包含 pages_messaging 权限', required: true, secret: true },
       { key: 'pageId', label: 'Page ID', description: 'Facebook 主页 ID', required: true },
       { key: 'appSecret', label: 'App secret', description: '用于校验入站 webhook 签名', required: true, secret: true },
+      { key: 'graphBaseUrl', label: 'Graph base URL（可选）', description: `默认 ${GRAPH_BASE}`, required: false, placeholder: GRAPH_BASE },
     ],
   },
 ]

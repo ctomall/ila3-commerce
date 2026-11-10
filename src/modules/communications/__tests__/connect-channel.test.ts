@@ -15,6 +15,10 @@ describe('tenant channel connect helpers', () => {
     })).toEqual({ accessToken: 'token', phoneNumberId: 'pn-1', appSecret: 'secret' })
   })
 
+  it('offers every Messenger field the integration declares, including the graph override', () => {
+    expect(messenger.fields.map((field) => field.key)).toEqual(['pageAccessToken', 'pageId', 'appSecret', 'graphBaseUrl'])
+  })
+
   it('does not leak per-user-only fields across providers', () => {
     expect(buildCredentials(messenger, { pageAccessToken: 'p', pageId: '1', appSecret: 's', accessToken: 'x' }))
       .toEqual({ pageAccessToken: 'p', pageId: '1', appSecret: 's' })
