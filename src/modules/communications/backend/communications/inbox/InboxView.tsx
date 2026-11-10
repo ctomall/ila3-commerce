@@ -82,6 +82,33 @@ async function selfFetch<T>(path: string, cookie: string, _host: string): Promis
   }
 }
 
+type LoadErrorScope = 'list' | 'detail'
+
+/**
+ * One wording table for both reads, so a failed detail fetch can never look
+ * like "you have not selected a conversation". `status === 0` is transport
+ * (selfFetch maps a thrown fetch to it), 401/403 are auth/permission, a detail
+ * 404 is the API's masked unknown-thread answer, and anything else is an HTTP
+ * failure that must stay visibly distinct from an empty list/thread.
+ */
+function loadErrorMessage(status: number, scope: LoadErrorScope): string {
+  if (status === 401) return '会话已过期，请重新登录后刷新。'
+  if (status === 403) {
+    return scope === 'list'
+      ? '当前账号没有全渠道收件箱权限：需要 communication_channels.connect_user_channel，请联系管理员开通。'
+      : '当前账号没有查看该会话的权限：需要 communication_channels.connect_user_channel，请联系管理员开通。'
+  }
+  if (status === 0) {
+    return scope === 'list' ? '收件箱暂时无法连接服务，请稍后重试。' : '会话暂时无法连接服务，请稍后重试。'
+  }
+  if (scope === 'detail' && status === 404) {
+    return '会话不存在或无权访问（可能已被删除，或你没有访问权限）。'
+  }
+  return scope === 'list'
+    ? `收件箱加载失败（HTTP ${status}），这不是"没有会话"。`
+    : `会话加载失败（HTTP ${status}），这不是"空会话"。`
+}
+
 /**
  * Server-rendered so the inbox is readable without client hydration: staff see
  * the customer, channel and source account on the first paint, and the detail
@@ -101,6 +128,7 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
     : null
   const detail = detailResult?.ok ? detailResult.data : null
   const listError = listResult.ok ? null : listResult.status
+  const detailError = detailResult && !detailResult.ok ? detailResult.status : null
 
   return (
     <Page>
@@ -130,15 +158,7 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                 </li>
               ))}
               {listError !== null ? (
-                <li className="p-4 text-sm text-red-700 dark:text-red-300">
-                  {listError === 401
-                    ? '会话已过期，请重新登录后刷新。'
-                    : listError === 403
-                      ? '当前账号没有全渠道收件箱权限：需要 communication_channels.connect_user_channel，请联系管理员开通。'
-                      : listError === 0
-                        ? '收件箱暂时无法连接服务，请稍后重试。'
-                        : `收件箱加载失败（HTTP ${listError}），这不是"没有会话"。`}
-                </li>
+                <li className="p-4 text-sm text-red-700 dark:text-red-300">{loadErrorMessage(listError, 'list')}</li>
               ) : threads.length === 0 ? (
                 <li className="p-4 text-sm text-muted-foreground">没有可访问的会话。</li>
               ) : null}
@@ -146,8 +166,14 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
           </aside>
 
           <section className="flex min-w-0 flex-1 flex-col rounded-lg border bg-card">
-            {!detail ? (
-              <div className="flex flex-1 items-center justify-center text-sm text-muted-foreground">选择左侧会话查看消息</div>
+            {detailError !== null ? (
+              <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-red-700 dark:text-red-300">
+                {loadErrorMessage(detailError, 'detail')}
+              </div>
+            ) : !detail ? (
+              <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-muted-foreground">
+                {selectedId ? '没有找到该会话。' : '选择左侧会话查看消息'}
+              </div>
             ) : (
               <>
                 <header className="border-b px-5 py-3">
