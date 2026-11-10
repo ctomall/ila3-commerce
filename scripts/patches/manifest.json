@@ -146,6 +146,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js",
       "marker": "/* [patched:outbound-inactive-channel-failed] */",
       "reason": "A missing or inactive channel throws before the outbound MessageChannelLink is located, leaving a queued/pending link in-flight forever. Mark the existing link failed (lastError channel_missing|channel_inactive), emit delivery_failed, flush and return failed; keep the throw only when no link exists."
+    },
+    {
+      "id": "tenant-channel-shared",
+      "script": "scripts/patches/apply-tenant-channel-shared.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/connect-channel.js",
+      "marker": "/* [patched:tenant-channel-shared] */",
+      "reason": "createConnectedChannelRow never writes visibility, so tenant-scoped WhatsApp/Messenger channels keep user_id=null + visibility=private and sendAsUser rejects every sender. Set visibility=shared for channelScope=tenant on create and reconnect/heal; per-user channels keep their visibility."
     }
   ]
 }
