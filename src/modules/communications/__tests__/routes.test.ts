@@ -11,6 +11,7 @@ import {
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { SendRequest } from '../data/entities'
 import { computeSendPayloadHash } from '../lib/send-request'
+import { OutboundMediaError, uploadAttachmentAsMedia } from '../lib/outbound-media'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 import { Message } from '@open-mercato/core/modules/messages/data/entities'
 
@@ -21,6 +22,20 @@ jest.mock('@open-mercato/shared/lib/auth/server', () => ({
 jest.mock('@open-mercato/shared/lib/di/container', () => ({
   createRequestContainer: jest.fn(),
 }))
+
+jest.mock('../lib/outbound-media', () => {
+  class OutboundMediaError extends Error {
+    code: string
+    status: number
+    constructor(message: string, code: string, status: number) {
+      super(message)
+      this.name = 'OutboundMediaError'
+      this.code = code
+      this.status = status
+    }
+  }
+  return { OutboundMediaError, uploadAttachmentAsMedia: jest.fn() }
+})
 
 const mockAuth = getAuthFromRequest as jest.MockedFunction<typeof getAuthFromRequest>
 const mockContainer = createRequestContainer as jest.MockedFunction<typeof createRequestContainer>
@@ -245,6 +260,59 @@ describe('POST /api/communications/me/send', () => {
     expect(res.status).toBe(503)
     await expect(res.json()).resolves.toMatchObject({ code: 'SEND_LEDGER_UNAVAILABLE' })
     expect(send).not.toHaveBeenCalled()
+  })
+
+  it('keeps the idempotency claim when the media upload outcome is unknown', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn()
+    const upload = uploadAttachmentAsMedia as jest.MockedFunction<typeof uploadAttachmentAsMedia>
+    const em = createFakeEm({
+      channels: [
+        {
+          id: 'ch-1',
+          providerKey: 'whatsapp-business',
+          channelType: 'whatsapp',
+          organizationId: 'o1',
+          userId: 'u1',
+          status: 'connected',
+          isActive: true,
+          visibility: 'private',
+        },
+      ],
+      // An inbound message inside the 24h window: the policy check must not be
+      // the thing this test exercises.
+      conversations: [{ id: 'conv-1' }],
+      messages: [{ direction: 'inbound', createdAt: new Date() }],
+    })
+    useContainer(
+      (name) =>
+        name === 'attachmentService' || name === 'integrationCredentialsService' ? {} : send,
+      em,
+    )
+    upload.mockRejectedValueOnce(new OutboundMediaError('media upload timed out', 'MEDIA_UPLOAD_TIMEOUT', 503))
+    const { POST } = await load()
+    const request = () =>
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          media: { attachmentId: '123e4567-e89b-42d3-a456-426614174000' },
+          clientRequestId: 'req-media-timeout',
+        }),
+      })
+    const first = await POST(request())
+    expect(first.status).toBe(503)
+    await expect(first.json()).resolves.toMatchObject({ code: 'MEDIA_UPLOAD_TIMEOUT' })
+    expect(send).not.toHaveBeenCalled()
+    // A 5xx upload outcome is unknown: the claim must NOT be released, so the
+    // retry is refused as in-flight instead of uploading/sending twice.
+    expect(em.removed).toHaveLength(0)
+    const second = await POST(request())
+    expect(second.status).toBe(409)
+    expect(upload).toHaveBeenCalledTimes(1)
   })
 
   it('replays the first result when the same clientRequestId already sent', async () => {
