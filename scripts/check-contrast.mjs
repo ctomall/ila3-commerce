@@ -119,6 +119,9 @@ if (typeof token === 'string' && token.split('.').length === 3) {
   if (claims.tenantId) cookies.push({ name: 'om_selected_tenant', value: String(claims.tenantId), url: BASE, path: '/', httpOnly: false, secure: false })
   if (claims.orgId) cookies.push({ name: 'om_selected_org', value: String(claims.orgId), url: BASE, path: '/', httpOnly: false, secure: false })
 }
+// The rail is collapsed by default in a fresh session, and a collapsed rail renders no
+// sidebar links, so the sidebar sample silently disappeared.
+cookies.push({ name: 'om_sidebar_collapsed', value: '0', url: BASE, path: '/', httpOnly: false, secure: false })
 
 const run = execFileSync('node', [EGO, 'nodejs'], { input: snippet.replace('__COOKIES__', JSON.stringify(cookies)), encoding: 'utf8', timeout: 300000 })
 const line = run.split('\n').find((l) => l.includes('@@DSH_RESULT@@'))
