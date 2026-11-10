@@ -8,7 +8,6 @@ import { namespacesForBackendRoute, trimDictionaryToNamespaces } from '@/lib/i18
 import { resolveForcedLocale } from '@open-mercato/shared/lib/i18n/locale'
 import { I18nProvider } from '@open-mercato/shared/lib/i18n/context'
 import { authorizeFeatures } from '@open-mercato/shared/security/featurePolicy'
-import { profilePathPrefixes } from '@open-mercato/core/modules/auth/lib/profile-sections'
 import { APP_VERSION } from '@open-mercato/shared/lib/version'
 
 // Footer shows the exact build, not just the package version.
@@ -20,23 +19,6 @@ import { BrowserTelemetry } from '@open-mercato/telemetry/browser'
 import { resolveBrowserTelemetryConfig } from '@open-mercato/telemetry/browser/server'
 import { DemoFeedbackWidget } from '@/components/DemoFeedbackWidget'
 import { BackendHeaderChrome } from '@/components/BackendHeaderChrome'
-import { CrmSidebarNav } from '@/modules/crm_navigation/widgets/injection/sidebar-nav/widget'
-
-function collectStaticSettingsPathPrefixes(): string[] {
-  const prefixes = new Set<string>()
-  for (const route of backendRouteMetadata) {
-    if (route.pageContext !== 'settings') continue
-    const href = route.pattern ?? route.path ?? ''
-    if (!href || href.includes('[')) continue
-    const parts = href.split('/')
-    const lastSegment = parts[parts.length - 1]
-    if (parts.length > 3 && lastSegment !== 'settings') {
-      prefixes.add(parts.slice(0, -1).join('/'))
-    }
-    prefixes.add(href)
-  }
-  return Array.from(prefixes)
-}
 
 export default async function BackendLayout({
   children,
@@ -131,6 +113,9 @@ export default async function BackendLayout({
         productName={productName}
         email={auth?.email}
         canManageUpgradeActions={canManageUpgradeActions}
+        // The installed AppShell fills the sidebar from `adminNavApi` (the
+        // catalogue-backed chrome payload). This empty list is only the
+        // pre-chrome fallback while that request is in flight.
         groups={[]}
         currentTitle={currentTitle}
         breadcrumb={breadcrumb}
@@ -148,13 +133,6 @@ export default async function BackendLayout({
         adminNavApi="/api/crm_navigation/navigation?chrome=1"
         version={DISPLAY_VERSION}
         hideFooter={hideBackendFooter}
-        settingsPathPrefixes={collectStaticSettingsPathPrefixes()}
-        settingsSections={[]}
-        settingsSectionTitle={translate('backend.nav.settings', 'Settings')}
-        profileSections={[]}
-        profileSectionTitle={translate('profile.page.title', 'Profile')}
-        profilePathPrefixes={profilePathPrefixes}
-        mobileSidebarSlot={<CrmSidebarNav variant="mobile" />}
       >
         <PageInjectionBoundary path={path} context={injectionContext}>
           {children}

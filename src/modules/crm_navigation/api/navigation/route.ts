@@ -1,7 +1,9 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
+import { resolveTranslations } from '@open-mercato/shared/lib/i18n/server'
 import { buildCrmNavigation } from '@/nav/crm-navigation'
+import { buildShellChrome } from '@/nav/shell-chrome'
 import { NAV_GROUP_CATALOG } from '@/lib/nav/group-catalog'
 import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
 
@@ -10,14 +12,19 @@ import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
  *
  * The core endpoint stays the single source of truth for what a caller may see:
  * this route calls it with the caller's own cookies, then arranges the result.
- * The shell receives no default nav groups (the left rail is rendered by the
- * app-owned module), no settings/profile section rails (so the rail cannot turn
- * into a second- or third-level tree), and a `crm` catalogue that the sidebar
- * and content-area strip consume.
  *
- * `settingsPathPrefixes` / `profilePathPrefixes` are preserved because the shell
- * uses them for organization-scope behaviour; only the section *lists* are
- * emptied, which is what keeps the rail constant.
+ * The installed `AppShell` renders the sidebar itself (`renderSidebar` in
+ * `@open-mercato/ui/src/backend/AppShell.tsx`): logo, search, uppercase group
+ * headers, icon + label items, collapse and mobile drawer. v1 therefore returns
+ * the catalogue's declared groups as real shell `groups` instead of leaving the
+ * shell empty for an app-owned rail. `/backend/manage` is appended as its own
+ * entry so the hidden management hub stays reachable; see `@/nav/shell-chrome`.
+ *
+ * `settingsSections` / `profileSections` are returned empty on purpose: v1 keeps
+ * the sidebar constant on settings/profile routes (every settings page is listed
+ * by `/backend/manage`, and per-user pages are reachable from the profile
+ * dropdown). `settingsPathPrefixes` / `profilePathPrefixes` are emptied with
+ * them so the shell never switches into an empty second-level panel.
  */
 
 export const metadata = {
@@ -126,13 +133,14 @@ export async function GET(req: NextRequest) {
     console.warn('[crm_navigation] duplicate daily nav hrefs:', catalog.duplicates)
   }
 
+  const { translate } = await resolveTranslations()
+  // The shell renders these groups directly; the catalogue stays attached for
+  // the management centre and the contract gate.
+  const shell = buildShellChrome(catalog, translate)
+
   return NextResponse.json({
     ...payload,
-    // Rendered by the app-owned scene widget instead of the shell's group list.
-    groups: [],
-    // Section rails would replace the scene rail on settings/profile paths.
-    settingsSections: [],
-    profileSections: [],
+    ...shell,
     crm: catalog,
   })
 }

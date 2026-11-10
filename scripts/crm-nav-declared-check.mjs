@@ -138,14 +138,42 @@ for (const role of ROLES) {
     continue
   }
   if (crm.version !== 2) push(role, `catalogue version ${crm.version}, expected 2`)
-  if ((body.groups ?? []).length !== 0) push(role, `shell still has ${body.groups.length} group(s)`)
-  if ((body.settingsSections ?? []).length !== 0) push(role, `shell still has ${body.settingsSections.length} settings section(s)`)
-  if ((body.profileSections ?? []).length !== 0) push(role, `shell still has ${body.profileSections.length} profile section(s)`)
 
   const dailyHrefs = itemHrefs((crm.groups ?? []).flatMap((group) => group.items))
   const manageHrefs = itemHrefs((crm.manage?.categories ?? []).flatMap((category) => category.items))
   const personalHrefs = itemHrefs(crm.personal?.items)
   const actionHrefs = Array.isArray(crm.actions) ? crm.actions : []
+
+  // v1 contract: the installed AppShell renders the declared catalogue as its
+  // default sidebar. Shell groups mirror catalogue groups 1:1, the management
+  // hub is appended once, and the sidebar stays constant on settings/profile
+  // routes (no second-level section panel).
+  const hasManageHub = (crm.utility ?? []).some((entry) => entry.id === 'manage')
+  const expectedShellGroupIds = (crm.groups ?? []).map((group) => group.id)
+  if (hasManageHub) expectedShellGroupIds.push('crm_navigation.utility')
+  const shellGroups = Array.isArray(body.groups) ? body.groups : []
+  const shellHrefs = itemHrefs(shellGroups.flatMap((group) => group.items))
+  if (JSON.stringify(shellGroups.map((group) => group.id)) !== JSON.stringify(expectedShellGroupIds)) {
+    push(
+      role,
+      `shell groups ${JSON.stringify(shellGroups.map((group) => group.id))} != catalogue ${JSON.stringify(expectedShellGroupIds)}`,
+    )
+  }
+  const expectedShellHrefs = hasManageHub ? [...dailyHrefs, '/backend/manage'] : [...dailyHrefs]
+  if (JSON.stringify(shellHrefs) !== JSON.stringify(expectedShellHrefs)) {
+    push(role, `shell hrefs differ from catalogue daily + management hub`)
+  }
+  if (new Set(shellHrefs).size !== shellHrefs.length) push(role, 'shell renders a href more than once')
+  for (const group of shellGroups) {
+    if (!group.id || !group.name) push(role, 'shell group is missing an id or a rendered name')
+    for (const item of group.items ?? []) {
+      if (!item.href || !item.title) push(role, `shell group ${group.id} has an unlabeled item`)
+    }
+  }
+  if ((body.settingsSections ?? []).length !== 0) push(role, `shell still has ${body.settingsSections.length} settings section(s)`)
+  if ((body.profileSections ?? []).length !== 0) push(role, `shell still has ${body.profileSections.length} profile section(s)`)
+  if ((body.settingsPathPrefixes ?? []).length !== 0) push(role, `shell still has ${body.settingsPathPrefixes.length} settings prefix(es)`)
+  if ((body.profilePathPrefixes ?? []).length !== 0) push(role, `shell still has ${body.profilePathPrefixes.length} profile prefix(es)`)
   const rendered = [...dailyHrefs, ...manageHrefs, ...personalHrefs, ...actionHrefs]
   const renderedSet = new Set(rendered)
   if (renderedSet.size !== rendered.length) {
@@ -221,6 +249,8 @@ for (const role of ROLES) {
       landing: group.landing,
       items: (group.items ?? []).length,
     })),
+    shellGroups: shellGroups.map((group) => ({ id: group.id, items: (group.items ?? []).length })),
+    shellHrefs: shellHrefs.length,
     daily: dailyHrefs.length,
     manage: manageHrefs.length,
     personal: personalHrefs.length,
