@@ -278,7 +278,8 @@ describe('K2-D1: clientRequestId is bound to the request payload', () => {
     // The stale row is dropped and replaced by the new claim.
     expect(sendRequests).toHaveLength(1)
     expect(sendRequests[0].id).not.toBe('sr-stale')
-    expect(sendRequests[0].createdAt.getTime()).toBeGreaterThan(Date.now() - 60_000)
+    const createdAt = sendRequests[0].createdAt as Date
+    expect(createdAt.getTime()).toBeGreaterThan(Date.now() - 60_000)
   })
 
   it('keeps answering 409 while the in-flight lease is still live', async () => {
