@@ -153,6 +153,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/connect-channel.js",
       "marker": "/* [patched:tenant-channel-shared] */",
       "reason": "createConnectedChannelRow never writes visibility, so tenant-scoped WhatsApp/Messenger channels keep user_id=null + visibility=private and sendAsUser rejects every sender. Set visibility=shared for channelScope=tenant on create and reconnect/heal; per-user channels keep their visibility."
+    },
+    {
+      "id": "outbound-thread-reuse-v2",
+      "script": "scripts/patches/apply-outbound-thread-reuse-v2.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
+      "marker": "/* [patched:outbound-thread-reuse-v2] */",
+      "reason": "P6-v2: a reply must reuse the inbound conversation even when its organization_id is null. Add org-scoped-then-tenant-only reads for the parent link/conversation and the conversation upsert, and look up ChannelThreadMapping by (external_conversation_id, tenant_id) — updating it in place — instead of inserting and hitting channel_thread_mappings_ext_conv_uq."
     }
   ]
 }
