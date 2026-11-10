@@ -141,13 +141,6 @@
       "reason": "A provider send whose outcome is unknown (transport failure, or the local commit failed after the provider accepted) must be marked unknown and never blindly retried; a stale attempt marker from a crashed worker is also surfaced for reconciliation instead of re-sending."
     },
     {
-      "id": "outbound-thread-reuse",
-      "script": "scripts/patches/apply-outbound-thread-reuse.mjs",
-      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
-      "marker": "/* [patched:outbound-thread-reuse] */",
-      "reason": "A reply sent through the web composer upserts its ExternalConversation by `outbound:<threadId>`, so it lands in a second conversation instead of the inbound one. Reuse the parent message's inbound conversation external key (tenant/org scoped, same channel); fall back to the legacy key when it cannot be resolved."
-    },
-    {
       "id": "outbound-inactive-channel-failed",
       "script": "scripts/patches/apply-outbound-inactive-channel-failed.mjs",
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js",
