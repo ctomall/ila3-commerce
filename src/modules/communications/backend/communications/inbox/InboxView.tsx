@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { describeMedia } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
+import { deliveryStatusLabel } from '../../../lib/delivery-status'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 
 type ThreadRow = {
@@ -194,7 +195,7 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                         <span className="font-medium text-foreground">
                           {item.direction === 'inbound' ? `客户 · ${item.senderDisplayName ?? item.senderIdentifier}` : '我方发出'}
                         </span>
-                        <span>{item.deliveryStatus ?? '—'}</span>
+                        <span>{deliveryStatusLabel(item.deliveryStatus)}</span>
                         <span>{when(item.createdAt)}</span>
                       </div>
                       {item.subject ? (
