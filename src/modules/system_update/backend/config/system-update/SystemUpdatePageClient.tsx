@@ -15,6 +15,7 @@ import {
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { formatDateTime } from '@open-mercato/shared/lib/time'
 import { apiCall } from '@open-mercato/ui/backend/utils/apiCall'
+import { Alert } from '@open-mercato/ui/primitives/alert'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { ErrorState } from '@/components/states/ErrorState'
 import { Button } from '@open-mercato/ui/primitives/button'
@@ -28,6 +29,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@open-mercato/ui/primitives/dialog'
+import VersionSurfacesPanel from './VersionSurfacesPanel'
 import {
   formatDuration,
   type CandidateDeployment,
@@ -36,6 +38,7 @@ import {
   type DeploymentStatus,
   type RunningDeployment,
 } from '../../../lib/deployment'
+import type { VersionSurfaces } from '../../../lib/versions'
 
 type UpdateRunState = 'running' | 'succeeded' | 'failed' | 'rolled-back'
 
@@ -80,6 +83,9 @@ type StatusPayload = {
   log: string[]
   /** Present on the new API. Optional so a rolling deploy can still render. */
   deployment?: DeploymentStatus | null
+  /** Kernel/app version surfaces. Optional for a rolling deploy / older server. */
+  versions?: VersionSurfaces | null
+  versionsError?: string | null
 }
 
 const RESULT_LABEL: Record<DeployResult, string> = {
@@ -179,6 +185,7 @@ export default function SystemUpdatePageClient() {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
+        target: 'system',
         ref: refInput.trim() || undefined,
         // Echo the RUNNING commit (what the upgrade would replace); the checkout
         // HEAD may already be ahead of it after a push.
@@ -307,7 +314,7 @@ export default function SystemUpdatePageClient() {
         </div>
       ) : null}
 
-      {payload ? (
+      {payload && payload.canManage ? (
         <>
       {deployment ? (
         <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
@@ -377,7 +384,16 @@ export default function SystemUpdatePageClient() {
         </div>
       ) : null}
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <VersionSurfacesPanel
+        versions={payload.versions ?? null}
+        versionsError={payload.versionsError ?? null}
+      />
+
+      <details className="rounded-lg border p-3">
+        <summary className="cursor-pointer text-sm font-semibold">
+          {t('system_update.deploy.details.title', '发布槽位与候选详情（只读）')}
+        </summary>
+      <div className="mt-3 grid gap-4 md:grid-cols-2">
         <section className="rounded-lg border p-4">
           <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
             <Server className="h-4 w-4" />
@@ -518,6 +534,7 @@ export default function SystemUpdatePageClient() {
           ) : null}
         </section>
       </div>
+      </details>
 
       <section className="rounded-lg border p-4">
         <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
@@ -588,14 +605,22 @@ export default function SystemUpdatePageClient() {
       <section className="rounded-lg border p-4">
         <h3 className="mb-3 flex items-center gap-2 text-sm font-semibold">
           <Rocket className="h-4 w-4" />
-          {t('system_update.deploy.action.title', '发起升级')}
+          {t('system_update.deploy.action.title', '发起系统更新（ILA3 应用）')}
         </h3>
-        <p className="mb-3 text-xs text-muted-foreground">
+        <p className="mb-2 text-xs text-muted-foreground">
           {t(
             'system_update.deploy.action.hint',
             '提交后由 ila3-auto-deploy 执行：CI 门禁 → 构建 release → 候选健康检查 → 切换发布槽位。进度以上方发布记录为准，不再使用旧的“检出/打标签”更新器。',
           )}
         </p>
+        <div className="mb-3">
+          <Alert status="warning" size="xs">
+            {t(
+              'system_update.deploy.action.scopeHint',
+              '此动作只更新系统版本（ILA3 应用）标识，不会升级 Open Mercato 内核；内核更新需单独的依赖升级流程。',
+            )}
+          </Alert>
+        </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Label htmlFor="system-update-ref">{t('system_update.action.ref', '目标 ref（可选）')}</Label>

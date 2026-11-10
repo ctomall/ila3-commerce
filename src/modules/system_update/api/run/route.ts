@@ -10,6 +10,7 @@ import {
   requestSelfUpdate,
 } from '../../lib/update'
 import { isDeployLockHeld } from '../../lib/deployment-reader'
+import { classifyUpgradeTarget } from '../../lib/versions'
 
 export const metadata = {
   POST: { requireAuth: true },
@@ -50,11 +51,27 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'cross-origin request rejected' }, { status: 403 })
   }
 
-  let body: { ref?: unknown; force?: unknown; confirm?: unknown } = {}
+  let body: { ref?: unknown; force?: unknown; confirm?: unknown; target?: unknown } = {}
   try {
-    body = (await req.json()) as { ref?: unknown; force?: unknown; confirm?: unknown }
+    body = (await req.json()) as { ref?: unknown; force?: unknown; confirm?: unknown; target?: unknown }
   } catch {
     body = {}
+  }
+
+  // This action publishes the app release (`origin/main` -> CI -> slot switch).
+  // A kernel/base request is refused server-side: a verified dependency upgrade,
+  // migration and permission-model review are separate, explicitly unauthorized
+  // steps, so the button cannot be coerced into a base upgrade.
+  const upgradeTarget = classifyUpgradeTarget(body.target)
+  if (!upgradeTarget.allowed) {
+    return NextResponse.json(
+      {
+        error: 'unsupported-target',
+        detail: upgradeTarget.error,
+        target: typeof body.target === 'string' ? body.target : null,
+      },
+      { status: 409 },
+    )
   }
 
   const rawRef = typeof body.ref === 'string' ? body.ref.trim() : ''
@@ -110,7 +127,7 @@ export async function POST(req: NextRequest) {
   const actor = typeof auth.email === 'string' && auth.email ? auth.email : String(auth.sub ?? 'unknown')
   const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
   console.log(
-    `[system_update] upgrade requested actor=${actor} ip=${ip} from=${expected} ref=${ref ?? 'origin/HEAD'} force=${body.force === true}`,
+    `[system_update] upgrade requested actor=${actor} ip=${ip} from=${expected} ref=${ref ?? 'origin/HEAD'} target=${upgradeTarget.target} force=${body.force === true}`,
   )
   try {
     await requestSelfUpdate({ ref, force: body.force === true, actor })
@@ -119,5 +136,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'start failed', detail: message }, { status: 500 })
   }
 
-  return NextResponse.json({ started: true, ref, force: body.force === true, actor }, { status: 202 })
+  return NextResponse.json(
+    { started: true, target: upgradeTarget.target, ref, force: body.force === true, actor },
+    { status: 202 },
+  )
 }
