@@ -146,6 +146,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/lib/send-as-user.js",
       "marker": "/* [patched:outbound-thread-reuse] */",
       "reason": "A reply sent through the web composer upserts its ExternalConversation by `outbound:<threadId>`, so it lands in a second conversation instead of the inbound one. Reuse the parent message's inbound conversation external key (tenant/org scoped, same channel); fall back to the legacy key when it cannot be resolved."
+    },
+    {
+      "id": "outbound-inactive-channel-failed",
+      "script": "scripts/patches/apply-outbound-inactive-channel-failed.mjs",
+      "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js",
+      "marker": "/* [patched:outbound-inactive-channel-failed] */",
+      "reason": "A missing or inactive channel throws before the outbound MessageChannelLink is located, leaving a queued/pending link in-flight forever. Mark the existing link failed (lastError channel_missing|channel_inactive), emit delivery_failed, flush and return failed; keep the throw only when no link exists."
     }
   ]
 }
