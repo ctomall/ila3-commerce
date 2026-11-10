@@ -228,3 +228,130 @@ describe('Messenger link attachments', () => {
     expect(requiresGraphToken('Messenger')).toBe(false)
   })
 })
+
+describe('media URL SSRF hardening', () => {
+  const publicLimits = {maxBytes: 1024 * 1024, allowPrivateHosts: false}
+
+  function mockResponse(
+    status: number,
+    init: {headers?: Record<string, string>; body?: Buffer} = {},
+  ): Response {
+    const body = init.body ?? Buffer.alloc(0)
+    return {
+      ok: status >= 200 && status < 300,
+      status,
+      headers: new Headers(init.headers ?? {}),
+      text: async () => body.toString('utf8'),
+      arrayBuffer: async () => body.buffer.slice(body.byteOffset, body.byteOffset + body.byteLength),
+    } as unknown as Response
+  }
+
+  function redirect(location: string): Response {
+    return mockResponse(302, {headers: {location}})
+  }
+
+  it('blocks non-routable address forms the old prefix check let through', () => {
+    for (const blocked of [
+      'http://0.0.0.0:3000/admin',
+      'http://100.64.0.1/x',
+      'http://198.18.0.1/x',
+      'http://224.0.0.1/x',
+      'http://240.0.0.1/x',
+      'http://[::]/x',
+      'http://[::1]/x',
+      'http://[fc00::1]/x',
+      'http://[fe80::1]/x',
+      'http://[::ffff:127.0.0.1]/x',
+      'http://[::ffff:10.0.0.1]/x',
+    ]) {
+      expect(() => assertSafeMediaUrl(blocked, publicLimits)).toThrow(/not allowed/)
+    }
+  })
+
+  it('keeps public hosts whose name merely starts with fc/fd/fe80', () => {
+    for (const allowed of [
+      'https://fc-cdn.example/a.png',
+      'https://fd.example/a.png',
+      'https://fe80.example/a.png',
+      'https://lookaside.fbsbx.com/whatsapp_business/attachments/a.png',
+    ]) {
+      expect(assertSafeMediaUrl(allowed, publicLimits).hostname).toBe(new URL(allowed).hostname)
+    }
+  })
+
+  it('refuses a redirect to a private address before requesting it', async () => {
+    const requested: string[] = []
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      requested.push(String(input))
+      return redirect('http://169.254.169.254/latest/meta-data/iam/security-credentials/')
+    }) as unknown as typeof fetch
+
+    await expect(
+      downloadMediaByUrl({url: 'https://lookaside.example/a.png', fetchImpl, limits: publicLimits}),
+    ).rejects.toMatchObject({code: 'MEDIA_URL_BLOCKED'})
+    expect(requested).toEqual(['https://lookaside.example/a.png'])
+  })
+
+  it('follows a public redirect and verifies the bytes after it', async () => {
+    const requested: string[] = []
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      const url = String(input)
+      requested.push(url)
+      if (url === 'https://lookaside.example/a.png') return redirect('https://cdn.example/final.png')
+      return mockResponse(200, {headers: {'content-type': 'image/png'}, body: PNG_BYTES})
+    }) as unknown as typeof fetch
+
+    const media = await downloadMediaByUrl({url: 'https://lookaside.example/a.png', fetchImpl, limits: publicLimits})
+    expect(media.sha256).toBe(PNG_SHA)
+    expect(requested).toEqual(['https://lookaside.example/a.png', 'https://cdn.example/final.png'])
+  })
+
+  it('does not forward the provider token to a different origin on redirect', async () => {
+    const authorizations: Array<string | undefined> = []
+    const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      authorizations.push((init?.headers as Record<string, string> | undefined)?.authorization)
+      if (url === 'https://graph.example/media-tok') {
+        return mockResponse(200, {
+          headers: {'content-type': 'application/json'},
+          body: Buffer.from(JSON.stringify({
+            url: 'https://media.example/bytes',
+            mime_type: 'image/png',
+            file_size: PNG_BYTES.byteLength,
+            sha256: PNG_SHA,
+          })),
+        })
+      }
+      if (url === 'https://media.example/bytes') return redirect('https://cdn.example/final.png')
+      if (url === 'https://cdn.example/final.png') {
+        return mockResponse(200, {headers: {'content-type': 'image/png'}, body: PNG_BYTES})
+      }
+      throw new Error(`unexpected request ${url}`)
+    }) as unknown as typeof fetch
+
+    const media = await downloadWhatsAppMedia({
+      mediaId: 'media-tok',
+      accessToken: 'secret-token',
+      baseUrl: 'https://graph.example',
+      fetchImpl,
+      limits: publicLimits,
+    })
+
+    expect(media.sha256).toBe(PNG_SHA)
+    expect(authorizations[1]).toBe('Bearer secret-token')
+    expect(authorizations[2]).toBeUndefined()
+  })
+
+  it('refuses a redirect chain longer than three hops', async () => {
+    const requested: string[] = []
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      requested.push(String(input))
+      return redirect('https://cdn.example/loop')
+    }) as unknown as typeof fetch
+
+    await expect(
+      downloadMediaByUrl({url: 'https://cdn.example/start', fetchImpl, limits: publicLimits}),
+    ).rejects.toMatchObject({code: 'MEDIA_REDIRECT_LIMIT'})
+    expect(requested).toHaveLength(4)
+  })
+})

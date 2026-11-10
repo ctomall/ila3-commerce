@@ -89,18 +89,71 @@ export class MediaDownloadError extends Error {
   }
 }
 
+/**
+ * True when the address cannot be reached from the public internet.
+ *
+ * `URL.hostname` keeps the brackets of an IPv6 literal (`[::1]`), so the previous
+ * string-prefix checks never matched: `http://[::1]/`, `http://[::ffff:127.0.0.1]/`
+ * and `http://0.0.0.0:3000/` (loopback on Linux) all passed the guard. Hostnames
+ * like `fc-cdn.example` were rejected by the same prefix logic. Both directions
+ * are fixed here by parsing the address instead of prefix-matching it.
+ */
+function isPrivateIpv4(a: number, b: number): boolean {
+  if (a === 0 || a === 10 || a === 127) return true
+  if (a === 100 && b >= 64 && b <= 127) return true // CGNAT 100.64.0.0/10
+  if (a === 169 && b === 254) return true // link-local / cloud metadata
+  if (a === 172 && b >= 16 && b <= 31) return true
+  if (a === 192 && (b === 0 || b === 168)) return true
+  if (a === 198 && (b === 18 || b === 19)) return true // benchmarking 198.18.0.0/15
+  if (a >= 224) return true // multicast + reserved + broadcast
+  return false
+}
+
+/** `::`-compressed IPv6 → eight 16-bit groups, or null when malformed. */
+function expandIpv6(literal: string): number[] | null {
+  const value = literal.toLowerCase()
+  const parts = value.split('::')
+  if (parts.length > 2) return null
+  const head = parts[0] ? parts[0].split(':') : []
+  const tail = parts.length === 2 && parts[1] ? parts[1].split(':') : []
+  if (parts.length === 1 && head.length !== 8) return null
+  const zeros = 8 - head.length - tail.length
+  if (zeros < 0) return null
+  const groups = [...head, ...Array<string>(zeros).fill('0'), ...tail].map((group) =>
+    /^[0-9a-f]{1,4}$/.test(group) ? Number.parseInt(group, 16) : Number.NaN,
+  )
+  return groups.some((group) => Number.isNaN(group)) ? null : groups
+}
+
+function isPrivateIpv6(groups: number[]): boolean {
+  const first = groups[0]
+  if ((first & 0xfe00) === 0xfc00) return true // unique-local fc00::/7
+  if ((first & 0xffc0) === 0xfe80) return true // link-local fe80::/10
+  if ((first & 0xff00) === 0xff00) return true // multicast ff00::/8
+  const zerosUntilLast = groups.slice(0, 7).every((group) => group === 0)
+  if (zerosUntilLast && (groups[7] === 0 || groups[7] === 1)) return true // :: and ::1
+  // ::ffff:a.b.c.d (IPv4-mapped): WHATWG normalizes it to ::ffff:7f00:1, so the
+  // embedded address is taken from the last two groups rather than the text.
+  if (groups.slice(0, 5).every((group) => group === 0) && groups[5] === 0xffff) {
+    return isPrivateIpv4(groups[6] >> 8, groups[6] & 0xff)
+  }
+  return false
+}
+
 function isPrivateHost(hostname: string): boolean {
   const host = hostname.toLowerCase()
-  if (host === 'localhost' || host.endsWith('.localhost')) return true
-  if (host === '::1' || host.startsWith('fc') || host.startsWith('fd') || host.startsWith('fe80')) return true
-  const ipv4 = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
+  const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host
+  if (bare === 'localhost' || bare.endsWith('.localhost')) return true
+  if (bare.includes(':')) {
+    const groups = expandIpv6(bare)
+    // An IPv6-shaped literal the parser cannot read is refused, not guessed.
+    return groups === null ? true : isPrivateIpv6(groups)
+  }
+  const ipv4 = bare.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/)
   if (!ipv4) return false
-  const [a, b] = [Number(ipv4[1]), Number(ipv4[2])]
-  if (a === 10 || a === 127) return true
-  if (a === 169 && b === 254) return true
-  if (a === 172 && b >= 16 && b <= 31) return true
-  if (a === 192 && b === 168) return true
-  return false
+  const octets = ipv4.slice(1, 5).map(Number)
+  if (octets.some((octet) => octet > 255)) return true
+  return isPrivateIpv4(octets[0], octets[1])
 }
 
 export function assertSafeMediaUrl(rawUrl: string, limits: MediaDownloadLimits): URL {
@@ -120,6 +173,46 @@ export function assertSafeMediaUrl(rawUrl: string, limits: MediaDownloadLimits):
     throw new MediaDownloadError('MEDIA_URL_BLOCKED', `media host ${url.hostname} is not allowed`)
   }
   return url
+}
+
+const REDIRECT_STATUS = new Set([301, 302, 303, 307, 308])
+const MAX_MEDIA_REDIRECTS = 3
+
+/**
+ * Fetch a provider-supplied media URL while following redirects by hand.
+ *
+ * `fetch` follows redirects by default and the guard only ran on the URL the
+ * provider handed us, so a `302 Location: http://169.254.169.254/…` reached the
+ * metadata endpoint unchecked. Every hop is now validated before it is requested;
+ * the bearer token is not forwarded to a different origin (the same rule undici
+ * applies to its own redirect handling), and a chain longer than three hops is
+ * refused instead of followed.
+ */
+async function fetchMediaResponse(
+  doFetch: FetchLike,
+  initialUrl: URL,
+  headers: Record<string, string> | undefined,
+  limits: MediaDownloadLimits,
+): Promise<Response> {
+  let current = initialUrl
+  let forwardedHeaders = headers
+  let hops = 0
+  while (true) {
+    const response: Response = await doFetch(current.toString(), { headers: forwardedHeaders, redirect: 'manual' })
+    if (!REDIRECT_STATUS.has(response.status)) return response
+    const location = response.headers.get('location')
+    if (!location) return response
+    const next = assertSafeMediaUrl(new URL(location, current).toString(), limits)
+    if (next.origin !== initialUrl.origin && forwardedHeaders?.authorization) {
+      const { authorization: _dropped, ...rest } = forwardedHeaders
+      forwardedHeaders = rest
+    }
+    hops += 1
+    if (hops > MAX_MEDIA_REDIRECTS) {
+      throw new MediaDownloadError('MEDIA_REDIRECT_LIMIT', `media download exceeded ${MAX_MEDIA_REDIRECTS} redirects`)
+    }
+    current = next
+  }
 }
 
 export function assertAllowedMime(mimeType: string): void {
@@ -225,9 +318,12 @@ export async function downloadWhatsAppMedia(input: {
     )
   }
   const url = assertSafeMediaUrl(metadata.url, limits)
-  const response = await doFetch(url.toString(), {
-    headers: {authorization: `Bearer ${input.accessToken}`},
-  })
+  const response = await fetchMediaResponse(
+    doFetch,
+    url,
+    {authorization: `Bearer ${input.accessToken}`},
+    limits,
+  )
   if (!response.ok) {
     throw new MediaDownloadError('MEDIA_DOWNLOAD_FAILED', `media download failed (${response.status})`)
   }
@@ -345,7 +441,7 @@ export async function downloadMediaByUrl(input: {
   const limits = input.limits ?? resolveMediaDownloadLimits()
   const url = assertSafeMediaUrl(input.url, limits)
   const doFetch = input.fetchImpl ?? fetch
-  const response = await doFetch(url.toString())
+  const response = await fetchMediaResponse(doFetch, url, undefined, limits)
   if (!response.ok) {
     throw new MediaDownloadError('MEDIA_DOWNLOAD_FAILED', `media download failed (${response.status})`)
   }
