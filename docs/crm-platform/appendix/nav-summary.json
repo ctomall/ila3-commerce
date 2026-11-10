@@ -2,7 +2,7 @@
   {
     "role": "superadmin",
     "file": "docs/crm-platform/appendix/nav-superadmin.json",
-    "groups": 4,
+    "groups": 21,
     "mainItems": 131,
     "settingsSections": 8,
     "settingsItems": 58,
@@ -11,7 +11,7 @@
   {
     "role": "admin",
     "file": "docs/crm-platform/appendix/nav-admin.json",
-    "groups": 4,
+    "groups": 21,
     "mainItems": 129,
     "settingsSections": 8,
     "settingsItems": 56,
@@ -20,7 +20,7 @@
   {
     "role": "employee",
     "file": "docs/crm-platform/appendix/nav-employee.json",
-    "groups": 4,
+    "groups": 14,
     "mainItems": 65,
     "settingsSections": 5,
     "settingsItems": 11,
