@@ -107,7 +107,12 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
         body: described.body,
         bodyFormat: 'text',
         timestamp: event.timestamp,
-        channelPayload: {...event.raw, _meta: event.media ? {media: event.media} : undefined},
+        channelPayload: {
+          ...event.raw,
+          // `kind` is the Meta message type (image/audio/…): the CRM labels the
+          // attachment from it instead of guessing from the MIME type.
+          _meta: event.media ? {media: {...event.media, kind: event.type}} : undefined,
+        },
         channelContentType: described.contentType,
         channelMetadata: {providerKey: WHATSAPP_PROVIDER_KEY, type: event.type},
       }

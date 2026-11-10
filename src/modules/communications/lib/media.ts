@@ -2,17 +2,19 @@
  * Normalize the provider-specific attachment metadata our adapters keep on
  * `ExternalMessage.channelPayload` into one shape for the inbox.
  *
- * This slice intentionally does NOT download bytes: the hub never persists
- * inbound attachments and the attachments module's authorization/quota
- * semantics are a separate decision (ADR-005 G3). Exposing the metadata lets
- * staff see that a file arrived without pretending it is stored locally.
+ * Bytes are downloaded by the media worker (G3) and stored as a real Attachment
+ * linked to the ExternalMessage row; when that has happened the descriptor gains
+ * `_meta.media.download` and this summary reports `downloaded: true` instead of
+ * pretending a remote file is local.
  */
 export type MediaSummary = {
   kind: string
   fileName?: string
   mimeType?: string
   externalId?: string
-  downloaded: false
+  downloaded: boolean
+  attachmentId?: string
+  fileSize?: number
 }
 
 function str(value: unknown): string | undefined {
@@ -27,12 +29,16 @@ export function extractMediaSummary(channelPayload: unknown): MediaSummary | nul
   const meta = payload._meta as Record<string, unknown> | undefined
   const media = meta?.media as Record<string, unknown> | undefined
   if (media) {
+    const download = media.download as Record<string, unknown> | undefined
+    const attachmentId = str(download?.attachmentId)
     return {
       kind: str(media.kind) ?? 'document',
-      fileName: str(media.fileName),
-      mimeType: str(media.mimeType),
+      fileName: str(download?.fileName) ?? str(media.fileName),
+      mimeType: str(download?.mimeType) ?? str(media.mimeType),
       externalId: str(media.id),
-      downloaded: false,
+      downloaded: Boolean(attachmentId),
+      ...(attachmentId ? {attachmentId} : {}),
+      ...(typeof download?.fileSize === 'number' ? {fileSize: download.fileSize} : {}),
     }
   }
 
@@ -67,5 +73,15 @@ export function describeMedia(media: MediaSummary): string {
     : media.mimeType
       ? `${media.kind}（${media.mimeType}）`
       : media.kind
+  if (media.downloaded) {
+    const size = typeof media.fileSize === 'number' ? ` · ${formatBytes(media.fileSize)}` : ''
+    return `附件：${label} · 已下载${size}`
+  }
   return `附件：${label} · 未下载`
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }

@@ -29,4 +29,26 @@ describe('extractMediaSummary', () => {
     expect(describeMedia({kind: 'sticker', downloaded: false})).toContain('sticker')
     expect(describeMedia({kind: 'sticker', downloaded: false})).toContain('未下载')
   })
+
+  it('reports 已下载 with size once the worker stored an attachment', () => {
+    const summary = extractMediaSummary({
+      _meta: {
+        media: {
+          id: 'media-1',
+          kind: 'image',
+          mimeType: 'image/png',
+          download: {
+            attachmentId: 'att-1',
+            fileName: 'photo.png',
+            mimeType: 'image/png',
+            fileSize: 2048,
+            url: '/api/attachments/att-1',
+          },
+        },
+      },
+    })
+    expect(summary).toMatchObject({downloaded: true, attachmentId: 'att-1', fileName: 'photo.png', fileSize: 2048})
+    expect(describeMedia(summary!)).toContain('已下载')
+    expect(describeMedia(summary!)).toContain('2.0 KB')
+  })
 })
