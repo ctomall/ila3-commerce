@@ -71,6 +71,41 @@ export async function GET(req: NextRequest) {
       status: result.status,
       attempts: result.attempts,
     })
+
+    // The shell's injection provider refuses to mount ANY sidebar widget while
+    // the chrome payload is absent. A real 502 therefore produced a blank rail
+    // with no retry affordance. The API keeps its truthful 502 for callers; the
+    // shell explicitly asks for this typed chrome fallback so its provider can
+    // become ready and the app-owned rail can render the error + retry. No
+    // groups are synthesized here.
+    if (req.nextUrl.searchParams.get('chrome') === '1') {
+      return NextResponse.json(
+        {
+          groups: [],
+          settingsSections: [],
+          profileSections: [],
+          settingsPathPrefixes: [],
+          profilePathPrefixes: [],
+          grantedFeatures: [],
+          crm: {
+            version: 2,
+            error: true,
+            groups: [],
+            railActions: [],
+            utility: [],
+            manage: { categories: [] },
+            personal: { items: [] },
+            unknown: [],
+            unconfiguredGroups: [],
+            actions: [],
+            authorized: [],
+            duplicates: [],
+          },
+        },
+        { status: 200 },
+      )
+    }
+
     return NextResponse.json({ error: 'Navigation is unavailable.' }, { status })
   }
 

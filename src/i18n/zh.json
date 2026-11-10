@@ -13599,5 +13599,11 @@
   "crmNav.group.fulfillment": "履约与售后",
   "crmNav.group.people": "人员与排程",
   "crmNav.group.content": "沟通与资料",
-  "crmNav.group.automation": "自动化与规则"
+  "crmNav.group.automation": "自动化与规则",
+  "crmNav.navLoadFailed": "导航加载失败",
+  "crmNav.retry": "重试",
+  "crmNav.loading": "正在加载导航",
+  "crmNav.openAssistant": "打开 AI 助手",
+  "crmNav.utility.manage": "管理中心",
+  "crmNav.utility.account": "个人账户"
 }

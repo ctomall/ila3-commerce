@@ -1350,5 +1350,11 @@
   "crmNav.group.fulfillment": "Fulfillment & aftercare",
   "crmNav.group.people": "People & scheduling",
   "crmNav.group.content": "Communication & documents",
-  "crmNav.group.automation": "Automation & rules"
+  "crmNav.group.automation": "Automation & rules",
+  "crmNav.navLoadFailed": "Navigation failed to load",
+  "crmNav.retry": "Retry",
+  "crmNav.loading": "Loading navigation",
+  "crmNav.openAssistant": "Open AI assistant",
+  "crmNav.utility.manage": "Management centre",
+  "crmNav.utility.account": "Account"
 }

@@ -132,6 +132,7 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
           href={group.landing}
           className={linkClass(active)}
           aria-current={active ? 'page' : undefined}
+          aria-label={compact ? label : undefined}
           title={compact ? label : undefined}
           data-crm-nav-group={group.id}
           data-crm-nav-active={active ? 'true' : undefined}
@@ -159,7 +160,7 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
           onClick={() => window.dispatchEvent(new CustomEvent(AI_ASSISTANT_LAUNCHER_OPEN_EVENT))}
           className={linkClass(false)}
           title={compact ? label : undefined}
-          aria-label={t('crmNav.openAssistant', '打开 AI 助手')}
+          aria-label={compact ? t('crmNav.openAssistant', '打开 AI 助手') : undefined}
           data-crm-rail-action={action.id}
         >
           <Icon className="size-4 shrink-0" aria-hidden />
@@ -182,6 +183,7 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
           href={item.href}
           className={linkClass(active)}
           aria-current={active ? 'page' : undefined}
+          aria-label={compact ? label : undefined}
           title={compact ? label : undefined}
           data-crm-utility={item.id}
         >
@@ -195,7 +197,9 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
   if (rail.state === 'error') {
     return (
       <div data-crm-nav-state="error" data-crm-scene-nav={variant} className="px-1 py-2">
-        <p className="text-xs text-muted-foreground">{t('crmNav.navLoadFailed', '导航加载失败')}</p>
+        <p role="alert" className="text-xs text-muted-foreground">
+          {t('crmNav.navLoadFailed', '导航加载失败')}
+        </p>
         <button
           type="button"
           onClick={() => void chrome.refresh()}
@@ -223,11 +227,16 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
       className="flex flex-col gap-1"
     >
       {rail.state === 'loading' ? (
-        <ul className="flex flex-col gap-1" data-crm-nav-loading="">
-          {[0, 1, 2, 3, 4, 5, 6, 7].map((row) => (
-            <li key={row} aria-hidden className="h-10 animate-pulse rounded-lg bg-muted/60" />
-          ))}
-        </ul>
+        <>
+          <span className="sr-only" role="status">
+            {t('crmNav.loading', '正在加载导航')}
+          </span>
+          <ul className="flex flex-col gap-1" data-crm-nav-loading="" aria-hidden>
+            {[0, 1, 2, 3, 4, 5, 6, 7].map((row) => (
+              <li key={row} className="h-10 animate-pulse rounded-lg bg-muted/60" />
+            ))}
+          </ul>
+        </>
       ) : (
         <>
           <ul className="flex flex-col gap-1">
@@ -235,7 +244,11 @@ export function CrmSidebarNav({ variant = 'desktop' }: { variant?: Variant }) {
             {railActions.map(renderAction)}
           </ul>
           {isEmpty ? (
-            <p className="px-2 py-3 text-xs text-muted-foreground" data-crm-nav-empty-message="">
+            <p
+              role="status"
+              className="px-2 py-3 text-xs text-muted-foreground"
+              data-crm-nav-empty-message=""
+            >
               {t('crmNav.empty', '你的账号暂时没有可用的导航入口。')}
             </p>
           ) : null}

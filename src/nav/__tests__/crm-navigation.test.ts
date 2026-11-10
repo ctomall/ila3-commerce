@@ -283,4 +283,40 @@ describe('declared CRM catalogue', () => {
     expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain('/backend/config/cache')
   })
 
+  it('re-homes settings embedded in a main group instead of dropping them', () => {
+    const catalog = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: 'legacy.admin',
+            name: '管理',
+            items: [item('缓存', '/backend/config/cache', { pageContext: 'settings', order: 1 })],
+          },
+        ],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(catalog.groups).toEqual([])
+    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
+      '/backend/config/cache',
+    ])
+    expect(catalog.authorized).toContain('/backend/config/cache')
+  })
+
+  it('treats the typed chrome fallback as an error, not as empty authorization', () => {
+    const errorCatalog = {
+      ...buildCrmNavigation(payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }), declared),
+      error: true,
+    }
+    expect(readCrmCatalog({ crm: errorCatalog })).toEqual(errorCatalog)
+    expect(selectRail(errorCatalog, false)).toEqual({
+      state: 'error',
+      groups: [],
+      railActions: [],
+      utility: [],
+    })
+  })
+
 })

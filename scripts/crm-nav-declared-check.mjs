@@ -52,7 +52,10 @@ function payloadHrefs(payload) {
   const profile = []
   const walk = (items, target) => {
     for (const item of items ?? []) {
-      if (item?.href) target.push(item.href)
+      if (item?.href) {
+        target.push(item.href)
+        all.push(item.href)
+      }
       walk(item?.children, target)
     }
   }
@@ -78,9 +81,22 @@ async function statusOf(url, cookie) {
   }
 }
 
-const expectedGroups = JSON.parse(fs.readFileSync(CATALOG_PATH, 'utf8')).map((group) => group.id)
+const sourceCatalog = JSON.parse(fs.readFileSync(CATALOG_PATH, 'utf8'))
+const expectedGroups = sourceCatalog.map((group) => group.id)
 const creds = credentials()
 const report = { generatedAt: new Date().toISOString(), base: BASE, expectedGroups, roles: {} }
+const generatedCatalogPath = path.resolve(
+  process.cwd(),
+  'node_modules/@open-mercato/core/dist/modules/auth/lib/nav-groups.generated.json',
+)
+if (!fs.existsSync(generatedCatalogPath)) {
+  issues.push('global: vendor nav-groups.generated.json is missing — run yarn patches:apply')
+} else {
+  const generated = JSON.parse(fs.readFileSync(generatedCatalogPath, 'utf8'))
+  if (JSON.stringify(sourceCatalog) !== JSON.stringify(generated)) {
+    issues.push('global: vendor nav-groups.generated.json differs from src/nav/nav-groups.json — run yarn patches:apply')
+  }
+}
 
 for (const role of ROLES) {
   if (!creds.has(role)) {

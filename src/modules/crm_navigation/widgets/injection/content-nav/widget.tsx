@@ -32,7 +32,7 @@ function activeHref(items: CrmNavItem[], pathname: string): string | null {
  * entries of the current group, so a page's own module metadata decides what is
  * here. It never rebuilds a nested tree and it disappears on one-entry groups.
  */
-function ContentNav() {
+export function ContentNav() {
   const t = useT()
   const pathname = usePathname() ?? ''
   const chrome = useBackendChrome()

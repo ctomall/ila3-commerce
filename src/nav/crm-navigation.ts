@@ -73,6 +73,8 @@ export type CrmCatalog = {
   authorized: string[]
   /** Repeated hrefs observed in the upstream payload; rendered only once. */
   duplicates: string[]
+  /** The shell chrome fallback: the authorized directory could not be read. */
+  error?: boolean
 }
 
 type PayloadItem = {
@@ -392,6 +394,7 @@ export type CrmRailState = {
  * - ready: exactly what the authorized catalogue says, including an empty list.
  */
 export function selectRail(catalog: CrmCatalog | null, isLoading: boolean): CrmRailState {
+  if (catalog?.error) return { state: 'error', groups: [], railActions: [], utility: [] }
   if (catalog) {
     return {
       state: 'ready',

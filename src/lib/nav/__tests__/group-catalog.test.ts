@@ -5,17 +5,19 @@ const group = (id: string, items: unknown[]) => ({ id, items })
 
 describe('applyGroupCatalog', () => {
   it('merges member groups into the declared sections in catalog order', () => {
-    // The catalog is 工作台 / 销售业务 / 资料中心 / 管理后台: customers, catalog, fulfilment
-    // and finance are one business area now, so they merge into `sales`.
+    // The shipped catalog separates home, customers, sales and catalog; each
+    // member page group keeps its own top-level section.
     const result = applyGroupCatalog([
       group('customers.nav.group', ['a', 'b']),
       group('customers~sales.nav.group', ['c']),
       group('catalog.nav.group', ['d']),
       group('workbench.nav.group', ['home']),
     ])
-    expect(result.map((entry) => entry.id)).toEqual(['workbench', 'sales'])
+    expect(result.map((entry) => entry.id)).toEqual(['home', 'customers', 'sales', 'catalog'])
     expect(result[0].items).toEqual(['home'])
-    expect(result[1].items).toEqual(['a', 'b', 'c', 'd'])
+    expect(result[1].items).toEqual(['a', 'b'])
+    expect(result[2].items).toEqual(['c'])
+    expect(result[3].items).toEqual(['d'])
   })
 
   it('keeps unknown groups visible after the catalog', () => {
@@ -23,13 +25,13 @@ describe('applyGroupCatalog', () => {
       group('customers.nav.group', ['a']),
       group('brand_new.nav.group', ['z']),
     ])
-    expect(result.map((entry) => entry.id)).toEqual(['sales', 'brand_new.nav.group'])
+    expect(result.map((entry) => entry.id)).toEqual(['customers', 'brand_new.nav.group'])
     expect(result[1].items).toEqual(['z'])
   })
 
   it('drops catalog entries whose members are absent', () => {
     const result = applyGroupCatalog([group('catalog.nav.group', ['d'])])
-    expect(result.map((entry) => entry.id)).toEqual(['sales'])
+    expect(result.map((entry) => entry.id)).toEqual(['catalog'])
   })
 
   it('matches the shipped catalog contract', () => {
@@ -38,6 +40,7 @@ describe('applyGroupCatalog', () => {
     for (const spec of NAV_GROUP_CATALOG) {
       expect(spec.members.length).toBeGreaterThan(0)
       expect(Number.isInteger(spec.order)).toBe(true)
+      if (spec.landing) expect(spec.landing.startsWith('/backend')).toBe(true)
     }
   })
 })
