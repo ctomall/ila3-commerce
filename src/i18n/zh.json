@@ -13587,5 +13587,17 @@
   "workflows.workInbox.priorities.high": "高",
   "workflows.workInbox.priorities.low": "低",
   "workflows.workInbox.priorities.medium": "中",
-  "workflows.workInbox.title": "工作收件箱"
+  "workflows.workInbox.title": "工作收件箱",
+  "crmNav.mainAria": "主导航",
+  "crmNav.contentAria": "当前分区入口",
+  "crmNav.empty": "你的账号暂时没有可用的导航入口。",
+  "crmNav.action.assistant": "AI助手",
+  "crmNav.group.home": "工作台",
+  "crmNav.group.customers": "客户",
+  "crmNav.group.sales": "销售",
+  "crmNav.group.catalog": "商品与库存",
+  "crmNav.group.fulfillment": "履约与售后",
+  "crmNav.group.people": "人员与排程",
+  "crmNav.group.content": "沟通与资料",
+  "crmNav.group.automation": "自动化与规则"
 }

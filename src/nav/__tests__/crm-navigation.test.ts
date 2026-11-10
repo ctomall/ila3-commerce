@@ -1,13 +1,37 @@
-import fs from 'node:fs'
-import path from 'node:path'
 import { describe, expect, it } from '@jest/globals'
-import { buildCrmNavigation, readCrmCatalog, SCENE_MAP, selectRail, type CoreNavPayload } from '../crm-navigation'
+import {
+  buildCrmNavigation,
+  readCrmCatalog,
+  selectActiveGroup,
+  selectRail,
+  type CoreNavPayload,
+} from '../crm-navigation'
+import { applyGroupCatalog, NAV_GROUP_CATALOG, type NavGroupSpec } from '../../lib/nav/group-catalog'
 
-const APPENDIX = path.resolve(__dirname, '../../../docs/crm-platform/appendix')
-
-function baseline(role: 'admin' | 'employee' | 'superadmin'): CoreNavPayload {
-  return JSON.parse(fs.readFileSync(path.join(APPENDIX, `nav-${role}.json`), 'utf8')) as CoreNavPayload
-}
+const declared: NavGroupSpec[] = [
+  {
+    id: 'home',
+    label: '工作台',
+    labelKey: 'crmNav.group.home',
+    order: 10,
+    landing: '/backend/workbench',
+    members: ['workbench.nav.group'],
+  },
+  {
+    id: 'customers',
+    label: '客户',
+    order: 20,
+    landing: '/backend/customers/companies',
+    members: ['customers.nav.group'],
+  },
+  {
+    id: 'content',
+    label: '沟通与资料',
+    order: 30,
+    landing: '/backend/messages',
+    members: ['messages.nav.group', 'documents.nav.group'],
+  },
+]
 
 function item(title: string, href: string, extra: Record<string, unknown> = {}) {
   return { id: href, title, href, pageContext: 'main', ...extra }
@@ -17,16 +41,31 @@ function payload(overrides: Partial<CoreNavPayload> = {}): CoreNavPayload {
   return {
     groups: [
       {
-        id: 'sales',
-        name: '销售业务',
+        id: 'home',
+        name: '工作台',
+        items: [item('工作台', '/backend/workbench', { order: 5 })],
+      },
+      {
+        id: 'customers',
+        name: '客户',
         items: [
-          item('公司', '/backend/customers/companies'),
-          item('联系人', '/backend/customers/people'),
-          item('商机', '/backend/customers/deals', {
-            children: [item('销售漏斗', '/backend/customers/deals/pipeline')],
+          item('公司', '/backend/customers/companies', { order: 110, iconName: 'building2' }),
+          item('联系人', '/backend/customers/people', { order: 100, iconName: 'users' }),
+          item('新建公司', '/backend/customers/companies/create', { order: undefined }),
+          item('添加资源类型', '/backend/resources/resource-types/create', { order: 10000 }),
+          item('公司详情', '/backend/customers/companies/1', { order: undefined }),
+        ],
+      },
+      {
+        id: 'content',
+        name: '沟通与资料',
+        items: [
+          item('消息', '/backend/messages', { order: 460, iconName: 'mail' }),
+          item('文档', '/backend/documents', { order: 100, iconName: 'file-text' }),
+          item('通知偏好', '/backend/profile/notification-preferences', {
+            order: 30,
+            pageContext: 'profile',
           }),
-          item('商机设置', '/backend/config/customers/deals'),
-          item('添加资源类型', '/backend/resources/resource-types/create'),
         ],
       },
     ],
@@ -34,178 +73,214 @@ function payload(overrides: Partial<CoreNavPayload> = {}): CoreNavPayload {
       {
         id: 'settings.sections.system',
         label: '系统',
-        items: [{ id: 'cache', label: '缓存', href: '/backend/config/cache' }],
+        items: [item('缓存', '/backend/config/cache', { pageContext: 'settings' })],
       },
     ],
-    grantedFeatures: ['ai_assistant.view', 'customers.companies.view'],
+    profileSections: [
+      {
+        id: 'profile.sections.account',
+        label: '账户',
+        items: [
+          item('通知偏好', '/backend/profile/notification-preferences', {
+            order: 30,
+            pageContext: 'profile',
+          }),
+        ],
+      },
+    ],
+    grantedFeatures: ['ai_assistant.view'],
     ...overrides,
   }
 }
 
-describe('buildCrmNavigation', () => {
-  it('buckets authorized entries into scenes and management categories', () => {
-    const catalog = buildCrmNavigation(payload())
-    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['assistant', 'customers'])
-    expect(catalog.customers.tabs.map((tab) => tab.id)).toEqual(['companies', 'people', 'deals'])
-    expect(catalog.business.categories).toEqual([])
-    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
-      '/backend/config/cache',
-      '/backend/config/customers/deals',
+describe('declared CRM catalogue', () => {
+  it('builds top-level groups from module groups and the app arrangement', () => {
+    const catalog = buildCrmNavigation(payload(), declared)
+    expect(catalog.version).toBe(2)
+    expect(catalog.groups.map((group) => group.id)).toEqual(['home', 'customers', 'content'])
+    expect(catalog.groups[1].landing).toBe('/backend/customers/companies')
+    expect(catalog.groups[1].items.map((entry) => entry.href)).toEqual([
+      '/backend/customers/people',
+      '/backend/customers/companies',
     ])
-    expect(catalog.unknown).toEqual([])
+    expect(catalog.groups[1].iconName).toBe('building2')
+    expect(catalog.groups[1].items.map((entry) => entry.href)).not.toContain('/backend/customers/companies/create')
+    expect(catalog.groups[1].items.map((entry) => entry.href)).not.toContain('/backend/resources/resource-types/create')
   })
 
-  it('keeps child entries under their parent within one business category', () => {
+  it('keeps settings and profile out of the daily rail but reachable from their surfaces', () => {
+    const catalog = buildCrmNavigation(payload(), declared)
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain(
+      '/backend/config/cache',
+    )
+    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
+      '/backend/config/cache',
+    ])
+    expect(catalog.personal.items.map((entry) => entry.href)).toEqual([
+      '/backend/profile/notification-preferences',
+    ])
+    expect(catalog.utility.map((entry) => entry.id)).toEqual(['manage', 'account'])
+  })
+
+  it('reports a newly declared module group but still renders it without a code change', () => {
     const catalog = buildCrmNavigation(
       payload({
         groups: [
+          ...(payload().groups ?? []),
           {
-            id: 'sales',
-            name: '销售业务',
+            id: 'brand_new.nav.group',
+            name: '新模块',
+            items: [item('新入口', '/backend/brand-new', { order: 10 })],
+          },
+        ],
+      }),
+      declared,
+    )
+    expect(catalog.unconfiguredGroups).toEqual(['brand_new.nav.group'])
+    expect(catalog.groups.find((group) => group.id === 'brand_new.nav.group')?.items[0].href).toBe(
+      '/backend/brand-new',
+    )
+  })
+
+  it('converges when a module entry is disabled, removed or no longer authorized', () => {
+    const disabled = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: 'customers',
+            name: '客户',
             items: [
-              item('销售渠道', '/backend/sales/channels', {
-                children: [item('渠道报价', '/backend/sales/channels/offers')],
-              }),
+              item('公司', '/backend/customers/companies', { order: 110 }),
+              item('联系人', '/backend/customers/people', { order: 100, enabled: false }),
             ],
           },
         ],
-        settingsSections: [],
       }),
+      declared,
     )
-    const sales = catalog.business.categories.find((category) => category.id === 'sales')
-    expect(sales?.items.map((entry) => entry.href)).toEqual(['/backend/sales/channels'])
-    expect(sales?.items[0].children?.map((child) => child.href)).toEqual(['/backend/sales/channels/offers'])
-    expect(catalog.customers.insights).toEqual([])
+    expect(disabled.groups[0].items.map((entry) => entry.href)).toEqual(['/backend/customers/companies'])
+
+    const revoked = buildCrmNavigation(
+      payload({
+        groups: [{ id: 'customers', name: '客户', items: [] }],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(revoked.groups).toEqual([])
+    expect(revoked.manage.categories).toEqual([])
+    expect(revoked.personal.items).toEqual([])
+    expect(revoked.utility).toEqual([])
   })
 
-  it('treats create forms as in-page actions, not navigation', () => {
-    const catalog = buildCrmNavigation(payload())
-    expect(catalog.actions).toEqual(['/backend/resources/resource-types/create'])
-    const rendered = JSON.stringify({
-      customers: catalog.customers,
-      business: catalog.business,
-      manage: catalog.manage,
-      messages: catalog.messages,
-      personal: catalog.personal,
+  it('renders an explicitly empty authorization as ready and empty', () => {
+    const catalog = buildCrmNavigation(
+      payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }),
+      declared,
+    )
+    expect(catalog.groups).toEqual([])
+    expect(catalog.manage.categories).toEqual([])
+    expect(catalog.personal.items).toEqual([])
+    expect(catalog.railActions).toEqual([])
+    expect(selectRail(catalog, false)).toEqual({
+      state: 'ready',
+      groups: [],
+      railActions: [],
+      utility: [],
     })
-    expect(rendered).not.toContain('/backend/resources/resource-types/create')
   })
 
-  it('never renders an href that has no owner, and reports it', () => {
+  it('reports unknown owners and duplicate daily hrefs instead of silently rendering them twice', () => {
     const catalog = buildCrmNavigation(
       payload({
         groups: [
           {
-            id: 'new_module',
-            name: '新模块',
-            items: [item('神秘入口', '/backend/brand-new/thing')],
+            id: 'customers',
+            name: '客户',
+            items: [
+              item('公司', '/backend/customers/companies', { order: 110 }),
+              item('公司重复', '/backend/customers/companies', { order: 120 }),
+              { id: 'no-href', title: '坏入口' },
+            ],
+          },
+          {
+            id: '',
+            name: '无归属',
+            items: [item('神秘入口', '/backend/mystery', { order: 1 })],
           },
         ],
       }),
+      declared,
     )
-    expect(catalog.unknown).toEqual(['/backend/brand-new/thing'])
-    expect(JSON.stringify(catalog.business)).not.toContain('/backend/brand-new/thing')
+    expect(catalog.duplicates).toEqual(['/backend/customers/companies'])
+    expect(catalog.groups.flatMap((group) => group.items.filter((entry) => entry.href === '/backend/customers/companies'))).toHaveLength(1)
+    expect(catalog.unknown).toContain('/backend/mystery')
   })
 
-  it('renders no scenes or utility entries for an empty grant set', () => {
-    const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }))
-    expect(catalog.scenes).toEqual([])
-    expect(catalog.utility).toEqual([])
-    expect(catalog.unknown).toEqual([])
-  })
-
-  it('hides scenes the caller has no entries for', () => {
-    const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [] }))
-    // Only the feature-gated AI scene remains: workbench has no authorized
-    // entry in this payload, and the account entry has no profile content.
-    expect(catalog.scenes.map((scene) => scene.id)).toEqual(['assistant'])
-    expect(catalog.utility).toEqual([])
-  })
-
-  it('does not repeat an href across surfaces', () => {
-    const catalog = buildCrmNavigation(baseline('admin'))
+  it('accounts for every authorized href exactly once across groups, manage, personal and actions', () => {
+    const catalog = buildCrmNavigation(payload(), declared)
     const rendered = [
-      ...catalog.business.categories.flatMap((category) => category.items.flatMap((entry) => [entry.href, ...(entry.children ?? []).map((child) => child.href)])),
+      ...catalog.groups.flatMap((group) => group.items.map((entry) => entry.href)),
       ...catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href)),
-      ...catalog.messages.items.map((entry) => entry.href),
       ...catalog.personal.items.map((entry) => entry.href),
-      ...catalog.customers.followup.map((entry) => entry.href),
-      ...catalog.customers.insights.map((entry) => entry.href),
+      ...catalog.actions,
     ]
     expect(new Set(rendered).size).toBe(rendered.length)
-  })
-})
-
-describe('selectRail', () => {
-  it('never substitutes the full scene list while loading or after a failure', () => {
-    expect(selectRail(null, true)).toEqual({ state: 'loading', scenes: [], utility: [] })
-    expect(selectRail(null, false)).toEqual({ state: 'error', scenes: [], utility: [] })
+    expect(catalog.actions).toContain('/backend/resources/resource-types/create')
+    for (const href of catalog.authorized) expect(rendered).toContain(href)
   })
 
-  it('treats an explicitly empty authorized catalogue as ready and empty', () => {
-    const catalog = buildCrmNavigation(payload({ groups: [], settingsSections: [], profileSections: [], grantedFeatures: [] }))
-    expect(selectRail(catalog, false)).toEqual({ state: 'ready', scenes: [], utility: [] })
+  it('resolves the active group from declared entries, including detail paths', () => {
+    const catalog = buildCrmNavigation(payload(), declared)
+    expect(selectActiveGroup(catalog, '/backend')?.id).toBe('home')
+    expect(selectActiveGroup(catalog, '/backend/workbench')?.id).toBe('home')
+    expect(selectActiveGroup(catalog, '/backend/customers/companies/1')?.id).toBe('customers')
+    expect(selectActiveGroup(catalog, '/backend/customers/people')?.id).toBe('customers')
+    expect(selectActiveGroup(catalog, '/backend/manage')).toBeNull()
   })
 
-  it('reads only a real CRM payload', () => {
+  it('never substitutes a static rail while loading or after failure', () => {
+    expect(selectRail(null, true)).toEqual({
+      state: 'loading',
+      groups: [],
+      railActions: [],
+      utility: [],
+    })
+    expect(selectRail(null, false)).toEqual({
+      state: 'error',
+      groups: [],
+      railActions: [],
+      utility: [],
+    })
+  })
+
+  it('reads only a real version-2 CRM payload', () => {
     expect(readCrmCatalog(null)).toBeNull()
     expect(readCrmCatalog({ groups: [] })).toBeNull()
-    expect(readCrmCatalog({ crm: { scenes: [] } })).toBeNull()
-    expect(readCrmCatalog({ crm: { scenes: [], utility: [] } })).toEqual({ scenes: [], utility: [] })
+    expect(readCrmCatalog({ crm: { groups: [] } })).toBeNull()
+    expect(readCrmCatalog({ crm: { groups: [], utility: [] } })).toBeNull()
+    const payloadShape = { groups: [], railActions: [], utility: [] }
+    expect(readCrmCatalog({ crm: payloadShape })).toEqual(payloadShape)
   })
-})
-
-describe('scene map', () => {
-  it('declares every frozen baseline entry, for every role', () => {
-    const mapped = new Set(Object.keys(SCENE_MAP.entries))
-    for (const role of ['admin', 'employee', 'superadmin'] as const) {
-      const live = new Set<string>()
-      const collect = (items: Array<{ href?: string; children?: unknown[] }> | undefined) => {
-        for (const entry of items ?? []) {
-          if (entry.href) live.add(entry.href)
-          collect(entry.children as Array<{ href?: string; children?: unknown[] }> | undefined)
-        }
-      }
-      const data = baseline(role)
-      for (const group of data.groups ?? []) collect(group.items as never)
-      for (const section of data.settingsSections ?? []) collect(section.items as never)
-      for (const section of data.profileSections ?? []) collect(section.items as never)
-      for (const href of live) expect(mapped.has(href)).toBe(true)
-    }
-  })
-
-  it('uses a declared category for every management entry', () => {
-    const declared = new Set(SCENE_MAP.manageCategories.map((category) => category.id))
-    for (const [href, spec] of Object.entries(SCENE_MAP.entries)) {
-      if (spec.surface !== 'manage') continue
-      expect(declared.has(spec.category ?? '')).toBe(true)
-      expect(spec.disposition).toBe('nav')
-      expect(href.startsWith('/backend/')).toBe(true)
-    }
+  it('applies the app grouping catalogue before building, without a per-href table', () => {
+    const merged = applyGroupCatalog([
+      { id: 'workbench.nav.group', name: '工作台', items: [{ id: 'w', href: '/backend/workbench', title: '工作台', order: 5 }] },
+      { id: 'customers.nav.group', name: '客户', items: [{ id: 'c', href: '/backend/customers/companies', title: '公司', order: 110 }] },
+      { id: 'customers~sales.nav.group', name: '销售', items: [{ id: 's', href: '/backend/sales/quotes', title: '报价', order: 100 }] },
+      {
+        id: 'settings.sections.system',
+        name: '系统',
+        items: [{ id: 'x', href: '/backend/config/cache', title: '缓存', pageContext: 'settings', order: 1 }],
+      },
+    ])
+    const catalog = buildCrmNavigation(
+      { groups: merged as unknown as CoreNavPayload['groups'], settingsSections: [], profileSections: [], grantedFeatures: [] },
+      NAV_GROUP_CATALOG,
+    )
+    expect(catalog.groups.map((group) => group.id)).toEqual(['home', 'customers', 'sales'])
+    expect(catalog.groups.find((group) => group.id === 'home')?.landing).toBe('/backend/workbench')
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain('/backend/config/cache')
   })
 
-  it('uses a declared category for every business entry', () => {
-    const declared = new Set(SCENE_MAP.businessCategories.map((category) => category.id))
-    for (const spec of Object.values(SCENE_MAP.entries)) {
-      if (spec.surface !== 'business') continue
-      expect(declared.has(spec.category ?? '')).toBe(true)
-    }
-  })
-
-  it('keeps settings pages out of the daily business surface', () => {
-    for (const [href, spec] of Object.entries(SCENE_MAP.entries)) {
-      if (spec.surface !== 'business') continue
-      expect(href).not.toMatch(/\/settings$/)
-      expect(href.startsWith('/backend/config/')).toBe(false)
-    }
-    expect(SCENE_MAP.entries['/backend/staff/time-tracking/settings']?.surface).toBe('manage')
-    expect(SCENE_MAP.entries['/backend/warranty_claims/settings']?.surface).toBe('manage')
-  })
-
-  it('pins only hrefs that are owned by the business surface', () => {
-    expect(SCENE_MAP.businessPinned.length).toBeGreaterThan(0)
-    for (const href of SCENE_MAP.businessPinned) {
-      expect(SCENE_MAP.entries[href]?.surface).toBe('business')
-    }
-  })
 })

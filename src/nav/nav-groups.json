@@ -1,36 +1,64 @@
 [
   {
-    "id": "workbench",
+    "id": "home",
     "label": "工作台",
+    "labelKey": "crmNav.group.home",
     "order": 10,
-    "members": [
-      "workbench.nav.group",
-      "profile.sections.account",
-      "resources.nav.group",
-      "staff.nav.group",
-      "staff.time_tracking.nav.group"
-    ]
+    "landing": "/backend/workbench",
+    "members": ["workbench.nav.group"]
+  },
+  {
+    "id": "customers",
+    "label": "客户",
+    "labelKey": "crmNav.group.customers",
+    "order": 20,
+    "landing": "/backend/customers/companies",
+    "members": ["customers.nav.group"]
   },
   {
     "id": "sales",
-    "label": "销售业务",
-    "order": 20,
+    "label": "销售",
+    "labelKey": "crmNav.group.sales",
+    "order": 30,
+    "landing": "/backend/sales/quotes",
+    "members": ["customers~sales.nav.group", "sales.nav.group"]
+  },
+  {
+    "id": "catalog",
+    "label": "商品与库存",
+    "labelKey": "crmNav.group.catalog",
+    "order": 40,
+    "landing": "/backend/catalog/products",
+    "members": ["catalog.nav.group", "wms.nav.group", "checkout.nav.group"]
+  },
+  {
+    "id": "fulfillment",
+    "label": "履约与售后",
+    "labelKey": "crmNav.group.fulfillment",
+    "order": 50,
+    "landing": "/backend/warranty_claims",
+    "members": ["warranty_claims.nav.group", "eudr.nav.group"]
+  },
+  {
+    "id": "people",
+    "label": "人员与排程",
+    "labelKey": "crmNav.group.people",
+    "order": 60,
+    "landing": "/backend/staff/time-tracking",
     "members": [
-      "customers.nav.group",
-      "customers~sales.nav.group",
-      "catalog.nav.group",
-      "wms.nav.group",
-      "checkout.nav.group",
-      "warranty_claims.nav.group",
-      "eudr.nav.group",
-      "currencies.nav.group",
-      "rules.nav.group"
+      "staff.nav.group",
+      "staff.time_tracking.nav.group",
+      "resources.nav.group",
+      "planner.nav.group",
+      "availability.nav.group"
     ]
   },
   {
-    "id": "resources",
-    "label": "资料中心",
-    "order": 30,
+    "id": "content",
+    "label": "沟通与资料",
+    "labelKey": "crmNav.group.content",
+    "order": 70,
+    "landing": "/backend/messages",
     "members": [
       "documents.nav.group",
       "attachments.nav.group",
@@ -41,22 +69,11 @@
     ]
   },
   {
-    "id": "admin",
-    "label": "管理后台",
-    "order": 40,
-    "members": [
-      "workflows.module.name",
-      "backend.nav.externalSystems",
-      "settings.sections.directory",
-      "settings.sections.featureToggles",
-      "settings.sections.dataDesigner",
-      "settings.sections.moduleConfigs",
-      "settings.sections.system",
-      "settings.sections.auth",
-      "backend.nav.security",
-      "backend.nav.developers",
-      "customer_accounts.settings.section",
-      "appShell.sidebarCustomizationGroup"
-    ]
+    "id": "automation",
+    "label": "自动化与规则",
+    "labelKey": "crmNav.group.automation",
+    "order": 80,
+    "landing": "/backend/definitions",
+    "members": ["business_rules.nav.group", "rules.nav.group", "workflows.module.name"]
   }
 ]

@@ -1,48 +1,79 @@
-import sceneMap from './scene-map.json'
+import { NAV_GROUP_CATALOG, type NavGroupSpec } from '../lib/nav/group-catalog'
 
 /**
- * CRM scene catalogue: the single place that turns the authorized backend nav
- * payload into the five-scene information architecture.
+ * CRM navigation catalogue.
  *
- * The shell used to render the flat page-group list (four groups, ~130 entries
- * for an administrator, with nested children). Here the same authorized
- * entries are re-bucketed:
+ * Module declarations are the fact source for an entry. The upstream
+ * `/api/auth/admin/nav` payload is already built from `page.meta.ts` and is the
+ * only place authorization is applied: every item here came from that payload.
+ * This module never adds a page of its own, never checks a role name and never
+ * widens a grant.
  *
- *   left rail (five scenes)  ->  content-area second level
- *   management centre         ->  categorized + searchable
- *   account area             ->  profile sections
+ * What the app owns is only the top-level arrangement: `nav-groups.json` names
+ * module page groups (`pageGroupKey`) and their order. A group a module adds is
+ * appended and reported as unconfigured instead of being dropped. A page that
+ * declares no menu order is an in-page action, not a destination.
  *
- * Ownership is declared per href in `scene-map.json`; an href with no decision
- * is reported as `unknown` and is never rendered. That is deliberately not a
- * prefix/fallback fallback: a new module must be mapped (and the CI check will
- * fail) instead of silently landing in a catch-all group.
+ * There is deliberately no per-href owner table: adding a declared page changes
+ * `page.meta.ts` + discovery only, not this file.
  */
 
-export type SceneId = 'workbench' | 'assistant' | 'customers' | 'business' | 'messages'
-export type SurfaceId = SceneId | 'manage' | 'personal'
-
-export type SceneMapEntry = {
-  surface: SurfaceId
-  category?: string
-  tab?: string
-  disposition: 'nav' | 'in-page-action'
+export type CrmNavItem = {
+  href: string
+  label: string
+  iconName?: string
+  iconMarkup?: string
+  order?: number
 }
 
-export type SceneMap = {
-  version: number
-  scenes: Array<{ id: SceneId; label: string; order: number; href?: string; action?: string; icon: string }>
-  utility: Array<{ id: 'manage' | 'account'; label: string; href: string; icon: string }>
-  customers: {
-    tabs: Array<{ id: string; label: string; href: string }>
-    related: Array<{ id: string; label: string; hrefs: string[] }>
-  }
-  businessPinned: string[]
-  businessCategories: Array<{ id: string; label: string; order: number }>
-  manageCategories: Array<{ id: string; label: string; order: number }>
-  entries: Record<string, SceneMapEntry>
+export type CrmNavGroup = {
+  id: string
+  label: string
+  labelKey?: string
+  order: number
+  landing: string
+  iconName?: string
+  iconMarkup?: string
+  items: CrmNavItem[]
 }
 
-export const SCENE_MAP = sceneMap as SceneMap
+export type CrmNavCategory = {
+  id: string
+  label: string
+  labelKey?: string
+  order: number
+  items: CrmNavItem[]
+}
+
+export type CrmUtilityId = 'manage' | 'account'
+
+export type CrmRailAction = {
+  id: 'assistant'
+  label: string
+  action: 'open-ai-assistant'
+  icon: string
+  feature: string
+}
+
+export type CrmCatalog = {
+  version: 2
+  groups: CrmNavGroup[]
+  /** Shell-level actions that are not pages (currently only the AI launcher). */
+  railActions: CrmRailAction[]
+  utility: Array<{ id: CrmUtilityId; label: string; href: string; icon: string }>
+  manage: { categories: CrmNavCategory[] }
+  personal: { items: CrmNavItem[] }
+  /** Authorized entries with no usable owner — reported, never silently kept. */
+  unknown: string[]
+  /** Visible page groups that the app-level catalogue has not organised yet. */
+  unconfiguredGroups: string[]
+  /** Create/import entries that belong in a page toolbar, not the navigation. */
+  actions: string[]
+  /** Every authorized href the upstream payload carried, for reachability checks. */
+  authorized: string[]
+  /** Repeated hrefs observed in the upstream payload; rendered only once. */
+  duplicates: string[]
+}
 
 type PayloadItem = {
   id?: string
@@ -54,11 +85,13 @@ type PayloadItem = {
   iconMarkup?: string
   pageContext?: string
   order?: number
+  enabled?: boolean
+  hidden?: boolean
   children?: PayloadItem[]
 }
 
-type PayloadGroup = { id?: string; name?: string; items?: PayloadItem[] }
-type PayloadSection = { id?: string; label?: string; items?: PayloadItem[] }
+type PayloadGroup = { id?: string; name?: string; defaultName?: string; items?: PayloadItem[] }
+type PayloadSection = { id?: string; label?: string; labelKey?: string; order?: number; items?: PayloadItem[] }
 
 export type CoreNavPayload = {
   groups?: PayloadGroup[]
@@ -68,209 +101,259 @@ export type CoreNavPayload = {
   [key: string]: unknown
 }
 
-export type CrmNavItem = {
-  href: string
-  label: string
-  iconName?: string
-  children?: CrmNavItem[]
-}
-
-export type CrmNavCategory = {
-  id: string
-  label: string
-  order: number
-  items: CrmNavItem[]
-}
-
-export type CrmSceneLink = {
-  id: SceneId
-  label: string
-  order: number
-  href?: string
-  action?: string
-  icon: string
-}
-
-export type CrmCatalog = {
-  scenes: CrmSceneLink[]
-  utility: Array<{ id: 'manage' | 'account'; label: string; href: string; icon: string }>
-  customers: {
-    tabs: Array<{ id: string; label: string; href: string }>
-    followup: CrmNavItem[]
-    insights: CrmNavItem[]
-  }
-  business: { categories: CrmNavCategory[] }
-  messages: { items: CrmNavItem[] }
-  manage: { categories: CrmNavCategory[] }
-  personal: { items: CrmNavItem[] }
-  /** Authorized entries with no explicit owner — surfaced, never rendered. */
-  unknown: string[]
-  /** Create/import/export entries that belong in the page toolbar, not the nav. */
-  actions: string[]
-  /** Every authorized href the payload carried, for content-level link checks. */
-  authorized: string[]
-}
-
-type Candidate = {
-  href: string
-  label: string
-  iconName?: string
-  spec: SceneMapEntry
-  order: number
-  parentHref?: string
-  nested: boolean
-  children: Candidate[]
+const ASSISTANT_ACTION: CrmRailAction = {
+  id: 'assistant',
+  label: 'AI助手',
+  action: 'open-ai-assistant',
+  icon: 'Sparkles',
+  feature: 'ai_assistant.view',
 }
 
 function labelOf(item: PayloadItem): string {
   return (item.title ?? item.label ?? item.defaultTitle ?? item.href ?? '').trim()
 }
 
-function categoryIndex(categories: Array<{ id: string; label: string; order: number }>, id: string | undefined) {
-  if (!id) return null
-  return categories.find((category) => category.id === id) ?? null
+function isBackendHref(href: unknown): href is string {
+  return typeof href === 'string' && href.startsWith('/backend')
 }
 
-function toItems(candidates: Candidate[]): CrmNavItem[] {
-  return candidates
-    .filter((candidate) => !candidate.nested)
-    .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label))
-    .map((candidate) => ({
-      href: candidate.href,
-      label: candidate.label,
-      iconName: candidate.iconName,
-      children: candidate.children.length
-        ? candidate.children
-            .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label))
-            .map((child) => ({ href: child.href, label: child.label, iconName: child.iconName }))
-        : undefined,
-    }))
+function isDailyContext(item: PayloadItem): boolean {
+  return item.pageContext !== 'settings' && item.pageContext !== 'admin' && item.pageContext !== 'profile'
 }
 
-/**
- * Build the CRM catalogue from the *authorized* server payload.
- *
- * Nothing here widens visibility: every href comes from the payload the shell
- * already filtered by tenant, organization, role and feature grants.
- */
-export function buildCrmNavigation(payload: CoreNavPayload, map: SceneMap = SCENE_MAP): CrmCatalog {
-  const unknown = new Set<string>()
-  const actions: string[] = []
-  const seen = new Set<string>()
-  const candidates: Candidate[] = []
+function isEnabled(item: PayloadItem): boolean {
+  return item.enabled !== false
+}
 
-  const visit = (items: PayloadItem[] | undefined, parentHref?: string) => {
-    for (const item of items ?? []) {
-      const href = typeof item.href === 'string' ? item.href : ''
+function compareItems(a: CrmNavItem, b: CrmNavItem): number {
+  const ao = a.order ?? Number.MAX_SAFE_INTEGER
+  const bo = b.order ?? Number.MAX_SAFE_INTEGER
+  return ao - bo || a.label.localeCompare(b.label)
+}
+
+function compareCategories(a: CrmNavCategory, b: CrmNavCategory): number {
+  return a.order - b.order || a.label.localeCompare(b.label)
+}
+
+function flattenPayloadItems(
+  items: PayloadItem[] | undefined,
+  options: { dailyOnly: boolean; actions: string[] },
+): CrmNavItem[] {
+  const result: CrmNavItem[] = []
+
+  const visit = (entries: PayloadItem[] | undefined) => {
+    for (const item of entries ?? []) {
+      if (!isEnabled(item) || item.hidden === true) continue
+      const href = isBackendHref(item.href) ? item.href : ''
       if (href) {
-        const spec = map.entries[href]
-        if (!spec) {
-          unknown.add(href)
-        } else if (spec.disposition === 'in-page-action') {
-          actions.push(href)
-        } else if (!seen.has(href)) {
-          seen.add(href)
-          candidates.push({
+        if (options.dailyOnly && !isDailyContext(item)) {
+          // Settings/profile entries are built from their own server sections;
+          // do not leak them into the daily rail.
+        } else if (options.dailyOnly && (item.order == null || item.order === 10000)) {
+          // The vendor serializer gives an undeclared page a fallback weight of
+          // 10000. That is not a module-declared destination; it is an object
+          // action reached from the list that owns it (or a missing declaration,
+          // reported by the caller's action audit). An explicit order, however
+          // small, is a declaration and stays in the navigation.
+          options.actions.push(href)
+        } else {
+          result.push({
             href,
-            label: labelOf(item),
+            label: labelOf(item) || href,
             iconName: item.iconName,
-            spec,
-            order: candidates.length,
-            parentHref,
-            nested: false,
-            children: [],
+            iconMarkup: item.iconMarkup,
+            order: item.order,
           })
         }
       }
-      visit(item.children, href || parentHref)
+      visit(item.children)
     }
   }
 
+  visit(items)
+  return result
+}
+
+function collectContextItems(
+  items: PayloadItem[] | undefined,
+  contexts: Set<string>,
+): CrmNavItem[] {
+  const result: CrmNavItem[] = []
+  const visit = (entries: PayloadItem[] | undefined) => {
+    for (const item of entries ?? []) {
+      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href) && contexts.has(item.pageContext ?? 'main')) {
+        result.push({
+          href: item.href,
+          label: labelOf(item) || item.href,
+          iconName: item.iconName,
+          iconMarkup: item.iconMarkup,
+          order: item.order,
+        })
+      }
+      visit(item.children)
+    }
+  }
+  visit(items)
+  return result
+}
+
+function collectAuthorized(payload: CoreNavPayload): Set<string> {
+  const authorized = new Set<string>()
+  const visit = (items: PayloadItem[] | undefined) => {
+    for (const item of items ?? []) {
+      if (isBackendHref(item.href)) authorized.add(item.href)
+      visit(item.children)
+    }
+  }
   for (const group of payload.groups ?? []) visit(group.items)
   for (const section of payload.settingsSections ?? []) visit(section.items)
   for (const section of payload.profileSections ?? []) visit(section.items)
+  return authorized
+}
 
-  // Attach children to a parent that lives on the same surface + category, so a
-  // category page keeps its one-level grouping without re-introducing a tree.
-  const byHref = new Map(candidates.map((candidate) => [candidate.href, candidate]))
-  for (const candidate of candidates) {
-    if (!candidate.parentHref) continue
-    const parent = byHref.get(candidate.parentHref)
-    if (!parent) continue
-    if (parent.spec.surface !== candidate.spec.surface) continue
-    if ((parent.spec.category ?? '') !== (candidate.spec.category ?? '')) continue
-    if ((parent.spec.tab ?? '') !== (candidate.spec.tab ?? '')) continue
-    parent.children.push(candidate)
-    candidate.nested = true
-  }
+/**
+ * Build the CRM catalogue from the authorized server payload.
+ *
+ * Nothing here widens visibility: every href comes from the payload the shell
+ * already filtered by tenant, organization, role and feature grants. The
+ * `declared` argument only orchestrates page groups; it cannot add an href.
+ */
+export function buildCrmNavigation(
+  payload: CoreNavPayload,
+  declared: NavGroupSpec[] = NAV_GROUP_CATALOG,
+): CrmCatalog {
+  const groups: CrmNavGroup[] = []
+  const manageCategories: CrmNavCategory[] = []
+  const personalItems: CrmNavItem[] = []
+  const unknown = new Set<string>()
+  const unconfiguredGroups = new Set<string>()
+  const actionHrefs: string[] = []
+  const duplicates = new Set<string>()
+  const rendered = new Set<string>()
+  const authorized = collectAuthorized(payload)
 
-  const surface = (id: SurfaceId) => candidates.filter((candidate) => candidate.spec.surface === id)
-  const byCategory = (id: SurfaceId, categories: Array<{ id: string; label: string; order: number }>): CrmNavCategory[] => {
-    const groups = new Map<string, Candidate[]>()
-    for (const candidate of surface(id)) {
-      const category = candidate.spec.category
-      if (!category || !categoryIndex(categories, category)) {
-        unknown.add(candidate.href)
-        continue
-      }
-      const bucket = groups.get(category) ?? []
-      bucket.push(candidate)
-      groups.set(category, bucket)
+  const claim = (href: string): boolean => {
+    if (rendered.has(href)) {
+      duplicates.add(href)
+      return false
     }
-    return categories
-      .filter((category) => (groups.get(category.id)?.length ?? 0) > 0)
-      .map((category) => ({
-        id: category.id,
-        label: category.label,
-        order: category.order,
-        items: toItems(groups.get(category.id) ?? []),
-      }))
+    rendered.add(href)
+    return true
   }
 
-  const customers = surface('customers')
-  const customerField = (tab: string) =>
-    toItems(customers.filter((candidate) => candidate.spec.tab === tab && !candidate.nested))
-  const tabs = map.customers.tabs.filter((tab) => customers.some((candidate) => candidate.href === tab.href))
+  const specById = new Map(declared.map((spec) => [spec.id, spec]))
+  const settingsFromGroups: CrmNavItem[] = []
+  const profileFromGroups: CrmNavItem[] = []
 
-  const business = byCategory('business', map.businessCategories)
-  const manage = byCategory('manage', map.manageCategories)
-  const messages = toItems(surface('messages'))
-  const personal = toItems(surface('personal'))
+  ;(payload.groups ?? []).forEach((group, groupIndex) => {
+    const id = typeof group.id === 'string' ? group.id.trim() : ''
+    settingsFromGroups.push(...collectContextItems(group.items, new Set(['settings', 'admin'])))
+    profileFromGroups.push(...collectContextItems(group.items, new Set(['profile'])))
+    const items: CrmNavItem[] = []
+    for (const item of flattenPayloadItems(group.items, { dailyOnly: true, actions: actionHrefs })) {
+      if (claim(item.href)) items.push(item)
+      else duplicates.add(item.href)
+    }
+    items.sort(compareItems)
+
+    if (items.length === 0) {
+      if (!id) {
+        for (const item of group.items ?? []) {
+          if (isBackendHref(item.href) && isDailyContext(item)) unknown.add(item.href)
+        }
+      }
+      return
+    }
+
+    if (!id) {
+      for (const item of items) unknown.add(item.href)
+      return
+    }
+
+    const spec = specById.get(id)
+    if (!spec) unconfiguredGroups.add(id)
+
+    const landing = spec?.landing && items.some((item) => item.href === spec.landing)
+      ? spec.landing
+      : items[0].href
+    const landingItem = items.find((item) => item.href === landing) ?? items[0]
+
+    groups.push({
+      id,
+      label: spec?.label ?? group.name ?? group.defaultName ?? id,
+      labelKey: spec?.labelKey,
+      order: spec?.order ?? 1000 + groupIndex,
+      landing,
+      iconName: landingItem.iconName ?? items.find((item) => item.iconName)?.iconName,
+      iconMarkup: landingItem.iconMarkup,
+      items,
+    })
+  })
+
+  ;(payload.settingsSections ?? []).forEach((section, index) => {
+    const items = flattenPayloadItems(section.items, { dailyOnly: false, actions: actionHrefs })
+      .filter((item) => claim(item.href))
+      .sort(compareItems)
+    if (items.length === 0) return
+    manageCategories.push({
+      id: section.id ?? `settings.section.${index}`,
+      label: section.label ?? section.labelKey ?? section.id ?? `settings.section.${index}`,
+      labelKey: section.labelKey,
+      order: section.order ?? index,
+      items,
+    })
+  })
+  const orphanSettings = settingsFromGroups
+    .filter((item) => !rendered.has(item.href))
+    .filter((item) => claim(item.href))
+    .sort(compareItems)
+  if (orphanSettings.length > 0) {
+    manageCategories.push({
+      id: 'settings.sections.other',
+      label: '其他设置',
+      order: 9999,
+      items: orphanSettings,
+    })
+  }
+  manageCategories.sort(compareCategories)
+
+  ;(payload.profileSections ?? []).forEach((section) => {
+    const items = flattenPayloadItems(section.items, { dailyOnly: false, actions: actionHrefs })
+      .filter((item) => claim(item.href))
+      .sort(compareItems)
+    personalItems.push(...items)
+  })
+
+  const orphanProfile = profileFromGroups
+    .filter((item) => !rendered.has(item.href))
+    .filter((item) => claim(item.href))
+    .sort(compareItems)
+  personalItems.push(...orphanProfile)
+  personalItems.sort(compareItems)
 
   const features = new Set(Array.isArray(payload.grantedFeatures) ? payload.grantedFeatures : [])
-  const scenes: CrmSceneLink[] = map.scenes
-    .filter((scene) => {
-      // Strict: a scene appears only when the authorized payload proves it has
-      // content. There is deliberately no "all scenes" fallback for an empty
-      // grant set — that would turn a permissions regression into a UI leak.
-      if (scene.id === 'assistant') return features.has('ai_assistant.view')
-      if (scene.id === 'workbench') return surface('workbench').length > 0
-      if (scene.id === 'customers') return tabs.length > 0 || customerField('followup').length > 0 || customerField('insights').length > 0
-      if (scene.id === 'business') return business.length > 0
-      if (scene.id === 'messages') return messages.length > 0
-      return false
-    })
-    .sort((a, b) => a.order - b.order)
-    .map(({ id, label, order, href, action, icon }) => ({ id, label, order, href, action, icon }))
+  const railActions = features.has(ASSISTANT_ACTION.feature) ? [ASSISTANT_ACTION] : []
 
-  // Same rule for the bottom entries: no static fallback, only authorized content.
-  const utility = map.utility.filter((item) => (item.id === 'manage' ? manage.length > 0 : personal.length > 0))
+  const utility: CrmCatalog['utility'] = []
+  if (manageCategories.some((category) => category.items.length > 0)) {
+    utility.push({ id: 'manage', label: '管理中心', href: '/backend/manage', icon: 'Settings' })
+  }
+  if (personalItems.length > 0) {
+    utility.push({ id: 'account', label: '个人账户', href: '/backend/profile', icon: 'UserCircle' })
+  }
 
   return {
-    scenes,
+    version: 2,
+    groups: groups.sort((a, b) => a.order - b.order || a.label.localeCompare(b.label)),
+    railActions,
     utility,
-    customers: {
-      tabs,
-      followup: customerField('followup'),
-      insights: customerField('insights'),
-    },
-    business: { categories: business },
-    messages: { items: messages },
-    manage: { categories: manage },
-    personal: { items: personal },
+    manage: { categories: manageCategories },
+    personal: { items: personalItems.sort(compareItems) },
     unknown: [...unknown].sort(),
-    actions: [...new Set(actions)].sort(),
-    authorized: [...seen].sort(),
+    unconfiguredGroups: [...unconfiguredGroups].sort(),
+    actions: [...new Set(actionHrefs)].sort(),
+    authorized: [...authorized].sort(),
+    duplicates: [...duplicates].sort(),
   }
 }
 
@@ -287,29 +370,69 @@ export function readCrmCatalog(payload: unknown): CrmCatalog | null {
   const candidate = (payload as { crm?: unknown }).crm
   if (!candidate || typeof candidate !== 'object') return null
   const catalog = candidate as CrmCatalog
-  return Array.isArray(catalog.scenes) && Array.isArray(catalog.utility) ? catalog : null
+  return Array.isArray(catalog.groups) &&
+    Array.isArray(catalog.railActions) &&
+    Array.isArray(catalog.utility)
+    ? catalog
+    : null
 }
 
 export type CrmRailState = {
   state: 'loading' | 'error' | 'ready'
-  scenes: CrmSceneLink[]
-  utility: Array<{ id: 'manage' | 'account'; label: string; href: string; icon: string }>
+  groups: CrmNavGroup[]
+  railActions: CrmRailAction[]
+  utility: CrmCatalog['utility']
 }
 
 /**
  * Resolve the rail from the three real states.
  *
- * - loading: no scenes yet (skeleton), never the full static list;
- * - error: no scenes (retry affordance owned by the caller);
+ * - loading: no groups yet (skeleton), never the full static list;
+ * - error: no groups (retry affordance owned by the caller);
  * - ready: exactly what the authorized catalogue says, including an empty list.
  */
 export function selectRail(catalog: CrmCatalog | null, isLoading: boolean): CrmRailState {
-  if (catalog) return { state: 'ready', scenes: catalog.scenes, utility: catalog.utility }
-  if (isLoading) return { state: 'loading', scenes: [], utility: [] }
-  return { state: 'error', scenes: [], utility: [] }
+  if (catalog) {
+    return {
+      state: 'ready',
+      groups: catalog.groups,
+      railActions: catalog.railActions ?? [],
+      utility: catalog.utility ?? [],
+    }
+  }
+  if (isLoading) return { state: 'loading', groups: [], railActions: [], utility: [] }
+  return { state: 'error', groups: [], railActions: [], utility: [] }
+}
+
+function matchesPath(pathname: string, href: string): boolean {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
+
+/**
+ * Resolve the current top-level group from the declared catalogue. This is a
+ * longest-prefix match over the entries the module declarations produced; it is
+ * not a static route-owner table.
+ */
+export function selectActiveGroup(catalog: CrmCatalog | null, pathname: string): CrmNavGroup | null {
+  if (!catalog) return null
+  if (pathname === '/backend') {
+    return catalog.groups.find((group) => group.id === 'home') ?? null
+  }
+  let best: CrmNavGroup | null = null
+  let bestLength = -1
+  for (const group of catalog.groups) {
+    for (const href of [group.landing, ...group.items.map((item) => item.href)]) {
+      if (!matchesPath(pathname, href)) continue
+      if (href.length > bestLength) {
+        best = group
+        bestLength = href.length
+      }
+    }
+  }
+  return best
 }
 
 /** Navigation is hidden from the rail; this says whether an entry is still reachable. */
-export function isMappedHref(href: string, map: SceneMap = SCENE_MAP): boolean {
-  return Boolean(map.entries[href])
+export function isAuthorizedHref(href: string, catalog: CrmCatalog | null): boolean {
+  return Boolean(catalog?.authorized.includes(href))
 }
