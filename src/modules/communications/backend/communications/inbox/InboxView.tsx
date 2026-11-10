@@ -137,9 +137,14 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
       <PageBody>
         <div className="flex h-[calc(100vh-9rem)] min-h-[560px] gap-4">
           <aside className="flex w-[400px] shrink-0 flex-col rounded-lg border bg-card">
-            <div className="border-b px-4 py-3">
-              <h1 className="text-base font-semibold">全渠道收件箱</h1>
-              <p className="text-xs text-muted-foreground">客户 · 渠道 · 来源账号</p>
+            <div className="flex items-start justify-between gap-2 border-b px-4 py-3">
+              <div>
+                <h1 className="text-base font-semibold">全渠道收件箱</h1>
+                <p className="text-xs text-muted-foreground">客户 · 渠道 · 来源账号</p>
+              </div>
+              <a className="text-xs underline" href="/backend/communications/channels/connect">
+                连接渠道
+              </a>
             </div>
             <ul className="divide-y overflow-y-auto">
               {threads.map((thread) => (
