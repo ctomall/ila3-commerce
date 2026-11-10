@@ -3,59 +3,80 @@
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+type Mode = 'text' | 'media' | 'template'
+
+const MEDIA_KINDS = ['image', 'video', 'audio', 'document'] as const
+
 /**
- * Web inbox reply box.
+ * Web inbox reply box: text, a public media link, or a WhatsApp template.
  *
- * The web inbox could read a conversation but not answer it; the Android client
- * and the BFF already had the send path, so this component is deliberately thin:
- * it calls the same `POST /api/communications/me/send` with the cookie auth the
- * page already has, generates the clientRequestId (so a double click cannot send
- * twice), and shows the server's machine code verbatim on refusal — window
- * closed, reauth, unsupported recipient — instead of a generic failure.
+ * Kept thin so web and Android share one BFF. The three modes map exactly onto
+ * what the server accepts today: free-form text, a media link (the API does not
+ * upload bytes for the web yet, and Messenger is link-only anyway), and a
+ * template name+language for a conversation outside the 24h window.
  */
 export function ReplyComposer(props: {
   channelId: string
   to: string
   subject: string
   parentMessageId?: string | null
+  channelType: string
 }) {
   const router = useRouter()
+  const [mode, setMode] = useState<Mode>('text')
   const [text, setText] = useState('')
+  const [mediaKind, setMediaKind] = useState<(typeof MEDIA_KINDS)[number]>('image')
+  const [mediaLink, setMediaLink] = useState('')
+  const [templateName, setTemplateName] = useState('')
+  const [templateLanguage, setTemplateLanguage] = useState('zh_CN')
   const [pending, setPending] = useState(false)
   const [status, setStatus] = useState<{ok: boolean; message: string} | null>(null)
 
+  const whatsapp = props.channelType.toLowerCase() === 'whatsapp'
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    if (pending) return
     const body = text.trim()
-    if (!body || pending) return
+    if (mode === 'text' && !body) return
+    if (mode === 'media' && !mediaLink.trim()) return
+    if (mode === 'template' && !templateName.trim()) return
     setPending(true)
     setStatus(null)
     try {
+      const payload: Record<string, unknown> = {
+        channelId: props.channelId,
+        to: [props.to],
+        subject: props.subject || 'Reply',
+        body: {plain: body || (mode === 'template' ? `模板 ${templateName.trim()}` : '')},
+        ...(props.parentMessageId ? {parentMessageId: props.parentMessageId} : {}),
+        clientRequestId: crypto.randomUUID(),
+      }
+      if (mode === 'media') {
+        payload.media = {kind: mediaKind, link: mediaLink.trim()}
+      }
+      if (mode === 'template') {
+        payload.template = {name: templateName.trim(), language: templateLanguage.trim() || 'zh_CN'}
+      }
       const response = await fetch('/api/communications/me/send', {
         method: 'POST',
         headers: {'content-type': 'application/json'},
-        body: JSON.stringify({
-          channelId: props.channelId,
-          to: [props.to],
-          subject: props.subject || 'Reply',
-          body: {plain: body},
-          ...(props.parentMessageId ? {parentMessageId: props.parentMessageId} : {}),
-          clientRequestId: crypto.randomUUID(),
-        }),
+        body: JSON.stringify(payload),
       })
       if (response.status === 202) {
         setText('')
+        setMediaLink('')
+        setTemplateName('')
         setStatus({ok: true, message: '已提交投递；平台回执到达后状态会更新。'})
         router.refresh()
       } else {
-        const payload = (await response.json().catch(() => ({}))) as {
+        const body = (await response.json().catch(() => ({}))) as {
           code?: string
           error?: string
-          lastInboundAt?: string | null
         }
         setStatus({
           ok: false,
-          message: [payload.code, payload.error].filter(Boolean).join(' · ') || `发送被拒绝（${response.status}）`,
+          message: [body.code, body.error].filter(Boolean).join(' · ') || `发送被拒绝（${response.status}）`,
         })
       }
     } catch (error) {
@@ -67,26 +88,92 @@ export function ReplyComposer(props: {
 
   return (
     <form onSubmit={submit} className="mt-3 space-y-2">
+      <div className="flex flex-wrap gap-2 text-xs">
+        {(
+          [
+            ['text', '文本'],
+            ['media', '媒体链接'],
+            ...(whatsapp ? ([['template', '模板']] as const) : []),
+          ] as const
+        ).map(([value, label]) => (
+          <button
+            key={value}
+            type="button"
+            onClick={() => setMode(value as Mode)}
+            className={`rounded border px-2 py-1 ${mode === value ? 'bg-foreground text-background' : 'text-muted-foreground'}`}
+          >
+            {label}
+          </button>
+        ))}
+        <span className="ml-auto self-center text-muted-foreground">仅 WhatsApp 支持 media id 与模板；Messenger 媒体需公网链接</span>
+      </div>
+
+      {mode === 'media' ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <select
+            value={mediaKind}
+            onChange={(event) => setMediaKind(event.target.value as (typeof MEDIA_KINDS)[number])}
+            className="rounded border px-2 py-1 text-sm"
+            aria-label="媒体类型"
+          >
+            {MEDIA_KINDS.map((kind) => (
+              <option key={kind} value={kind}>
+                {kind}
+              </option>
+            ))}
+          </select>
+          <input
+            type="url"
+            value={mediaLink}
+            onChange={(event) => setMediaLink(event.target.value)}
+            placeholder="https://…（公网可访问的文件链接）"
+            className="min-w-0 flex-1 rounded border px-3 py-1.5 text-sm"
+            aria-label="媒体链接"
+          />
+        </div>
+      ) : null}
+
+      {mode === 'template' ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            value={templateName}
+            onChange={(event) => setTemplateName(event.target.value)}
+            placeholder="模板名，如 quote_followup"
+            className="min-w-0 flex-1 rounded border px-3 py-1.5 text-sm"
+            aria-label="模板名"
+          />
+          <input
+            value={templateLanguage}
+            onChange={(event) => setTemplateLanguage(event.target.value)}
+            placeholder="语言，如 zh_CN"
+            className="w-32 rounded border px-3 py-1.5 text-sm"
+            aria-label="模板语言"
+          />
+        </div>
+      ) : null}
+
       <textarea
         value={text}
         onChange={(event) => setText(event.target.value)}
         rows={3}
         maxLength={4000}
-        placeholder={`回复 ${props.to}（正文将以当前员工身份发出）`}
+        placeholder={
+          mode === 'template'
+            ? '正文仅作会话记录，模板内容由平台发送'
+            : `回复 ${props.to}（正文将以当前员工身份发出）`
+        }
         className="w-full rounded border px-3 py-2 text-sm"
         aria-label="回复内容"
       />
       <div className="flex items-center gap-3">
         <button
           type="submit"
-          disabled={pending || text.trim().length === 0}
+          disabled={pending}
           className="rounded bg-foreground px-3 py-1.5 text-sm text-background disabled:opacity-50"
         >
           {pending ? '发送中…' : '发送回复'}
         </button>
-        <span className="text-xs text-muted-foreground">
-          仅文本；附件/模板走 API（网页选择器在下一轮）
-        </span>
+        <span className="text-xs text-muted-foreground">服务端会再次校验归属、渠道能力与发送窗口</span>
       </div>
       {status ? (
         <p className={`text-xs ${status.ok ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
