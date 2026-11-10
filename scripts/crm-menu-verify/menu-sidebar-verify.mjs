@@ -39,6 +39,7 @@ import { execFileSync } from 'node:child_process'
 import { chromium } from 'playwright'
 import { credentials, loginWithRetry } from '../lib/session.mjs'
 import { checkHeaderLabels } from './ia-headers.mjs'
+import { waitSettled } from './profile-settled.mjs'
 
 const arg = (name, fallback) => {
   const index = process.argv.indexOf(name)
@@ -106,6 +107,7 @@ const report = {
   coverage: {},
   manage: {},
   account: {},
+  entry: {},
   mobile: {},
   keyboard: {},
   reducedMotion: {},
@@ -1168,10 +1170,85 @@ try {
       }
       const badProfilePages = account.profilePages.filter((entry) => !entry.ok)
       check(role, 'account.profile-pages', 'account pages reachable (password/channels/preferences)', badProfilePages.length === 0, JSON.stringify(badProfilePages))
+
+      // account.profile-settled: page 200 is not enough — the surface must stop
+      // loading and render rows, an empty state, a form, a stable custom surface,
+      // or a retryable error. A permanent spinner fails.
+      account.profileSettled = { results: [] }
+      for (const href of profileHrefs) {
+        await page.goto(new URL(href, BASE).toString(), { waitUntil: 'domcontentloaded', timeout: 30000 }).catch(() => {})
+        const settled = await waitSettled(page, { timeout: 9000 })
+        account.profileSettled.results.push({
+          href,
+          settled: settled.settled,
+          waitedMs: settled.waitedMs,
+          loadingIndicators: settled.loadingIndicators ?? null,
+          surface: settled.surface ?? null,
+          text: short(settled.text ?? '', 200),
+        })
+      }
+      const unsettledProfilePages = account.profileSettled.results.filter((entry) => !entry.settled)
+      check(role, 'account.profile-settled', 'every personal page settles (rows / empty / form / custom surface / retryable error)', unsettledProfilePages.length === 0, JSON.stringify(unsettledProfilePages))
       roleReport.account = account
       report.account[role] = account
       await gotoReady(page, '/backend/profile/change-password')
       await takeShot(page, role, 'profile')
+
+      // entry.click-through: menu interaction, not just HTTP 200 reachability.
+      const clickThrough = { inbox: null, manage: null, profile: null }
+      await gotoReady(page, '/backend/workbench')
+      const messageHeader = page.locator('aside [data-sidebar-group="true"] button').filter({ hasText: '消息' }).first()
+      if ((await messageHeader.count()) > 0 && (await messageHeader.getAttribute('aria-expanded')) !== 'true') {
+        await messageHeader.click().catch(() => {})
+        await page.waitForTimeout(500)
+      }
+      const inboxLink = page.locator('aside a[href="/backend/communications/inbox"]').first()
+      if ((await inboxLink.count()) > 0) {
+        const clickedText = (await inboxLink.innerText().catch(() => '')).replace(/\s+/g, ' ').trim()
+        const from = page.url()
+        await inboxLink.click()
+        await page.waitForURL('**/backend/communications/inbox', { timeout: 20000 }).catch(() => {})
+        const settled = await waitSettled(page, { timeout: 9000 })
+        const text = await mainText(page)
+        clickThrough.inbox = { from, clickedText, finalUrl: page.url(), settled: settled.settled, surface: settled.surface, denied: DENY_RE.test(text), text: short(text, 200) }
+      }
+      await gotoReady(page, '/backend/workbench')
+      const manageHeader = page.locator('aside [data-sidebar-group="true"] button').filter({ hasText: '管理中心' }).first()
+      if ((await manageHeader.count()) > 0 && (await manageHeader.getAttribute('aria-expanded')) !== 'true') {
+        await manageHeader.click().catch(() => {})
+        await page.waitForTimeout(500)
+      }
+      const manageLink = page.locator('aside a[href="/backend/manage"]').first()
+      if ((await manageLink.count()) > 0) {
+        const from = page.url()
+        await manageLink.click()
+        await page.waitForURL('**/backend/manage', { timeout: 20000 }).catch(() => {})
+        const settled = await waitSettled(page, { timeout: 9000 })
+        clickThrough.manage = {
+          from,
+          finalUrl: page.url(),
+          settled: settled.settled,
+          entries: await page.locator('[data-manage-entry]').count(),
+          categories: await page.locator('main section').count(),
+        }
+      }
+      await gotoReady(page, '/backend/workbench')
+      const accountTrigger = page.locator('header button[aria-haspopup="menu"]').first()
+      if ((await accountTrigger.count()) > 0) {
+        await accountTrigger.click().catch(() => {})
+        await page.waitForTimeout(400)
+        clickThrough.profile = {
+          menuHasChangePassword: (await page.locator('[role="menu"] a[href="/backend/profile/change-password"]').count()) > 0,
+        }
+        await page.keyboard.press('Escape').catch(() => {})
+      }
+      const profileNavigation = await gotoReady(page, '/backend/profile')
+      clickThrough.profile = { ...(clickThrough.profile ?? {}), profileUrl: profileNavigation.url, profileOk: profileNavigation.ok, finalPath: (() => { try { return new URL(profileNavigation.url).pathname } catch { return '' } })() }
+      roleReport.clickThrough = clickThrough
+      report.entry[role] = clickThrough
+      check(role, 'entry.clickthrough-inbox', 'menu click lands on /backend/communications/inbox and settles', Boolean(clickThrough.inbox) && clickThrough.inbox.finalUrl === `${BASE}/backend/communications/inbox` && clickThrough.inbox.settled === true && clickThrough.inbox.denied === false, JSON.stringify(clickThrough.inbox))
+      check(role, 'entry.clickthrough-manage', 'management hub click lands on /backend/manage with 10 categories', clickThrough.manage?.finalUrl === `${BASE}/backend/manage` && clickThrough.manage?.settled === true && clickThrough.manage?.categories === 10, JSON.stringify(clickThrough.manage))
+      check(role, 'entry.clickthrough-profile', 'account menu reaches the profile surface (/backend/profile -> change-password)', clickThrough.profile?.menuHasChangePassword === true && clickThrough.profile?.profileOk === true && clickThrough.profile?.finalPath === '/backend/profile/change-password', JSON.stringify(clickThrough.profile))
 
       // Keyboard order from a fresh load.
       await gotoReady(page, '/backend/workbench')
