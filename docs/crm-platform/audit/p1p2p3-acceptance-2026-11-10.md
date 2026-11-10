@@ -40,7 +40,7 @@
 | 同 SHA 不重启 | `result=already-current`（多次；`ActiveEnterTimestamp` 不变） |
 | artifact 回滚演练 | `artifact-rollback-drill` passed（切换后注入失败 → 回滚到旧版并复验） |
 | 迁移预检 | `migration-preflight` 拒绝破坏性迁移（`migration-refusal-drill` passed） |
-| 备份恢复 | `crm-backup-restore-drill` passed（临时库恢复 + 行数对比 + 生产未变） |
+| 备份恢复 | `crm-restore-drill`（`crm-verify-all --full` 门禁；结构+内容比对，比对器先自证会红） |
 | 升级页（superadmin） | `p3-update-versions-2026-11-10.png`、`p3-update-records-2026-11-10.png` |
 
 ## 未完成 / 待决策（不折算为已完成）
