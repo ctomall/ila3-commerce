@@ -99,11 +99,23 @@ export async function GET(
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
 
-  const conversation = await em.findOne(ExternalConversation, {
-    id: params.id,
-    tenantId,
-    ...channelOrgScopeWhere(organizationId),
-  } as FilterQuery<ExternalConversation>)
+  // The path segment is an internal conversation uuid. A malformed value would
+  // otherwise reach the uuid cast and fail as a 500 (Postgres 22P02); answer with
+  // the same masked 404 as an inaccessible id, so a validation failure never
+  // confirms or distinguishes existence.
+  let conversation: ExternalConversation | null
+  try {
+    conversation = await em.findOne(ExternalConversation, {
+      id: params.id,
+      tenantId,
+      ...channelOrgScopeWhere(organizationId),
+    } as FilterQuery<ExternalConversation>)
+  } catch (err) {
+    if ((err as { code?: string }).code === '22P02') {
+      return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
+    }
+    throw err
+  }
   if (!conversation) {
     // Masked 404: an inaccessible conversation must not confirm its existence.
     return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })

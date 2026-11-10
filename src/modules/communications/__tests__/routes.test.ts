@@ -396,6 +396,20 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     await expect(res.json()).resolves.toEqual({ error: 'Conversation not found' })
   })
 
+  it('masks a malformed conversation id instead of throwing a uuid cast error', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({})
+    em.findOne.mockRejectedValueOnce(Object.assign(new Error('invalid input syntax for type uuid'), { code: '22P02' }))
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const res = await GET(
+      new Request('http://localhost/api/communications/me/threads/not-a-uuid/messages'),
+      { params: { id: 'not-a-uuid' } },
+    )
+    expect(res.status).toBe(404)
+    await expect(res.json()).resolves.toEqual({ error: 'Conversation not found' })
+  })
+
   it('returns message metadata with the platform message id and next cursor', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const createdAt = new Date('2026-11-09T10:00:00Z')
