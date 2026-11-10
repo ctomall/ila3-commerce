@@ -1,0 +1,26 @@
+# Manual entry for the upgrade page: the web app writes request.json and starts this
+# unit with --no-block; entry.mjs --legacy-ui validates and consumes that request.
+[Unit]
+Description=ILA3 Commerce self-update (one-shot)
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=pro
+Group=pro
+WorkingDirectory=/home/pro/apps/mercato
+Environment=ILA3_APP_DIR=/home/pro/apps/mercato
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=HOME=/home/pro
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/node /home/pro/apps/mercato/scripts/auto-deploy/entry.mjs --legacy-ui
+TimeoutStartSec=5400
+Restart=no
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=ila3-self-update
+
+[Install]
+WantedBy=multi-user.target
