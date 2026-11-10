@@ -12,6 +12,7 @@ import {
   downloadInboundWhatsAppMedia,
   downloadMediaByUrl,
   readMessengerAttachment,
+  requiresGraphToken,
   withMessengerMedia,
   withPersistedMedia,
   type AttachmentServiceLike,
@@ -94,16 +95,10 @@ export default async function handle(
       credentials = {}
     }
   }
+  // Messenger attachments are fetched from a provider-signed URL and need no
+  // Graph token; only the WhatsApp media-id lookup does. The token gate therefore
+  // lives on the WhatsApp branch below.
   const accessToken = typeof credentials.accessToken === 'string' ? credentials.accessToken : ''
-  if (!accessToken) {
-    // No token means the channel is not connected; the message stays with its
-    // descriptor ("未下载") rather than failing a delivery that already landed.
-    logger.warn('media download skipped: channel has no access token', {
-      channelLinkId,
-      channelId: channel.id,
-    })
-    return
-  }
   const graphBaseUrl = typeof credentials.graphBaseUrl === 'string' ? credentials.graphBaseUrl : undefined
 
   let attachmentService: AttachmentServiceLike | null = null
@@ -159,6 +154,16 @@ export default async function handle(
         reason: error instanceof Error ? error.message : String(error),
       })
     }
+    return
+  }
+
+  if (requiresGraphToken(channelType) && !accessToken) {
+    // No token means the channel is not connected; the message stays with its
+    // descriptor ("未下载") rather than failing a delivery that already landed.
+    logger.warn('media download skipped: channel has no access token', {
+      channelLinkId,
+      channelId: channel.id,
+    })
     return
   }
 

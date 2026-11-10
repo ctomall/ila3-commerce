@@ -299,6 +299,16 @@ export type AttachmentServiceLike = {
 
 export const MEDIA_PARTITION_CODE = 'privateAttachments'
 
+/**
+ * Only the WhatsApp path needs a Graph token: it resolves a media id via
+ * `/media/{id}`. A Messenger attachment is a provider-signed URL, and requiring a
+ * token there skipped every download with "channel has no access token"
+ * (found by the round-46 drill, after the capability had shipped).
+ */
+export function requiresGraphToken(channelType: string): boolean {
+  return channelType.trim().toLowerCase() === 'whatsapp'
+}
+
 export type MessengerAttachment = {kind: string; url: string}
 
 /** Messenger keeps attachments on the raw event; pick the first downloadable one. */
