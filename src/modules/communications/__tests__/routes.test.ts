@@ -10,6 +10,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { SendRequest } from '../data/entities'
+import { computeSendPayloadHash } from '../lib/send-request'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({
@@ -224,6 +225,12 @@ describe('POST /api/communications/me/send', () => {
           messageId: 'm-first',
           messageThreadId: 'th-first',
           createdAt: new Date(),
+          payloadHash: computeSendPayloadHash({
+            channelId: '11111111-1111-4111-8111-111111111111',
+            to: ['customer@example.test'],
+            subject: 'Re: demo',
+            body: { plain: 'hello' },
+          }),
         },
       ],
     })
