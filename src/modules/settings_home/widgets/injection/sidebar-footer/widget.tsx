@@ -37,14 +37,16 @@ function SidebarFooter() {
     <div className="flex shrink-0 items-center gap-1 border-t px-2 py-2">
       <Link
         href="/backend/profile"
-        aria-label={t('appShell.openUserCenter', '用户中心')}
-        title={email ?? t('appShell.openUserCenter', '用户中心')}
+        aria-label={t('appShell.openUserCenter', '个人账户')}
+        title={email ?? t('appShell.openUserCenter', '个人账户')}
         className="flex size-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-medium text-foreground transition-colors hover:bg-muted/80"
       >
         {initial}
       </Link>
       {collapsed ? null : (
-        <span className="min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground">{email ?? ''}</span>
+        <span className="min-w-0 flex-1 truncate px-1 text-xs text-muted-foreground">
+          {t('appShell.openUserCenter', '个人账户')}
+        </span>
       )}
       <button
         type="button"
