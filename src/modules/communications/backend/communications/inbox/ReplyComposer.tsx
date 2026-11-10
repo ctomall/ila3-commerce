@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { attemptAfterResponse, decideAttempt, type SendAttempt } from '../../../lib/send-attempt'
 
 type Mode = 'text' | 'media' | 'template'
 
@@ -31,8 +32,23 @@ export function ReplyComposer(props: {
   const [templateLanguage, setTemplateLanguage] = useState('zh_CN')
   const [pending, setPending] = useState(false)
   const [status, setStatus] = useState<{ok: boolean; message: string} | null>(null)
+  const [attempt, setAttempt] = useState<SendAttempt | null>(null)
 
   const whatsapp = props.channelType.toLowerCase() === 'whatsapp'
+
+  function signature(): string {
+    return JSON.stringify({
+      mode,
+      text,
+      mediaKind,
+      mediaLink,
+      templateName,
+      templateLanguage,
+      to: props.to,
+      subject: props.subject,
+      parentMessageId: props.parentMessageId ?? null,
+    })
+  }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -41,6 +57,12 @@ export function ReplyComposer(props: {
     if (mode === 'text' && !body) return
     if (mode === 'media' && !mediaLink.trim()) return
     if (mode === 'template' && !templateName.trim()) return
+    const decision = decideAttempt(attempt, signature(), () => crypto.randomUUID())
+    if ('blocked' in decision) {
+      setStatus({ok: false, message: decision.blocked})
+      return
+    }
+    setAttempt(decision.attempt)
     setPending(true)
     setStatus(null)
     try {
@@ -50,7 +72,7 @@ export function ReplyComposer(props: {
         subject: props.subject || 'Reply',
         body: {plain: body || (mode === 'template' ? `模板 ${templateName.trim()}` : '')},
         ...(props.parentMessageId ? {parentMessageId: props.parentMessageId} : {}),
-        clientRequestId: crypto.randomUUID(),
+        clientRequestId: decision.clientRequestId,
       }
       if (mode === 'media') {
         payload.media = {kind: mediaKind, link: mediaLink.trim()}
@@ -63,24 +85,50 @@ export function ReplyComposer(props: {
         headers: {'content-type': 'application/json'},
         body: JSON.stringify(payload),
       })
-      if (response.status === 202) {
+      const answer = (await response.json().catch(() => ({}))) as {
+        code?: string
+        error?: string
+        replayed?: boolean
+      }
+      if (response.ok) {
+        setAttempt(null)
         setText('')
         setMediaLink('')
         setTemplateName('')
-        setStatus({ok: true, message: '已提交投递；平台回执到达后状态会更新。'})
+        setStatus({
+          ok: true,
+          message: answer.replayed
+            ? '已取回原发送结果（未重复投递）。'
+            : '已提交投递；平台回执到达后状态会更新。',
+        })
         router.refresh()
-      } else {
-        const body = (await response.json().catch(() => ({}))) as {
-          code?: string
-          error?: string
-        }
+        return
+      }
+      const outcome = attemptAfterResponse(response.status)
+      if (outcome === 'clear') {
+        setAttempt(null)
         setStatus({
           ok: false,
-          message: [body.code, body.error].filter(Boolean).join(' · ') || `发送被拒绝（${response.status}）`,
+          message: [answer.code, answer.error].filter(Boolean).join(' · ') || `发送被拒绝（${response.status}）`,
+        })
+      } else if (outcome === 'keep-unknown') {
+        setAttempt({...decision.attempt, unknown: true})
+        setStatus({
+          ok: false,
+          message: `发送结果未知（HTTP ${response.status}）：${answer.error ?? answer.code ?? '无响应体'}。请勿修改内容，直接重试会复用同一 clientRequestId。`,
+        })
+      } else {
+        setStatus({
+          ok: false,
+          message: `同一条回复可能仍在发送中（HTTP 409）：${answer.error ?? answer.code ?? ''}。稍后重试会取回原结果。`,
         })
       }
     } catch (error) {
-      setStatus({ok: false, message: `网络错误：${error instanceof Error ? error.message : String(error)}`})
+      setAttempt({...decision.attempt, unknown: true})
+      setStatus({
+        ok: false,
+        message: `网络错误：${error instanceof Error ? error.message : String(error)}。结果未知，请勿修改内容，直接重试会复用同一 clientRequestId。`,
+      })
     } finally {
       setPending(false)
     }
@@ -88,6 +136,11 @@ export function ReplyComposer(props: {
 
   return (
     <form onSubmit={submit} className="mt-3 space-y-2">
+      {attempt?.unknown ? (
+        <p className="rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-xs text-amber-700">
+          上一条发送结果未知：请保持内容不变后重试（复用同一 clientRequestId）；修改内容会被拒绝。
+        </p>
+      ) : null}
       <div className="flex flex-wrap gap-2 text-xs">
         {(
           [
