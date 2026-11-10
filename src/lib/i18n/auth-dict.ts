@@ -76,7 +76,11 @@ const SHELL_KEY_ALLOWLIST: Record<string, string[]> = {
  * addition is verified with the DOM residue scan before shipping.
  */
 const AREA_NAMESPACES: Record<string, string[]> = {
-  customers: ['customers', 'sales'],
+  // The customer detail renders the file/activity/change-log/warranty tabs and the
+  // document + workflow cards, so trimming to customers+sales alone left their
+  // labels as raw keys ("documents.relatedDocuments.title" etc.) on the page a
+  // salesperson actually works in.
+  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs'],
   sales: ['sales', 'customers'],
   catalog: ['catalog', 'currencies', 'sales'],
   wms: ['wms', 'catalog'],
@@ -84,7 +88,8 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   staff: ['staff', 'resources'],
   workflows: ['workflows', 'business_rules'],
   integrations: ['integrations'],
-  messages: ['messages'],
+  // The message table header renders communication_channels.columns.*.
+  messages: ['messages', 'communication_channels'],
   documents: ['documents', 'attachments'],
 }
 

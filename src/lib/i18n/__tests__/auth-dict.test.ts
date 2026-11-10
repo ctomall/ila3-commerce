@@ -53,6 +53,20 @@ describe('backend route namespaces', () => {
     expect(ns).not.toContain('wms')
   })
 
+  it('keeps the namespaces the customer detail actually renders', () => {
+    const ns = namespacesForBackendRoute('/backend/customers/companies-v2/abc')
+    expect(ns).not.toBeNull()
+    for (const required of ['documents', 'workflows', 'warranty_claims', 'audit_logs']) {
+      expect(ns).toContain(required)
+    }
+  })
+
+  it('keeps the communication channel column labels on the messages route', () => {
+    const ns = namespacesForBackendRoute('/backend/messages')
+    expect(ns).not.toBeNull()
+    expect(ns).toContain('communication_channels')
+  })
+
   it('keeps the full dictionary for unknown areas', () => {
     expect(namespacesForBackendRoute('/backend/unknown-area')).toBeNull()
   })
