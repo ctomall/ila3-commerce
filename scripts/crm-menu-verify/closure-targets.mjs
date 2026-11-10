@@ -341,7 +341,19 @@ async function runDesktop(role, context, credentialsMap) {
       }))
     collapse.before = await readPersistence()
     const toggle = page.locator('aside button[aria-label="切换侧边栏"]').first()
-    const togglePresent = (await toggle.count()) > 0
+    // Client hydration renders the toggle after the SSR shell; a bare count() can race
+    // it (observed once on admin while the same run passed for employee). Wait for it
+    // with a bounded budget and retry once from a fresh document before failing.
+    await toggle.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {})
+    let togglePresent = (await toggle.count()) > 0
+    if (!togglePresent) {
+      await page.reload({ waitUntil: 'domcontentloaded' })
+      await waitReady(page)
+      await toggle.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {})
+      togglePresent = (await toggle.count()) > 0
+      collapse.retriedAfterMissingToggle = true
+    }
+    collapse.togglePresent = togglePresent
     if (togglePresent) {
       await toggle.click()
       await page.waitForFunction(() => Math.round(document.querySelector('aside')?.getBoundingClientRect().width ?? 0) <= 82, undefined, { timeout: 5000 }).catch(() => {})

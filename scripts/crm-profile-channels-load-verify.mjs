@@ -37,7 +37,7 @@ const CHANNELS_API = '**/api/communication_channels/me/channels'
 /** Locale-robust: the deployment serves zh by default and en for English sessions. */
 const TIMEOUT_TITLE = /加载超时|Loading timed out/
 const RETRY_LABEL = /重新加载|Reload/
-const EMPTY_STATE = /no connected channels|connected yet|暂无|没有已连接/i
+const EMPTY_STATE = /no connected channels|connected yet|还没有连接|未连接任何渠道|暂无|没有已连接/i
 const TABLE_LOADING = /正在加载表格|Loading data/i
 
 function fail(report, message) {

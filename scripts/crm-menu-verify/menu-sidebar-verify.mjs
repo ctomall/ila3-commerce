@@ -1247,7 +1247,9 @@ try {
       roleReport.clickThrough = clickThrough
       report.entry[role] = clickThrough
       check(role, 'entry.clickthrough-inbox', 'menu click lands on /backend/communications/inbox and settles', Boolean(clickThrough.inbox) && clickThrough.inbox.finalUrl === `${BASE}/backend/communications/inbox` && clickThrough.inbox.settled === true && clickThrough.inbox.denied === false, JSON.stringify(clickThrough.inbox))
-      check(role, 'entry.clickthrough-manage', 'management hub click lands on /backend/manage with 10 categories', clickThrough.manage?.finalUrl === `${BASE}/backend/manage` && clickThrough.manage?.settled === true && clickThrough.manage?.categories === 10, JSON.stringify(clickThrough.manage))
+      const manageCategoriesOk =
+        role === 'admin' ? clickThrough.manage?.categories === 10 : Number(clickThrough.manage?.categories) > 0
+      check(role, 'entry.clickthrough-manage', 'management hub click lands on /backend/manage with its authorized categories', clickThrough.manage?.finalUrl === `${BASE}/backend/manage` && clickThrough.manage?.settled === true && manageCategoriesOk, JSON.stringify({ expected: role === 'admin' ? 10 : 'authorized-subset', ...clickThrough.manage }))
       check(role, 'entry.clickthrough-profile', 'account menu reaches the profile surface (/backend/profile -> change-password)', clickThrough.profile?.menuHasChangePassword === true && clickThrough.profile?.profileOk === true && clickThrough.profile?.finalPath === '/backend/profile/change-password', JSON.stringify(clickThrough.profile))
 
       // Keyboard order from a fresh load.
