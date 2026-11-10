@@ -337,6 +337,32 @@ node scripts/auto-deploy/artifact-rollback-drill.mjs
 `state.json status=succeeded`，`ActiveEnterTimestamp` 保持 23:54:09 不变；
 升级页刷新后出现「已是最新（未重启）/ 手动 / 63f89b87」一行。
 
+## 11.3 迁移预检与 systemd 单元纳管（2026-11-10）
+
+**迁移预检（Gate 1）**：deploy 在切换前静态分类 release 里的新迁移，只允许 expand
+（create table / add column / create index / add constraint）；DROP、改类型、rename、
+TRUNCATE、DELETE、SET NOT NULL 以及无法识别的语句一律拒绝（`migration-preflight-failed`）。
+独立验证：
+
+```bash
+node scripts/auto-deploy/migration-refusal-drill.mjs
+```
+
+2026-11-10 实跑：`exitCode=2`、`result=refused`、`errorCode=migration-preflight-failed`、
+`switchedToOld=true`、`candidateStarted=false`、`passed=true`（temp release root，不碰生产）。
+
+**单元纳管**：`deploy/systemd/` 是四个发布路径单元的仓库版本，安装器：
+
+```bash
+node scripts/auto-deploy/install-units.mjs          # --check（默认，只读，drift 退出 1）
+node scripts/auto-deploy/install-units.mjs --apply  # 需 sudo -n；写单元 + 退役冗余 drop-in + daemon-reload
+```
+
+比较只认指令行（注释不算 drift），并打印每个单元的**实际** `exec=` 与 `timeout-stop=`。
+仓库版本把 app 的 `TimeoutStopSec` 从 30s 提到 **90s**——2026-11-09 23:53 的优雅退出超过 30s，
+systemd 在 23:54:09 SIGKILL 了进程；把 `RequiresMountsFor` 与统一入口 `ExecStart` 直接写进单元，
+apply 时把四个手写 drop-in 移到 `.bak`。**未经批准不执行 `--apply`**，本轮只跑了 `--check`。
+
 ## 12. 启用 / 停用
 
 ### 当前实际状态

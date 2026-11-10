@@ -1,0 +1,20 @@
+# One-shot deploy executor, started by ila3-auto-deploy.timer and by the manual entry
+# (ila3-self-update.service). Runs scripts/auto-deploy/entry.mjs, which validates the
+# request, pins origin/main and calls deploy.mjs.
+[Unit]
+Description=ILA3 CRM isolated auto-deploy (CI gate + release build + switch)
+After=network-online.target
+Wants=network-online.target
+RequiresMountsFor=/home/pro/apps/mercato /home/pro/releases/mercato
+
+[Service]
+# NoNewPrivileges would block the setuid `sudo` this unit needs to start/stop the
+# release-slot app service; without elevation the executor installs a symlink it cannot
+# activate (that is what happened on 2026-11-09 09:06 and left production down).
+Type=oneshot
+User=pro
+Group=pro
+WorkingDirectory=/home/pro/apps/mercato
+Environment=ILA3_ALLOW_PRODUCTION=1
+ExecStart=/usr/bin/node /home/pro/apps/mercato/scripts/auto-deploy/entry.mjs --auto
+TimeoutStartSec=5400
