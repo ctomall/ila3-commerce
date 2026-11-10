@@ -7008,6 +7008,7 @@
   "messages.body": "消息",
   "messages.compose": "撰写消息",
   "messages.composer.contextPreview.title": "上下文预览",
+  "messages.composer.dialogDescription": "撰写并发送消息，保存后不自动外发。",
   "messages.composer.objectPicker.recordPlaceholder": "选择记录",
   "messages.composer.objectPicker.recordSearchLabel": "搜索记录",
   "messages.confirm.actionConfirm": "确认",
