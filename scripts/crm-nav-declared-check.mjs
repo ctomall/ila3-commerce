@@ -37,6 +37,12 @@
  * `--expect-ia` first verifies the file still matches src/nav/nav-groups.json and
  * src/nav/settings-sections.json (a stale expectation fails), then asserts the
  * candidate's container/category ids and order against that file.
+ *
+ * `--baseline <dir>` (default the v1 live-baseline artifact directory) supplies
+ * nav-admin.json/nav-employee.json for the authorization-drift comparison: only
+ * hrefs that were admin-only in that baseline can be a leak. Entries the employee
+ * could already see then (for example /backend/users and /backend/audit-logs,
+ * whose pages render Access Denied) are reported as observations, not issues.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -146,6 +152,41 @@ function isOrderedSubset(ids, expected) {
   }
   return true
 }
+
+/**
+ * Optional v1 baseline payloads, used only to separate a real v2 authorization
+ * drift from entries the employee account could already see before this change
+ * (the baseline shows /backend/users and /backend/audit-logs were already in the
+ * v1 employee payload, even though their pages render Access Denied).
+ */
+const BASELINE_DIR = arg('--baseline', '/storage/artifacts/pro/menu-declaration-audit/live-baseline')
+function loadBaseline() {
+  try {
+    const read = (file) => JSON.parse(fs.readFileSync(path.join(BASELINE_DIR, file), 'utf8'))
+    const hrefsOf = (payload) => {
+      const out = new Set()
+      const walk = (items) => {
+        for (const item of items ?? []) {
+          if (item?.href) out.add(item.href)
+          walk(item?.children)
+        }
+      }
+      for (const group of payload.groups ?? []) walk(group.items)
+      for (const section of payload.settingsSections ?? []) walk(section.items)
+      for (const section of payload.profileSections ?? []) walk(section.items)
+      return out
+    }
+    const adminHrefs = hrefsOf(read('nav-admin.json'))
+    const employeeHrefs = hrefsOf(read('nav-employee.json'))
+    return {
+      adminOnly: new Set([...adminHrefs].filter((href) => !employeeHrefs.has(href))),
+      employeeHrefs,
+    }
+  } catch {
+    return null
+  }
+}
+const baseline = loadBaseline()
 
 const creds = credentials()
 const report = { generatedAt: new Date().toISOString(), base: BASE, expectedGroups, roles: {} }
@@ -327,33 +368,51 @@ for (const role of ROLES) {
   }
 
   // Hidden pages: documented reason + evidence + reachable, non-hidden parent,
-  // never rendered. A hidden page whose parent is hidden is unreachable from the
-  // menu, which is exactly the silent-drop failure this gate exists to prevent.
+  // never rendered on a navigation surface. Reachability is measured per role:
+  // an employee who cannot reach either the page or its parent is not a
+  // reachability failure for that role (admin's own pass covers the page).
+  // "Visible" means any real surface: daily groups, management categories,
+  // personal items, or the shell's management hub — a parent in the management
+  // centre is reachable even though it is not in the daily rail.
   const renderedEverywhere = new Set(rendered)
-  const documentedParents = new Set(Object.values(hiddenPages).map((doc) => doc?.parent).filter(Boolean))
-  const reachableParents = new Set([...shellHrefs, ...manageHrefs, ...personalHrefs, '/backend'])
+  const renderedSurfaces = new Set([...dailyHrefs, ...manageHrefs])
+  const hiddenHrefs = new Set(Object.keys(hiddenPages))
+  const reachableSurface = new Set([...shellHrefs, ...manageHrefs, ...personalHrefs, '/backend'])
+  const roleAuthorized = new Set(crm.authorized ?? [])
   let hiddenDeclared = 0
+  let hiddenChecked = 0
+  const hiddenSkipped = []
   for (const [href, doc] of Object.entries(hiddenPages)) {
     hiddenDeclared += 1
-    if (!doc || typeof doc !== 'object') { push(role, `hidden page ${href} has no declaration`); continue }
+    if (!doc || typeof doc !== 'object') {
+      push(role, `hidden page ${href} has no declaration`)
+      continue
+    }
     if (!doc.reason) push(role, `hidden page ${href} has no reason`)
     if (!doc.evidence) push(role, `hidden page ${href} has no evidence`)
     if (!doc.parent || !doc.parent.startsWith('/backend')) push(role, `hidden page ${href} has no backend parent`)
-    if (doc.parent && documentedParents.has(doc.parent)) push(role, `hidden page ${href} parent is itself hidden: ${doc.parent}`)
-    if (doc.parent && !reachableParents.has(doc.parent)) push(role, `hidden page ${href} parent is not reachable: ${doc.parent}`)
-    if (renderedEverywhere.has(href)) push(role, `hidden page is rendered: ${href}`)
-  }
-
-  if (role === 'employee') {
-    for (const href of ['/backend/users', '/backend/roles', '/backend/api-keys', '/backend/config/system-status', '/backend/audit-logs']) {
-      if (renderedEverywhere.has(href)) push(role, `admin-only entry leaked to employee: ${href}`)
+    // A hidden page may legitimately live in the personal menu (for example the
+    // profile/change-password page) or be the management hub itself; it must
+    // never appear in the daily rail or inside a management category.
+    if (renderedSurfaces.has(href)) push(role, `hidden page is rendered: ${href}`)
+    const childInRole = roleAuthorized.has(href)
+    const parentInRole = doc.parent ? roleAuthorized.has(doc.parent) || reachableSurface.has(doc.parent) : false
+    // This role cannot reach either side of the pair (for example a tenant admin
+    // without the cross-tenant `directory.tenants.view` feature); the admin run
+    // still GETs the page itself, so skipping is recorded, not silent.
+    if (!childInRole && !parentInRole) {
+      hiddenSkipped.push(href)
+      continue
     }
+    hiddenChecked += 1
+    if (doc.parent && hiddenHrefs.has(doc.parent)) push(role, `hidden page ${href} parent is itself hidden: ${doc.parent}`)
+    if (doc.parent && !reachableSurface.has(doc.parent)) push(role, `hidden page ${href} parent is not reachable: ${doc.parent}`)
   }
 
   let hiddenPageChecks = null
   if (role === 'admin') {
     // A hidden entry is only acceptable when its parent is a real, reachable page.
-    const parents = [...new Set(Object.values(hiddenPages).map((doc) => doc.parent).filter(Boolean))]
+    const parents = [...new Set(Object.values(hiddenPages).map((doc) => doc?.parent).filter(Boolean))]
     const parentResults = []
     for (const parent of parents) {
       const status = await statusOf(parent, cookie)
@@ -367,6 +426,21 @@ for (const role of ROLES) {
       hrefResults.push({ href, status })
     }
     hiddenPageChecks = { parents: parentResults, hrefs: hrefResults }
+  }
+
+  // Authorization drift is measured only against hrefs that were admin-only in
+  // the v1 baseline. Entries the employee could already see then (users, audit
+  // logs) are recorded as observations, not reported as a v2 leak.
+  const observations = {}
+  if (role === 'employee') {
+    if (baseline) {
+      for (const href of renderedEverywhere) {
+        if (baseline.adminOnly.has(href)) push(role, `admin-only entry leaked to employee: ${href}`)
+      }
+      observations.preExistingEmployeeManagementEntries = manageHrefs.filter((href) => baseline.employeeHrefs.has(href))
+    } else {
+      console.warn('[declared-check] baseline payloads unavailable; admin-only leak comparison skipped (set --baseline <dir>)')
+    }
   }
 
   const deniedApi = await fetch(`${BASE}/api/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
@@ -407,7 +481,11 @@ for (const role of ROLES) {
     containers: observedGroups,
     categories: observedCategories,
     hiddenPagesDeclared: hiddenDeclared,
+    hiddenPagesChecked: hiddenChecked,
+    hiddenPagesSkipped: hiddenSkipped,
+    baseline: BASELINE_DIR,
     hiddenPages: hiddenPageChecks,
+    observations,
     daily: dailyHrefs.length,
     manage: manageHrefs.length,
     personal: personalHrefs.length,
