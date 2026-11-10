@@ -305,7 +305,23 @@ for (const role of ROLES) {
     if (profileSet.has(href)) push(role, `profile page leaked into daily rail: ${href}`)
   }
 
-  if ((crm.unknown ?? []).length > 0) push(role, `unknown owners: ${crm.unknown.join(', ')}`)
+  // R2 strict contract: the catalogue must expose every "unconfigured/unknown"
+  // bucket as an array. An old build that does not expose a field cannot prove it
+  // is empty, so a missing field is a strict failure with an explicit message.
+  const requireArrayField = (field, label) => {
+    if (!(field in crm)) {
+      push(role, `${label}: field missing from catalogue payload (old build; cannot prove it is empty)`)
+      return
+    }
+    if (!Array.isArray(crm[field])) {
+      push(role, `${label}: expected an array, got ${typeof crm[field]}`)
+      return
+    }
+    if (crm[field].length > 0) push(role, `${label}: ${crm[field].join(', ')}`)
+  }
+  requireArrayField('unknown', 'unknown owners')
+  requireArrayField('unconfiguredSettings', 'unconfigured settings')
+  requireArrayField('unconfiguredProfile', 'unconfigured profile')
   if ((crm.unconfiguredGroups ?? []).length > 0) push(role, `unconfigured groups: ${crm.unconfiguredGroups.join(', ')}`)
   if ((crm.duplicates ?? []).length > 0) push(role, `duplicate daily hrefs: ${crm.duplicates.join(', ')}`)
   for (const group of crm.groups ?? []) {
@@ -492,6 +508,8 @@ for (const role of ROLES) {
     actions: actionHrefs.length,
     authorized: authorized.size,
     unconfiguredGroups: crm.unconfiguredGroups ?? [],
+    unconfiguredSettings: crm.unconfiguredSettings ?? null,
+    unconfiguredProfile: crm.unconfiguredProfile ?? null,
     unknown: crm.unknown ?? [],
     duplicates: crm.duplicates ?? [],
     deniedApi: deniedApi.status,
