@@ -7,6 +7,7 @@ import { readJsonSafe } from '@open-mercato/shared/lib/http/readJsonSafe'
 import {
   claimSendRequest,
   completeSendRequest,
+  computeSendPayloadHash,
   releaseSendRequest,
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
@@ -155,6 +156,27 @@ export async function POST(req: Request): Promise<Response> {
     }
   }
 
+  // Bind the client idempotency key to the request content. Computed AFTER the
+  // body synthesis above so a media/template-only request hashes the same label
+  // on every retry. The hash covers everything that changes what leaves the CRM;
+  // a replay with any other channel/recipient/subject/body/template/media shape
+  // is refused instead of being answered with the first message id.
+  const templateMetadata =
+    body.template ?? (body.channelMetadata?.template as Record<string, unknown> | undefined)
+  const payloadHash = computeSendPayloadHash({
+    channelId: body.channelId,
+    to: body.to,
+    cc: body.cc,
+    bcc: body.bcc,
+    subject: body.subject,
+    body: body.body,
+    template: templateMetadata as
+      | { name?: string; language?: string; components?: unknown[] }
+      | undefined,
+    media: body.media ?? null,
+    parentMessageId: body.parentMessageId ?? null,
+  })
+
   const container = await createRequestContainer()
   let send: SendAsUserFacade | null = null
   try {
@@ -263,6 +285,7 @@ export async function POST(req: Request): Promise<Response> {
       userId: auth.sub as string,
       clientRequestId: body.clientRequestId,
       channelId: body.channelId,
+      payloadHash,
     })
     if (claim.state === 'replay') {
       return NextResponse.json(
@@ -281,6 +304,20 @@ export async function POST(req: Request): Promise<Response> {
       return NextResponse.json(
         {
           error: 'A send with this clientRequestId is still in flight',
+          clientRequestId: body.clientRequestId,
+        },
+        { status: 409 },
+      )
+    }
+    if (claim.state === 'conflict') {
+      // The key belongs to a different payload. Replaying would report the first
+      // message id for a request that was never sent, so fail closed and make the
+      // caller choose a new key.
+      return NextResponse.json(
+        {
+          error:
+            'This clientRequestId was already used for a different send; use a new clientRequestId',
+          code: 'IDEMPOTENCY_KEY_REUSED',
           clientRequestId: body.clientRequestId,
         },
         { status: 409 },
@@ -351,7 +388,6 @@ export async function POST(req: Request): Promise<Response> {
     }
   }
 
-  const templateMetadata = body.template ?? (body.channelMetadata?.template as Record<string, unknown> | undefined)
   const channelMetadata = {
     ...(body.channelMetadata ?? {}),
     ...(templateMetadata ? { template: templateMetadata } : {}),

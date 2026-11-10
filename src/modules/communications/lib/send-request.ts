@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import type { EntityManager } from '@mikro-orm/postgresql'
 import { isUniqueViolation } from '@open-mercato/shared/lib/db/pg-errors'
 import { SendRequest } from '../data/entities'
@@ -10,22 +11,106 @@ import { SendRequest } from '../data/entities'
  */
 const IN_FLIGHT_TTL_MS = 2 * 60 * 1000
 
+export type SendPayloadHashInput = {
+  channelId: string
+  to: string[]
+  cc?: string[]
+  bcc?: string[]
+  subject: string
+  body: { plain?: string; html?: string }
+  template?: { name?: string; language?: string; components?: unknown[] } | null
+  media?: {
+    kind?: string
+    id?: string
+    link?: string
+    attachmentId?: string
+    fileName?: string
+    caption?: string
+  } | null
+  parentMessageId?: string | null
+}
+
+/**
+ * Canonical JSON: object keys sorted at every depth, array order preserved.
+ * Recipient/component order is semantically meaningful, so it must not be
+ * normalized away; key order from the caller is not, so it must not create a
+ * false mismatch.
+ */
+function canonicalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(canonicalize)
+  if (value && typeof value === 'object') {
+    const source = value as Record<string, unknown>
+    const out: Record<string, unknown> = {}
+    for (const key of Object.keys(source).sort()) {
+      const child = canonicalize(source[key])
+      if (child !== undefined) out[key] = child
+    }
+    return out
+  }
+  return value
+}
+
+/**
+ * Stable digest of the send request, used to bind a `clientRequestId` to the
+ * payload it was issued for. Every field that changes what leaves the CRM is
+ * included; caller metadata that does not affect the provider payload is not.
+ */
+export function computeSendPayloadHash(input: SendPayloadHashInput): string {
+  const normalized = {
+    channelId: input.channelId,
+    to: input.to,
+    cc: input.cc ?? [],
+    bcc: input.bcc ?? [],
+    subject: input.subject,
+    body: {
+      plain: input.body.plain ?? null,
+      html: input.body.html ?? null,
+    },
+    template: input.template
+      ? {
+          name: input.template.name ?? null,
+          language: input.template.language ?? null,
+          components: input.template.components ?? [],
+        }
+      : null,
+    media: input.media
+      ? {
+          kind: input.media.kind ?? null,
+          id: input.media.id ?? null,
+          link: input.media.link ?? null,
+          attachmentId: input.media.attachmentId ?? null,
+          fileName: input.media.fileName ?? null,
+          caption: input.media.caption ?? null,
+        }
+      : null,
+    parentMessageId: input.parentMessageId ?? null,
+  }
+  return createHash('sha256').update(JSON.stringify(canonicalize(normalized))).digest('hex')
+}
+
 export type ClaimSendRequestInput = {
   tenantId: string
   organizationId: string | null
   userId: string
   clientRequestId: string
   channelId: string
+  /** Digest of the normalized request, bound to the key at claim time. */
+  payloadHash: string
 }
 
 export type ClaimSendRequestResult =
   | { state: 'claimed'; id: string }
   | { state: 'replay'; messageId: string; messageThreadId: string | null; channelId: string }
   | { state: 'in_flight' }
+  /** The key was already completed by a DIFFERENT payload; never send. */
+  | { state: 'conflict' }
 
-function decide(row: SendRequest | null): ClaimSendRequestResult | null {
+function decide(row: SendRequest | null, payloadHash: string): ClaimSendRequestResult | null {
   if (!row) return null
   if (row.messageId) {
+    // A null stored hash predates the column and cannot prove the payload, so
+    // it fails closed rather than replaying a possibly different request.
+    if (row.payloadHash !== payloadHash) return { state: 'conflict' }
     return {
       state: 'replay',
       messageId: row.messageId,
@@ -57,7 +142,7 @@ export async function claimSendRequest(
   input: ClaimSendRequestInput,
 ): Promise<ClaimSendRequestResult> {
   const existing = await findByKey(em, input)
-  const decided = decide(existing)
+  const decided = decide(existing, input.payloadHash)
   if (decided) return decided
   if (existing) {
     // Stale in-flight row from a dead process: drop it before re-claiming.
@@ -71,6 +156,7 @@ export async function claimSendRequest(
     userId: input.userId,
     clientRequestId: input.clientRequestId,
     channelId: input.channelId,
+    payloadHash: input.payloadHash,
   })
   try {
     em.persist(row)
@@ -79,7 +165,7 @@ export async function claimSendRequest(
   } catch (err) {
     if (!isUniqueViolation(err)) throw err
     const raced = await findByKey(em, input)
-    const outcome = decide(raced)
+    const outcome = decide(raced, input.payloadHash)
     if (outcome) return outcome
     throw err
   }

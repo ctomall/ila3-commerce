@@ -9,6 +9,12 @@ import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/decorato
  * duplicate loses the unique-key race and can be answered with the first
  * attempt's result instead of sending again.
  *
+ * `payloadHash` binds the key to the request content. The key alone is not
+ * enough: a caller (or the mobile retry screen, which keeps the key while the
+ * fields stay editable) can reuse a key with a different channel, recipient or
+ * body. That must be refused instead of replayed — replaying would tell the
+ * caller the first message id while the second payload is silently discarded.
+ *
  * Deliberately app-owned: the installed hub has no client-request ledger, and
  * adding columns to its tables would turn a local integration concern into an
  * upstream contract change.
@@ -17,7 +23,7 @@ import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/decorato
 @Index({ name: 'communications_send_requests_scope_idx', properties: ['tenantId', 'userId', 'createdAt'] })
 @Unique({ name: 'communications_send_requests_uq', properties: ['tenantId', 'userId', 'clientRequestId'] })
 export class SendRequest {
-  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'messageId' | 'messageThreadId' | 'organizationId'
+  [OptionalProps]?: 'createdAt' | 'updatedAt' | 'messageId' | 'messageThreadId' | 'organizationId' | 'payloadHash'
 
   @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
   id!: string
@@ -36,6 +42,15 @@ export class SendRequest {
 
   @Property({ name: 'channel_id', type: 'uuid' })
   channelId!: string
+
+  /**
+   * SHA-256 of the canonicalized send input (channel, recipients, subject,
+   * body, template/media shape, parent message). Nullable only for rows written
+   * before the column existed; a replay against a null hash is refused
+   * fail-closed because the original payload can no longer be proven.
+   */
+  @Property({ name: 'payload_hash', type: 'text', nullable: true })
+  payloadHash?: string | null
 
   /** `messages.message.id` once the hub accepted the send; null while in flight. */
   @Property({ name: 'message_id', type: 'uuid', nullable: true })
