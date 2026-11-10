@@ -815,6 +815,7 @@
     "customers.widgets.new-customers",
     "customers.widgets.new-deals",
     "customers.interactions.view",
+    "customers.interactions.manage",
     "customers.roles.view",
     "customers.roles.manage",
     "customers.email.compose",

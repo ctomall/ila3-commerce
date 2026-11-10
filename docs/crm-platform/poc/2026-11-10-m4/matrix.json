@@ -1,0 +1,158 @@
+{
+  "generatedAt": "2026-11-10T03:45:33.185Z",
+  "base": "http://127.0.0.1:3000",
+  "fixtures": {
+    "leadgen-api": false,
+    "employee-B": true,
+    "second-organization": false,
+    "dsh-profile-per-employee": false,
+    "probe-tool": true,
+    "tool-execute": true,
+    "existing-quote": true
+  },
+  "rowCount": {
+    "table": "customer_entities",
+    "before": 9,
+    "after": 9,
+    "unchanged": true
+  },
+  "summary": {
+    "total": 12,
+    "pass": 5,
+    "passWeak": 2,
+    "fail": 0,
+    "blocked": 4,
+    "invalid": 1
+  },
+  "results": [
+    {
+      "id": 1,
+      "attack": "猜 ID：随机 uuid 取记录（现有模块）",
+      "expected": "404（不泄露存在性）",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"未找到\"}"
+    },
+    {
+      "id": 1.1,
+      "attack": "猜 ID：跨员工取 candidate/run（leadgen API）",
+      "expected": "404",
+      "requires": [
+        "leadgen-api",
+        "second-organization"
+      ],
+      "status": "invalid",
+      "detail": "openapi 里没有 /leadgen/candidates/{id}：404 不能当作拒绝证据"
+    },
+    {
+      "id": 1.2,
+      "attack": "猜 ID：AI 会话（他人/不存在）",
+      "expected": "404 conversation_not_found",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Conversation not found.\",\"code\":\"conversation_not_found\"}"
+    },
+    {
+      "id": 1.3,
+      "attack": "猜 ID：AI 会话参与者列表",
+      "expected": "404（不泄露会话是否存在）",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Conversation not found.\",\"code\":\"conversation_not_found\"}"
+    },
+    {
+      "id": 1.4,
+      "attack": "会话列表越权（是否只回本人）",
+      "expected": "200 且 items 为空或全部属于本人",
+      "requires": [],
+      "status": "pass-weak",
+      "weakReason": "列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor",
+      "detail": "200 {\"items\":[],\"nextCursor\":null}"
+    },
+    {
+      "id": 2,
+      "attack": "直连写接口 + body 注入 tenantId/organizationId",
+      "expected": "400/403/422，且不写库",
+      "requires": [],
+      "status": "pass",
+      "detail": "403 {\"error\":\"Not authorized to target this tenant.\"}"
+    },
+    {
+      "id": 3,
+      "attack": "未知 agent 在进入模型前被拒（原误标为“伪造身份”）",
+      "expected": "404 agent_unknown，且不进入模型",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Agent \\\"probe.m4\\\" is not registered.\",\"code\":\"agent_unknown\"}"
+    },
+    {
+      "id": 3.1,
+      "attack": "模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId）",
+      "expected": "运行时按真实会话解析 actor，注入值不生效",
+      "requires": [
+        "probe-tool",
+        "tool-execute"
+      ],
+      "status": "pass-weak",
+      "weakReason": "证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核",
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3031}"
+    },
+    {
+      "id": 4,
+      "attack": "子 Agent 提权（子工具集 ⊄ 父工具集）",
+      "expected": "子工具集 = 交集",
+      "requires": [
+        "probe-tool",
+        "dsh-profile-per-employee"
+      ],
+      "status": "blocked",
+      "missing": [
+        "dsh-profile-per-employee"
+      ],
+      "detail": "缺少 fixture：dsh-profile-per-employee"
+    },
+    {
+      "id": 5,
+      "attack": "撤权影响在飞任务",
+      "expected": "≤10s 停止，且不完成 CRM 写入",
+      "requires": [
+        "leadgen-api",
+        "dsh-profile-per-employee"
+      ],
+      "status": "blocked",
+      "missing": [
+        "leadgen-api",
+        "dsh-profile-per-employee"
+      ],
+      "detail": "缺少 fixture：leadgen-api、dsh-profile-per-employee"
+    },
+    {
+      "id": 6,
+      "attack": "跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态）",
+      "expected": "互不可读，跨读返回空 + 审计",
+      "requires": [
+        "dsh-profile-per-employee",
+        "second-organization"
+      ],
+      "status": "blocked",
+      "missing": [
+        "dsh-profile-per-employee",
+        "second-organization"
+      ],
+      "detail": "缺少 fixture：dsh-profile-per-employee、second-organization"
+    },
+    {
+      "id": 7,
+      "attack": "配额/审批绕过（超额度、审批令牌复用）",
+      "expected": "429 / 4xx",
+      "requires": [
+        "leadgen-api"
+      ],
+      "status": "blocked",
+      "missing": [
+        "leadgen-api"
+      ],
+      "detail": "缺少 fixture：leadgen-api"
+    }
+  ]
+}
