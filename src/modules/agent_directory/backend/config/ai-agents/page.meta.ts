@@ -24,9 +24,9 @@ export const metadata = {
   requireFeatures: ['ai_assistant.settings.manage'],
   pageTitle: 'AI agents',
   pageTitleKey: 'agents.directory.navTitle',
-  pageGroup: 'Module Configs',
-  pageGroupKey: 'settings.sections.moduleConfigs',
-  pageOrder: 433,
+  pageGroup: 'AI management',
+  pageGroupKey: 'crmNav.manage.category.ai',
+  pageOrder: 9,
   icon: agentsIcon,
   pageContext: 'settings' as const,
   breadcrumb: [

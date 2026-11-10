@@ -22,9 +22,9 @@ export const metadata = {
   requireFeatures: ['ai_assistant.settings.manage'],
   pageTitle: 'Model Configuration',
   pageTitleKey: 'ai_assistant.models.navTitle',
-  pageGroup: 'Module Configs',
-  pageGroupKey: 'settings.sections.moduleConfigs',
-  pageOrder: 431,
+  pageGroup: 'AI management',
+  pageGroupKey: 'crmNav.manage.category.ai',
+  pageOrder: 8,
   icon: modelsIcon,
   pageContext: 'settings' as const,
   breadcrumb: [

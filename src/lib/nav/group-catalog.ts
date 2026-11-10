@@ -35,8 +35,12 @@ export type ShellGroup = {
 
 export const NAV_GROUP_CATALOG = catalog as NavGroupSpec[]
 
-export function applyGroupCatalog(groups: ReadonlyArray<ShellGroup>): ShellGroup[] {
+export function applyGroupCatalog(
+  groups: ReadonlyArray<ShellGroup>,
+  translate?: (key: string | undefined, fallback: string) => string,
+): ShellGroup[] {
   // The rules live in src/nav/logic.mjs, which the managed patch also installs into the
-  // shell, so tests and runtime cannot drift apart.
-  return applyGroupCatalogImpl(groups, NAV_GROUP_CATALOG) as ShellGroup[]
+  // shell, so tests and runtime cannot drift apart. `translate` resolves a container's
+  // labelKey (a container merges several module groups, so it has no own name).
+  return applyGroupCatalogImpl(groups, NAV_GROUP_CATALOG, translate) as ShellGroup[]
 }

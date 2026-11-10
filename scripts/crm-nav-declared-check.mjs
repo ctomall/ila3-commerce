@@ -13,7 +13,13 @@
  *   - the app-level group ids match src/nav/nav-groups.json;
  *   - no group is unconfigured, unknown or duplicated;
  *   - group landings and every daily destination answer;
- *   - the employee account cannot open admin-only APIs.
+ *   - the declared information architecture is exact: admin sees every declared
+ *     container and management category in declaration order, a narrower role
+ *     sees an ordered subset, and nothing outside the declaration is rendered;
+ *   - every daily entry is owned by exactly one container (no duplicate homes);
+ *   - every documented hidden page has a reason, evidence and a reachable parent,
+ *     and is not rendered anywhere;
+ *   - the employee account cannot open admin-only APIs or see admin-only entries.
  *
  * Credentials are read from ~/.ila3-admin-credentials (0600) and never printed.
  *
@@ -34,6 +40,8 @@ const OUT = arg('--out', null)
 const STRICT = process.argv.includes('--strict')
 const ROLES = (arg('--roles', 'admin,employee')).split(',').filter(Boolean)
 const CATALOG_PATH = path.resolve(process.cwd(), 'src/nav/nav-groups.json')
+const SETTINGS_TABLE_PATH = path.resolve(process.cwd(), 'src/nav/settings-sections.json')
+const HIDDEN_PAGES_PATH = path.resolve(process.cwd(), 'src/nav/hidden-pages.json')
 // Keep in sync with SHELL_HREF_ALIASES in src/nav/shell-chrome.ts. The only
 // declared destination whose route is a redirect is the workbench entry
 // (src/modules/workbench/backend/workbench/page.tsx redirects to /backend), so
@@ -94,6 +102,23 @@ async function statusOf(url, cookie) {
 
 const sourceCatalog = JSON.parse(fs.readFileSync(CATALOG_PATH, 'utf8'))
 const expectedGroups = sourceCatalog.map((group) => group.id)
+const settingsTable = JSON.parse(fs.readFileSync(SETTINGS_TABLE_PATH, 'utf8'))
+const hiddenPages = JSON.parse(fs.readFileSync(HIDDEN_PAGES_PATH, 'utf8'))
+const expectedCategories = Object.values(settingsTable)
+  .sort((a, b) => a.order - b.order)
+  .map((spec) => spec.id)
+const expectedCategoryKeys = new Set(Object.keys(settingsTable))
+/** True when every id occurs in `expected` in the same relative order. */
+function isOrderedSubset(ids, expected) {
+  let cursor = 0
+  for (const id of ids) {
+    const found = expected.indexOf(id, cursor)
+    if (found === -1) return false
+    cursor = found + 1
+  }
+  return true
+}
+
 const creds = credentials()
 const report = { generatedAt: new Date().toISOString(), base: BASE, expectedGroups, roles: {} }
 const generatedCatalogPath = path.resolve(
@@ -224,6 +249,91 @@ for (const role of ROLES) {
     if ((group.items ?? []).some((item) => !item.label)) push(role, `group ${group.id} has an unlabeled item`)
   }
 
+  // v2 contract — declared information architecture.
+  //
+  // Ownership is a single declared fact: a page names its container/category via
+  // page metadata, nav-groups.json only defines the containers and their order.
+  // The runtime gate therefore asserts the exact set and order for the full
+  // (admin) view, an ordered subset for narrower roles, and that nothing outside
+  // the declaration is rendered.
+  const observedGroups = (crm.groups ?? []).map((group) => group.id)
+  if (!isOrderedSubset(observedGroups, expectedGroups)) {
+    push(role, `containers ${JSON.stringify(observedGroups)} are not an ordered subset of ${JSON.stringify(expectedGroups)}`)
+  }
+  if (new Set(observedGroups).size !== observedGroups.length) push(role, 'a container is rendered more than once')
+  if (role === 'admin' && JSON.stringify(observedGroups) !== JSON.stringify(expectedGroups)) {
+    push(role, `admin containers ${JSON.stringify(observedGroups)} != declared ${JSON.stringify(expectedGroups)}`)
+  }
+  for (const group of crm.groups ?? []) {
+    if (!group.labelKey) push(role, `container ${group.id} has no labelKey`)
+    if (group.labelKey && group.label === group.labelKey) push(role, `container ${group.id} label is not translated`)
+  }
+
+  const observedCategories = (crm.manage?.categories ?? []).map((category) => category.id)
+  if (!isOrderedSubset(observedCategories, expectedCategories)) {
+    push(role, `management categories ${JSON.stringify(observedCategories)} are not an ordered subset of ${JSON.stringify(expectedCategories)}`)
+  }
+  if (new Set(observedCategories).size !== observedCategories.length) push(role, 'a management category is rendered more than once')
+  if (role === 'admin' && JSON.stringify(observedCategories) !== JSON.stringify(expectedCategories)) {
+    push(role, `admin management categories ${JSON.stringify(observedCategories)} != declared ${JSON.stringify(expectedCategories)}`)
+  }
+  for (const group of crm.groups ?? []) {
+    if (expectedCategoryKeys.has(group.id)) push(role, `settings category leaked into the daily rail: ${group.id}`)
+  }
+  for (const category of crm.manage?.categories ?? []) {
+    if (category.id && !expectedCategories.includes(category.id)) push(role, `management category not declared: ${category.id}`)
+    if ((category.items ?? []).length === 0) push(role, `management category ${category.id} is empty`)
+  }
+
+  // One primary owner per daily entry: it must appear under exactly one container.
+  for (const href of new Set(dailyHrefs)) {
+    const owners = (crm.groups ?? []).filter((group) => (group.items ?? []).some((item) => item.href === href))
+    if (owners.length !== 1) push(role, `daily href owned by ${owners.length} containers: ${href}`)
+  }
+
+  // Hidden pages: documented reason + evidence + reachable, non-hidden parent,
+  // never rendered. A hidden page whose parent is hidden is unreachable from the
+  // menu, which is exactly the silent-drop failure this gate exists to prevent.
+  const renderedEverywhere = new Set(rendered)
+  const documentedParents = new Set(Object.values(hiddenPages).map((doc) => doc?.parent).filter(Boolean))
+  const reachableParents = new Set([...shellHrefs, ...manageHrefs, ...personalHrefs, '/backend'])
+  let hiddenDeclared = 0
+  for (const [href, doc] of Object.entries(hiddenPages)) {
+    hiddenDeclared += 1
+    if (!doc || typeof doc !== 'object') { push(role, `hidden page ${href} has no declaration`); continue }
+    if (!doc.reason) push(role, `hidden page ${href} has no reason`)
+    if (!doc.evidence) push(role, `hidden page ${href} has no evidence`)
+    if (!doc.parent || !doc.parent.startsWith('/backend')) push(role, `hidden page ${href} has no backend parent`)
+    if (doc.parent && documentedParents.has(doc.parent)) push(role, `hidden page ${href} parent is itself hidden: ${doc.parent}`)
+    if (doc.parent && !reachableParents.has(doc.parent)) push(role, `hidden page ${href} parent is not reachable: ${doc.parent}`)
+    if (renderedEverywhere.has(href)) push(role, `hidden page is rendered: ${href}`)
+  }
+
+  if (role === 'employee') {
+    for (const href of ['/backend/users', '/backend/roles', '/backend/api-keys', '/backend/config/system-status', '/backend/audit-logs']) {
+      if (renderedEverywhere.has(href)) push(role, `admin-only entry leaked to employee: ${href}`)
+    }
+  }
+
+  let hiddenPageChecks = null
+  if (role === 'admin') {
+    // A hidden entry is only acceptable when its parent is a real, reachable page.
+    const parents = [...new Set(Object.values(hiddenPages).map((doc) => doc.parent).filter(Boolean))]
+    const parentResults = []
+    for (const parent of parents) {
+      const status = await statusOf(parent, cookie)
+      if (![200, 307, 308].includes(status)) push(role, `hidden page parent ${parent} -> ${status}`)
+      parentResults.push({ parent, status })
+    }
+    const hrefResults = []
+    for (const href of Object.keys(hiddenPages)) {
+      const status = await statusOf(href, cookie)
+      if (![200, 307, 308].includes(status)) push(role, `hidden page ${href} -> ${status}`)
+      hrefResults.push({ href, status })
+    }
+    hiddenPageChecks = { parents: parentResults, hrefs: hrefResults }
+  }
+
   const deniedApi = await fetch(`${BASE}/api/directory/organizations`, { headers: { cookie }, redirect: 'manual' })
   if (role === 'employee' && deniedApi.status !== 403) {
     push(role, `organizations API was not refused (${deniedApi.status})`)
@@ -259,6 +369,10 @@ for (const role of ROLES) {
     })),
     shellGroups: shellGroups.map((group) => ({ id: group.id, items: (group.items ?? []).length })),
     shellHrefs: shellHrefs.length,
+    containers: observedGroups,
+    categories: observedCategories,
+    hiddenPagesDeclared: hiddenDeclared,
+    hiddenPages: hiddenPageChecks,
     daily: dailyHrefs.length,
     manage: manageHrefs.length,
     personal: personalHrefs.length,

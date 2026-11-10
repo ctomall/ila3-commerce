@@ -4,11 +4,17 @@
  *
  * Grouping (which page groups become one sidebar section, and in what order) was
  * only expressible by editing the package or writing nav.groupOrder per module.
- * The catalog in scripts/patches/data/nav-groups.json now describes it: each
- * entry lists the page-group ids it absorbs, plus the label and order to use.
+ * The catalog in src/nav/nav-groups.json now describes it: each entry lists the
+ * page-group ids it absorbs, plus the label and order to use.
  *
  * Groups not listed in the catalog are appended unchanged, so a module that ships
  * later still appears without touching this file.
+ *
+ * Every step is normalised on each run rather than short-circuited after the first
+ * injection: a node_modules tree patched by an older revision holds the same marker
+ * but a previous contract (for example an extra catalog call inside `groupEntries`
+ * that runs before `translate` is in scope). Normalising keeps such a tree on the
+ * committed contract instead of silently preserving the older behaviour.
  *
  * Idempotent; asserted by scripts/verify-patches.mjs.
  */
@@ -36,10 +42,6 @@ fs.mkdirSync(path.dirname(dest), { recursive: true })
 fs.copyFileSync(src, dest)
 
 let source = fs.readFileSync(file, 'utf8')
-if (source.includes(MARKER)) {
-  console.log('[patch:nav-groups] already applied')
-  process.exit(0)
-}
 
 const ANCHOR = 'async function groupEntries(entries) {'
 if (!source.includes(ANCHOR)) {
@@ -77,24 +79,33 @@ function __applyNavGroupCatalog(groups) {
 }
 `
 
-source = source.replace(ANCHOR, HELPER + ANCHOR)
-const RETURN_ANCHOR = '  return normalizeGroupWeights(groups);\n}'
-if (!source.includes(RETURN_ANCHOR)) {
-  console.error('[patch:nav-groups] return anchor not found — package changed')
-  process.exit(1)
+if (!source.includes(MARKER)) {
+  source = source.replace(ANCHOR, HELPER + ANCHOR)
 }
-source = source.replace(RETURN_ANCHOR, '  return normalizeGroupWeights(groups);\n}')
+
+// Normalise an older/manually patched tree that merged the catalog inside
+// `groupEntries` as well. The committed contract applies it once, after sidebar
+// preferences (below); the duplicate call runs before `translate` is in scope and
+// would silently leave untranslated container labels. No-op when the tree is clean.
+const DRIFTED_RETURN = '  return __applyNavGroupCatalog(normalizeGroupWeights(groups));'
+if (source.includes(DRIFTED_RETURN)) {
+  source = source.replace(DRIFTED_RETURN, '  return normalizeGroupWeights(groups);')
+}
+
 // Stored role/user sidebar preferences are built from the old group ids, so the
 // catalog has to be applied once more after preferences or the old grouping wins.
 const PREFS_ANCHOR = '  const appliedGroups = userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser;'
-if (!source.includes(PREFS_ANCHOR)) {
+const PATCHED_PREFS = '  const appliedGroups = __applyNavGroupCatalog(userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser'
+if (source.includes(PREFS_ANCHOR)) {
+  source = source.replace(
+    PREFS_ANCHOR,
+    '  const appliedGroups = __applyNavGroupCatalog(userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser);',
+  )
+} else if (!source.includes(PATCHED_PREFS)) {
   console.error('[patch:nav-groups] preferences anchor not found — package changed')
   process.exit(1)
 }
-source = source.replace(
-  PREFS_ANCHOR,
-  '  const appliedGroups = __applyNavGroupCatalog(userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser);',
-)
+
 fs.writeFileSync(file, source)
 
 // The nav payload is cached with a version prefix; a stale entry keeps serving the

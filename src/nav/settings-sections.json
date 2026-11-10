@@ -1,92 +1,62 @@
 {
-  "settings.sections.system": {
-    "id": "settings.sections.system",
-    "labelKey": "settings.sections.system",
-    "label": "系统",
-    "order": 1
+  "crmNav.manage.category.users": {
+    "id": "users",
+    "labelKey": "crmNav.manage.category.users",
+    "label": "用户组织",
+    "order": 10
   },
-  "settings.sections.moduleConfigs": {
-    "id": "settings.sections.moduleConfigs",
-    "labelKey": "settings.sections.moduleConfigs",
-    "label": "模块配置",
-    "order": 5
+  "crmNav.manage.category.channels": {
+    "id": "channels",
+    "labelKey": "crmNav.manage.category.channels",
+    "label": "渠道集成",
+    "order": 20
   },
-  "settings.sections.auth": {
-    "id": "settings.sections.access",
-    "labelKey": "settings.sections.access",
-    "label": "身份与权限",
-    "order": 2
+  "crmNav.manage.category.ai": {
+    "id": "ai",
+    "labelKey": "crmNav.manage.category.ai",
+    "label": "AI管理",
+    "order": 30
   },
-  "settings.sections.directory": {
-    "id": "settings.sections.access",
-    "labelKey": "settings.sections.access",
-    "label": "身份与权限",
-    "order": 2
+  "crmNav.manage.category.business": {
+    "id": "business",
+    "labelKey": "crmNav.manage.category.business",
+    "label": "业务设置",
+    "order": 40
   },
-  "settings.sections.security": {
-    "id": "settings.sections.security",
-    "labelKey": "settings.sections.security",
-    "label": "安全",
-    "order": 9
+  "crmNav.manage.category.rules": {
+    "id": "rules",
+    "labelKey": "crmNav.manage.category.rules",
+    "label": "规则流程",
+    "order": 50
   },
-  "backend.nav.security": {
-    "id": "settings.sections.security",
-    "labelKey": "settings.sections.security",
-    "label": "安全",
-    "order": 9
+  "crmNav.manage.category.portal": {
+    "id": "portal",
+    "labelKey": "crmNav.manage.category.portal",
+    "label": "客户门户",
+    "order": 60
   },
-  "customer_accounts.settings.section": {
-    "id": "settings.sections.portal",
-    "labelKey": "settings.sections.portal",
-    "label": "客户与门户",
-    "order": 3
+  "crmNav.manage.category.notifications": {
+    "id": "notifications",
+    "labelKey": "crmNav.manage.category.notifications",
+    "label": "通知设备",
+    "order": 70
   },
-  "settings.sections.dataDesigner": {
-    "id": "settings.sections.data",
-    "labelKey": "settings.sections.data",
-    "label": "数据与集成",
-    "order": 4
+  "crmNav.manage.category.system": {
+    "id": "system",
+    "labelKey": "crmNav.manage.category.system",
+    "label": "系统维护",
+    "order": 80
   },
-  "backend.nav.externalSystems": {
-    "id": "settings.sections.data",
-    "labelKey": "settings.sections.data",
-    "label": "数据与集成",
-    "order": 4
+  "crmNav.manage.category.diagnostics": {
+    "id": "diagnostics",
+    "labelKey": "crmNav.manage.category.diagnostics",
+    "label": "诊断",
+    "order": 90
   },
-  "currencies.nav.group": {
-    "id": "settings.sections.org",
-    "labelKey": "settings.sections.org",
-    "label": "组织与财务",
-    "order": 6
-  },
-  "backend.nav.settings": {
-    "id": "settings.sections.org",
-    "labelKey": "settings.sections.org",
-    "label": "组织与财务",
-    "order": 6
-  },
-  "availability.nav.group": {
-    "id": "settings.sections.org",
-    "labelKey": "settings.sections.org",
-    "label": "组织与财务",
-    "order": 6
-  },
-  "settings.sections.featureToggles": {
-    "id": "settings.sections.dev",
-    "labelKey": "settings.sections.dev",
-    "label": "开发者与定制",
-    "order": 8
-  },
-  "backend.nav.developers": {
-    "id": "settings.sections.dev",
-    "labelKey": "settings.sections.dev",
-    "label": "开发者与定制",
-    "order": 8
-  },
-  "appShell.sidebarCustomizationGroup": {
-    "id": "settings.sections.dev",
-    "labelKey": "settings.sections.dev",
-    "label": "开发者与定制",
-    "order": 8
+  "crmNav.manage.category.advanced": {
+    "id": "advanced",
+    "labelKey": "crmNav.manage.category.advanced",
+    "label": "高级",
+    "order": 100
   }
 }

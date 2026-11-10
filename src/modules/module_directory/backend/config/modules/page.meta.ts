@@ -23,9 +23,9 @@ export const metadata = {
   requireFeatures: ['configs.system_status.view'],
   pageTitle: 'Module applications',
   pageTitleKey: 'modules.directory.navTitle',
-  pageGroup: 'System',
-  pageGroupKey: 'settings.sections.system',
-  pageOrder: 3,
+  pageGroup: 'System maintenance',
+  pageGroupKey: 'crmNav.manage.category.system',
+  pageOrder: 4,
   icon: directoryIcon,
   pageContext: 'settings' as const,
   breadcrumb: [

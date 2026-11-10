@@ -1,0 +1,342 @@
+{
+  "/backend/api-keys/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/api-keys",
+    "evidence": "node_modules/@open-mercato/core/src/modules/api_keys/backend/api-keys/page.tsx:185"
+  },
+  "/backend/auth/profile": {
+    "reason": "legacy-duplicate",
+    "parent": "/backend",
+    "evidence": "node_modules/@open-mercato/core/src/modules/auth/lib/profile-sections.tsx:21 (account section is the canonical profile surface)"
+  },
+  "/backend/business": {
+    "reason": "legacy-aggregator",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_navigation/backend/business/page.meta.ts:8 (retired app aggregator, no inbound link)"
+  },
+  "/backend/catalog/categories/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/catalog/categories",
+    "evidence": "node_modules/@open-mercato/core/src/modules/catalog/components/categories/CategoriesDataTable.tsx:199 (create link)"
+  },
+  "/backend/catalog/prices/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/catalog/prices",
+    "evidence": "node_modules/@open-mercato/core/src/modules/catalog/components/prices/PricesDataTable.tsx:277 (create link)"
+  },
+  "/backend/catalog/products/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/catalog/products",
+    "evidence": "node_modules/@open-mercato/core/src/modules/catalog/components/products/ProductsDataTable.tsx:681"
+  },
+  "/backend/checkout": {
+    "reason": "redirect-alias",
+    "parent": "/backend/checkout/pay-links",
+    "evidence": "node_modules/@open-mercato/checkout/src/modules/checkout/backend/page.tsx:4 (redirects to pay links)"
+  },
+  "/backend/checkout/pay-links/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/checkout/pay-links",
+    "evidence": "node_modules/@open-mercato/checkout/src/modules/checkout/backend/checkout/pay-links/page.tsx:183"
+  },
+  "/backend/checkout/templates/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/checkout/templates",
+    "evidence": "node_modules/@open-mercato/checkout/src/modules/checkout/backend/checkout/templates/page.tsx:132"
+  },
+  "/backend/config/ai-assistant": {
+    "reason": "redirect-alias",
+    "parent": "/backend/config/ai-assistant/agents",
+    "evidence": "node_modules/@open-mercato/ai-assistant/src/modules/ai_assistant/backend/config/ai-assistant/page.tsx:16 (redirects to the agents list)"
+  },
+  "/backend/config/home": {
+    "reason": "settings-home",
+    "parent": "/backend",
+    "evidence": "src/modules/settings_home/backend/config/home/page.meta.ts:30 (settings landing, deliberately navHidden)"
+  },
+  "/backend/config/scheduled-jobs/new": {
+    "reason": "in-page-action",
+    "parent": "/backend/config/scheduled-jobs",
+    "evidence": "node_modules/@open-mercato/scheduler/src/modules/scheduler/backend/config/scheduled-jobs/page.tsx:274"
+  },
+  "/backend/currencies/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/currencies",
+    "evidence": "node_modules/@open-mercato/core/src/modules/currencies/backend/currencies/page.tsx:306"
+  },
+  "/backend/customer_accounts/roles/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/customer_accounts/roles",
+    "evidence": "node_modules/@open-mercato/core/src/modules/customer_accounts/backend/customer_accounts/roles/page.tsx:211"
+  },
+  "/backend/customers/companies/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/customers/companies",
+    "evidence": "node_modules/@open-mercato/core/src/modules/customers/backend/customers/companies/page.tsx:885"
+  },
+  "/backend/customers/deals/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/customers/deals",
+    "evidence": "node_modules/@open-mercato/core/src/modules/customers/backend/customers/deals/page.tsx:1205"
+  },
+  "/backend/customers/people/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/customers/people",
+    "evidence": "node_modules/@open-mercato/core/src/modules/customers/backend/customers/people/page.tsx:912"
+  },
+  "/backend/definitions/create": {
+    "reason": "redirect-alias",
+    "parent": "/backend/definitions",
+    "evidence": "node_modules/@open-mercato/core/src/modules/workflows/backend/definitions/create/page.tsx:29 (bridge to the studio)"
+  },
+  "/backend/definitions/visual-editor": {
+    "reason": "in-page-action",
+    "parent": "/backend/definitions",
+    "evidence": "node_modules/@open-mercato/core/src/modules/workflows/backend/definitions/page.tsx:449 (row action opens the studio)"
+  },
+  "/backend/devices/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/devices",
+    "evidence": "node_modules/@open-mercato/core/src/modules/devices/backend/devices/page.tsx:236"
+  },
+  "/backend/directory/organizations/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/directory/organizations",
+    "evidence": "node_modules/@open-mercato/core/src/modules/directory/backend/directory/organizations/page.tsx:245"
+  },
+  "/backend/directory/tenants/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/directory/tenants",
+    "evidence": "node_modules/@open-mercato/core/src/modules/directory/backend/directory/tenants/page.tsx:184"
+  },
+  "/backend/entities/user/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/entities/user",
+    "evidence": "node_modules/@open-mercato/core/src/modules/entities/components/UserEntitiesTable.tsx:91"
+  },
+  "/backend/eudr/evidence-submissions/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/eudr/evidence-submissions",
+    "evidence": "node_modules/@open-mercato/core/src/modules/eudr/backend/eudr/evidence-submissions/page.tsx:320"
+  },
+  "/backend/eudr/plots/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/eudr/plots",
+    "evidence": "node_modules/@open-mercato/core/src/modules/eudr/backend/eudr/plots/page.tsx:379"
+  },
+  "/backend/eudr/product-mappings/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/eudr/product-mappings",
+    "evidence": "node_modules/@open-mercato/core/src/modules/eudr/backend/eudr/product-mappings/page.tsx:281"
+  },
+  "/backend/eudr/risk-assessments/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/eudr/risk-assessments",
+    "evidence": "node_modules/@open-mercato/core/src/modules/eudr/backend/eudr/risk-assessments/page.tsx:326"
+  },
+  "/backend/eudr/statements/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/eudr/statements",
+    "evidence": "node_modules/@open-mercato/core/src/modules/eudr/backend/eudr/statements/page.tsx:315"
+  },
+  "/backend/exchange-rates/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/exchange-rates",
+    "evidence": "node_modules/@open-mercato/core/src/modules/currencies/backend/exchange-rates/page.tsx:309"
+  },
+  "/backend/feature-toggles/global/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/feature-toggles/global",
+    "evidence": "node_modules/@open-mercato/core/src/modules/feature_toggles/components/FeatureTogglesTable.tsx:199"
+  },
+  "/backend/manage": {
+    "reason": "management-hub",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_navigation/backend/manage/page.meta.ts:8 (rendered from the management utility entry)"
+  },
+  "/backend/messages/compose": {
+    "reason": "in-page-action",
+    "parent": "/backend/messages",
+    "evidence": "node_modules/@open-mercato/core/src/modules/messages/components/MessagesInboxPageClient.tsx:448 (compose link)"
+  },
+  "/backend/planner/availability-rulesets/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/planner/availability-rulesets",
+    "evidence": "node_modules/@open-mercato/core/src/modules/planner/backend/planner/availability-rulesets/page.tsx:218"
+  },
+  "/backend/profile": {
+    "reason": "account-menu",
+    "parent": "/backend",
+    "evidence": "src/modules/settings_home/widgets/injection/sidebar-footer/widget.tsx:39 (account footer links here)"
+  },
+  "/backend/profile/change-password": {
+    "reason": "account-menu",
+    "parent": "/backend",
+    "evidence": "node_modules/@open-mercato/ui/src/backend/ProfileDropdown.tsx:30 (account menu entry)"
+  },
+  "/backend/prototype": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/prototype/accounts": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/prototype/accounts/detail": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/prototype/candidates": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/prototype/drafts": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/prototype/tasks": {
+    "reason": "prototype-demo",
+    "parent": "/backend",
+    "evidence": "src/modules/crm_prototype/index.ts (M3 prototype, non-production)"
+  },
+  "/backend/resources/resource-types/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/resources/resource-types",
+    "evidence": "node_modules/@open-mercato/core/src/modules/resources/backend/resources/resource-types/page.tsx:302 (add link)"
+  },
+  "/backend/resources/resources/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/resources/resources",
+    "evidence": "node_modules/@open-mercato/core/src/modules/resources/backend/resources/resources/page.tsx:521"
+  },
+  "/backend/roles/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/roles",
+    "evidence": "node_modules/@open-mercato/core/src/modules/auth/backend/roles/page.tsx:137"
+  },
+  "/backend/rules/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/rules",
+    "evidence": "node_modules/@open-mercato/core/src/modules/business_rules/backend/rules/page.tsx:338"
+  },
+  "/backend/sales/channels/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/sales/channels",
+    "evidence": "node_modules/@open-mercato/core/src/modules/sales/backend/sales/channels/page.tsx:219"
+  },
+  "/backend/sales/documents/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/sales/quotes",
+    "evidence": "node_modules/@open-mercato/core/src/modules/sales/components/documents/SalesDocumentsTable.tsx:780 (create link with kind)"
+  },
+  "/backend/sets/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/sets",
+    "evidence": "node_modules/@open-mercato/core/src/modules/business_rules/backend/sets/page.tsx:245"
+  },
+  "/backend/settings": {
+    "reason": "stock-placeholder",
+    "parent": "/backend",
+    "evidence": "node_modules/@open-mercato/core/src/modules/auth/backend/settings/page.tsx:16 (placeholder pointing at the settings menu)"
+  },
+  "/backend/shipping-carriers/create": {
+    "reason": "base-module-hidden",
+    "parent": "/backend",
+    "evidence": "node_modules/@open-mercato/core/src/modules/shipping_carriers/backend/shipping-carriers/create/page.meta.ts:5 (package declares navHidden; no list surface or inbound link in source)"
+  },
+  "/backend/staff/leave-requests/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/leave-requests",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/leave-requests/page.tsx:162"
+  },
+  "/backend/staff/my-leave-requests/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/my-leave-requests",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/my-leave-requests/page.tsx:173"
+  },
+  "/backend/staff/profile/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/my-availability",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/my-availability/page.tsx:102 (create profile link)"
+  },
+  "/backend/staff/team-members/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/team-members",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/team-members/page.tsx:437"
+  },
+  "/backend/staff/team-roles/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/team-roles",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/team-roles/page.tsx:315"
+  },
+  "/backend/staff/teams/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/teams",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/teams/page.tsx:244"
+  },
+  "/backend/staff/time-tracking/projects/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/time-tracking/projects",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/time-tracking/projects/page.tsx:1133"
+  },
+  "/backend/staff/time-tracking/reports/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/staff/time-tracking/reports",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/time-tracking/reports/page.tsx:233"
+  },
+  "/backend/staff/timesheets": {
+    "reason": "legacy-redirect",
+    "parent": "/backend/staff/time-tracking",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/timesheets/page.tsx:1 (permanentRedirect to time tracking)"
+  },
+  "/backend/staff/timesheets/projects": {
+    "reason": "legacy-redirect",
+    "parent": "/backend/staff/time-tracking/projects",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/timesheets/projects/page.tsx:4"
+  },
+  "/backend/staff/timesheets/projects/create": {
+    "reason": "legacy-redirect",
+    "parent": "/backend/staff/time-tracking/projects",
+    "evidence": "node_modules/@open-mercato/core/src/modules/staff/backend/staff/timesheets/projects/create/page.tsx:4"
+  },
+  "/backend/tasks": {
+    "reason": "bridge-route",
+    "parent": "/backend/work-inbox",
+    "evidence": "node_modules/@open-mercato/core/src/modules/workflows/backend/tasks/page.tsx:34 (replaced by the work inbox)"
+  },
+  "/backend/users/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/users",
+    "evidence": "node_modules/@open-mercato/core/src/modules/auth/backend/users/page.tsx:431"
+  },
+  "/backend/warranty_claims/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/warranty_claims",
+    "evidence": "node_modules/@open-mercato/core/src/modules/warranty_claims/backend/page.tsx:1135 (new claim link)"
+  },
+  "/backend/warranty_claims/registrations/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/warranty_claims/registrations",
+    "evidence": "node_modules/@open-mercato/core/src/modules/warranty_claims/backend/warranty_claims/registrations/page.tsx:468"
+  },
+  "/backend/warranty_claims/troubleshooting-guides/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/warranty_claims/troubleshooting-guides",
+    "evidence": "node_modules/@open-mercato/core/src/modules/warranty_claims/backend/warranty_claims/troubleshooting-guides/page.tsx:393"
+  },
+  "/backend/warranty_claims/vendor-policies/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/warranty_claims/vendor-policies",
+    "evidence": "node_modules/@open-mercato/core/src/modules/warranty_claims/backend/warranty_claims/vendor-policies/page.tsx:420"
+  },
+  "/backend/webhooks/create": {
+    "reason": "in-page-action",
+    "parent": "/backend/webhooks",
+    "evidence": "node_modules/@open-mercato/webhooks/src/modules/webhooks/backend/webhooks/page.tsx:247"
+  }
+}

@@ -7,14 +7,22 @@
  * exercised. They now live once in src/nav/logic.mjs; this patch copies it into the
  * package and reduces the injected helpers to thin wrappers that pass their data in.
  *
+ * The catalogue helper also receives the shell's `translate` function: a container
+ * merges several module page groups, so its label cannot inherit one group's already
+ * translated name — it is resolved from the catalogue's own `labelKey` instead.
+ *
  * Runs after apply-nav-config (which installs those helpers on a pristine package).
  *
- * Idempotent; asserted by scripts/verify-patches.mjs.
+ * Re-runnable on an already patched package: the wrapper and its call site are
+ * normalised on every run, so a node_modules tree patched by an older revision of
+ * this script still receives the translate-aware contract instead of silently
+ * keeping the previous one. Idempotent; asserted by scripts/verify-patches.mjs.
  */
 import fs from 'node:fs'
 import path from 'node:path'
 
 const MARKER = '/* [patched:nav-logic] */'
+const CATALOG_CALL_MARKER = '/* [patched:nav-logic-call] */'
 const DIR = 'node_modules/@open-mercato/core/dist/modules/auth/lib'
 const TARGET = `${DIR}/backendChrome.js`
 const LOGIC_SRC = 'src/nav/logic.js'
@@ -35,14 +43,10 @@ fs.mkdirSync(path.dirname(dest), { recursive: true })
 fs.copyFileSync(src, dest)
 
 let source = fs.readFileSync(file, 'utf8')
-if (source.includes(MARKER)) {
-  console.log('[patch:nav-logic] already applied')
-  process.exit(0)
-}
 
 const IMPORT = `${MARKER}\nimport { mergeSettingsSections as __mergeSettingsImpl, applyGroupCatalog as __applyGroupCatalogImpl } from "./nav-logic.generated.mjs";\n`
 const WRAP_MERGE = `function __mergeSettingsSections(groups) { return __mergeSettingsImpl(groups, __SETTINGS_SECTION_MERGE); }`
-const WRAP_CATALOG = `function __applyNavGroupCatalog(groups) { return __applyGroupCatalogImpl(groups, __NAV_GROUPS_DATA); }`
+const WRAP_CATALOG = `function __applyNavGroupCatalog(groups, translate) { return __applyGroupCatalogImpl(groups, __NAV_GROUPS_DATA, translate); }`
 
 function replaceFunction(text, name, replacement) {
   const start = text.indexOf(`function ${name}(`)
@@ -59,22 +63,41 @@ function replaceFunction(text, name, replacement) {
   return null
 }
 
-let next = replaceFunction(source, '__mergeSettingsSections', WRAP_MERGE)
-if (!next) {
+// 1. The shared implementation import. Appending is safe (ES modules allow an import
+//    declaration anywhere at the top level) and avoids guessing where the last import
+//    ends; `apply-settings-groups.mjs` already appended one the same way.
+if (!source.includes(MARKER)) {
+  source = `${source}\n${IMPORT}`
+}
+
+// 2. The merge helper wrapper (translation is not involved: settings sections carry
+//    their own labelKey and are translated when the sections are converted).
+const merged = replaceFunction(source, '__mergeSettingsSections', WRAP_MERGE)
+if (!merged) {
   console.error('[patch:nav-logic] __mergeSettingsSections not found — run apply-settings-groups first')
   process.exit(1)
 }
-source = next
-next = replaceFunction(source, '__applyNavGroupCatalog', WRAP_CATALOG)
-if (!next) {
+source = merged
+
+// 3. The catalogue helper wrapper. Replace it on every run so a package patched by an
+//    older script revision gains the translate argument.
+const catalogued = replaceFunction(source, '__applyNavGroupCatalog', WRAP_CATALOG)
+if (!catalogued) {
   console.error('[patch:nav-logic] __applyNavGroupCatalog not found — run apply-nav-groups first')
   process.exit(1)
 }
-source = next
+source = catalogued
 
-// Keep the marker on its own line right after the last import so a re-run finds it.
-// Append rather than guess where the last import ends (see apply-settings-groups.mjs).
-source = `${source}\n${IMPORT}`
+// 4. Pass the request translator through at the single call site. The shell resolves
+//    the payload for one locale, so the container label is rendered in that locale.
+const CALL = '__applyNavGroupCatalog(userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser)'
+const CALL_TRANSLATED = '__applyNavGroupCatalog(userPreference ? applySidebarPreference(baseForUser, userPreference) : baseForUser, translate)'
+if (source.includes(CALL)) {
+  source = source.replace(CALL, `${CALL_TRANSLATED} ${CATALOG_CALL_MARKER}`)
+} else if (!source.includes(CALL_TRANSLATED)) {
+  console.error('[patch:nav-logic] __applyNavGroupCatalog call site not found — package changed')
+  process.exit(1)
+}
 
 fs.writeFileSync(file, source)
 console.log('[patch:nav-logic] helpers now delegate to src/nav/logic.mjs')

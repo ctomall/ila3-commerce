@@ -33,8 +33,15 @@ export function mergeSettingsSections(groups, table) {
  * Collapse page groups into the sidebar sections declared in the catalogue.
  * Groups the catalogue does not mention are appended unchanged, so a module that
  * ships later stays visible.
+ *
+ * The container label is resolved through the catalogue's `labelKey` when a
+ * translate function is supplied. A container merges several module page groups,
+ * so it cannot inherit a single group's rendered name: the label has to come from
+ * the container declaration, and it has to be the translated one. Without a
+ * translate function (pure tests, old shell builds) the declared `label` stands.
  */
-export function applyGroupCatalog(groups, catalog) {
+export function applyGroupCatalog(groups, catalog, translate) {
+  const t = typeof translate === 'function' ? translate : (key, fallback) => fallback
   const byId = new Map(groups.map((group) => [group.id, group]))
   const consumed = new Set()
   const merged = []
@@ -47,7 +54,8 @@ export function applyGroupCatalog(groups, catalog) {
       items.push(...(group.items ?? []))
     }
     if (items.length === 0) continue
-    merged.push({ id: spec.id, name: spec.label, defaultName: spec.label, weight: spec.order, items })
+    const label = t(spec.labelKey, spec.label)
+    merged.push({ id: spec.id, name: label, defaultName: label, weight: spec.order, items })
   }
   for (const group of groups) if (!consumed.has(group.id)) merged.push(group)
   return merged

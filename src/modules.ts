@@ -8,7 +8,12 @@
 //   `apps/docs/docs/framework/modules/overrides.mdx`.
 import { parseBooleanWithDefault } from '@open-mercato/shared/lib/boolean'
 import { applyModuleTier, normalizeTier } from './lib/module-tiers'
-import type { ModuleOverrides } from '@open-mercato/shared/modules/overrides'
+import type {
+  ModuleOverrides,
+  PageRouteOverrideDefinition,
+  PageRouteOverridesMap,
+} from '@open-mercato/shared/modules/overrides'
+import type { PageMetadata } from '@open-mercato/shared/modules/registry'
 import { officialModuleEntries } from './official-modules.generated'
 
 export type ModuleEntry = {
@@ -69,6 +74,173 @@ export const moduleOverrideExamples: ModuleOverrides = {
   },
 }
 
+/**
+ * Declared navigation ownership — one primary container per page entry.
+ *
+ * A page states where it belongs in its own metadata (`pageGroupKey`); the app
+ * restates it here only for installed package pages it does not own, and only when
+ * the page's own metadata would render the wrong container, order, context or
+ * visibility. A row that changes nothing is rejected by the declaration test, so
+ * this is not a second, per-href copy of the existing declarations. Every key is
+ * also the container/category translation key, so the rendered label follows the
+ * caller's locale. `src/nav/nav-groups.json` interprets those keys as containers
+ * and their order — it never lists an href, so this table (and the `page.meta.ts`
+ * of app-owned modules) is the only per-entry ownership source for pages whose
+ * classification the app changes.
+ *
+ * A page that declares no mapped key is reported as unconfigured by the catalogue,
+ * never silently dropped and never folded into a catch-all.
+ */
+type DeclaredNavPage = {
+  /** Page-group/category key: also its translation key and container member id. */
+  key: string
+  /** Only set when the page's own declared order would misplace it in its new container. */
+  order?: number
+  context?: 'main' | 'settings' | 'profile'
+  /** `true` hides the entry from the menu; the route, permission and in-page link stay. */
+  hidden?: boolean
+}
+
+const declaredNavPages: Record<string, DeclaredNavPage> = {
+  '/backend/staff/time-tracking': { key: 'crmNav.group.home', order: 20 },
+  '/backend/work-inbox': { key: 'crmNav.group.home', order: 30 },
+  '/backend/calendar': { key: 'crmNav.group.home', order: 40 },
+  '/backend/staff/my-availability': { key: 'crmNav.group.scheduling', order: 10 },
+  '/backend/staff/my-leave-requests': { key: 'crmNav.group.scheduling', order: 20 },
+  '/backend/staff/leave-requests': { key: 'crmNav.group.scheduling', order: 30 },
+  '/backend/staff/time-tracking/entries': { key: 'crmNav.group.scheduling' },
+  '/backend/staff/time-tracking/timesheet': { key: 'crmNav.group.scheduling' },
+  '/backend/staff/time-tracking/reports': { key: 'crmNav.group.scheduling' },
+  '/backend/planner/availability-rulesets': { key: 'planner.nav.group', order: 70, context: 'main' },
+  '/backend/payment-gateways': { key: 'crmNav.group.payments', context: 'main' },
+  '/backend/instances': { key: 'crmNav.group.automation' },
+  '/backend/users': { key: 'crmNav.manage.category.users' },
+  '/backend/roles': { key: 'crmNav.manage.category.users' },
+  '/backend/directory/organizations': { key: 'crmNav.manage.category.users' },
+  '/backend/directory/branding': { key: 'crmNav.manage.category.users' },
+  '/backend/integrations': { key: 'crmNav.manage.category.channels' },
+  '/backend/data-sync': { key: 'crmNav.manage.category.channels' },
+  '/backend/webhooks': { key: 'crmNav.manage.category.channels' },
+  '/backend/config/scheduled-jobs': { key: 'crmNav.manage.category.channels' },
+  '/backend/communication_channels/channels': { key: 'crmNav.manage.category.channels', context: 'settings' },
+  '/backend/config/ai-assistant/settings': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/agents': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/allowlist': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/moderation-flags': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/playground': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/usage': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/ai-assistant/legacy': { key: 'crmNav.manage.category.ai' },
+  '/backend/config/customers': { key: 'crmNav.manage.category.business' },
+  '/backend/config/customers/pipeline-stages': { key: 'crmNav.manage.category.business' },
+  '/backend/config/customers/deals': { key: 'crmNav.manage.category.business', context: 'settings' },
+  '/backend/config/catalog': { key: 'crmNav.manage.category.business' },
+  '/backend/config/sales': { key: 'crmNav.manage.category.business' },
+  '/backend/config/wms': { key: 'crmNav.manage.category.business' },
+  '/backend/currencies': { key: 'crmNav.manage.category.business' },
+  '/backend/exchange-rates': { key: 'crmNav.manage.category.business' },
+  '/backend/config/currency-fetching': { key: 'crmNav.manage.category.business' },
+  '/backend/config/dictionaries': { key: 'crmNav.manage.category.business' },
+  '/backend/warranty_claims/settings': { key: 'crmNav.manage.category.business', context: 'settings' },
+  '/backend/staff/time-tracking/settings': { key: 'crmNav.manage.category.business', context: 'settings' },
+  '/backend/inbox-ops/settings': { key: 'crmNav.manage.category.business', context: 'settings', hidden: false },
+  '/backend/rules': { key: 'crmNav.manage.category.rules', context: 'settings' },
+  '/backend/sets': { key: 'crmNav.manage.category.rules', context: 'settings' },
+  '/backend/definitions': { key: 'crmNav.manage.category.rules', context: 'settings' },
+  '/backend/config/workflows': { key: 'crmNav.manage.category.rules' },
+  '/backend/customer_accounts/users': { key: 'crmNav.manage.category.portal' },
+  '/backend/customer_accounts/roles': { key: 'crmNav.manage.category.portal' },
+  '/backend/customer_accounts/settings': { key: 'crmNav.manage.category.portal' },
+  '/backend/customer_accounts/settings/domain': { key: 'crmNav.manage.category.portal' },
+  '/backend/devices': { key: 'crmNav.manage.category.notifications' },
+  '/backend/config/notifications': { key: 'crmNav.manage.category.notifications' },
+  '/backend/notifications/user-preferences': { key: 'crmNav.manage.category.notifications' },
+  '/backend/push_notifications': { key: 'crmNav.manage.category.notifications' },
+  '/backend/push_notifications/send': { key: 'crmNav.manage.category.notifications' },
+  '/backend/config/system-status': { key: 'crmNav.manage.category.system' },
+  '/backend/config/cache': { key: 'crmNav.manage.category.system' },
+  '/backend/config/module-telemetry': { key: 'crmNav.manage.category.system' },
+  '/backend/query-indexes': { key: 'crmNav.manage.category.system' },
+  '/backend/config/attachments': { key: 'crmNav.manage.category.system' },
+  '/backend/config/search': { key: 'crmNav.manage.category.system' },
+  '/backend/config/translations': { key: 'crmNav.manage.category.system' },
+  '/backend/audit-logs': { key: 'crmNav.manage.category.diagnostics' },
+  '/backend/instances/failure-queue': { key: 'crmNav.manage.category.diagnostics', context: 'settings' },
+  '/backend/events': { key: 'crmNav.manage.category.diagnostics', context: 'settings' },
+  '/backend/logs': { key: 'crmNav.manage.category.diagnostics', context: 'settings' },
+  '/backend/inbox-ops/log': { key: 'crmNav.manage.category.diagnostics', context: 'settings', hidden: false },
+  '/backend/entities/system': { key: 'crmNav.manage.category.advanced' },
+  '/backend/entities/user': { key: 'crmNav.manage.category.advanced' },
+  '/backend/config/settings': { key: 'crmNav.manage.category.advanced' },
+  '/backend/config/encryption': { key: 'crmNav.manage.category.advanced' },
+  '/backend/feature-toggles/global': { key: 'crmNav.manage.category.advanced' },
+  '/backend/feature-toggles/overrides': { key: 'crmNav.manage.category.advanced' },
+  '/backend/api-keys': { key: 'crmNav.manage.category.advanced' },
+  '/backend/docs': { key: 'crmNav.manage.category.advanced' },
+  '/backend/directory/tenants': { key: 'crmNav.manage.category.advanced' },
+  '/backend/profile': { key: 'profile.sections.account' },
+  '/backend/profile/change-password': { key: 'profile.sections.account' },
+  '/backend/sidebar-customization': { key: 'profile.sections.account', order: 3, context: 'profile' },
+  '/backend/definitions/create': { key: 'crmNav.manage.category.rules', context: 'settings', hidden: true },
+  '/backend/definitions/visual-editor': { key: 'crmNav.manage.category.rules', context: 'settings', hidden: true },
+}
+
+/**
+ * Create/new routes that are object-level actions, not destinations.
+ *
+ * Each is reached from the toolbar of the list surface that owns the object
+ * (`createHref` / `<Link>`), so keeping them in the sidebar renders the same
+ * action twice. `navHidden` only removes the menu entry — the route, its feature
+ * and the in-page button stay untouched. The hidden-page matrix under
+ * `src/nav/hidden-pages.json` records the verifying file+line for every one of
+ * them, plus the routes that are hidden by their own package metadata.
+ */
+const hiddenActionPages: string[] = [
+  '/backend/customers/companies/create',
+  '/backend/customers/people/create',
+  '/backend/customers/deals/create',
+  '/backend/sales/channels/create',
+  '/backend/sales/documents/create',
+  '/backend/catalog/products/create',
+  '/backend/catalog/prices/create',
+  '/backend/catalog/categories/create',
+  '/backend/warranty_claims/create',
+  '/backend/warranty_claims/registrations/create',
+  '/backend/warranty_claims/vendor-policies/create',
+  '/backend/warranty_claims/troubleshooting-guides/create',
+  '/backend/users/create',
+  '/backend/roles/create',
+  '/backend/currencies/create',
+  '/backend/exchange-rates/create',
+  '/backend/rules/create',
+  '/backend/sets/create',
+  '/backend/resources/resources/create',
+  '/backend/resources/resource-types/create',
+  '/backend/staff/teams/create',
+  '/backend/feature-toggles/global/create',
+  '/backend/entities/user/create',
+]
+
+function pageRouteOverride(decl: DeclaredNavPage): PageRouteOverrideDefinition {
+  const metadata: PageMetadata = {
+    pageGroupKey: decl.key,
+    ...(decl.order === undefined ? {} : { pageOrder: decl.order }),
+    ...(decl.context ? { pageContext: decl.context } : {}),
+    ...(decl.hidden === undefined ? {} : { navHidden: decl.hidden }),
+  }
+  // The `page*` aliases are declared on `PageMetadata` and normalized into the
+  // manifest by the override dispatcher before the nav payload reads it; the
+  // `routes.pages` metadata type names the resolved fields only.
+  return { metadata: metadata as unknown as PageRouteOverrideDefinition['metadata'] }
+}
+
+const declaredPageOverrides: PageRouteOverridesMap = Object.fromEntries([
+  ...Object.entries(declaredNavPages).map(([href, decl]) => [`backend:${href}`, pageRouteOverride(decl)]),
+  ...hiddenActionPages.map((href): [string, PageRouteOverrideDefinition] => [
+    `backend:${href}`,
+    { metadata: { navHidden: true } },
+  ]),
+])
+
 export const enabledModules: ModuleEntry[] = [
   // Functional grouping: business flows first, platform/administration last.
   {
@@ -76,92 +248,41 @@ export const enabledModules: ModuleEntry[] = [
     from: '@open-mercato/core',
     overrides: {
       nav: {
+        // Page-group keys in container order. The catalog in src/nav/nav-groups.json
+        // is authoritative at runtime; this keeps the shell's ordering sane when the
+        // managed patch is absent (unit tests, a bare dev install).
         groupOrder: [
+          'workbench.nav.group',
+          'crmNav.group.home',
           'customers.nav.group',
           'customers~sales.nav.group',
-          'sales.nav.group',
           'catalog.nav.group',
-          'customers~catalog.nav.group',
           'wms.nav.group',
-          'checkout.nav.group',
           'warranty_claims.nav.group',
-          'eudr.nav.group',
-          'resources.nav.group',
           'staff.nav.group',
           'staff.time_tracking.nav.group',
-          'availability.nav.group',
+          'resources.nav.group',
+          'crmNav.group.scheduling',
           'planner.nav.group',
-          'currencies.nav.group',
-          'business_rules.nav.group',
-          'rules.nav.group',
-          'workflows.module.name',
+          'checkout.nav.group',
+          'crmNav.group.payments',
           'documents.nav.group',
           'attachments.nav.group',
           'messages.nav.group',
           'inbox_ops.nav.group',
-          'communication_channels.nav.group',
-          'integrations.nav.group',
           'phone_calls.nav.group',
-          'notifications.nav.group',
-          'customer_accounts.nav.group',
-          'customer_groups.nav.group',
-          'feature_toggles.nav.group',
-          'entities.nav.group',
-          'directory.nav.group',
-          'auth.nav.group',
-          'agent_orchestrator.nav.group',
+          'crmNav.group.automation',
+          'eudr.nav.group',
         ],
       },
-      // M7 导航收敛（对象级动作从顶层菜单下沉到列表页操作区）。
-      //
-      // These routes are *object-level mutations*, not destinations: every one of them is
-      // reached from the create button of its own list surface, so keeping them in the
-      // sidebar renders the same action twice (one of the two paths is always a detour).
-      // `navHidden` only removes the nav entry — the route, its permissions and its
-      // in-page button stay untouched, so the action is still one click away where the
-      // user already is. The rule applied to the whole class, not just the first ten:
-      // a route is hidden only when its list surface declares `createHref` / a `Link`
-      // to it (verified per surface, not assumed):
-      //   customers companies|people|deals      -> Link / createHref
-      //   sales channels; quotes+orders (SalesDocumentsTable) -> Link (documents/create?kind=…)
-      //   catalog products|prices|categories    -> createHref (prices/categories gated on canManage)
-      //   warranty claims|registrations|vendor-policies|troubleshooting-guides -> Link / createHref
-      //   auth users|roles, currencies, exchange-rates, rules, sets,
-      //   resources, staff teams, feature toggles, user entities -> createHref / Link
-      // Left untouched on purpose: /backend/definitions/create and
-      // /backend/resources/resource-types/create — their list surfaces do NOT expose a
-      // create action, so hiding the menu entry would remove the only way in.
-      //
-      // Declared on the module that already owns the app-wide nav ordering so the
-      // navigation policy lives in one place; the override dispatcher is app-wide.
-      routes: {
-        pages: {
-          'backend:/backend/customers/companies/create': { metadata: { navHidden: true } },
-          'backend:/backend/customers/people/create': { metadata: { navHidden: true } },
-          'backend:/backend/customers/deals/create': { metadata: { navHidden: true } },
-          'backend:/backend/sales/channels/create': { metadata: { navHidden: true } },
-          'backend:/backend/sales/documents/create': { metadata: { navHidden: true } },
-          'backend:/backend/catalog/products/create': { metadata: { navHidden: true } },
-          'backend:/backend/catalog/prices/create': { metadata: { navHidden: true } },
-          'backend:/backend/catalog/categories/create': { metadata: { navHidden: true } },
-          'backend:/backend/warranty_claims/create': { metadata: { navHidden: true } },
-          'backend:/backend/warranty_claims/registrations/create': { metadata: { navHidden: true } },
-          'backend:/backend/warranty_claims/vendor-policies/create': { metadata: { navHidden: true } },
-          'backend:/backend/warranty_claims/troubleshooting-guides/create': { metadata: { navHidden: true } },
-          'backend:/backend/users/create': { metadata: { navHidden: true } },
-          'backend:/backend/roles/create': { metadata: { navHidden: true } },
-          'backend:/backend/currencies/create': { metadata: { navHidden: true } },
-          'backend:/backend/exchange-rates/create': { metadata: { navHidden: true } },
-          'backend:/backend/rules/create': { metadata: { navHidden: true } },
-          'backend:/backend/sets/create': { metadata: { navHidden: true } },
-          'backend:/backend/resources/resources/create': { metadata: { navHidden: true } },
-          'backend:/backend/staff/teams/create': { metadata: { navHidden: true } },
-          'backend:/backend/feature-toggles/global/create': { metadata: { navHidden: true } },
-          'backend:/backend/entities/user/create': { metadata: { navHidden: true } },
-        },
-      },
+      // The override dispatcher is app-wide, so the app declares installed pages'
+      // navigation metadata from one place: `metadata` merges over the page's own
+      // `page.meta.ts`, and the `navHidden` entries below are the object-action
+      // policy documented in src/nav/hidden-pages.json.
+      routes: { pages: declaredPageOverrides },
     },
   },
+
   { id: 'auth', from: '@open-mercato/core' },
   { id: 'directory', from: '@open-mercato/core' },
   { id: 'customers', from: '@open-mercato/core' },

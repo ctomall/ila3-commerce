@@ -4,8 +4,8 @@
     "label": "工作台",
     "labelKey": "crmNav.group.home",
     "order": 10,
-    "landing": "/backend/workbench",
-    "members": ["workbench.nav.group"]
+    "landing": "/backend",
+    "members": ["workbench.nav.group", "crmNav.group.home"]
   },
   {
     "id": "customers",
@@ -21,59 +21,86 @@
     "labelKey": "crmNav.group.sales",
     "order": 30,
     "landing": "/backend/sales/quotes",
-    "members": ["customers~sales.nav.group", "sales.nav.group"]
+    "members": ["customers~sales.nav.group"]
   },
   {
     "id": "catalog",
-    "label": "商品与库存",
+    "label": "商品目录",
     "labelKey": "crmNav.group.catalog",
     "order": 40,
     "landing": "/backend/catalog/products",
-    "members": ["catalog.nav.group", "wms.nav.group", "checkout.nav.group"]
+    "members": ["catalog.nav.group"]
   },
   {
-    "id": "fulfillment",
-    "label": "履约与售后",
-    "labelKey": "crmNav.group.fulfillment",
+    "id": "warehouse",
+    "label": "仓储运营",
+    "labelKey": "crmNav.group.warehouse",
     "order": 50,
+    "landing": "/backend/wms",
+    "members": ["wms.nav.group"]
+  },
+  {
+    "id": "aftercare",
+    "label": "售后",
+    "labelKey": "crmNav.group.aftercare",
+    "order": 60,
     "landing": "/backend/warranty_claims",
-    "members": ["warranty_claims.nav.group", "eudr.nav.group"]
+    "members": ["warranty_claims.nav.group"]
   },
   {
     "id": "people",
-    "label": "人员与排程",
+    "label": "人员与项目",
     "labelKey": "crmNav.group.people",
-    "order": 60,
-    "landing": "/backend/staff/time-tracking",
-    "members": [
-      "staff.nav.group",
-      "staff.time_tracking.nav.group",
-      "resources.nav.group",
-      "planner.nav.group",
-      "availability.nav.group"
-    ]
+    "order": 70,
+    "landing": "/backend/staff/time-tracking/projects",
+    "members": ["staff.nav.group", "staff.time_tracking.nav.group", "resources.nav.group"]
   },
   {
-    "id": "content",
-    "label": "沟通与资料",
-    "labelKey": "crmNav.group.content",
-    "order": 70,
+    "id": "scheduling",
+    "label": "排班与工时",
+    "labelKey": "crmNav.group.scheduling",
+    "order": 80,
+    "landing": "/backend/staff/time-tracking/entries",
+    "members": ["crmNav.group.scheduling", "planner.nav.group"]
+  },
+  {
+    "id": "payments",
+    "label": "支付",
+    "labelKey": "crmNav.group.payments",
+    "order": 90,
+    "landing": "/backend/payment-gateways",
+    "members": ["checkout.nav.group", "crmNav.group.payments"]
+  },
+  {
+    "id": "documents",
+    "label": "文档",
+    "labelKey": "crmNav.group.documents",
+    "order": 100,
+    "landing": "/backend/documents",
+    "members": ["documents.nav.group", "attachments.nav.group"]
+  },
+  {
+    "id": "messages",
+    "label": "消息",
+    "labelKey": "crmNav.group.messages",
+    "order": 110,
     "landing": "/backend/messages",
-    "members": [
-      "documents.nav.group",
-      "attachments.nav.group",
-      "messages.nav.group",
-      "inbox_ops.nav.group",
-      "communication_channels.nav.group",
-      "phone_calls.nav.group"
-    ]
+    "members": ["messages.nav.group", "inbox_ops.nav.group", "phone_calls.nav.group"]
   },
   {
     "id": "automation",
-    "label": "自动化与规则",
+    "label": "自动化",
     "labelKey": "crmNav.group.automation",
-    "order": 80,
-    "landing": "/backend/definitions",
-    "members": ["business_rules.nav.group", "rules.nav.group", "workflows.module.name"]
+    "order": 120,
+    "landing": "/backend/instances",
+    "members": ["crmNav.group.automation"]
+  },
+  {
+    "id": "compliance",
+    "label": "合规",
+    "labelKey": "crmNav.group.compliance",
+    "order": 130,
+    "landing": "/backend/eudr",
+    "members": ["eudr.nav.group"]
   }
 ]

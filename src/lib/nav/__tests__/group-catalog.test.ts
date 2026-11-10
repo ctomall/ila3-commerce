@@ -34,6 +34,21 @@ describe('applyGroupCatalog', () => {
     expect(result.map((entry) => entry.id)).toEqual(['catalog'])
   })
 
+  it('renders the container label through the catalogue labelKey when translated', () => {
+    const result = applyGroupCatalog(
+      [group('customers.nav.group', ['a'])],
+      (key, fallback) => (key === 'crmNav.group.customers' ? '客户' : fallback),
+    )
+    expect(result[0].id).toBe('customers')
+    expect(result[0].name).toBe('客户')
+    expect(result[0].defaultName).toBe('客户')
+  })
+
+  it('falls back to the declared label without a translator', () => {
+    const result = applyGroupCatalog([group('customers.nav.group', ['a'])])
+    expect(result[0].name).toBe('客户')
+  })
+
   it('matches the shipped catalog contract', () => {
     const ids = NAV_GROUP_CATALOG.map((spec) => spec.id)
     expect(new Set(ids).size).toBe(ids.length)
