@@ -16,6 +16,7 @@
  * Usage: node scripts/check-contrast.mjs [--json]
  */
 import { execFileSync } from 'node:child_process'
+import fs from 'node:fs'
 
 const EGO = '/home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs'
 const BASE = process.env.CONTRAST_BASE_URL ?? 'http://127.0.0.1:3000'
@@ -24,11 +25,23 @@ const PAGE = process.env.CONTRAST_PAGE ?? '/backend/sales/quotes'
 const SAMPLE_NAMES = ['body', 'table header', 'page title', 'muted text', 'sidebar group', 'primary button']
 
 const snippet = `
+const COOKIES = __COOKIES__
+for (const c of COOKIES) await cdp('Network.setCookie', c)
+
 const measure = async (theme) => {
   await cdp('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: theme }] })
   await cdp('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
   await page.goto('${BASE}${PAGE}')
-  await new Promise((r) => setTimeout(r, 5000))
+  // Wait for the page's primary action instead of a fixed 5s: on a cold session the
+  // shell + table can take longer, and a missing primary button fails the gate for a
+  // timing reason rather than a contrast one (2026-11-10: "5/6 samples rendered").
+  const deadline = Date.now() + 25000
+  while (Date.now() < deadline) {
+    const ready = await page.evaluate(() => /创建销售单据|创建订单/.test(document.body.innerText))
+    if (ready) break
+    await new Promise((r) => setTimeout(r, 1000))
+  }
+  await new Promise((r) => setTimeout(r, 1500))
   return await page.evaluate(() => {
     const cv = document.createElement('canvas'); cv.width = cv.height = 1
     const ctx = cv.getContext('2d', { willReadFrequently: true })
@@ -43,8 +56,13 @@ const measure = async (theme) => {
       ['table header', pick('table thead th')],
       ['page title', pick('h1') || pick('h2')],
       ['muted text', pick('.text-muted-foreground')],
-      ['sidebar group', pick('[data-sidebar-group="true"] button')],
-      ['primary button', Array.from(document.querySelectorAll('button, a')).find((b)=>/创建销售单据|创建订单/.test(b.innerText||''))],
+      // The five-scene rail replaced the old grouped sidebar, so the data attribute this
+      // sample relied on is gone; a rail link is the closest equivalent text role.
+      ['sidebar group', pick('[data-testid="sidebar"] a') || pick('[data-sidebar-group="true"] button')],
+      // Locale-agnostic: the primary action is the create-document link. Matching on its
+      // Chinese label failed whenever the measuring session rendered English.
+      ['primary button', document.querySelector('a[data-slot="button"][href*="/backend/sales/documents/create"]')
+        || Array.from(document.querySelectorAll('button, a')).find((b)=>/创建销售单据|创建订单|create (sales|order)/i.test(b.innerText||''))],
     ].filter(([, el]) => el)
     const measured = samples.map(([name, el]) => {
       const cs = getComputedStyle(el); const bg = bgOf(el)
@@ -64,7 +82,45 @@ const out = { light: await measure('light'), dark: await measure('dark') }
 console.log('@@DSH_RESULT@@' + JSON.stringify(out))
 `
 
-const run = execFileSync('node', [EGO, 'nodejs'], { input: snippet, encoding: 'utf8', timeout: 300000 })
+// Log in as superadmin from the outer process and hand the cookies to the browser
+// snippet: the profile may be signed in as an ordinary employee, whose view has no
+// create button, which made the primary-button sample disappear for the wrong reason.
+const credLines = fs
+  .readFileSync('/home/pro/.ila3-admin-credentials', 'utf8')
+  .split('\n')
+  .map((line) => line.trim())
+  .filter((line) => line && !line.startsWith('#'))
+  .map((line) => line.split(/\s+/))
+const adminCred = credLines.find((parts) => parts[0] === 'superadmin')
+if (!adminCred) {
+  console.error('[contrast] no superadmin credential in ~/.ila3-admin-credentials')
+  process.exit(1)
+}
+const loginRes = await fetch(`${BASE}/api/auth/login`, {
+  method: 'POST',
+  headers: { 'content-type': 'application/x-www-form-urlencoded' },
+  body: new URLSearchParams({ email: adminCred[1], password: adminCred[2] }).toString(),
+})
+if (!loginRes.ok) {
+  console.error(`[contrast] login failed: ${loginRes.status}`)
+  process.exit(1)
+}
+const cookies = (loginRes.headers.getSetCookie?.() ?? []).map((raw) => {
+  const pair = raw.split(';')[0]
+  const at = pair.indexOf('=')
+  return { name: pair.slice(0, at), value: pair.slice(at + 1), url: BASE, path: '/', httpOnly: true, secure: false }
+})
+// A brand-new session has no organization selected, so /backend renders the chooser
+// instead of the page under test. The token already names the tenant and organization.
+const loginBody = await loginRes.json().catch(() => null)
+const token = loginBody?.token
+if (typeof token === 'string' && token.split('.').length === 3) {
+  const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString('utf8'))
+  if (claims.tenantId) cookies.push({ name: 'om_selected_tenant', value: String(claims.tenantId), url: BASE, path: '/', httpOnly: false, secure: false })
+  if (claims.orgId) cookies.push({ name: 'om_selected_org', value: String(claims.orgId), url: BASE, path: '/', httpOnly: false, secure: false })
+}
+
+const run = execFileSync('node', [EGO, 'nodejs'], { input: snippet.replace('__COOKIES__', JSON.stringify(cookies)), encoding: 'utf8', timeout: 300000 })
 const line = run.split('\n').find((l) => l.includes('@@DSH_RESULT@@'))
 if (!line) {
   console.error('[contrast] browser did not return a measurement')
@@ -83,7 +139,10 @@ for (const [theme, items] of Object.entries(data)) {
     failures += 1
   }
   if (measured.length < expectedCount) {
-    const missing = SAMPLE_NAMES.slice(measured.length)
+    // Name the samples that are actually absent: slicing by count blamed whatever came
+    // last in the list, which sent one debugging session after the wrong selector.
+    const seenNames = new Set(measured.map((item) => item.name))
+    const missing = SAMPLE_NAMES.filter((name) => !seenNames.has(name))
     console.error(`[contrast] ${theme}: only ${measured.length}/${expectedCount} samples rendered (missing: ${missing.join(', ')})`)
     failures += 1
   }
