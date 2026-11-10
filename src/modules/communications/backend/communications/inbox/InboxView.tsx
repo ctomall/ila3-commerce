@@ -2,6 +2,7 @@ import * as React from 'react'
 import { headers } from 'next/headers'
 import { describeMedia } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
+import { pickReplyRecipient } from '../../../lib/reply-recipient'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 
 type ThreadRow = {
@@ -225,7 +226,7 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                   ) ? (
                     <ReplyComposer
                       channelId={detail.channel.id}
-                      to={detail.conversation.externalConversationId}
+                      to={pickReplyRecipient(detail.items, detail.conversation.externalConversationId)}
                       subject={detail.conversation.subject ?? ''}
                       channelType={detail.channel.channelType ?? ''}
                       parentMessageId={
