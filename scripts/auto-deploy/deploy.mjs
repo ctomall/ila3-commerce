@@ -104,6 +104,11 @@ function parseArgs(argv) {
     else if (flag === '--help' || flag === '-h') args.help = true
     else throw new Error(`unknown argument ${flag}`)
   }
+  const candidateFlagIndex = process.argv.indexOf('--candidate-port')
+  if (candidateFlagIndex === -1 && !process.env.ILA3_CANDIDATE_PORT) {
+    const free = pickFreePort(args.targetPort)
+    if (free) args.candidatePort = free
+  }
   args.candidateCheckPort = args.candidateCheckPort ?? args.candidatePort
   return args
 }
@@ -117,6 +122,28 @@ function parseArgs(argv) {
  * nothing to do with the release under test. A refusal must leave the machine as it found
  * it, so the port is checked and cleared on every exit path.
  */
+/**
+ * A candidate port that is actually free.
+ *
+ * The candidate check starts the release next to production, and it used to insist on
+ * 3100. On this shared host another worktree runs its own dev server on 3100, so the
+ * candidate could not bind (`EADDRINUSE`) and the release was refused as
+ * `candidate-unhealthy` while the old server answered /login for us (2026-11-10). The
+ * default is now "any free port"; --candidate-port still pins one.
+ */
+function portInUse(port) {
+  const out = spawnSync('ss', ['-ltn'], {encoding: 'utf8'})
+  return (out.stdout || '').split('\n').some((line) => new RegExp(`[:.]${port}\\s`).test(line))
+}
+
+function pickFreePort(exclude) {
+  for (let attempt = 0; attempt < 50; attempt += 1) {
+    const port = 3200 + Math.floor(Math.random() * 800)
+    if (port !== exclude && !portInUse(port)) return port
+  }
+  return null
+}
+
 function freePortIfOccupied(port, echo = false) {
   const out = spawnSync('ss', ['-ltnp'], {encoding: 'utf8'})
   const line = (out.stdout || '').split('\n').find((l) => l.includes(`:${port} `))
