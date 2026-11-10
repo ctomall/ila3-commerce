@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-09T09:28:42.235Z",
-  "roots": 97,
+  "generatedAt": "2026-11-10T03:46:23.947Z",
+  "roots": 98,
   "suspicious": [
     {
       "href": "/backend/config/customers/deals",
       "title": "商机设置",
-      "group": "客户与销售",
+      "group": "销售业务",
       "parent": "/backend/config/customers"
     }
   ]
