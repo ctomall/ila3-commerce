@@ -43,10 +43,22 @@ function when(value: string | null): string {
   return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('zh-CN', { hour12: false })
 }
 
-async function selfFetch<T>(path: string, cookie: string, host: string): Promise<T | null> {
-  const response = await fetch(`http://${host}${path}`, { headers: { cookie }, cache: 'no-store' })
-  if (!response.ok) return null
-  return (await response.json()) as T
+type SelfFetchResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; status: number }
+
+/**
+ * Self-fetch that KEEPS the failure: an expired session or a 5xx must not look
+ * like "you have no conversations". Only a 2xx with an empty list is empty.
+ */
+async function selfFetch<T>(path: string, cookie: string, host: string): Promise<SelfFetchResult<T>> {
+  try {
+    const response = await fetch(`http://${host}${path}`, { headers: { cookie }, cache: 'no-store' })
+    if (!response.ok) return { ok: false, status: response.status }
+    return { ok: true, data: (await response.json()) as T }
+  } catch {
+    return { ok: false, status: 0 }
+  }
 }
 
 /**
@@ -61,11 +73,13 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
   const cookie = headerStore.get('cookie') ?? ''
   const selectedId = selectedIdProp ?? null
 
-  const list = await selfFetch<{ items: ThreadRow[] }>('/api/communications/me/threads', cookie, host)
-  const threads = list?.items ?? []
-  const detail = selectedId
+  const listResult = await selfFetch<{ items: ThreadRow[] }>('/api/communications/me/threads', cookie, host)
+  const threads = listResult.ok ? listResult.data.items ?? [] : []
+  const detailResult = selectedId
     ? await selfFetch<ThreadDetail>(`/api/communications/me/threads/${selectedId}/messages`, cookie, host)
     : null
+  const detail = detailResult?.ok ? detailResult.data : null
+  const listError = listResult.ok ? null : listResult.status
 
   return (
     <Page>
@@ -94,7 +108,17 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                   </a>
                 </li>
               ))}
-              {threads.length === 0 ? <li className="p-4 text-sm text-muted-foreground">没有可访问的会话。</li> : null}
+              {listError !== null ? (
+                <li className="p-4 text-sm text-red-700 dark:text-red-300">
+                  {listError === 401
+                    ? '会话已过期，请重新登录后刷新。'
+                    : listError === 0
+                      ? '收件箱暂时无法连接服务，请稍后重试。'
+                      : `收件箱加载失败（HTTP ${listError}），这不是"没有会话"。`}
+                </li>
+              ) : threads.length === 0 ? (
+                <li className="p-4 text-sm text-muted-foreground">没有可访问的会话。</li>
+              ) : null}
             </ul>
           </aside>
 
