@@ -1356,5 +1356,6 @@
   "crmNav.loading": "Loading navigation",
   "crmNav.openAssistant": "Open AI assistant",
   "crmNav.utility.manage": "Management centre",
-  "crmNav.utility.account": "Account"
+  "crmNav.utility.account": "Account",
+  "crmNav.manage.category.settings.sections.other": "Other settings"
 }
