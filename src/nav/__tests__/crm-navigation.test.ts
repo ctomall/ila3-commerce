@@ -284,14 +284,17 @@ describe('declared CRM catalogue', () => {
     expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain('/backend/config/cache')
   })
 
-  it('re-homes settings embedded in a main group instead of dropping them', () => {
+  it('reports a settings-context group entry with no settings section as unconfigured, never a catch-all', () => {
     const catalog = buildCrmNavigation(
       payload({
         groups: [
           {
             id: 'legacy.admin',
             name: '管理',
-            items: [item('缓存', '/backend/config/cache', { pageContext: 'settings', order: 1 })],
+            items: [
+              item('缓存', '/backend/config/cache', { pageContext: 'settings', order: 1 }),
+              item('孤儿设置', '/backend/config/orphan-setting', { pageContext: 'settings', order: 2 }),
+            ],
           },
         ],
         settingsSections: [],
@@ -299,11 +302,17 @@ describe('declared CRM catalogue', () => {
       }),
       declared,
     )
-    expect(catalog.groups).toEqual([])
-    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
+    // Both settings entries are undeclared (no settings section claims them):
+    // they are diagnostics, not rendered management categories and not dropped.
+    expect(catalog.unconfiguredSettings ?? []).toEqual([
       '/backend/config/cache',
+      '/backend/config/orphan-setting',
     ])
-    expect(catalog.authorized).toContain('/backend/config/cache')
+    expect(catalog.unknown).toEqual(['/backend/config/cache', '/backend/config/orphan-setting'])
+    expect(catalog.groups).toEqual([])
+    expect(catalog.manage.categories).toEqual([])
+    expect(catalog.manage.categories.some((category) => category.id === 'settings.sections.other')).toBe(false)
+    expect(catalog.authorized).toContain('/backend/config/orphan-setting')
   })
 
   it('treats the typed chrome fallback as an error, not as empty authorization', () => {
@@ -320,7 +329,9 @@ describe('declared CRM catalogue', () => {
     })
   })
 
-  it('keeps settings-path pages out of daily even when their metadata lacks pageContext', () => {
+  it('keeps an undeclared /backend/config path in its declared daily group when pageContext is main', () => {
+    // The path shape must not classify this entry: no pageContext means main, so
+    // it stays in the declared group even though the URL looks like settings.
     const catalog = buildCrmNavigation(
       payload({
         groups: [
@@ -329,8 +340,7 @@ describe('declared CRM catalogue', () => {
             name: '客户',
             items: [
               item('公司', '/backend/customers/companies', { order: 110 }),
-              item('商机设置', '/backend/config/customers/deals', { order: 350 }),
-              item('工时设置', '/backend/staff/time-tracking/settings', { order: 900 }),
+              item('新配置页', '/backend/config/brand-new-setting', { order: 350 }),
             ],
           },
         ],
@@ -339,13 +349,74 @@ describe('declared CRM catalogue', () => {
       }),
       declared,
     )
-    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).toEqual([
-      '/backend/customers/companies',
-    ])
-    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).toEqual([
-      '/backend/config/customers/deals',
-      '/backend/staff/time-tracking/settings',
-    ])
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).toContain(
+      '/backend/config/brand-new-setting',
+    )
+    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).not.toContain(
+      '/backend/config/brand-new-setting',
+    )
+    expect(catalog.unconfiguredSettings ?? []).toEqual([])
+  })
+
+  it('reports an unclaimed settings-context entry as unconfiguredSettings and renders it nowhere', () => {
+    const catalog = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: 'settings.sections.system',
+            name: '系统',
+            items: [item('孤儿设置', '/backend/config/unclaimed-setting', { pageContext: 'settings', order: 5 })],
+          },
+        ],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(catalog.unconfiguredSettings ?? []).toContain('/backend/config/unclaimed-setting')
+    expect(catalog.unconfiguredSettings ?? []).not.toHaveLength(0)
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain(
+      '/backend/config/unclaimed-setting',
+    )
+    expect(catalog.manage.categories.flatMap((category) => category.items.map((entry) => entry.href))).not.toContain(
+      '/backend/config/unclaimed-setting',
+    )
+    expect(catalog.manage.categories.some((category) => category.id === 'settings.sections.other')).toBe(false)
+  })
+
+  it('reports a visible authorized href that no rendered surface claims as unknown', () => {
+    const catalog = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: '',
+            name: '无归属',
+            items: [item('神秘入口', '/backend/mystery', { order: 1 })],
+          },
+        ],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(catalog.unknown).toContain('/backend/mystery')
+    expect(catalog.groups.flatMap((group) => group.items.map((entry) => entry.href))).not.toContain('/backend/mystery')
+    // Hidden entries are not "visible authorized" and must not be reported.
+    const hidden = buildCrmNavigation(
+      payload({
+        groups: [
+          {
+            id: '',
+            name: '无归属',
+            items: [{ id: 'x', href: '/backend/hidden-entry', title: '隐藏', order: 1, hidden: true }],
+          },
+        ],
+        settingsSections: [],
+        profileSections: [],
+      }),
+      declared,
+    )
+    expect(hidden.unknown).not.toContain('/backend/hidden-entry')
   })
 
 })

@@ -250,6 +250,23 @@ describe('declared navigation ownership', () => {
     }
   })
 
+  it('classifies every settings-shaped route through declaration metadata, not its path', () => {
+    // No allowlist: any visible route whose URL merely *looks* like settings must
+    // still be declared as a settings-context management entry. This is the
+    // invariant that makes the old path heuristic unnecessary.
+    const shaped = visible.filter(
+      (entry) => entry.pattern!.startsWith('/backend/config/') || entry.pattern!.endsWith('/settings'),
+    )
+    expect(shaped.length).toBeGreaterThan(0)
+    const violations = shaped
+      .map((entry) => {
+        const owner = resolveNavOwner(entry.groupKey ?? entry.group)
+        return { href: entry.pattern, ownerKind: owner?.kind ?? 'none', pageContext: entry.pageContext ?? 'main' }
+      })
+      .filter((entry) => entry.ownerKind !== 'category' || entry.pageContext !== 'settings')
+    expect(violations).toEqual([])
+  })
+
   it('does not manufacture a menu entry for a base/adaptor module page', () => {
     const entry = byPath.get('/backend/shipping-carriers/create')
     expect(entry?.navHidden).toBe(true)

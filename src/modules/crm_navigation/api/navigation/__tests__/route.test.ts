@@ -157,5 +157,41 @@ describe('CRM navigation chrome route', () => {
     expect(body.groups).toEqual([])
     expect(body.settingsSections).toEqual([])
     expect(body.crm.error).toBe(true)
+    expect(body.crm.unconfiguredSettings).toEqual([])
+    expect(body.crm.unconfiguredProfile).toEqual([])
+    expect(body.crm.unconfiguredGroups).toEqual([])
+    expect(body.crm.unknown).toEqual([])
+  })
+
+  it('exposes and logs an unclaimed settings entry instead of rendering a catch-all', async () => {
+    const warnLog = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    mockFetchCoreNavigation.mockResolvedValue({
+      ok: true,
+      status: 200,
+      attempts: 1,
+      payload: {
+        ...payload,
+        groups: [
+          ...payload.groups,
+          {
+            id: 'settings.sections.system',
+            name: '系统',
+            items: [
+              { id: 'orphan', href: '/backend/config/orphan-setting', title: '孤儿设置', pageContext: 'settings', order: 5 },
+            ],
+          },
+        ],
+        settingsSections: [],
+      },
+    })
+    const res = await GET(request())
+    const body = await res.json()
+    warnLog.mockRestore()
+
+    expect(body.crm.unconfiguredSettings).toEqual(['/backend/config/orphan-setting'])
+    expect(body.crm.manage.categories).toEqual([])
+    expect(
+      (body.crm.manage.categories as Array<{ id: string }>).some((section) => section.id === 'settings.sections.other'),
+    ).toBe(false)
   })
 })
