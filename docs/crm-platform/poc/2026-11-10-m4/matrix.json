@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-10T07:06:43.533Z",
+  "generatedAt": "2026-11-10T07:10:27.364Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -95,7 +95,7 @@
       ],
       "status": "pass-weak",
       "weakReason": "证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核",
-      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":2999}"
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3031}"
     },
     {
       "id": 4,
