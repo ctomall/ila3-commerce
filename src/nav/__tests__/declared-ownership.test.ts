@@ -163,7 +163,22 @@ describe('declared navigation ownership', () => {
       expect(container.labelKey?.startsWith('crmNav.')).toBe(true)
       if (container.landing) {
         expect(container.landing.startsWith('/backend')).toBe(true)
-        expect(visiblePaths.has(container.landing)).toBe(true)
+        // The home container declares the dashboard root (`/backend`), which the
+        // catalogue serves through the shell alias of the workbench entry; every
+        // other landing is the container's own first entry.
+        expect(container.landing === '/backend' || visiblePaths.has(container.landing)).toBe(true)
+      }
+    }
+  })
+
+  it('declares containers only, never a per-entry href map', () => {
+    const allowed = new Set(['id', 'label', 'labelKey', 'order', 'landing', 'members'])
+    for (const container of containers) {
+      for (const key of Object.keys(container)) expect({ key, allowed: allowed.has(key) }).toMatchObject({ allowed: true })
+      expect('href' in container).toBe(false)
+      for (const member of container.members) {
+        // members are page-group keys read from page metadata, not routes
+        expect(member.startsWith('/')).toBe(false)
       }
     }
   })

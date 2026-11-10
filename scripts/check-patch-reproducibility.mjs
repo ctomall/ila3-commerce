@@ -46,8 +46,8 @@ function extractFunction(source, name) {
  *
  * The markers only prove text was inserted. These run the two helpers the patches
  * install, with synthetic input, and check the contract the app relies on: 15
- * settings partitions collapse to 8 sections, 23 page groups collapse to 7, and no
- * entry is lost.
+ * settings partitions collapse to their declared category containers, page groups
+ * collapse to the declared containers, and no entry is lost.
  */
 async function assertPatchedBehaviour(tmp, pkgRoot) {
   const libDir = path.join(pkgRoot, 'core', 'dist', 'modules', 'auth', 'lib')
@@ -56,7 +56,7 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
   if (!/__mergeSettingsImpl\(groups, __SETTINGS_SECTION_MERGE\)/.test(chrome)) {
     throw new Error('merge helper is not delegating to the shared implementation')
   }
-  if (!/__applyGroupCatalogImpl\(groups, __NAV_GROUPS_DATA\)/.test(chrome)) {
+  if (!/__applyGroupCatalogImpl\(groups, __NAV_GROUPS_DATA(?:, translate)?\)/.test(chrome)) {
     throw new Error('catalogue helper is not delegating to the shared implementation')
   }
 

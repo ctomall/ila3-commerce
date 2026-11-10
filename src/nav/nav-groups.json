@@ -97,7 +97,7 @@
   },
   {
     "id": "compliance",
-    "label": "合规",
+    "label": "业务合规（欧盟零毁林专项）",
     "labelKey": "crmNav.group.compliance",
     "order": 130,
     "landing": "/backend/eudr",

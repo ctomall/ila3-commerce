@@ -26,6 +26,17 @@
  * Usage:
  *   node scripts/crm-nav-declared-check.mjs --base http://127.0.0.1:3100 \
  *     --out /storage/artifacts/pro/crm-declared-navigation-goal/check.json --strict
+ *
+ * Independent acceptance (C) can pin the expected information architecture with
+ * the machine-readable file written by the v2 declaration:
+ *
+ *   node scripts/crm-nav-declared-check.mjs \
+ *     --base http://127.0.0.1:3100 --strict \
+ *     --expect-ia /storage/artifacts/pro/menu-declaration-audit/v2-ia-expectation.json
+ *
+ * `--expect-ia` first verifies the file still matches src/nav/nav-groups.json and
+ * src/nav/settings-sections.json (a stale expectation fails), then asserts the
+ * candidate's container/category ids and order against that file.
  */
 import fs from 'node:fs'
 import path from 'node:path'
@@ -39,6 +50,7 @@ const BASE = arg('--base', process.env.CRM_NAV_BASE_URL ?? 'http://127.0.0.1:300
 const OUT = arg('--out', null)
 const STRICT = process.argv.includes('--strict')
 const ROLES = (arg('--roles', 'admin,employee')).split(',').filter(Boolean)
+const EXPECT_IA = arg('--expect-ia', null)
 const CATALOG_PATH = path.resolve(process.cwd(), 'src/nav/nav-groups.json')
 const SETTINGS_TABLE_PATH = path.resolve(process.cwd(), 'src/nav/settings-sections.json')
 const HIDDEN_PAGES_PATH = path.resolve(process.cwd(), 'src/nav/hidden-pages.json')
@@ -101,13 +113,29 @@ async function statusOf(url, cookie) {
 }
 
 const sourceCatalog = JSON.parse(fs.readFileSync(CATALOG_PATH, 'utf8'))
-const expectedGroups = sourceCatalog.map((group) => group.id)
+const sourceGroups = sourceCatalog.map((group) => group.id)
 const settingsTable = JSON.parse(fs.readFileSync(SETTINGS_TABLE_PATH, 'utf8'))
 const hiddenPages = JSON.parse(fs.readFileSync(HIDDEN_PAGES_PATH, 'utf8'))
-const expectedCategories = Object.values(settingsTable)
+const sourceCategories = Object.values(settingsTable)
   .sort((a, b) => a.order - b.order)
   .map((spec) => spec.id)
 const expectedCategoryKeys = new Set(Object.keys(settingsTable))
+// Independent acceptance can pin the IA in a machine-readable expectation file.
+// A stale file is an issue, never a silent override of the source declarations.
+const expectation = EXPECT_IA ? JSON.parse(fs.readFileSync(path.resolve(EXPECT_IA), 'utf8')) : null
+if (expectation) {
+  if (JSON.stringify(expectation.containers.map((c) => c.id)) !== JSON.stringify(sourceGroups)) {
+    issues.push('global: --expect-ia containers differ from src/nav/nav-groups.json')
+  }
+  if (JSON.stringify(expectation.categories.map((c) => c.id)) !== JSON.stringify(sourceCategories)) {
+    issues.push('global: --expect-ia categories differ from src/nav/settings-sections.json')
+  }
+}
+const expectedGroups = expectation ? expectation.containers.map((c) => c.id) : sourceGroups
+const expectedCategories = expectation ? expectation.categories.map((c) => c.id) : sourceCategories
+const expectedLanding = new Map(
+  (expectation ? expectation.containers : sourceCatalog).map((c) => [c.id, c.landing]),
+)
 /** True when every id occurs in `expected` in the same relative order. */
 function isOrderedSubset(ids, expected) {
   let cursor = 0
@@ -267,6 +295,13 @@ for (const role of ROLES) {
   for (const group of crm.groups ?? []) {
     if (!group.labelKey) push(role, `container ${group.id} has no labelKey`)
     if (group.labelKey && group.label === group.labelKey) push(role, `container ${group.id} label is not translated`)
+    const wantedLanding = expectedLanding.get(group.id)
+    if (wantedLanding && shellHref(group.landing) !== wantedLanding) {
+      push(
+        role,
+        `container ${group.id} landing ${group.landing} (shell ${shellHref(group.landing)}) != declared ${wantedLanding}`,
+      )
+    }
   }
 
   const observedCategories = (crm.manage?.categories ?? []).map((category) => category.id)
