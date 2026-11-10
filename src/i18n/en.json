@@ -1357,5 +1357,9 @@
   "crmNav.openAssistant": "Open AI assistant",
   "crmNav.utility.manage": "Management centre",
   "crmNav.utility.account": "Account",
-  "crmNav.manage.category.settings.sections.other": "Other settings"
+  "crmNav.manage.category.settings.sections.other": "Other settings",
+  "messages.priority.low": "Low",
+  "messages.priority.normal": "Normal",
+  "messages.priority.high": "High",
+  "messages.priority.urgent": "Urgent"
 }

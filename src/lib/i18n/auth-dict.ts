@@ -80,7 +80,9 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   // document + workflow cards, so trimming to customers+sales alone left their
   // labels as raw keys ("documents.relatedDocuments.title" etc.) on the page a
   // salesperson actually works in.
-  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages'],
+  // The compose dialog opened from a customer renders the attachment picker
+  // (attachments.library.upload.choose), so the area needs the attachments namespace.
+  customers: ['customers', 'sales', 'documents', 'workflows', 'warranty_claims', 'audit_logs', 'messages', 'attachments'],
   sales: ['sales', 'customers'],
   catalog: ['catalog', 'currencies', 'sales'],
   wms: ['wms', 'catalog'],
@@ -88,8 +90,9 @@ const AREA_NAMESPACES: Record<string, string[]> = {
   staff: ['staff', 'resources'],
   workflows: ['workflows', 'business_rules'],
   integrations: ['integrations'],
-  // The message table header renders communication_channels.columns.*.
-  messages: ['messages', 'communication_channels'],
+  // The message table header renders communication_channels.columns.*, and the composer
+  // renders the attachment picker, so both namespaces ship with this area.
+  messages: ['messages', 'communication_channels', 'attachments'],
   documents: ['documents', 'attachments'],
 }
 
