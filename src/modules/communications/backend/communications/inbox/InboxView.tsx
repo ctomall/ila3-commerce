@@ -51,9 +51,24 @@ type SelfFetchResult<T> =
  * Self-fetch that KEEPS the failure: an expired session or a 5xx must not look
  * like "you have no conversations". Only a 2xx with an empty list is empty.
  */
-async function selfFetch<T>(path: string, cookie: string, host: string): Promise<SelfFetchResult<T>> {
+/**
+ * The app's own base URL for server-side self-fetches.
+ *
+ * Using the public Host header sent the request out through the edge (or failed
+ * DNS/loopback in production: the drill hitting 127.0.0.1 worked while prod
+ * rendered "收件箱暂时无法连接服务"). Loopback + the port the server actually
+ * listens on keeps the call in-process, and INTERNAL_API_BASE_URL stays
+ * available for deployments where that is not true.
+ */
+function internalApiBase(): string {
+  const explicit = process.env.INTERNAL_API_BASE_URL?.trim()
+  if (explicit) return explicit.replace(/\/$/, '')
+  return `http://127.0.0.1:${process.env.PORT ?? '3000'}`
+}
+
+async function selfFetch<T>(path: string, cookie: string, _host: string): Promise<SelfFetchResult<T>> {
   try {
-    const response = await fetch(`http://${host}${path}`, { headers: { cookie }, cache: 'no-store' })
+    const response = await fetch(`${internalApiBase()}${path}`, { headers: { cookie }, cache: 'no-store' })
     if (!response.ok) return { ok: false, status: response.status }
     return { ok: true, data: (await response.json()) as T }
   } catch {
