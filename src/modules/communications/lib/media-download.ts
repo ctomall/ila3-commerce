@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto'
+import { lookup as dnsLookup } from 'node:dns/promises'
 
 /**
  * Inbound WhatsApp media download (ADR-005 G3).
@@ -129,6 +130,7 @@ function isPrivateIpv6(groups: number[]): boolean {
   const first = groups[0]
   if ((first & 0xfe00) === 0xfc00) return true // unique-local fc00::/7
   if ((first & 0xffc0) === 0xfe80) return true // link-local fe80::/10
+  if ((first & 0xffc0) === 0xfec0) return true // deprecated site-local fec0::/10
   if ((first & 0xff00) === 0xff00) return true // multicast ff00::/8
   const zerosUntilLast = groups.slice(0, 7).every((group) => group === 0)
   if (zerosUntilLast && (groups[7] === 0 || groups[7] === 1)) return true // :: and ::1
@@ -137,12 +139,26 @@ function isPrivateIpv6(groups: number[]): boolean {
   if (groups.slice(0, 5).every((group) => group === 0) && groups[5] === 0xffff) {
     return isPrivateIpv4(groups[6] >> 8, groups[6] & 0xff)
   }
+  // IPv4-compatible ::a.b.c.d (deprecated but still routable on some stacks).
+  // Excludes :: and ::1, which are handled above; ::7f00:1 is 127.0.0.1.
+  if (groups.slice(0, 6).every((group) => group === 0) && !(groups[6] === 0 && groups[7] <= 1)) {
+    return isPrivateIpv4(groups[6] >> 8, groups[6] & 0xff)
+  }
   return false
 }
 
-function isPrivateHost(hostname: string): boolean {
+function normalizeHostname(hostname: string): string {
   const host = hostname.toLowerCase()
   const bare = host.startsWith('[') && host.endsWith(']') ? host.slice(1, -1) : host
+  // `localhost.` is the same DNS name as `localhost`; a trailing dot must not
+  // slip past the loopback/metadata checks (found by the independent verifier).
+  const trimmed = bare.replace(/\.+$/, '')
+  return trimmed.length === 0 ? 'localhost' : trimmed
+}
+
+function isPrivateHost(hostname: string): boolean {
+  const host = normalizeHostname(hostname)
+  const bare = host
   if (bare === 'localhost' || bare.endsWith('.localhost')) return true
   if (bare.includes(':')) {
     const groups = expandIpv6(bare)
@@ -177,6 +193,46 @@ export function assertSafeMediaUrl(rawUrl: string, limits: MediaDownloadLimits):
 
 const REDIRECT_STATUS = new Set([301, 302, 303, 307, 308])
 const MAX_MEDIA_REDIRECTS = 3
+const MEDIA_FETCH_TIMEOUT_MS = 30_000
+
+export type MediaLookup = (host: string) => Promise<ReadonlyArray<{address: string; family?: number}>>
+
+const defaultMediaLookup: MediaLookup = (host) => dnsLookup(host, {all: true, verbatim: true})
+
+/**
+ * Reject a DNS name whose resolved addresses are not public.
+ *
+ * `localhost.` was rejected by the literal guard once its trailing dot was
+ * normalized, but `metadata.google.internal` or a wildcard resolver such as
+ * `127.0.0.1.nip.io` only reveal themselves after resolution. A failed lookup is
+ * not treated as a block: `fetch` reports the same failure with its own error, and
+ * a transient resolver hiccup must not become a security decision here.
+ */
+async function assertHostResolvesPublic(
+  hostname: string,
+  lookup: MediaLookup,
+  limits: MediaDownloadLimits,
+): Promise<void> {
+  // The drill flag is the documented way to allow loopback fixtures; it must keep
+  // covering the resolution check as well, or every drill would be blocked.
+  if (limits.allowPrivateHosts) return
+  const host = normalizeHostname(hostname)
+  if (host === 'localhost' || host.endsWith('.localhost')) return
+  let addresses: ReadonlyArray<{address: string; family?: number}>
+  try {
+    addresses = await lookup(host)
+  } catch {
+    return
+  }
+  for (const entry of addresses) {
+    if (isPrivateHost(entry.address)) {
+      throw new MediaDownloadError(
+        'MEDIA_URL_BLOCKED',
+        `media host ${host} resolves to a non-public address (${entry.address})`,
+      )
+    }
+  }
+}
 
 /**
  * Fetch a provider-supplied media URL while following redirects by hand.
@@ -193,12 +249,18 @@ async function fetchMediaResponse(
   initialUrl: URL,
   headers: Record<string, string> | undefined,
   limits: MediaDownloadLimits,
+  lookup?: MediaLookup,
 ): Promise<Response> {
   let current = initialUrl
   let forwardedHeaders = headers
   let hops = 0
   while (true) {
-    const response: Response = await doFetch(current.toString(), { headers: forwardedHeaders, redirect: 'manual' })
+    if (lookup) await assertHostResolvesPublic(current.hostname, lookup, limits)
+    const response: Response = await doFetch(current.toString(), {
+      headers: forwardedHeaders,
+      redirect: 'manual',
+      signal: AbortSignal.timeout(MEDIA_FETCH_TIMEOUT_MS),
+    })
     if (!REDIRECT_STATUS.has(response.status)) return response
     const location = response.headers.get('location')
     if (!location) return response
@@ -301,6 +363,7 @@ export async function downloadWhatsAppMedia(input: {
   baseUrl?: string
   fetchImpl?: FetchLike
   limits?: MediaDownloadLimits
+  lookupImpl?: MediaLookup
 }): Promise<DownloadedMedia> {
   const limits = input.limits ?? resolveMediaDownloadLimits()
   const doFetch = input.fetchImpl ?? fetch
@@ -318,11 +381,13 @@ export async function downloadWhatsAppMedia(input: {
     )
   }
   const url = assertSafeMediaUrl(metadata.url, limits)
+  const lookup = input.lookupImpl ?? (doFetch === fetch ? defaultMediaLookup : undefined)
   const response = await fetchMediaResponse(
     doFetch,
     url,
     {authorization: `Bearer ${input.accessToken}`},
     limits,
+    lookup,
   )
   if (!response.ok) {
     throw new MediaDownloadError('MEDIA_DOWNLOAD_FAILED', `media download failed (${response.status})`)
@@ -437,11 +502,13 @@ export async function downloadMediaByUrl(input: {
   url: string
   fetchImpl?: typeof fetch
   limits?: MediaDownloadLimits
+  lookupImpl?: MediaLookup
 }): Promise<DownloadedMedia> {
   const limits = input.limits ?? resolveMediaDownloadLimits()
   const url = assertSafeMediaUrl(input.url, limits)
   const doFetch = input.fetchImpl ?? fetch
-  const response = await fetchMediaResponse(doFetch, url, undefined, limits)
+  const lookup = input.lookupImpl ?? (doFetch === fetch ? defaultMediaLookup : undefined)
+  const response = await fetchMediaResponse(doFetch, url, undefined, limits, lookup)
   if (!response.ok) {
     throw new MediaDownloadError('MEDIA_DOWNLOAD_FAILED', `media download failed (${response.status})`)
   }

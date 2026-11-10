@@ -355,3 +355,88 @@ describe('media URL SSRF hardening', () => {
     expect(requested).toHaveLength(4)
   })
 })
+
+describe('media URL SSRF hardening — verifier follow-ups', () => {
+  const publicLimits = {maxBytes: 1024 * 1024, allowPrivateHosts: false}
+
+  it('normalizes a trailing dot so localhost. and metadata addresses stay blocked', () => {
+    for (const blocked of [
+      'http://localhost./x',
+      'http://foo.localhost./x',
+      'http://169.254.169.254./latest/meta-data/',
+      'http://0.0.0.0./x',
+    ]) {
+      expect(() => assertSafeMediaUrl(blocked, publicLimits)).toThrow(/not allowed/)
+    }
+  })
+
+  it('blocks deprecated site-local and IPv4-compatible IPv6 forms', () => {
+    for (const blocked of ['http://[fec0::1]/x', 'http://[::7f00:1]/x', 'http://[::a00:1]/x']) {
+      expect(() => assertSafeMediaUrl(blocked, publicLimits)).toThrow(/not allowed/)
+    }
+  })
+
+  it('refuses a hostname that resolves to a private address before requesting it', async () => {
+    const requested: string[] = []
+    const fetchImpl = (async (input: RequestInfo | URL) => {
+      requested.push(String(input))
+      return {ok: true, status: 200, headers: new Headers({'content-type': 'image/png'}), arrayBuffer: async () => PNG_BYTES} as unknown as Response
+    }) as unknown as typeof fetch
+
+    await expect(
+      downloadMediaByUrl({
+        url: 'https://metadata.google.internal/computeMetadata/v1/',
+        fetchImpl,
+        lookupImpl: async () => [{address: '169.254.169.254', family: 4}],
+        limits: publicLimits,
+      }),
+    ).rejects.toMatchObject({code: 'MEDIA_URL_BLOCKED'})
+    await expect(
+      downloadMediaByUrl({
+        url: 'https://127.0.0.1.nip.io/a.png',
+        fetchImpl,
+        lookupImpl: async () => [{address: '::ffff:10.0.0.7', family: 6}],
+        limits: publicLimits,
+      }),
+    ).rejects.toMatchObject({code: 'MEDIA_URL_BLOCKED'})
+    expect(requested).toEqual([])
+  })
+
+  it('downloads when the lookup returns only public addresses', async () => {
+    const media = await downloadMediaByUrl({
+      url: 'https://cdn.example/a.png',
+      fetchImpl: (async () => ({
+        ok: true,
+        status: 200,
+        headers: new Headers({'content-type': 'image/png'}),
+        arrayBuffer: async () => PNG_BYTES,
+      })) as unknown as typeof fetch,
+      lookupImpl: async () => [{address: '93.184.216.34', family: 4}],
+      limits: publicLimits,
+    })
+    expect(media.sha256).toBe(PNG_SHA)
+  })
+
+  it('resolves and checks every redirect hop, and sends a fetch timeout', async () => {
+    const calls: Array<{url: string; hasSignal: boolean}> = []
+    const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
+      const url = String(input)
+      calls.push({url, hasSignal: init?.signal instanceof AbortSignal})
+      if (url === 'https://lookaside.example/a.png') {
+        return {ok: false, status: 302, headers: new Headers({location: 'https://evil.example/internal'}), arrayBuffer: async () => Buffer.alloc(0)} as unknown as Response
+      }
+      return {ok: true, status: 200, headers: new Headers({'content-type': 'image/png'}), arrayBuffer: async () => PNG_BYTES} as unknown as Response
+    }) as unknown as typeof fetch
+
+    await expect(
+      downloadMediaByUrl({
+        url: 'https://lookaside.example/a.png',
+        fetchImpl,
+        lookupImpl: async (host) => (host === 'evil.example' ? [{address: '127.0.0.1', family: 4}] : [{address: '93.184.216.34', family: 4}]),
+        limits: publicLimits,
+      }),
+    ).rejects.toMatchObject({code: 'MEDIA_URL_BLOCKED'})
+    expect(calls).toHaveLength(1)
+    expect(calls[0].hasSignal).toBe(true)
+  })
+})
