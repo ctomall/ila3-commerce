@@ -56,18 +56,30 @@ function createFakeEm(rows: {
   const persisted: Row[] = []
   const removed: Row[] = []
   const created: Row[] = []
-  const find = jest.fn(async (entity: unknown) => {
+  const find = jest.fn(async (entity: unknown, where: Row = {}) => {
     if (entity === CommunicationChannel) return rows.channels ?? []
     if (entity === ExternalConversation) return rows.conversations ?? []
     if (entity === CustomerEntity) return rows.customers ?? []
     if (entity === MessageChannelLink) return rows.links ?? []
     if (entity === ChannelThreadMapping) return rows.mappings ?? []
-    if (entity === ExternalMessage) return rows.messages ?? []
+    if (entity === ExternalMessage) {
+      const list = rows.messages ?? []
+      // Legacy fixtures omit conversationId; only filter rows that carry one so
+      // per-conversation isolation can be asserted without rewriting them all.
+      if (where.conversationId) {
+        return list.filter((row) => row.conversationId === undefined || row.conversationId === where.conversationId)
+      }
+      return list
+    }
     if (entity === Message) return rows.platformMessages ?? []
     throw new Error('unexpected entity in fake em.find')
   })
   const findOne = jest.fn(async (entity: unknown, where: Row) => {
-    if (entity === ExternalConversation) return (rows.conversations ?? [])[0] ?? null
+    if (entity === ExternalConversation) {
+      const list = rows.conversations ?? []
+      if (where.id) return list.find((row) => row.id === where.id) ?? null
+      return list[0] ?? null
+    }
     if (entity === CommunicationChannel) return (rows.channels ?? [])[0] ?? null
     if (entity === CommunicationChannel) {
       const candidate = (rows.channels ?? [])[0] ?? null
@@ -567,6 +579,44 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     })
     expect(payload.channel.capabilities).toMatchObject({fileSharing: true})
     expect(payload.nextAfter).toBe(createdAt.toISOString())
+  })
+
+  it('never leaks another conversation body into the requested thread', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const createdAt = new Date('2026-11-09T10:00:00Z')
+    const em = createFakeEm({
+      conversations: [
+        { id: 'conv-a', channelId: 'ch-a', externalConversationId: 'xa', subject: 'A' },
+        { id: 'conv-b', channelId: 'ch-b', externalConversationId: 'xb', subject: 'B' },
+      ],
+      channels: [
+        { id: 'ch-a', userId: 'u1', providerKey: 'imap', channelType: 'email', status: 'connected', visibility: 'private' },
+        { id: 'ch-b', userId: 'u1', providerKey: 'imap', channelType: 'email', status: 'connected', visibility: 'private' },
+      ],
+      messages: [
+        { id: 'em-a', conversationId: 'conv-a', direction: 'inbound', externalMessageId: 'ext-a', senderIdentifier: 'a@example.test', createdAt },
+        { id: 'em-b', conversationId: 'conv-b', direction: 'inbound', externalMessageId: 'ext-b', senderIdentifier: 'b@example.test', createdAt },
+      ],
+      links: [
+        { externalMessageId: 'em-a', messageId: 'msg-a' },
+        { externalMessageId: 'em-b', messageId: 'msg-b' },
+      ],
+      platformMessages: [
+        { id: 'msg-a', subject: 'A', body: 'A secret', bodyFormat: 'text', tenantId: 't1', organizationId: 'o1', deletedAt: null },
+        { id: 'msg-b', subject: 'B', body: 'B secret', bodyFormat: 'text', tenantId: 't1', organizationId: 'o1', deletedAt: null },
+      ],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const res = await GET(
+      new Request('http://localhost/api/communications/me/threads/conv-a/messages'),
+      { params: Promise.resolve({ id: 'conv-a' }) } as never,
+    )
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.items).toHaveLength(1)
+    expect(payload.items[0]).toMatchObject({ id: 'em-a', body: 'A secret' })
+    expect(JSON.stringify(payload)).not.toContain('B secret')
   })
 
   it('returns the linked message body, subject and tenant-scoped read; unlinked items stay null', async () => {
