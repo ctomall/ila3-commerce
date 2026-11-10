@@ -17,7 +17,11 @@ import {
   parseMetaEvents,
   parseSingleMessage,
   parseSingleStatus,
+  buildMediaPayload,
+  normalizeOutboundMedia,
+  MetaMediaError,
   MetaTemplateError,
+  type MetaOutboundMedia,
   type MetaTemplate,
 } from './meta-payload'
 import {MetaGraphError, sendWhatsAppMessage} from './graph-client'
@@ -133,6 +137,7 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
         metadata: {
           ...(typeof channelMetadata.to === 'string' ? {to: channelMetadata.to} : {}),
           ...(channelMetadata.template ? {template: channelMetadata.template} : {}),
+          ...(channelMetadata.media ? {media: channelMetadata.media} : {}),
         },
       }
     },
@@ -167,9 +172,31 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
           throw error
         }
       }
+      // Media (G3 outbound): the caller supplies an already-uploaded provider
+      // media id or a public https link; validate before any request so a typo
+      // or an internal address never reaches Graph.
+      let outboundMedia: MetaOutboundMedia | undefined
+      if (!template && input.metadata?.media !== undefined) {
+        try {
+          outboundMedia = normalizeOutboundMedia(input.metadata.media)
+        } catch (error) {
+          if (error instanceof MetaMediaError) {
+            return {externalMessageId: '', status: 'failed', error: error.message}
+          }
+          throw error
+        }
+      }
+      if (outboundMedia) {
+        const text = (input.content.text ?? '').trim()
+        const caption =
+          outboundMedia.caption ?? (outboundMedia.kind !== 'audio' && text.length > 0 ? text : undefined)
+        outboundMedia = caption ? {...outboundMedia, caption} : outboundMedia
+      }
       const body = template
         ? buildTemplatePayload(to, template)
-        : buildTextPayload(to, input.content.text ?? '')
+        : outboundMedia
+          ? buildMediaPayload(to, outboundMedia)
+          : buildTextPayload(to, input.content.text ?? '')
       try {
         const result = await sendWhatsAppMessage({
           baseUrl: credentials.graphBaseUrl,

@@ -525,6 +525,43 @@ describe('customer-service window policy', () => {
     expect(send).not.toHaveBeenCalled()
   })
 
+  it('refuses media on a non-WhatsApp channel and a template+media conflict', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(
+      () => send,
+      createFakeEm({
+        channels: [{id: '11111111-1111-4111-8111-111111111111', userId: 'u1', channelType: 'messenger', providerKey: 'messenger'}],
+        conversations: [{id: 'conv-1', channelId: '11111111-1111-4111-8111-111111111111', externalConversationId: '+15550001111'}],
+        messages: [{id: 'em-1', direction: 'inbound', conversationId: 'conv-1', createdAt: new Date(Date.now() - 60 * 60 * 1000)}],
+      }),
+    )
+    const {POST} = await import('../api/me/send/route')
+    const mediaRes = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, media: {kind: 'image', link: 'https://cdn.example.test/a.png'}}),
+      }),
+    )
+    expect(mediaRes.status).toBe(422)
+    await expect(mediaRes.json()).resolves.toMatchObject({code: 'MEDIA_UNSUPPORTED'})
+    expect(send).not.toHaveBeenCalled()
+
+    const conflictRes = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...base,
+          template: {name: 'quote_followup', language: 'en'},
+          media: {kind: 'image', link: 'https://cdn.example.test/a.png'},
+        }),
+      }),
+    )
+    expect(conflictRes.status).toBe(422)
+    await expect(conflictRes.json()).resolves.toMatchObject({code: 'MEDIA_TEMPLATE_CONFLICT'})
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it('email channels are not windowed', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()

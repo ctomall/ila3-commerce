@@ -53,6 +53,22 @@ const bodySchema = z.object({
       components: z.array(z.unknown()).max(20).optional(),
     })
     .optional(),
+  /**
+   * Outbound media (G3): an already-uploaded provider media id or a public https
+   * link Meta fetches itself. Exactly one, because both at once is ambiguous.
+   */
+  media: z
+    .object({
+      kind: z.enum(['image', 'audio', 'video', 'document']),
+      id: z.string().regex(/^\d{1,64}$/).optional(),
+      link: z.string().url().optional(),
+      fileName: z.string().min(1).max(255).optional(),
+      caption: z.string().max(1024).optional(),
+    })
+    .refine((value) => Boolean(value.id) !== Boolean(value.link), {
+      message: 'media must carry exactly one of id or link',
+    })
+    .optional(),
   channelMetadata: z.record(z.string(), z.unknown()).optional(),
 })
 
@@ -178,22 +194,31 @@ export async function POST(req: Request): Promise<Response> {
         )
       }
     }
-    // Template shapes are provider-specific: WhatsApp Cloud API documents an
-    // approved-template payload; this Messenger connector has no equivalent, so
-    // refuse instead of queueing a send the adapter cannot express.
-    if (hasTemplate) {
-      const templateChannel = await policyEm.findOne(CommunicationChannel, {
+    // Template/media shapes are provider-specific: WhatsApp Cloud API documents
+    // both payloads; this Messenger connector has no equivalent, so refuse
+    // instead of queueing a send the adapter cannot express.
+    const hasMedia = Boolean(body.media)
+    if (hasTemplate && hasMedia) {
+      return NextResponse.json(
+        {error: 'A message cannot carry a template and media at the same time', code: 'MEDIA_TEMPLATE_CONFLICT'},
+        {status: 422},
+      )
+    }
+    if (hasTemplate || hasMedia) {
+      const shapedChannel = await policyEm.findOne(CommunicationChannel, {
         id: body.channelId,
         tenantId: auth.tenantId as string,
         organizationId,
         deletedAt: null,
       } as never)
-      const channelType = (templateChannel?.channelType ?? '').toLowerCase()
-      if (templateChannel && channelType !== 'whatsapp') {
+      const channelType = (shapedChannel?.channelType ?? '').toLowerCase()
+      if (shapedChannel && channelType !== 'whatsapp') {
         return NextResponse.json(
           {
-            error: 'Templates are only supported on WhatsApp Business channels in this build',
-            code: 'TEMPLATE_UNSUPPORTED',
+            error: hasTemplate
+              ? 'Templates are only supported on WhatsApp Business channels in this build'
+              : 'Media sends are only supported on WhatsApp Business channels in this build',
+            code: hasTemplate ? 'TEMPLATE_UNSUPPORTED' : 'MEDIA_UNSUPPORTED',
           },
           { status: 422 },
         )
@@ -249,6 +274,7 @@ export async function POST(req: Request): Promise<Response> {
   const channelMetadata = {
     ...(body.channelMetadata ?? {}),
     ...(templateMetadata ? { template: templateMetadata } : {}),
+    ...(body.media ? { media: body.media } : {}),
     ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),
   }
 

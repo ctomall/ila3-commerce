@@ -162,6 +162,62 @@ describe('provider-native outbound over a real HTTP socket', () => {
     expect(requests).toHaveLength(0)
   })
 
+  it('WhatsApp media: sends type=image by public link with the text as caption', async () => {
+    requests.length = 0
+    const adapter = createWhatsAppAdapter()
+    const converted = await adapter.convertOutbound({
+      body: '这是产品图',
+      bodyFormat: 'text',
+      channelMetadata: {to: '15550001111', media: {kind: 'image', link: 'https://cdn.example.test/a.png'}},
+    })
+    const result = await adapter.sendMessage({
+      conversationId: '15550001111',
+      content: converted.content,
+      credentials: {accessToken: 'token-wa', phoneNumberId: 'pn-1', appSecret: 'secret', graphBaseUrl: baseUrl},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: converted.metadata,
+    })
+    expect(result).toMatchObject({status: 'sent'})
+    expect(requests[0].body).toMatchObject({
+      type: 'image',
+      image: {link: 'https://cdn.example.test/a.png'},
+      caption: '这是产品图',
+    })
+  })
+
+  it('WhatsApp media: sends a document by provider id with a file name', async () => {
+    requests.length = 0
+    const adapter = createWhatsAppAdapter()
+    const result = await adapter.sendMessage({
+      conversationId: '15550001111',
+      content: {text: '合同见附件', bodyFormat: 'text'},
+      credentials: {accessToken: 'token-wa', phoneNumberId: 'pn-1', appSecret: 'secret', graphBaseUrl: baseUrl},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: {to: '15550001111', media: {kind: 'document', id: '1234567890', fileName: '合同.pdf'}},
+    })
+    expect(result).toMatchObject({status: 'sent'})
+    expect(requests[0].body).toMatchObject({
+      type: 'document',
+      document: {id: '1234567890', filename: '合同.pdf'},
+      caption: '合同见附件',
+    })
+  })
+
+  it('refuses an invalid media descriptor before any request', async () => {
+    requests.length = 0
+    const adapter = createWhatsAppAdapter()
+    const result = await adapter.sendMessage({
+      conversationId: '15550001111',
+      content: {text: '', bodyFormat: 'text'},
+      credentials: {accessToken: 'token-wa', phoneNumberId: 'pn-1', appSecret: 'secret', graphBaseUrl: baseUrl},
+      scope: {tenantId: 't1', organizationId: 't1'},
+      metadata: {to: '15550001111', media: {kind: 'image', link: 'http://127.0.0.1/a.png'}},
+    })
+    expect(result.status).toBe('failed')
+    expect(String(result.error)).toMatch(/https|public host/)
+    expect(requests).toHaveLength(0)
+  })
+
   it('refuses to guess a recipient when the hub supplied none', async () => {
     requests.length = 0
     const adapter = createWhatsAppAdapter()

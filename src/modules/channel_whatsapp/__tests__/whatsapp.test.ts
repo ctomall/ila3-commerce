@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals'
 import crypto from 'node:crypto'
 import {verifyMetaSignature} from '../lib/meta-signature'
-import {buildTemplatePayload, buildTextPayload, describeInbound, normalizeTemplate, parseMetaEvents, parseSingleMessage} from '../lib/meta-payload'
+import {buildTemplatePayload, buildTextPayload, describeInbound, normalizeOutboundMedia, normalizeTemplate, parseMetaEvents, parseSingleMessage} from '../lib/meta-payload'
 import {MetaGraphError, sendWhatsAppMessage} from '../lib/graph-client'
 import {createWhatsAppAdapter} from '../lib/adapter'
 
@@ -317,5 +317,28 @@ describe('normalizeTemplate', () => {
     expect(() =>
       normalizeTemplate({name: 'x', language: 'en', components: [{type: 'header', parameters: [{type: 'image'}]}]}),
     ).toThrow(/image must be an object/)
+  })
+})
+
+
+describe('normalizeOutboundMedia', () => {
+  it('accepts exactly one source and a document file name', () => {
+    expect(normalizeOutboundMedia({kind: 'image', link: 'https://cdn.example.test/a.png'})).toEqual({
+      kind: 'image',
+      link: 'https://cdn.example.test/a.png',
+    })
+    expect(normalizeOutboundMedia({kind: 'document', id: '42', fileName: '../../x.pdf'})).toEqual({
+      kind: 'document',
+      id: '42',
+      fileName: 'x.pdf',
+    })
+  })
+
+  it('rejects both/neither source, a private link, a non-numeric id and an audio caption', () => {
+    expect(() => normalizeOutboundMedia({kind: 'image', id: '1', link: 'https://x.test/a'})).toThrow(/exactly one/)
+    expect(() => normalizeOutboundMedia({kind: 'image'})).toThrow(/exactly one/)
+    expect(() => normalizeOutboundMedia({kind: 'image', link: 'http://10.0.0.2/a'})).toThrow(/public host|https/)
+    expect(() => normalizeOutboundMedia({kind: 'image', id: 'abc'})).toThrow(/numeric provider media id/)
+    expect(() => normalizeOutboundMedia({kind: 'audio', id: '1', caption: 'hi'})).toThrow(/caption/)
   })
 })
