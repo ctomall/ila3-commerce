@@ -213,7 +213,12 @@ export function createWhatsAppAdapter(options: WhatsAppAdapterOptions = {}): Cha
           // plain Error and loses that classification.
           throw error
         }
-        throw new Error('WHATSAPP_SEND_FAILED')
+        // Preserve the transport error: the hub's unknown-outcome classifier
+        // needs the network cause (`fetch failed`, ECONNRESET, UND_ERR_SOCKET)
+        // to tell a definitive provider rejection from an unresolved send.
+        const wrapped = new Error('WHATSAPP_SEND_FAILED')
+        ;(wrapped as Error & {cause?: unknown}).cause = error
+        throw wrapped
       }
     },
 

@@ -195,6 +195,17 @@ describe('whatsapp adapter', () => {
     ).rejects.toMatchObject({transient: true, status: 429})
   })
 
+  it('preserves the transport cause when a send fails below HTTP', async () => {
+    const adapterWithDrop = createWhatsAppAdapter({
+      fetchImpl: (async () => {
+        throw new TypeError('fetch failed', {cause: {code: 'UND_ERR_SOCKET'}})
+      }) as unknown as typeof fetch,
+    })
+    await expect(
+      adapterWithDrop.sendMessage({content: {text: 'hello'}, credentials, metadata: {to: '1555'}, scope: {tenantId: 't', organizationId: 'o'}} as never),
+    ).rejects.toMatchObject({message: 'WHATSAPP_SEND_FAILED', cause: {message: 'fetch failed'}})
+  })
+
   it('uses the template payload when metadata carries a template', async () => {
     let sentBody: Record<string, unknown> = {}
     const adapterWithFetch = createWhatsAppAdapter({
