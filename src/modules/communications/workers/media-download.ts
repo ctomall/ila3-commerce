@@ -10,6 +10,9 @@ import { createLogger } from '@open-mercato/shared/lib/logger'
 import {
   MEDIA_DOWNLOAD_QUEUE,
   downloadInboundWhatsAppMedia,
+  downloadMediaByUrl,
+  readMessengerAttachment,
+  withMessengerMedia,
   withPersistedMedia,
   type AttachmentServiceLike,
   type MediaDownloadJobPayload,
@@ -70,7 +73,8 @@ export default async function handle(
     tenantId: scope.tenantId,
     deletedAt: null,
   } as never)
-  if (!channel || channel.channelType.toLowerCase() !== 'whatsapp') return
+  const channelType = channel?.channelType.toLowerCase() ?? ''
+  if (!channel || (channelType !== 'whatsapp' && channelType !== 'messenger')) return
 
   let credentialsService: CredentialsServiceLike | null = null
   try {
@@ -111,6 +115,50 @@ export default async function handle(
   if (!attachmentService) {
     // Attachments module disabled: the descriptor stays "未下载" by design.
     logger.warn('media download skipped: attachment service unavailable', {channelLinkId})
+    return
+  }
+
+  if (channelType === 'messenger') {
+    const attachment = readMessengerAttachment(link.channelPayload)
+    if (!attachment) return
+    try {
+      const downloaded = await downloadMediaByUrl({url: attachment.url})
+      const created = await attachmentService.createScoped({
+        tenantId: scope.tenantId,
+        organizationId: link.organizationId ?? scope.organizationId ?? scope.tenantId,
+        entityId: 'communication_channels.external_message',
+        recordId: external.id,
+        partitionCode: 'privateAttachments',
+        fileName: downloaded.fileName,
+        declaredMimeType: downloaded.mimeType,
+        buffer: downloaded.buffer,
+      })
+      link.channelPayload = withMessengerMedia(
+        link.channelPayload,
+        {
+          attachmentId: created.id,
+          fileName: created.fileName,
+          mimeType: created.mimeType,
+          fileSize: created.fileSize,
+          sha256: downloaded.sha256,
+          url: created.url,
+        },
+        {kind: attachment.kind, mimeType: downloaded.mimeType, fileName: created.fileName},
+      )
+      await em.flush()
+      logger.info('inbound messenger media stored', {
+        channelLinkId,
+        attachmentId: created.id,
+        fileSize: created.fileSize,
+      })
+    } catch (error) {
+      const code = (error as {code?: string}).code ?? 'MEDIA_DOWNLOAD_FAILED'
+      logger.warn('inbound messenger media download failed', {
+        channelLinkId,
+        code,
+        reason: error instanceof Error ? error.message : String(error),
+      })
+    }
     return
   }
 

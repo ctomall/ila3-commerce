@@ -299,6 +299,97 @@ export type AttachmentServiceLike = {
 
 export const MEDIA_PARTITION_CODE = 'privateAttachments'
 
+export type MessengerAttachment = {kind: string; url: string}
+
+/** Messenger keeps attachments on the raw event; pick the first downloadable one. */
+export function readMessengerAttachment(channelPayload: unknown): MessengerAttachment | null {
+  if (!channelPayload || typeof channelPayload !== 'object') return null
+  const message = (channelPayload as Record<string, unknown>).message
+  if (!message || typeof message !== 'object') return null
+  const attachments = (message as Record<string, unknown>).attachments
+  if (!Array.isArray(attachments)) return null
+  for (const entry of attachments) {
+    if (!entry || typeof entry !== 'object') continue
+    const record = entry as Record<string, unknown>
+    const payload = record.payload
+    if (!payload || typeof payload !== 'object') continue
+    const url = (payload as Record<string, unknown>).url
+    if (typeof url === 'string' && url.length > 0) {
+      return {kind: typeof record.type === 'string' ? record.type : 'file', url}
+    }
+  }
+  return null
+}
+
+/**
+ * Download bytes from a provider-supplied public URL (Messenger attachments are
+ * link-based, unlike WhatsApp's media-id lookup). Same three guards as the
+ * WhatsApp path: https-only, no private host unless drilled, byte ceiling and a
+ * MIME allowlist.
+ */
+export async function downloadMediaByUrl(input: {
+  url: string
+  fetchImpl?: typeof fetch
+  limits?: MediaDownloadLimits
+}): Promise<DownloadedMedia> {
+  const limits = input.limits ?? resolveMediaDownloadLimits()
+  const url = assertSafeMediaUrl(input.url, limits)
+  const doFetch = input.fetchImpl ?? fetch
+  const response = await doFetch(url.toString())
+  if (!response.ok) {
+    throw new MediaDownloadError('MEDIA_DOWNLOAD_FAILED', `media download failed (${response.status})`)
+  }
+  const headerMime = (response.headers.get('content-type') ?? '').split(';')[0].trim().toLowerCase()
+  // Messenger CDNs sometimes answer application/octet-stream; the attachment
+  // type is the fallback signal, and the allowlist still applies to the result.
+  const mimeType = headerMime && headerMime !== 'application/octet-stream' ? headerMime : 'image/jpeg'
+  assertAllowedMime(mimeType)
+  const declaredLength = Number.parseInt(response.headers.get('content-length') ?? '', 10)
+  if (Number.isFinite(declaredLength) && declaredLength > limits.maxBytes) {
+    throw new MediaDownloadError('MEDIA_TOO_LARGE', `media is ${declaredLength} bytes, over the ${limits.maxBytes}-byte limit`)
+  }
+  const bytes = Buffer.from(await response.arrayBuffer())
+  if (bytes.byteLength > limits.maxBytes) {
+    throw new MediaDownloadError('MEDIA_TOO_LARGE', `media is ${bytes.byteLength} bytes, over the ${limits.maxBytes}-byte limit`)
+  }
+  if (bytes.byteLength === 0) throw new MediaDownloadError('MEDIA_EMPTY', 'media download returned no bytes')
+  return {
+    buffer: bytes,
+    mimeType,
+    fileName: safeMediaFileName({mimeType, mediaId: 'messenger'}),
+    fileSize: bytes.byteLength,
+    sha256: createHash('sha256').update(bytes).digest('hex'),
+  }
+}
+
+export function withMessengerMedia(
+  channelPayload: unknown,
+  persisted: PersistedMedia,
+  meta: {kind: string; mimeType: string; fileName: string},
+): Record<string, unknown> {
+  const payload = channelPayload && typeof channelPayload === 'object' ? {...(channelPayload as Record<string, unknown>)} : {}
+  const existing = payload._meta && typeof payload._meta === 'object' ? {...(payload._meta as Record<string, unknown>)} : {}
+  payload._meta = {
+    ...existing,
+    media: {
+      id: `messenger:${meta.kind}`,
+      kind: meta.kind,
+      mimeType: meta.mimeType,
+      fileName: meta.fileName,
+      download: {
+        attachmentId: persisted.attachmentId,
+        fileName: persisted.fileName,
+        mimeType: persisted.mimeType,
+        fileSize: persisted.fileSize,
+        sha256: persisted.sha256,
+        url: persisted.url,
+        downloadedAt: new Date().toISOString(),
+      },
+    },
+  }
+  return payload
+}
+
 export type PersistedMedia = {
   attachmentId: string
   fileName: string

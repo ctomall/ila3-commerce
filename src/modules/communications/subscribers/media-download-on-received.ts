@@ -6,6 +6,7 @@ import { createLogger } from '@open-mercato/shared/lib/logger'
 import {
   MEDIA_DOWNLOAD_QUEUE,
   readMediaDescriptor,
+  readMessengerAttachment,
   type MediaDownloadJobPayload,
 } from '../lib/media-download'
 
@@ -45,7 +46,7 @@ export default async function handler(payload: ReceivedPayload): Promise<void> {
   if (!channelLinkId || !tenantId) return
   // Only providers whose media this build can fetch. Mailbox attachments arrive
   // as MIME parts already; Messenger media download is a later slice.
-  if (channelType !== 'whatsapp') return
+  if (channelType !== 'whatsapp' && channelType !== 'messenger') return
 
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
@@ -57,8 +58,13 @@ export default async function handler(payload: ReceivedPayload): Promise<void> {
   if (!link) return
 
   const descriptor = readMediaDescriptor(link.channelPayload)
-  if (!descriptor || typeof descriptor.id !== 'string') return
-  if (descriptor.download && typeof descriptor.download === 'object') return
+  const messengerAttachment = channelType === 'messenger' ? readMessengerAttachment(link.channelPayload) : null
+  if (channelType === 'messenger') {
+    if (!messengerAttachment) return
+  } else {
+    if (!descriptor || typeof descriptor.id !== 'string') return
+    if (descriptor.download && typeof descriptor.download === 'object') return
+  }
 
   const job: MediaDownloadJobPayload = {channelLinkId, scope: {tenantId, organizationId}}
   try {

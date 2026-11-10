@@ -6,6 +6,9 @@ import {
   MediaDownloadError,
   assertAllowedMime,
   assertSafeMediaUrl,
+  downloadMediaByUrl,
+  readMessengerAttachment,
+  withMessengerMedia,
   downloadWhatsAppMedia,
   fetchWhatsAppMediaMetadata,
   readMediaDescriptor,
@@ -43,6 +46,11 @@ beforeAll(async () => {
         file_size: PNG_BYTES.byteLength,
         sha256: PNG_SHA,
       }))
+      return
+    }
+    if (url === '/html') {
+      res.writeHead(200, {'content-type': 'text/html'})
+      res.end('<h1>x</h1>')
       return
     }
     if (url === '/bytes') {
@@ -176,4 +184,40 @@ describe('media download guards', () => {
       fetchWhatsAppMediaMetadata({mediaId: 'nope', accessToken: 't', baseUrl: base, fetchImpl: fetch}),
     ).rejects.toBeInstanceOf(MediaDownloadError)
   })
+
+describe('Messenger link attachments', () => {
+  it('downloads bytes by url with the same guards', async () => {
+    const media = await downloadMediaByUrl({url: `${base}/bytes`, limits: drillLimits})
+    expect(media.mimeType).toBe('image/png')
+    expect(media.fileSize).toBe(PNG_BYTES.byteLength)
+    expect(media.sha256).toBe(PNG_SHA)
+  })
+
+  it('refuses a private url and a non-allowlisted content type', async () => {
+    await expect(
+      downloadMediaByUrl({url: 'http://10.0.0.2/x.png', limits: {maxBytes: 1024, allowPrivateHosts: false}}),
+    ).rejects.toMatchObject({
+      code: 'MEDIA_URL_BLOCKED',
+    })
+    await expect(downloadMediaByUrl({url: `${base}/html`, limits: drillLimits})).rejects.toMatchObject({
+      code: 'MEDIA_MIME_UNSUPPORTED',
+    })
+  })
+
+  it('reads the first downloadable attachment and records the stored file', () => {
+    const payload = {message: {attachments: [{type: 'image', payload: {url: 'https://cdn.example.test/a.png'}}]}}
+    expect(readMessengerAttachment(payload)).toEqual({kind: 'image', url: 'https://cdn.example.test/a.png'})
+    expect(readMessengerAttachment({message: {text: 'hi'}})).toBeNull()
+    const next = withMessengerMedia(payload, {
+      attachmentId: 'att-9',
+      fileName: 'whatsapp-messenger.png',
+      mimeType: 'image/png',
+      fileSize: 66,
+      sha256: 'aa',
+      url: '/api/attachments/att-9',
+    }, {kind: 'image', mimeType: 'image/png', fileName: 'whatsapp-messenger.png'})
+    expect(readMediaDescriptor(next)).toMatchObject({kind: 'image', download: {attachmentId: 'att-9'}})
+    expect((next.message as Record<string, unknown>)).toBeDefined()
+  })
+})
 })
