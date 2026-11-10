@@ -6,8 +6,9 @@ export const metadata = {
   pageTitle: '全渠道收件箱',
   pageTitleKey: 'communications.inbox.title',
   // Registered into the existing "沟通与资料" group, beside the messages scene —
-  // no new top-level scene and no navHidden. The entry is still gated by the
-  // feature above, so only users who may connect a channel see it.
+  // no new top-level scene and no navHidden. Visibility follows the read gate
+  // above (`communication_channels.view`); connecting an account is a separate
+  // grant (`connect_user_channel`) and is not a prerequisite to see the inbox.
   pageGroup: 'Messages',
   pageGroupKey: 'messages.nav.group',
   pageOrder: 470,
