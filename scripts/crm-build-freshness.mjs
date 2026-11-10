@@ -77,6 +77,71 @@ function runtimeTreeDigest(root) {
 }
 
 const REPO = process.cwd()
+/**
+ * Release-slot mode.
+ *
+ * Production is served from `/home/pro/releases/mercato/<sha>` installed by the deploy
+ * pipeline; the checkout has no build of its own. Asking "did the working tree change
+ * after .mercato/build-info.json" then compares the source with a dev build that nothing
+ * serves, which is how this gate kept failing for a week with the wrong reason.
+ *
+ * In this mode the two questions that matter are:
+ *   1. is the sha in the running release.json the same commit as HEAD?
+ *   2. did the process start after that release was built?
+ */
+function checkReleaseSlot() {
+  const unit = process.env.CRM_APP_UNIT ?? 'ila3-auto-deploy-app'
+  const pidOut = spawnSync('systemctl', ['show', unit, '-p', 'MainPID', '--value'], { encoding: 'utf8' })
+  const pid = Number((pidOut.stdout || '').trim())
+  if (!Number.isFinite(pid) || pid <= 0) return false
+  let cwd
+  try {
+    cwd = fs.realpathSync(`/proc/${pid}/cwd`)
+  } catch {
+    return false
+  }
+  if (!cwd.includes('/releases/mercato/')) return false
+
+  const problems = []
+  const releasePath = path.join(cwd, 'release.json')
+  if (!fs.existsSync(releasePath)) {
+    console.log(`FAIL  运行目录 ${cwd} 没有 release.json：无法证明部署的是哪个提交`)
+    return 'fail'
+  }
+  const release = JSON.parse(fs.readFileSync(releasePath, 'utf8'))
+  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8' }).trim()
+  const builtAt = release.buildInfo?.builtAt ?? release.createdAt ?? null
+  console.log(`[freshness] 模式：发布槽位（${path.basename(cwd)}）`)
+  console.log(`[freshness] 运行提交：${String(release.sha).slice(0, 8)}（${release.source?.method ?? 'unknown'}）· 构建 ${builtAt ?? 'n/a'} · pid ${pid}`)
+  console.log(`[freshness] HEAD：${head.slice(0, 8)}`)
+
+  if (release.sha !== head) {
+    problems.push(`运行中的服务是 ${String(release.sha).slice(0, 8)}，HEAD 是 ${head.slice(0, 8)}：源码比已部署版本新，部署后再跑这个门`)
+  }
+  const startOut = spawnSync('systemctl', ['show', unit, '-p', 'ActiveEnterTimestamp', '--timestamp=unix', '--value'], { encoding: 'utf8' })
+  const startEpoch = Number((startOut.stdout || '').trim().replace(/^@/, ''))
+  if (builtAt && Number.isFinite(startEpoch) && startEpoch > 0) {
+    const startedAt = startEpoch * 1000
+    if (startedAt < Date.parse(builtAt)) {
+      problems.push(`服务在 ${new Date(startedAt).toISOString()} 启动，早于 release 的构建时间 ${builtAt}`)
+    } else {
+      console.log(`[freshness] 服务启动 ${new Date(startedAt).toISOString()}，晚于构建 ✓`)
+    }
+  }
+
+  if (problems.length > 0) {
+    console.log(`\n[freshness] RESULT: FAIL — ${problems.length} 个问题`)
+    for (const problem of problems) console.log(`  ✗ ${problem}`)
+    return 'fail'
+  }
+  console.log('\n[freshness] RESULT: PASS — 运行中的发布槽位就是 HEAD，且进程晚于构建')
+  return 'pass'
+}
+
+const slotResult = checkReleaseSlot()
+if (slotResult === 'pass') process.exit(0)
+if (slotResult === 'fail') process.exit(1)
+
 const BUILD_INFO = path.resolve(arg('--build-info') ?? '.mercato/build-info.json')
 
 function git(args) {
