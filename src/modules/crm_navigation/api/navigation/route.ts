@@ -103,6 +103,8 @@ export async function GET(req: NextRequest) {
             manage: { categories: [] },
             personal: { items: [] },
             unknown: [],
+            unconfiguredSettings: [],
+            unconfiguredProfile: [],
             unconfiguredGroups: [],
             actions: [],
             authorized: [],
@@ -123,6 +125,14 @@ export async function GET(req: NextRequest) {
     // A declared entry with no usable owner must be visible, not absorbed by a
     // catch-all. The CI check fails on this; production logs it too.
     console.warn('[crm_navigation] unauthorized or unowned nav entries:', catalog.unknown)
+  }
+  if (catalog.unconfiguredSettings.length > 0) {
+    // A settings-context page that no settings section claims is a declaration
+    // gap; it is not rendered into a catch-all, so the log is the only handler.
+    console.warn('[crm_navigation] settings entries without a declared section:', catalog.unconfiguredSettings)
+  }
+  if (catalog.unconfiguredProfile.length > 0) {
+    console.warn('[crm_navigation] profile entries without a declared section:', catalog.unconfiguredProfile)
   }
   if (catalog.unconfiguredGroups.length > 0) {
     // New module groups are still rendered (the shell appends them), but the

@@ -65,6 +65,14 @@ export type CrmCatalog = {
   personal: { items: CrmNavItem[] }
   /** Authorized entries with no usable owner — reported, never silently kept. */
   unknown: string[]
+  /**
+   * Settings-context entries no `settingsSections` entry claims — diagnostic,
+   * never rendered. Optional in the type only so catalogue literals that predate
+   * this diagnostic keep compiling; `buildCrmNavigation` always sets it.
+   */
+  unconfiguredSettings?: string[]
+  /** Profile-context entries no `profileSections` entry claims — diagnostic, never rendered. */
+  unconfiguredProfile?: string[]
   /** Visible page groups that the app-level catalogue has not organised yet. */
   unconfiguredGroups: string[]
   /** Create/import entries that belong in a page toolbar, not the navigation. */
@@ -119,21 +127,18 @@ function isBackendHref(href: unknown): href is string {
   return typeof href === 'string' && href.startsWith('/backend')
 }
 
-function isSettingsHref(href: string): boolean {
-  // Vendor pages that pre-date the app's settings metadata sometimes declare a
-  // menu group and order but no pageContext (deal settings, time-tracking
-  // settings, warranty settings are live examples). These paths are settings by
-  // product semantics; classify them without an href table so a future page in
-  // the same namespace cannot leak into the daily rail either.
-  return href.startsWith('/backend/config/') || href.endsWith('/settings')
-}
-
-function isSettingsContext(item: PayloadItem): boolean {
-  return item.pageContext === 'settings' || item.pageContext === 'admin' || (isBackendHref(item.href) && isSettingsHref(item.href))
-}
-
-function isDailyContext(item: PayloadItem): boolean {
-  return !isSettingsContext(item) && item.pageContext !== 'profile'
+/**
+ * The navigation context of a payload entry.
+ *
+ * Context comes only from the declaration (`pageContext` in page metadata). There
+ * is deliberately no URL-shape fallback: a page's path must never decide whether
+ * it is a settings destination, because that would let an undeclared page leak
+ * into (or out of) the settings surface without any declaration.
+ */
+function declaredContext(item: PayloadItem): 'main' | 'settings' | 'profile' {
+  if (item.pageContext === 'settings' || item.pageContext === 'admin') return 'settings'
+  if (item.pageContext === 'profile') return 'profile'
+  return 'main'
 }
 
 function isEnabled(item: PayloadItem): boolean {
@@ -161,7 +166,7 @@ function flattenPayloadItems(
       if (!isEnabled(item) || item.hidden === true) continue
       const href = isBackendHref(item.href) ? item.href : ''
       if (href) {
-        if (options.dailyOnly && !isDailyContext(item)) {
+        if (options.dailyOnly && declaredContext(item) !== 'main') {
           // Settings/profile entries are built from their own server sections;
           // do not leak them into the daily rail.
         } else if (options.dailyOnly && (item.order == null || item.order === 10000)) {
@@ -191,13 +196,12 @@ function flattenPayloadItems(
 
 function collectContextItems(
   items: PayloadItem[] | undefined,
-  contexts: Set<string>,
+  context: 'settings' | 'profile',
 ): CrmNavItem[] {
   const result: CrmNavItem[] = []
   const visit = (entries: PayloadItem[] | undefined) => {
     for (const item of entries ?? []) {
-      const context = isSettingsContext(item) ? 'settings' : (item.pageContext ?? 'main')
-      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href) && contexts.has(context)) {
+      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href) && declaredContext(item) === context) {
         result.push({
           href: item.href,
           label: labelOf(item) || item.href,
@@ -228,6 +232,25 @@ function collectAuthorized(payload: CoreNavPayload): Set<string> {
 }
 
 /**
+ * Visible authorized hrefs: enabled entries the caller may see. Hidden entries do
+ * not appear in the shell payload at all, but the catalogue must not report one as
+ * unowned if a lower layer sent it for reachability bookkeeping.
+ */
+function collectVisibleAuthorized(payload: CoreNavPayload): Set<string> {
+  const visible = new Set<string>()
+  const visit = (items: PayloadItem[] | undefined) => {
+    for (const item of items ?? []) {
+      if (isEnabled(item) && item.hidden !== true && isBackendHref(item.href)) visible.add(item.href)
+      visit(item.children)
+    }
+  }
+  for (const group of payload.groups ?? []) visit(group.items)
+  for (const section of payload.settingsSections ?? []) visit(section.items)
+  for (const section of payload.profileSections ?? []) visit(section.items)
+  return visible
+}
+
+/**
  * Build the CRM catalogue from the authorized server payload.
  *
  * Nothing here widens visibility: every href comes from the payload the shell
@@ -241,12 +264,12 @@ export function buildCrmNavigation(
   const groups: CrmNavGroup[] = []
   const manageCategories: CrmNavCategory[] = []
   const personalItems: CrmNavItem[] = []
-  const unknown = new Set<string>()
   const unconfiguredGroups = new Set<string>()
   const actionHrefs: string[] = []
   const duplicates = new Set<string>()
   const rendered = new Set<string>()
   const authorized = collectAuthorized(payload)
+  const visibleAuthorized = collectVisibleAuthorized(payload)
 
   const claim = (href: string): boolean => {
     if (rendered.has(href)) {
@@ -263,8 +286,12 @@ export function buildCrmNavigation(
 
   ;(payload.groups ?? []).forEach((group, groupIndex) => {
     const id = typeof group.id === 'string' ? group.id.trim() : ''
-    settingsFromGroups.push(...collectContextItems(group.items, new Set(['settings', 'admin'])))
-    profileFromGroups.push(...collectContextItems(group.items, new Set(['profile'])))
+    settingsFromGroups.push(...collectContextItems(group.items, 'settings'))
+    profileFromGroups.push(...collectContextItems(group.items, 'profile'))
+    // A group without a declared id cannot render anything. Its entries are not
+    // claimed, so they surface through the `unknown` diagnostic below instead of
+    // being silently marked as rendered.
+    if (!id) return
     const items: CrmNavItem[] = []
     for (const item of flattenPayloadItems(group.items, { dailyOnly: true, actions: actionHrefs })) {
       if (claim(item.href)) items.push(item)
@@ -272,19 +299,7 @@ export function buildCrmNavigation(
     }
     items.sort(compareItems)
 
-    if (items.length === 0) {
-      if (!id) {
-        for (const item of group.items ?? []) {
-          if (isBackendHref(item.href) && isDailyContext(item)) unknown.add(item.href)
-        }
-      }
-      return
-    }
-
-    if (!id) {
-      for (const item of items) unknown.add(item.href)
-      return
-    }
+    if (items.length === 0) return
 
     const spec = specById.get(id)
     if (!spec) unconfiguredGroups.add(id)
@@ -319,18 +334,14 @@ export function buildCrmNavigation(
       items,
     })
   })
-  const orphanSettings = settingsFromGroups
+  // A settings-context entry that no `settingsSections` entry claims is a
+  // declaration gap. It must not be rendered into a catch-all and must not be
+  // dropped: it is exposed as `unconfiguredSettings` (and remains unclaimed, so
+  // it also surfaces in `unknown`). No 'settings.sections.other' bucket exists.
+  const unconfiguredSettings = settingsFromGroups
     .filter((item) => !rendered.has(item.href))
-    .filter((item) => claim(item.href))
-    .sort(compareItems)
-  if (orphanSettings.length > 0) {
-    manageCategories.push({
-      id: 'settings.sections.other',
-      label: '其他设置',
-      order: 9999,
-      items: orphanSettings,
-    })
-  }
+    .map((item) => item.href)
+    .sort()
   manageCategories.sort(compareCategories)
 
   ;(payload.profileSections ?? []).forEach((section) => {
@@ -340,12 +351,18 @@ export function buildCrmNavigation(
     personalItems.push(...items)
   })
 
-  const orphanProfile = profileFromGroups
+  // Same contract for the profile context: unclaimed profile entries are a
+  // diagnostic, not something to auto-render into the account surface.
+  const unconfiguredProfile = profileFromGroups
     .filter((item) => !rendered.has(item.href))
-    .filter((item) => claim(item.href))
-    .sort(compareItems)
-  personalItems.push(...orphanProfile)
+    .map((item) => item.href)
+    .sort()
   personalItems.sort(compareItems)
+
+  // An authorized, visible entry that no rendered surface claims and that is not
+  // a page-toolbar action has no owner or in-page home: report it, never drop it.
+  const claimed = new Set<string>([...rendered, ...actionHrefs])
+  const unknown = [...visibleAuthorized].filter((href) => !claimed.has(href)).sort()
 
   const features = new Set(Array.isArray(payload.grantedFeatures) ? payload.grantedFeatures : [])
   const railActions = features.has(ASSISTANT_ACTION.feature) ? [ASSISTANT_ACTION] : []
@@ -365,7 +382,9 @@ export function buildCrmNavigation(
     utility,
     manage: { categories: manageCategories },
     personal: { items: personalItems.sort(compareItems) },
-    unknown: [...unknown].sort(),
+    unknown,
+    unconfiguredSettings,
+    unconfiguredProfile,
     unconfiguredGroups: [...unconfiguredGroups].sort(),
     actions: [...new Set(actionHrefs)].sort(),
     authorized: [...authorized].sort(),
