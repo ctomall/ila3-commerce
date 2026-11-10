@@ -323,6 +323,20 @@ node scripts/auto-deploy/artifact-rollback-drill.mjs
 
 注意它证明的是 **executor 的 artifact 切换/回滚逻辑**；真实 Next 进程的重启由生产发布本身证明。
 
+## 11.2 手工入口端到端（2026-11-10）
+
+生产上以 superadmin 在 `/backend/config/system-update` 点「立即升级 → 开始升级」，走完整链路：
+
+1. `POST /api/system_update/run`（同源 + superadmin + 确认值 = **运行中** commit 的前缀）写 `request.json`；
+2. `systemctl start ila3-self-update.service`（drop-in 指向 `entry.mjs --legacy-ui`）；
+3. `entry.mjs` 校验请求（≤10 分钟、main/完整 SHA、未消费）→ 解析 origin/main → 调 `deploy.mjs --manual --from-artifact --allow-production`；
+4. 目标 SHA == 当前 release 且活端口健康 → `result=already-current`，**不重启**。
+
+实测：run `deploy-20261110000131-63f89b87`，`entry=manual`、`result=already-current`、
+`steps=resolve-sha/worktree-audit/ci-gate/release/live-release-health`，`actor=superadmin@acme.com`，
+`state.json status=succeeded`，`ActiveEnterTimestamp` 保持 23:54:09 不变；
+升级页刷新后出现「已是最新（未重启）/ 手动 / 63f89b87」一行。
+
 ## 12. 启用 / 停用
 
 ### 当前实际状态
