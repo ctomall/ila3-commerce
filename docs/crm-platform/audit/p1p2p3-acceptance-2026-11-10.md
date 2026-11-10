@@ -50,3 +50,12 @@
 3. **公网 URL 同角色截图**：本机到 Cloudflare 时通时断，截图为 loopback（同一 release）。
 4. **M5–M7（获客/触达/Bot）**：阻塞于 leadgen 迁移批准与真实外发授权。
 5. 消息详情里的公司状态值 `active` 属数据枚举，非文案缺口。
+
+## 运维可见性（2026-11-10 07:2x 复核）
+
+`/backend/config/system-update`（superadmin）在 61d1589b 上能直接看到发布运行记录及**拒绝原因**，
+例如 `已拒绝 自动 d174bdda ci-gate-denied — no-successful-test-run-for-sha`、
+`已拒绝 自动 25c7dbc0 ci-gate-denied — no-successful-test-run-for-sha`。
+截图：`p3-update-runs-visibility-2026-11-10.png`。
+
+也就是说：发布失败不是只写进日志，运营人员在产品界面里能看到“哪个提交、什么原因被拒”。
