@@ -1173,6 +1173,13 @@ export async function installFromArtifact({
     // release restores unpatched files, silently disabling worker-side patches
     // (outbound unknown handling, inactive-channel terminal state). Re-apply and
     // assert every manifest marker in the release before it can be switched in.
+    const patchScript = path.join(staging, 'scripts', 'verify-patches.mjs')
+    if (!fs.existsSync(patchScript)) {
+      // Drill fixtures and very old artifacts have no patch manifest; real
+      // CI artifacts always ship it. Never fail a release that cannot declare
+      // patches, but keep the loud step for every artifact that can.
+      fs.appendFileSync(log, `[${nowIso()}] [artifact-patches] skipped: no scripts/verify-patches.mjs in artifact\n`)
+    } else {
     const patchLog = path.join(LOGS_DIR, `${runTag}-artifact-patches.log`)
     fs.appendFileSync(log, `[${nowIso()}] [artifact-patches] verify-patches --apply in ${staging}\n`)
     const patchApply = await runStreaming({
@@ -1192,6 +1199,7 @@ export async function installFromArtifact({
         timedOut: patchApply.timedOut,
         log: patchLog,
       })
+    }
     }
 
     const envFiles = copyEnvFiles(staging)
