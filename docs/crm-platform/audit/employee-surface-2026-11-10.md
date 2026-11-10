@@ -35,3 +35,18 @@
 ```bash
 node scripts/crm-employee-surface-audit.mjs --out /tmp/employee-surface.json
 ```
+
+## 收紧工具（只读检查跑过，等你一句话）
+
+`scripts/crm-employee-role-tighten.mjs`：
+
+```bash
+node scripts/crm-employee-role-tighten.mjs --check          # 只读：113 → 110，列出将撤销的 3 项
+node scripts/crm-employee-role-tighten.mjs --apply --approval "用户姓名/工单"   # 需 ILA3_ALLOW_ROLE_TIGHTEN=1
+```
+
+`--apply` 双重闸门（环境变量 + 显式 approval 文案），执行后写
+`docs/crm-platform/audit/employee-role-tighten.json` 记录撤销前后数量与批准人；
+`RbacService` 缓存 5 分钟或重启应用立即生效。
+
+本轮只跑了 `--check`，生产权限未改动。
