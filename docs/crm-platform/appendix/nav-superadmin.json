@@ -579,6 +579,15 @@
           "order": 460
         },
         {
+          "id": "/backend/communications/inbox",
+          "href": "/backend/communications/inbox",
+          "title": "全渠道收件箱",
+          "defaultTitle": "全渠道收件箱",
+          "enabled": true,
+          "iconName": "inbox",
+          "order": 470
+        },
+        {
           "id": "/backend/inbox-ops",
           "href": "/backend/inbox-ops",
           "title": "收件箱建议",

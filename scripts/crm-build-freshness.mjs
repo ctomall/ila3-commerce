@@ -116,7 +116,19 @@ function checkReleaseSlot() {
   console.log(`[freshness] HEAD：${head.slice(0, 8)}`)
 
   if (release.sha !== head) {
-    problems.push(`运行中的服务是 ${String(release.sha).slice(0, 8)}，HEAD 是 ${head.slice(0, 8)}：源码比已部署版本新，部署后再跑这个门`)
+    // A shared host lands docs/verify commits between deploys all day. What matters is
+    // whether the RUNTIME code differs: a docs-only difference means the served app still
+    // corresponds to the reviewed source.
+    const RUNTIME_PREFIXES = ['src/', 'vendor/', 'public/', 'i18n/', 'scripts/auto-deploy/']
+    const RUNTIME_FILES = ['package.json', 'yarn.lock', 'next.config.ts', 'tsconfig.json', 'postcss.config.mjs', 'eslint.config.mjs']
+    const diff = spawnSync('git', ['diff', '--name-only', `${release.sha}..${head}`], { cwd: REPO, encoding: 'utf8' })
+      .stdout.split('\n').map((line) => line.trim()).filter(Boolean)
+    const runtime = diff.filter((file) => RUNTIME_FILES.includes(file) || RUNTIME_PREFIXES.some((prefix) => file.startsWith(prefix)))
+    if (runtime.length > 0) {
+      problems.push(`运行中的服务是 ${String(release.sha).slice(0, 8)}，HEAD 是 ${head.slice(0, 8)}：${runtime.length} 个运行时文件尚未部署（${runtime.slice(0, 3).join(', ')}）`)
+    } else {
+      console.log(`[freshness] HEAD 比部署多 ${diff.length} 个非运行时文件（文档/记录），所服务的代码仍是 HEAD 的一部分 ✓`)
+    }
   }
   const startOut = spawnSync('systemctl', ['show', unit, '-p', 'ActiveEnterTimestamp', '--timestamp=unix', '--value'], { encoding: 'utf8' })
   const startEpoch = Number((startOut.stdout || '').trim().replace(/^@/, ''))
