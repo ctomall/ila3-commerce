@@ -123,8 +123,24 @@ async function assertPatchedBehaviour(tmp, pkgRoot) {
   }
 
   const appShell2 = fs.readFileSync(path.join(uiRoot2, 'backend', 'AppShell.js'), 'utf8')
-  for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria']) {
+  for (const marker of ['patched:sidebar-footer-injected', 'patched:sidebar-active-group', 'patched:nav-aria', 'patched:nav-a11y']) {
     if (!appShell2.includes(marker)) throw new Error(`AppShell marker missing: ${marker}`)
+  }
+  // Effect assertion: exactly one of the three active branches is marked at
+  // runtime, and both sidebar width transitions honour reduced motion.
+  const ariaCurrentCount = (appShell2.match(/"aria-current"/g) ?? []).length
+  if (ariaCurrentCount !== 3) {
+    throw new Error(`AppShell has ${ariaCurrentCount} aria-current branch(es), expected 3`)
+  }
+  const motionReduceCount = (appShell2.match(/motion-reduce:transition-none/g) ?? []).length
+  if (motionReduceCount !== 2) {
+    throw new Error(`AppShell has ${motionReduceCount} reduced-motion transition(s), expected 2`)
+  }
+  if (appShell2.includes('transition-[width] duration-200 ease-out`')) {
+    throw new Error('AppShell aside width transition lacks a reduced-motion variant')
+  }
+  if (appShell2.includes('transition-[grid-template-columns] duration-200 ease-out ${gridColsClass}')) {
+    throw new Error('AppShell grid width transition lacks a reduced-motion variant')
   }
   // Markers and behaviour are not enough: an insert can land inside a multi-line import
   // and still satisfy every assertion. Parse the patched files the build must consume.

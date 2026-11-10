@@ -122,6 +122,13 @@
       "target": "node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js",
       "marker": "/* [patched:dedupe-external-id] */",
       "reason": "A provider id already stored must complete delivery instead of failing the job and re-sending the message (round-31 drill produced 5 duplicate sends)."
+    },
+    {
+      "id": "nav-a11y",
+      "script": "scripts/patches/apply-nav-a11y.mjs",
+      "target": "node_modules/@open-mercato/ui/dist/backend/AppShell.js",
+      "marker": "/* [patched:nav-a11y] */",
+      "reason": "Stock AppShell renders the active destination without aria-current and keeps the aside width transition under prefers-reduced-motion; the retired rail had aria-current, so shipping stock as-is is an a11y regression."
     }
   ]
 }
