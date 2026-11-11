@@ -7,6 +7,8 @@ const CHAT_PUBLIC_PATH = '/api/ai_assistant/chat'
 const CHAT_DSH_PATH = '/api/internal/ai-assistant-dsh-chat'
 const HEALTH_PUBLIC_PATH = '/api/ai_assistant/health'
 const HEALTH_DSH_PATH = '/api/internal/dsh-health'
+const AGENTS_PUBLIC_PATH = '/api/ai_assistant/ai/agents'
+const AGENTS_DSH_PATH = '/api/internal/dsh-agents'
 
 /**
  * `OM_AI_ENGINE=dsh` is the only value that switches the chat engine. Unset (or
@@ -36,6 +38,14 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  // The catalogue's derived `aiConfigured` flag gates the UI; correct it for the
+  // engine that actually serves chat while keeping the packaged auth/list logic.
+  if (isDshEngineEnabled() && req.method === 'GET' && req.nextUrl.pathname === AGENTS_PUBLIC_PATH) {
+    const url = req.nextUrl.clone()
+    url.pathname = AGENTS_DSH_PATH
+    return NextResponse.rewrite(url)
+  }
+
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-next-url', req.nextUrl.pathname)
   return NextResponse.next({ request: { headers: requestHeaders } })
@@ -54,5 +64,6 @@ export const config = {
     '/((?!api/|_next/|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js|map|txt|xml|json|woff|woff2|ttf|eot)$).*)',
     '/api/ai_assistant/chat',
     '/api/ai_assistant/health',
+    '/api/ai_assistant/ai/agents',
   ],
 }
