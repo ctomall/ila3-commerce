@@ -3,6 +3,8 @@ import { headers } from 'next/headers'
 import Link from 'next/link'
 import { describeMedia, mediaHref } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
+import { InboxLiveRefresh } from './InboxLiveRefresh'
+import { newestCursor } from '../../../lib/inbox-live'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
 import { deliveryStatusLabel } from '../../../lib/delivery-status'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
@@ -189,6 +191,12 @@ export async function InboxView({
           </aside>
 
           <section className="flex min-w-0 flex-1 flex-col rounded-lg border bg-card">
+            {selectedId ? (
+              <InboxLiveRefresh
+                threadId={selectedId}
+                after={newestCursor(detailResult && detailResult.ok ? detailResult.data.items : [])}
+              />
+            ) : null}
             {detailError !== null ? (
               <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-red-700 dark:text-red-300">
                 {loadErrorMessage(detailError, 'detail')}
