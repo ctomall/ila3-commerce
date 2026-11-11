@@ -68,6 +68,14 @@ describe('outbound-attempt-unknown managed patch', () => {
       expect(command).toContain('providerAccepted = true;')
       expect(command).toContain('localCommitDone = true;')
       expect(command).toContain('if (providerAccepted && localCommitDone)')
+      // R1: the attempt marker and the provider call must be separated by an
+      // atomic claim, otherwise two stalled-job redeliveries both send.
+      expect(command).toContain('/* [patched:outbound-concurrent-claim] */')
+      expect(command).toContain('const claimRows = await em.getConnection().execute(')
+      expect(command).toContain("jsonb_set(coalesce(channel_metadata, '{}'::jsonb), '{attempting}', 'true'::jsonb)")
+      expect(command).toContain("and delivery_status not in ('sent', 'delivered', 'read')")
+      expect(command).toContain('if (!Array.isArray(claimRows) || claimRows.length === 0)')
+      expect(command).toContain('status: "already_delivered"')
       expect(command).toContain('...providerExternalMessageId ? { providerExternalMessageId } : {}')
       expect(worker).toContain('/* [patched:outbound-attempt-unknown] */')
       expect(worker).toContain('case "unknown":')

@@ -39,6 +39,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 
 const MARKER = '/* [patched:outbound-attempt-unknown] */'
+const CLAIM_MARKER = '/* [patched:outbound-concurrent-claim] */'
 const COMMAND_TARGET =
   'node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js'
 const WORKER_TARGET =
@@ -158,13 +159,58 @@ const ENTRY_GUARD = `    if (link && link.deliveryStatus === "unknown") {
     }
     if (link && (link.deliveryStatus === "queued" || link.deliveryStatus === "sent" || link.deliveryStatus === "delivered" || link.deliveryStatus === "read")) {`
 
-const ATTEMPT_FLUSH = `      attemptStartedAt = (new Date()).toISOString();
+const ATTEMPT_FLUSH_V1 = `      attemptStartedAt = (new Date()).toISOString();
       link.channelMetadata = {
         ...link.channelMetadata ?? {},
         attempting: true,
         lastAttemptAt: attemptStartedAt
       };
       await em.flush();
+      try {
+        sendResult = await adapter.sendMessage({
+          conversationId: mapping.externalThreadRef,
+          content: converted.content,
+          credentials,
+          scope: {
+            tenantId: input.scope.tenantId,
+            organizationId: channel.organizationId ?? input.scope.tenantId
+          },
+          metadata: converted.metadata
+        });
+      } catch (sendCallError) {
+        sendCallThrew = true;
+        throw sendCallError;
+      }`
+
+const ATTEMPT_FLUSH = `      attemptStartedAt = (new Date()).toISOString();
+      /* [patched:outbound-concurrent-claim] */
+      // Two concurrent redeliveries of this link (a BullMQ stalled job) both pass
+      // the "attempting" check above before either writes a marker, so both would
+      // call the provider and the customer receives the message twice. Claim the
+      // attempt atomically: exactly one execution gets a row back. A row lock
+      // would have to be held across the provider call instead.
+      const claimRows = await em.getConnection().execute(
+        \`update message_channel_links
+            set channel_metadata = jsonb_set(coalesce(channel_metadata, '{}'::jsonb), '{attempting}', 'true'::jsonb)
+                                   || jsonb_build_object('lastAttemptAt', ?::text)
+          where id = ?
+            and coalesce(channel_metadata->>'attempting', 'false') <> 'true'
+            and delivery_status not in ('sent', 'delivered', 'read')
+          returning id\`,
+        [attemptStartedAt, link.id]
+      );
+      if (!Array.isArray(claimRows) || claimRows.length === 0) {
+        return {
+          status: "already_delivered",
+          messageId: message.id,
+          channelLinkId: link.id
+        };
+      }
+      link.channelMetadata = {
+        ...link.channelMetadata ?? {},
+        attempting: true,
+        lastAttemptAt: attemptStartedAt
+      };
       try {
         sendResult = await adapter.sendMessage({
           conversationId: mapping.externalThreadRef,
@@ -235,7 +281,12 @@ const UNKNOWN_CATCH = `    } catch (sendErr) {
       link.deliveryStatus = "failed";`
 
 function patchCommand(source) {
-  if (source.includes(MARKER)) return source
+  if (source.includes(CLAIM_MARKER)) return source
+  if (source.includes(MARKER)) {
+    // v1 was already applied (a local install or an older release): splice in the
+    // atomic claim without re-running the whole transform.
+    return replaceOnce(source, ATTEMPT_FLUSH_V1, ATTEMPT_FLUSH, 'claim upgrade')
+  }
 
   source = replaceOnce(
     source,
