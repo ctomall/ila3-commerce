@@ -118,10 +118,24 @@ function createFakeEm(rows: {
   return { find, findOne, create, persist, remove, flush, persisted, removed }
 }
 
-function useContainer(resolve: (name: string) => unknown, em: ReturnType<typeof createFakeEm>) {
+function useContainer(
+  resolve: (name: string) => unknown,
+  em: ReturnType<typeof createFakeEm>,
+  grantedFeatures: string[] = ['communication_channels.connect_user_channel'],
+) {
+  // The reply split resolves the caller's RBAC grants inside the handler; tests
+  // default to the legacy connect grant so existing send cases keep exercising
+  // the hub path, and pass another list to prove reply-only / denied callers.
+  const rbac = {
+    userHasAllFeatures: jest.fn(async (_userId: string, features: string[]) =>
+      features.every((feature) => grantedFeatures.includes(feature)),
+    ),
+  }
   mockContainer.mockResolvedValue({
-    resolve: (name: string) => (name === 'em' ? { fork: () => em } : resolve(name)),
+    resolve: (name: string) =>
+      name === 'em' ? { fork: () => em } : name === 'rbacService' ? rbac : resolve(name),
   } as never)
+  return rbac
 }
 
 const signedIn = { sub: 'u1', tenantId: 't1', orgId: 'o1', roles: ['employee'] } as never
@@ -792,6 +806,31 @@ describe('customer-service window policy', () => {
     // provider-native recipient shape, not against an e-mail regex.
     expect(input.to).toEqual(['+15550001111'])
     await expect(res.json()).resolves.toMatchObject({providerKey: 'whatsapp', enqueuedForDelivery: true})
+  })
+
+  it('accepts a reply grant without the legacy connect capability', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))), ['communications.reply'])
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }),
+    )
+    expect(res.status).toBe(202)
+    expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  it('refuses a read-only caller with REPLY_FORBIDDEN and never reaches the hub', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))), [])
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }),
+    )
+    expect(res.status).toBe(403)
+    await expect(res.json()).resolves.toMatchObject({code: 'REPLY_FORBIDDEN'})
+    expect(send).not.toHaveBeenCalled()
   })
 
   it('rejects free-form text after the window with WINDOW_CLOSED and never calls the hub', async () => {

@@ -79,6 +79,15 @@ function containerWith(em: unknown, send: unknown) {
     resolve: (name: string) => {
       if (name === 'em') return { fork: () => em }
       if (name === 'communicationChannelsSendAsUser') return send
+      // The reply split checks the caller's grants inside the handler; this
+      // suite is about the ledger, so grant the legacy capability the seeded
+      // employee role holds.
+      if (name === 'rbacService') {
+        return {
+          userHasAllFeatures: async (_userId: string, features: string[]) =>
+            features.every((feature) => feature === 'communication_channels.connect_user_channel'),
+        }
+      }
       throw new Error(`unexpected resolve: ${name}`)
     },
   }

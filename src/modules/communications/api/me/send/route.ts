@@ -14,6 +14,8 @@ import {
 import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
 import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
+import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
+import { canReply } from '../../../lib/reply-permission'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -106,12 +108,14 @@ export const metadata = {
   path: '/communications/me/send',
   POST: {
     requireAuth: true,
-    // Own-mailbox send: still gated by the connect feature until the reply
-    // permission split is approved. Changing this to a read-only feature would
-    // let `view` callers send, so it must NOT follow the inbox read gate.
-    // Ownership is enforced inside the hub facade, so this feature cannot reach
+    // Reading the inbox is a prerequisite for replying, so the route guard keeps
+    // the read feature. The reply capability itself is checked in the handler
+    // (`canReply`): `communications.reply` OR the legacy
+    // `communication_channels.connect_user_channel`. Expressing it as one guard
+    // feature is impossible because the framework matches features with AND.
+    // Ownership is enforced inside the hub facade, so neither grant can reach
     // another employee's mailbox.
-    requireFeatures: ['communication_channels.connect_user_channel'],
+    requireFeatures: ['communication_channels.view'],
   },
 }
 
@@ -198,6 +202,49 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const organizationId = (auth as { orgId?: string | null }).orgId ?? null
+
+  // Reply permission split: a staff member who may read the shared inbox still
+  // needs an explicit reply grant. The legacy connect capability is accepted
+  // until roles are migrated to `communications.reply`; otherwise every current
+  // employee would lose the ability to answer.
+  let grantedReply = false
+  try {
+    const rbac = container.resolve<RbacService>('rbacService')
+    const featureContext = {
+      tenantId: (auth.tenantId as string | undefined) ?? null,
+      organizationId,
+    }
+    const check = async (feature: string): Promise<boolean> => {
+      try {
+        return await rbac.userHasAllFeatures(auth.sub as string, [feature], featureContext)
+      } catch {
+        return false
+      }
+    }
+    grantedReply = await canReply(check)
+  } catch {
+    // No RBAC service means the route guard could not have run either; fail
+    // closed rather than letting the send through on a broken authorization path.
+    grantedReply = false
+  }
+  if (!grantedReply) {
+    // Operationally useful and free of message content: an operator can tell a
+    // read-only staff member from a misconfigured role without reading the body.
+    console.warn('[communications] reply denied', {
+      userId: auth.sub,
+      tenantId: auth.tenantId ?? null,
+      organizationId,
+      path: '/api/communications/me/send',
+    })
+    return NextResponse.json(
+      {
+        error: 'You do not have permission to reply in this inbox',
+        code: 'REPLY_FORBIDDEN',
+      },
+      { status: 403 },
+    )
+  }
+
   const hasTemplate = Boolean(body.template) || Boolean(body.channelMetadata && body.channelMetadata.template)
 
   let requestEm: EntityManager | null = null

@@ -13,11 +13,12 @@ jest.mock('@open-mercato/shared/lib/di/container', () => ({
 }))
 
 /**
- * K1 permission split, first step: READ routes are gated by
- * `communication_channels.view`, while replying (`POST /me/send`) and binding
- * a channel stay on `communication_channels.connect_user_channel` until the
- * reply permission split is approved. This test exists so a future "make them
- * consistent" edit cannot silently turn a read permission into a send/bind one.
+ * K1 permission split: read routes are gated by `communication_channels.view`.
+ * `POST /me/send` keeps that read gate (you must see the inbox) and checks the
+ * reply capability in the handler — `communications.reply` OR the legacy
+ * `communication_channels.connect_user_channel` — because the framework matches
+ * route features with AND. This test exists so a future "make them consistent"
+ * edit cannot silently turn a read permission into a send/bind one.
  */
 describe('communications route permission gates', () => {
   it('gates the thread list read on view', () => {
@@ -28,7 +29,7 @@ describe('communications route permission gates', () => {
     expect(messagesMetadata.GET.requireFeatures).toEqual(['communication_channels.view'])
   })
 
-  it('keeps sending on connect_user_channel until the reply split is approved', () => {
-    expect(sendMetadata.POST.requireFeatures).toEqual(['communication_channels.connect_user_channel'])
+  it('gates sending on the read feature and leaves the reply grant to the handler', () => {
+    expect(sendMetadata.POST.requireFeatures).toEqual(['communication_channels.view'])
   })
 })
