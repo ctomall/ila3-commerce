@@ -367,3 +367,27 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 
 **说明**：该次收口来自父进程对子进程退出的处理；`f1bd7f3` 的 pre-boot sweep（单实例）是兜底，
 用于父进程被直接杀掉、来不及 finish 的场景。两者结果一致：终态、可重试、不再显示“运行中”。
+
+## 23. 双员工并行与绑定缺口（`f1bd7f3`）
+
+### 23.1 双员工并行
+admin 与 acceptance 员工同时发起任务：
+
+| 账号 | 结果 |
+| --- | --- |
+| admin | 200，run `par-admin-1` completed |
+| employee | 200，run `par-emp-1` completed |
+| 子进程 | 结束后 0 |
+
+证据：`parallel-admin.sse`、`parallel-employee.sse`。
+
+### 23.2 绑定缺口（B 的剩余部分）
+新增运维工具 `scripts/dsh-bind-employees.mjs`（默认 dry-run，打印 user id，不打印邮箱）：
+
+```
+[dsh-bind] users=5 bindings=2 missing=3
+```
+
+说明：当前是“首次聊天懒创建”；3 个已存在员工尚无 binding。`--apply` 可补齐，
+但会写生产账号数据，**未获批准前未执行**。创建/启用员工时的自动绑定链路仍缺
+（包内 `auth.user.created` 未发射，不能直接订阅）。
