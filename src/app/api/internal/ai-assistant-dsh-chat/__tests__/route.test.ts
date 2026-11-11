@@ -50,6 +50,7 @@ type FakeRunService = {
   >
   finish: jest.Mock<(runId: string, input: FinishRunInput) => Promise<RunRecord>>
   getRun: jest.Mock<(runId: string) => Promise<RunRecord | null>>
+  recoverInFlight: jest.Mock<() => Promise<Array<{ runId: string; createdAt: string }>>>
   replay: jest.Mock<(userId: string, runId: string, cursor?: number) => Promise<ReplayRunResult>>
 }
 
