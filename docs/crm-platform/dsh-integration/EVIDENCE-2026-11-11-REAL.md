@@ -314,3 +314,16 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 证据：`write-denied.json`、`read-after-write-gate.sse`。
 
 **边界**：写 handler 仍未实现；即使闸门评估通过也只会返回 `write_not_enabled`，不会写 CRM。
+
+## 19. 工具卡渲染（v30 `9983638`）
+
+桥新增 DSH `tool-call` → AI SDK `tool-input-start`/`tool-input-available`，`tool-result` →
+`tool-output-available`。
+
+**生产 UI 实测**（admin，`/backend` → 助手 → customers.account_assistant）：
+- 发送“Use crm_find_companies … then say TOOLCARD_OK”
+- DOM：`[data-ai-chat-tool-calls]` ×1、`[data-ai-chat-tool-call]` ×1
+- 文本：`工具调用 | 1 | mcp.crm.crm_find_companies | 完成 | TOOLCARD_OK`
+- 截图：`prod-ui-tool-card.png`
+
+**边界**：只覆盖读工具卡片；写工具的审批卡仍不存在（写 handler 未开）。
