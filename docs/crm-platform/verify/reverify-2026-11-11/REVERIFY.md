@@ -268,3 +268,25 @@ Chromium `prefers-color-scheme: dark`（html class=dark，body `rgb(10,10,10)`�
 | `evidence/t8-nav.json` | 63 链接名称、14 分组、Tab 顺序 |
 | `evidence/t5-t6-t9.json` | 8 页枚举/日期/列数/横向滚动原始值 |
 | `evidence/shots/` | 侧栏展开、6 页暗色、3 个失败页截图 |
+
+---
+
+## 7. 修复后复验更新（2026-11-11 09:05，运行 `6a721d1`）
+
+> 本节是修复后的状态，不覆盖第 1 节的基线判定；基线保留作前后对照。
+
+| 项 | 基线（56d319dc） | 现状（6a721d1） | 证据 |
+| --- | --- | --- | --- |
+| T4 `-v2` 收敛 | 不通过（200） | **通过**：companies-v2/people-v2/config/system-updates 均 301 到规范路径 | `/tmp/reverify-loop/release-6a721d1/` |
+| T11 三态 | 不通过（config 404、升级页无限骨架） | **通过**：config 301→settings；升级页 571ms 中文 alert+重试，恢复 5 行 | 同上 |
+| T14 页脚版本 | 部分通过（0.9.0 vs 0.2.2） | **通过**：`v0.2.2 (6a721d1)`，版本与 SHA 同源 | 同上 |
+| T7 英文残留 | 不通过（12/46 页） | **部分通过**：9/12 目标页归零；剩 44 条包内硬编码（integrations 25、search 19）+ 1 条 `success` 状态值；0 条字典可修 UI 标签 | `release-6a721d1/t7-classification.json` |
+| T8 导航分组 | 部分通过（14>8） | 未改，仍 14 组；63/63 有名称、Tab 可用 | `release-6a721d1/` |
+| T13 暗色基线 | 截图陈旧（11-04） | **已重拍**当前构建 6 张（`docs/visual-baseline/dark-*.png`，1440×900，html.dark）；对比度沿用实测最小 6.94（≥4.5） | `docs/visual-baseline/` |
+| DSH 引擎 | — | A 阶段 mock 模型端到端 PASS（隔离实例）；生产仍 OpenCode | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-A.md` |
+
+**更新后的签收建议**
+
+- 原 T1–T16 修复范围：T4/T11/T14 已关闭；T7 只剩“声明硬编码 + 状态数据值”，需产品豁免口径；T8 需信息架构决策；T2/T9/T16 仍待口径。
+- 可以按“T4/T11/T14 已验收、T7 条件通过、T8 保留”做**有条件签收**；不建议宣称 T1–T16 全部达成。
+- DSH 替换未完成：生产未切换、B 迁移未应用、C/D 未闭环、真实模型未调用。
