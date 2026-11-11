@@ -177,3 +177,13 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 - `answerQuestion` 仍 501；写工具仍关闭；工具集仅 `crm_find_companies`。
 - UI 前端对 DSH SSE 的完整交互（停止、重试、问题卡片）未逐个回归。
 - 同 uid OS 隔离未实现。
+
+## 11. 生产 UI 可达性探测（2026-11-11 13:0xZ）
+
+用 Playwright（headless Chromium，任务专属 profile）以 API 登录后加载 `/backend`：
+
+- acceptance 员工与 superadmin 的 `button[aria-label="打开 AI 助手"]` 均为 **`display:none` / 0×0**，页面上没有可见的聊天入口；截图：`prod-ui-assistant-hidden-admin.png`、`prod-ui-assistant-hidden-employee.png`。
+- 该隐藏行为在切换前即存在（同一构建的 `AiAssistantIntegration` 只在挂载处渲染 DockableChat），不是 DSH SSE 改动导致。
+- 因无可见入口，本轮无法完成“点击 → 输入 → 停止 → 重连”的 UI 回归；只能完成 API 级生产验证（见 §10）。
+
+**未完成**：聊天入口的产品/权限暴露决策 + UI 端到端回归。当前生产可用路径是 CRM 内已有的 API/自动化入口，而非可点击的助手面板。
