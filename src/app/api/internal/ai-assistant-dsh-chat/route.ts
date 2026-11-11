@@ -22,8 +22,9 @@
  * the mirrored tests pin them down.)
  *
  * Not implemented here, on purpose:
- * - persistence of runs/bindings/events (B1),
- * - RBAC / customer-access checks or tool bridging (C1),
+ * - persistence of runs/bindings/events (B1). The run token therefore carries a
+ *   placeholder binding id that can never match a row, so CRM tool calls fail
+ *   closed with 403 `binding_inactive` until B1 lands,
  * - OpenCode's pending-question round trip, which has no DSH counterpart yet:
  *   `answerQuestion` answers 501 instead of silently doing nothing.
  */
@@ -35,6 +36,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createLogger } from '@open-mercato/shared/lib/logger'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { bootstrap } from '@/bootstrap-api'
+import { resolveRunTokenSecret, signRunToken } from '@/lib/dsh/tool-bridge/run-token'
 import type {
   DshEvent,
   DshRunHandle,
@@ -57,6 +59,21 @@ export const dynamic = 'force-dynamic'
 
 const DEFAULT_RUN_TIMEOUT_MS = 120_000
 const DEFAULT_DSH_ROOT = path.join(os.tmpdir(), 'om-dsh')
+
+/** Must match `FIND_COMPANIES_TOOL` in `src/lib/dsh/tool-bridge/crm-find-companies.ts`. */
+const DSH_BRIDGE_TOOL = 'crm.find_companies'
+/**
+ * B1 (binding persistence) is not wired yet, but the run-token payload requires
+ * a non-empty binding id. This placeholder deliberately can never match a real
+ * `dsh_assistant_bindings` row, so the bridge answers 403 `binding_inactive` —
+ * the expected fail-closed behaviour until a real binding exists. It is not a
+ * fake binding and must not be replaced with a guessed one.
+ */
+const UNBOUND_BINDING_ID = 'unbound'
+/** Extra seconds the run token stays valid beyond the run timeout. */
+const RUN_TOKEN_GRACE_SECONDS = 60
+
+type AuthContext = NonNullable<Awaited<ReturnType<typeof getAuthFromRequest>>>
 
 /**
  * The only seam between this route and the launcher. Tests replace the module
@@ -158,27 +175,132 @@ function runTimeoutMs(): number {
 }
 
 /**
+ * Bridge endpoint the MCP child calls. `OM_DSH_BRIDGE_URL` wins (release
+ * wiring); otherwise derive the loopback app address from `PORT`.
+ */
+function resolveBridgeBaseUrl(): string {
+  const configured = process.env.OM_DSH_BRIDGE_URL?.trim()
+  if (configured) return configured.replace(/\/+$/, '')
+  const port = process.env.PORT?.trim() || '3000'
+  return `http://127.0.0.1:${port}/api/internal/dsh-tools`
+}
+
+/**
+ * The CRM MCP overlay shipped in this repository. `OM_DSH_CRM_PATCH` lets a
+ * release point at its own absolute path; the default is repo-relative so a
+ * local build works without extra configuration.
+ */
+function resolveCrmPatchPath(): string {
+  const configured = process.env.OM_DSH_CRM_PATCH?.trim()
+  if (configured) return configured
+  return path.join(process.cwd(), 'vendor', 'dsh', 'crm-profile.patch.yml')
+}
+
+/**
+ * Sign the bridge token for one run.
+ *
+ * Identity comes only from the authenticated session. The token lists exactly
+ * the bridge tools this run may call; the bridge still re-checks binding, ACL
+ * features and customer scope per call. Returns `null` (and therefore no MCP
+ * tools) when the tenant/organization/secret is missing — fail closed, never a
+ * default secret and never a guessed identity.
+ */
+function signBridgeToken(auth: AuthContext, runId: string, timeoutMs: number): string | null {
+  const tenantId = auth.tenantId?.trim()
+  const organizationId = auth.orgId?.trim()
+  const secret = resolveRunTokenSecret()
+  if (!tenantId || !organizationId || !secret) return null
+
+  try {
+    return signRunToken(
+      {
+        runId,
+        // Real binding wiring is B1; the placeholder can never match a row.
+        bindingId: UNBOUND_BINDING_ID,
+        userId: auth.sub,
+        tenantId,
+        organizationId,
+        exp: Math.floor(Date.now() / 1000) + Math.ceil(timeoutMs / 1000) + RUN_TOKEN_GRACE_SECONDS,
+        tools: [DSH_BRIDGE_TOOL],
+      },
+      secret,
+    )
+  } catch (error) {
+    // The thrown message never contains the secret; keep it for diagnosis.
+    logger.warn('DSH tool token could not be signed; MCP tools stay disabled', {
+      reason: errorMessage(error),
+    })
+    return null
+  }
+}
+
+/**
+ * Env and launch args that mount the stdio CRM MCP server into this DSH run.
+ *
+ * The MCP overlay is only added when both the script path and a signed run
+ * token exist. A half-configured bridge would either spawn a server destined
+ * to exit or advertise tools that can only fail, so it is omitted instead and
+ * chat keeps working without tools. The token is written into the child env
+ * only; it is never logged.
+ */
+function resolveToolBridgeWiring(
+  auth: AuthContext,
+  runId: string,
+  timeoutMs: number,
+): { args: string[]; env: Record<string, string> } {
+  const args = ['--profile', 'sdk-minimal']
+  const script = process.env.OM_DSH_MCP_SCRIPT?.trim()
+  if (!script) return { args, env: {} }
+  if (!path.isAbsolute(script)) {
+    // The MCP child is spawned with the run workspace as cwd; a relative script
+    // path would resolve there, not in the app checkout.
+    logger.warn('DSH CRM MCP disabled: OM_DSH_MCP_SCRIPT must be an absolute path', {})
+    return { args, env: {} }
+  }
+
+  const token = signBridgeToken(auth, runId, timeoutMs)
+  if (!token) {
+    logger.warn('DSH CRM MCP disabled: run token unavailable (tenant, organization or secret missing)', {})
+    return { args, env: {} }
+  }
+
+  return {
+    args: [...args, '--patch', resolveCrmPatchPath()],
+    env: {
+      OM_DSH_BRIDGE_URL: resolveBridgeBaseUrl(),
+      OM_DSH_MCP_SCRIPT: script,
+      OM_DSH_TOOL_TOKEN: token,
+    },
+  }
+}
+
+/**
  * Per-employee DSH_HOME plus a per-run workspace outside the app checkout, as
  * required by `DshRunInput`. The launcher is responsible for creating them;
  * this route only derives the paths. B1 replaces this with the persisted
  * per-employee profile.
  */
 function buildRunInput(
-  auth: NonNullable<Awaited<ReturnType<typeof getAuthFromRequest>>>,
+  auth: AuthContext,
   request: ChatRequest,
   signal: AbortSignal,
 ): DshRunInput {
   const runId = randomUUID()
+  const timeoutMs = runTimeoutMs()
   const root = process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT
   const employee = identityKey([auth.tenantId, auth.orgId, auth.sub])
+  const wiring = resolveToolBridgeWiring(auth, runId, timeoutMs)
 
   return {
     runId,
     ...(request.sessionId ? { sessionId: request.sessionId } : {}),
     prompt: request.prompt,
-    timeoutMs: runTimeoutMs(),
+    timeoutMs,
     workspace: path.join(root, 'workspaces', employee, runId),
     dshHome: path.join(root, 'homes', employee),
+    // Explicit launch: the base profile plus the CRM MCP overlay when enabled.
+    args: wiring.args,
+    env: wiring.env,
     // The runtime owns cancellation: it aborts the subprocess when the browser
     // disconnects. Called through here so the route does not spawn or signal.
     signal,

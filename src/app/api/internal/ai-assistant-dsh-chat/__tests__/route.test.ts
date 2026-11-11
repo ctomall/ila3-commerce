@@ -13,24 +13,35 @@ jest.mock('@/lib/dsh/runtime', () => ({ startDshRun: mockStartDshRun }))
 jest.mock('@/bootstrap-api', () => ({ bootstrap: jest.fn() }))
 
 const mockGetAuthFromRequest = jest.fn<
-  () => Promise<{ sub: string; tenantId: string; orgId: string } | null>
+  () => Promise<{ sub: string; tenantId: string | null; orgId: string | null } | null>
 >()
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({
   getAuthFromRequest: mockGetAuthFromRequest,
 }))
 
+const mockLog = {
+  debug: jest.fn(),
+  info: jest.fn(),
+  warn: jest.fn(),
+  error: jest.fn(),
+}
+
 jest.mock('@open-mercato/shared/lib/logger', () => ({
-  createLogger: () => ({
-    debug: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
-    error: jest.fn(),
-  }),
+  createLogger: () => mockLog,
 }))
 
 import { POST } from '../route'
 import type { DshEvent, DshRunResult } from '@/lib/dsh/runtime/types'
+import { verifyRunToken } from '@/lib/dsh/tool-bridge/run-token'
+
+const TOOL_WIRING_ENV_KEYS = [
+  'OM_DSH_MCP_SCRIPT',
+  'OM_DSH_BRIDGE_URL',
+  'OM_DSH_CRM_PATCH',
+  'OM_DSH_RUN_TOKEN_SECRET',
+  'OM_DSH_TOOL_TOKEN',
+] as const
 
 type SseEvent = { type: string; [key: string]: unknown }
 
@@ -86,6 +97,8 @@ beforeEach(() => {
   jest.clearAllMocks()
   process.env.OM_DSH_ROOT = '/tmp/om-dsh-route-test'
   delete process.env.OM_DSH_RUN_TIMEOUT_MS
+  delete process.env.PORT
+  for (const key of TOOL_WIRING_ENV_KEYS) delete process.env[key]
   mockGetAuthFromRequest.mockResolvedValue({
     sub: 'user-1',
     tenantId: 'tenant-1',
@@ -96,6 +109,8 @@ beforeEach(() => {
 afterAll(() => {
   delete process.env.OM_DSH_ROOT
   delete process.env.OM_DSH_RUN_TIMEOUT_MS
+  delete process.env.PORT
+  for (const key of TOOL_WIRING_ENV_KEYS) delete process.env[key]
 })
 
 describe('POST /api/internal/ai-assistant-dsh-chat', () => {
@@ -355,4 +370,98 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
     expect(events.map((event) => event.type)).toEqual(['thinking', 'error', 'done'])
     expect(events[1]).toEqual({ type: 'error', error: 'model exploded' })
   })
+  it('wires the CRM MCP overlay and a signed run token into the DSH launch without logging the token', async () => {
+    process.env.OM_DSH_MCP_SCRIPT = '/opt/om/scripts/dsh-crm-mcp.mjs'
+    process.env.OM_DSH_BRIDGE_URL = 'http://127.0.0.1:3456/api/internal/dsh-tools'
+    process.env.OM_DSH_CRM_PATCH = '/opt/om/vendor/dsh/crm-profile.patch.yml'
+    process.env.OM_DSH_RUN_TOKEN_SECRET = 'route-test-secret-not-real'
+    process.env.OM_DSH_RUN_TIMEOUT_MS = '1000'
+
+    const handle = makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } })
+    mockStartDshRun.mockResolvedValueOnce(handle)
+
+    await POST(chatRequest({ messages: userMessages }))
+
+    const input = mockStartDshRun.mock.calls[0][0]
+    expect(input.args).toEqual([
+      '--profile',
+      'sdk-minimal',
+      '--patch',
+      '/opt/om/vendor/dsh/crm-profile.patch.yml',
+    ])
+    expect(input.env).toMatchObject({
+      OM_DSH_BRIDGE_URL: 'http://127.0.0.1:3456/api/internal/dsh-tools',
+      OM_DSH_MCP_SCRIPT: '/opt/om/scripts/dsh-crm-mcp.mjs',
+    })
+
+    const token = input.env?.OM_DSH_TOOL_TOKEN
+    expect(typeof token).toBe('string')
+    const verified = verifyRunToken(token, { secret: process.env.OM_DSH_RUN_TOKEN_SECRET })
+    expect(verified.ok).toBe(true)
+    if (!verified.ok) throw new Error(`token did not verify: ${verified.reason}`)
+    expect(verified.claims).toMatchObject({
+      runId: input.runId,
+      bindingId: 'unbound',
+      userId: 'user-1',
+      tenantId: 'tenant-1',
+      organizationId: 'org-1',
+      tools: ['crm.find_companies'],
+    })
+    expect(verified.claims.exp).toBeGreaterThan(Math.floor(Date.now() / 1000))
+
+    const logDump = JSON.stringify([mockLog.debug.mock.calls, mockLog.info.mock.calls, mockLog.warn.mock.calls, mockLog.error.mock.calls])
+    expect(logDump).not.toContain(String(token))
+    expect(logDump).not.toContain('route-test-secret-not-real')
+  })
+
+  it('derives the loopback bridge URL from PORT when OM_DSH_BRIDGE_URL is unset', async () => {
+    process.env.PORT = '4321'
+    process.env.OM_DSH_MCP_SCRIPT = '/opt/om/scripts/dsh-crm-mcp.mjs'
+    process.env.OM_DSH_RUN_TOKEN_SECRET = 'route-test-secret-not-real'
+
+    const handle = makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } })
+    mockStartDshRun.mockResolvedValueOnce(handle)
+
+    await POST(chatRequest({ messages: userMessages }))
+
+    const input = mockStartDshRun.mock.calls[0][0]
+    expect(input.env?.OM_DSH_BRIDGE_URL).toBe('http://127.0.0.1:4321/api/internal/dsh-tools')
+    // Repo-relative default; no OM_DSH_CRM_PATCH is set here.
+    expect(input.args).toEqual([
+      '--profile',
+      'sdk-minimal',
+      '--patch',
+      expect.stringContaining('/vendor/dsh/crm-profile.patch.yml'),
+    ])
+  })
+
+  it('does not mount MCP tools when the session has no tenant/organization (fail closed)', async () => {
+    process.env.OM_DSH_MCP_SCRIPT = '/opt/om/scripts/dsh-crm-mcp.mjs'
+    process.env.OM_DSH_RUN_TOKEN_SECRET = 'route-test-secret-not-real'
+    mockGetAuthFromRequest.mockResolvedValueOnce({ sub: 'user-1', tenantId: null, orgId: null })
+
+    const handle = makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } })
+    mockStartDshRun.mockResolvedValueOnce(handle)
+
+    await POST(chatRequest({ messages: userMessages }))
+
+    const input = mockStartDshRun.mock.calls[0][0]
+    expect(input.args).toEqual(['--profile', 'sdk-minimal'])
+    expect(input.env).toEqual({})
+    expect(mockLog.warn).toHaveBeenCalled()
+  })
+
+  it('does not mount MCP tools when no run-token secret is configured (fail closed)', async () => {
+    process.env.OM_DSH_MCP_SCRIPT = '/opt/om/scripts/dsh-crm-mcp.mjs'
+
+    const handle = makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } })
+    mockStartDshRun.mockResolvedValueOnce(handle)
+
+    await POST(chatRequest({ messages: userMessages }))
+
+    const input = mockStartDshRun.mock.calls[0][0]
+    expect(input.args).toEqual(['--profile', 'sdk-minimal'])
+    expect(input.env).toEqual({})
+  })
+
 })

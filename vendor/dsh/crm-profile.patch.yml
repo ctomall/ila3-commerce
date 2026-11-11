@@ -1,0 +1,19 @@
+# CRM tool bridge overlay for the DSH runtime (C1).
+#
+# Applied as `dsh --profile sdk-minimal --patch <this file>`. It inserts only the
+# stdio CRM MCP server; the server itself is `scripts/dsh-crm-mcp.mjs` and every
+# tool call goes back through the CRM bridge with the run's signed token.
+#
+# All three values are supplied by the chat route in the DSH child environment;
+# no token is written into this file, the profile, or the repository.
+- insert:
+    - id: mcp-crm
+      name: '@deepseek-ai/dsh-mcp-client'
+      config:
+        serverName: crm
+        transport: stdio
+        command: node
+        args: !!js '[process.env.OM_DSH_MCP_SCRIPT]'
+        env:
+          OM_DSH_BRIDGE_URL: !!js process.env.OM_DSH_BRIDGE_URL
+          OM_DSH_TOOL_TOKEN: !!js process.env.OM_DSH_TOOL_TOKEN
