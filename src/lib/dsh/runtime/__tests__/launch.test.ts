@@ -107,6 +107,16 @@ afterEach(async () => {
 })
 
 describe('startDshRun', () => {
+  it('materialises a missing workspace and DSH home before spawning', async () => {
+    const { input } = makeRun('success')
+    fs.rmSync(input.workspace, { recursive: true, force: true })
+    fs.rmSync(input.dshHome, { recursive: true, force: true })
+    const handle = await start(input)
+    await handle.result
+    expect(fs.existsSync(input.workspace)).toBe(true)
+    expect(fs.existsSync(input.dshHome)).toBe(true)
+  })
+
   it('runs one session/query successfully, streams seq from 1 and confirms close', async () => {
     const { input, recordPath } = makeRun('success')
     const handle = await start(input)

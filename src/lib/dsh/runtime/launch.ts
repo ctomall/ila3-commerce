@@ -22,6 +22,7 @@
  */
 
 import { spawn, type ChildProcess } from 'node:child_process'
+import fs from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
 import { createTransport, type DshTransport } from './transport'
@@ -280,6 +281,11 @@ export async function startDshRun(
   const args = input.args === undefined ? ['--profile', 'sdk-minimal'] : [...input.args]
   const workspace = resolve(input.workspace)
   const dshHome = resolve(input.dshHome)
+  // The route derives per-run paths but must not touch the filesystem; the
+  // launcher owns materialising them. 0700 keeps other Unix users out (it does
+  // NOT isolate two employees running as the same user — see DESIGN.md).
+  fs.mkdirSync(workspace, { recursive: true, mode: 0o700 })
+  fs.mkdirSync(dshHome, { recursive: true, mode: 0o700 })
   const initializeTimeoutMs = positive(input.initializeTimeoutMs, DEFAULT_INITIALIZE_TIMEOUT_MS)
   const requestTimeoutMs = positive(input.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS)
   const shutdownTimeoutMs = positive(input.shutdownTimeoutMs, DEFAULT_SHUTDOWN_TIMEOUT_MS)
