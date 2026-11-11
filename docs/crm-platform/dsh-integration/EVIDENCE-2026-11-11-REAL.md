@@ -72,3 +72,15 @@ tool-result 200: {"companies":[],"scanned":3,
 ## 6. 证据文件
 
 `evidence/real-model-chat.sse`、`real-model-tool.sse`、`replay-idempotent.sse`、`resume-cursor.sse`、`revoke-inflight.sse`、`cancel-inflight.sse`、`dsh-runs.txt`、`dsh-bindings.txt`。
+
+## 7. 重启恢复与撤权文案（v18 / `777cb7a`）
+
+| 场景 | 结果 |
+| --- | --- |
+| 伪造 1h 前 `running` 行（模拟上一进程遗留） | 首个持久化请求后置为 `failed` / `server_restart`；同请求真实模型返回 `SWEEP_OK` 并 completed |
+| v18 复测 2h 前 stale 行 | `stale-sweep-2 → failed/server_restart`，新 run `completed` |
+| 撤权 in-flight（v18） | 200、**549 ms** 停流；SSE `error:"run_cancelled"`；run `cancelled`（reason `e2e-revoke-5`）；binding revoked |
+
+证据：`restart-sweep.sse`、`revoke-run-cancelled.sse`、`recovery-sweep.txt`。
+
+> 恢复口径：只收口"超过 run timeout + 60s"的遗留行，避免误杀并发 worker 的活 run；不承诺续跑，客户端可重试。
