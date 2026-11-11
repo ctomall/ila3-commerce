@@ -431,3 +431,18 @@ admin 与 acceptance 员工同时发起任务：
 | 构建产物包含订阅器 | 是（45 个构建文件命中 `ensure-binding-on-login`） |
 | admin 登录 | 200；bindings 5→5（已存在，no-op）；无错误日志 |
 | 创建路径 E2E | 未做：需要新建测试员工账号（生产账号写操作未授权） |
+
+## 27. UI 桥重试幂等（v34 `07112a6`）
+
+`dsh-agentic-chat` 不再用随机 UUID，而是 `sha256(sessionId + 转发的对话文本)` 作为 DSH
+idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换 key。
+
+生产实测（admin，同一 body + sessionId 连发两次）：
+
+| 项 | 结果 |
+| --- | --- |
+| 第一次 | 200，创建 1 个 run（75→76） |
+| 第二次 | 200，**未新建 run**（76→76），重放同一回答 |
+| 两次响应 | 均含 `BRIDGE_IDEM_OK` |
+
+证据：`bridge-retry-first.sse`、`bridge-retry-second.sse`。
