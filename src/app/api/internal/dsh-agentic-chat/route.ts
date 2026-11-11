@@ -11,7 +11,7 @@
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 
 type ChatBody = {
@@ -43,6 +43,14 @@ export async function POST(req: NextRequest) {
   const prompt = promptFrom(body)
   if (!prompt) return NextResponse.json({ error: 'messages must include text' }, { status: 400 })
 
+  // A retry of the same turn (same conversation + same transcript) must replay
+  // the original run instead of paying for a second model call. A new turn
+  // changes the transcript, so its key changes too.
+  const idempotencyKey = createHash('sha256')
+    .update(`${body.sessionId ?? ''}\u0000${prompt}`)
+    .digest('hex')
+    .slice(0, 32)
+
   const target = new URL('/api/internal/ai-assistant-dsh-chat', req.nextUrl.origin)
   let upstream: Response
   try {
@@ -55,7 +63,7 @@ export async function POST(req: NextRequest) {
       },
       body: JSON.stringify({
         messages: [{ role: 'user', content: prompt }],
-        idempotencyKey: randomUUID(),
+        idempotencyKey,
       }),
       // The UI's stop button aborts this request. Forwarding the signal lets the
       // DSH route cancel the child and finish the run instead of orphaning it.
