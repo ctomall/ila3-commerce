@@ -351,6 +351,7 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'ai_model_config', from: '@app' },
   // Superadmin one-click upgrade from the configured git remote.
   { id: 'system_update', from: '@app' },
+  { id: 'dsh_runs', from: '@app' },
   // Read-only directory of enabled modules for the settings UI.
   { id: 'module_directory', from: '@app' },
   // Searchable settings landing page replacing the stock placeholder.
