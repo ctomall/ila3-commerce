@@ -1,6 +1,6 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
 
-const findOne = jest.fn<() => Promise<unknown>>()
+const findOne = jest.fn<(entity: unknown, where: unknown) => Promise<unknown>>()
 const create = jest.fn((_entity: unknown, data: unknown) => data)
 const persist = jest.fn<() => void>()
 const flush = jest.fn<() => Promise<void>>()
