@@ -187,3 +187,27 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 - 因无可见入口，本轮无法完成“点击 → 输入 → 停止 → 重连”的 UI 回归；只能完成 API 级生产验证（见 §10）。
 
 **未完成**：聊天入口的产品/权限暴露决策 + UI 端到端回归。当前生产可用路径是 CRM 内已有的 API/自动化入口，而非可点击的助手面板。
+
+## 12. 生产 UI 恢复（v24/v25，`07fecd3` → `271b95c`）
+
+### 12.1 根因链
+1. UI 打开助手前请求 `/api/ai_assistant/health`，包内 handler 访问不存在的 OpenCode server → `fetch failed` → UI 判定不可用。
+2. 即使 health 修好，`/api/ai_assistant/ai/agents` 的 `aiConfigured` 来自进程内 provider registry；该 registry 只在管理端读写设置时填充，重启后为空 → UI 仍报“未配置提供方密钥”。
+3. UI 实际聊天走 **`/api/ai_assistant/ai/chat?agent=…`**（agentic 路径，AI SDK），不是 `/api/ai_assistant/chat`。
+
+### 12.2 修复
+- `src/proxy.ts`：`OM_AI_ENGINE=dsh` 时把 `GET /api/ai_assistant/health` 与 `GET /api/ai_assistant/ai/agents` 重写到内部 handler；
+- `dsh-health`：同 auth + `ai_assistant.view` 门槛，返回 `{status:"ok",engine:"dsh"}`；
+- `dsh-agents`：调用包内 catalogue（保留鉴权/列表），把 `aiConfigured` 置 true，并在返回前 `ensureProviderRuntime` 水合 provider registry。
+
+### 12.3 生产 UI 实测（Playwright，headless Chromium）
+| 步骤 | 结果 |
+| --- | --- |
+| 打开助手（本地可见性开关） | 助手列表出现 `Customers Account Assistant` |
+| 选择 agent → 发送 `Reply with exactly UI_LIVE_OK` | 助手气泡返回 **`UI_LIVE_OK`**；截图 `prod-ui-chat-ok.png` |
+| 同一时刻 `/api/ai_assistant/chat` | 200、11 个 `dsh.event`、`DSH_AFTER_UI`；证据 `prod-dsh-after-ui.sse` |
+
+### 12.4 关键边界（必须保留）
+UI 的 agentic 路径现在**可用**，但执行的是包内 AI SDK agent loop，**不是 DSH**；DSH 仍只覆盖 `/api/ai_assistant/chat`。把 UI agentic 协议接到 DSH 是下一阶段工作，不能把“UI 可用”当成“DSH 已接管 UI”。
+
+默认可见性仍为隐藏（包内 `DEFAULT_VISIBILITY.enabled=false`），本轮测试通过 localStorage 打开；是否默认展示是产品决策。
