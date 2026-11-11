@@ -57,6 +57,9 @@ export async function POST(req: NextRequest) {
         messages: [{ role: 'user', content: prompt }],
         idempotencyKey: randomUUID(),
       }),
+      // The UI's stop button aborts this request. Forwarding the signal lets the
+      // DSH route cancel the child and finish the run instead of orphaning it.
+      signal: req.signal,
     })
   } catch {
     return NextResponse.json({ error: 'DSH bridge unavailable' }, { status: 502 })
