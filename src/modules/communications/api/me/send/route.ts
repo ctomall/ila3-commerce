@@ -13,7 +13,7 @@ import {
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
-import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
+import { CommunicationChannel, ExternalConversation, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { canActorReply } from '../../../lib/reply-permission-server'
 
 function noNewlines(value: string): boolean {
@@ -40,6 +40,13 @@ const bodySchema = z.object({
   references: z.array(z.string().min(1).max(500).refine(noNewlines)).optional(),
   /** `messages.message` id being replied to, so the reply joins that thread. */
   parentMessageId: z.string().uuid().optional(),
+  /**
+   * Inbox conversation the reply was composed in (`external_conversations.id`).
+   * Optional and additive: when supplied with `parentMessageId`, the server
+   * verifies the quoted message belongs to that conversation so a crafted
+   * parent id cannot file the outgoing message into another customer's thread.
+   */
+  threadId: z.string().uuid().optional(),
   /**
    * Caller-generated idempotency key. Echoed back and persisted on the channel
    * link metadata so a retry after a network timeout can be correlated before
@@ -181,6 +188,7 @@ export async function POST(req: Request): Promise<Response> {
       | undefined,
     media: body.media ?? null,
     parentMessageId: body.parentMessageId ?? null,
+    ...(body.threadId ? { threadId: body.threadId } : {}),
   })
 
   const container = await createRequestContainer()
@@ -247,6 +255,37 @@ export async function POST(req: Request): Promise<Response> {
   // caller can switch to an approved template, instead of queueing a send the
   // platform will reject.
   const policyEm = forkEm()
+  if (policyEm && body.threadId && body.parentMessageId) {
+    // A quoted parent must belong to the conversation the caller says it is
+    // replying in. Without this a crafted parentMessageId (same channel, other
+    // conversation) would let the hub reuse that conversation's thread ref and
+    // file the outgoing message into another customer's inbox thread.
+    const parentLink = await policyEm.findOne(MessageChannelLink, {
+      messageId: body.parentMessageId,
+      tenantId: auth.tenantId as string,
+      direction: 'inbound',
+    } as never)
+    const parentConversationId =
+      (parentLink as { externalConversationId?: string | null } | null)?.externalConversationId ?? null
+    const sameThread =
+      parentConversationId === body.threadId &&
+      Boolean(
+        await policyEm.findOne(ExternalConversation, {
+          id: body.threadId,
+          tenantId: auth.tenantId as string,
+          channelId: body.channelId,
+        } as never),
+      )
+    if (!sameThread) {
+      return NextResponse.json(
+        {
+          error: 'The quoted message does not belong to this conversation',
+          code: 'PARENT_THREAD_MISMATCH',
+        },
+        { status: 422 },
+      )
+    }
+  }
   if (policyEm) {
     if (!hasTemplate) {
       const policy = await checkCustomerWindow({

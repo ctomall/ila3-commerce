@@ -26,6 +26,8 @@ export function ReplyComposer(props: {
   to: string
   subject: string
   parentMessageId?: string | null
+  /** Inbox conversation id; lets the server reject a parent from another thread. */
+  threadId?: string | null
   channelType: string
 }) {
   const router = useRouter()
@@ -52,6 +54,7 @@ export function ReplyComposer(props: {
       to: props.to,
       subject: props.subject,
       parentMessageId: props.parentMessageId ?? null,
+      threadId: props.threadId ?? null,
     })
   }
 
@@ -77,6 +80,7 @@ export function ReplyComposer(props: {
         subject: props.subject || 'Reply',
         body: {plain: body || (mode === 'template' ? `模板 ${templateName.trim()}` : '')},
         ...(props.parentMessageId ? {parentMessageId: props.parentMessageId} : {}),
+        ...(props.threadId ? {threadId: props.threadId} : {}),
         clientRequestId: decision.clientRequestId,
       }
       if (mode === 'media') {

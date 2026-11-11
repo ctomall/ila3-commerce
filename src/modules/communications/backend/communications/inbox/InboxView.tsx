@@ -265,6 +265,7 @@ export async function InboxView({
                       parentMessageId={
                         [...detail.items].reverse().find((item) => item.direction === 'inbound')?.messageId ?? null
                       }
+                      threadId={selectedId}
                     />
                   ) : null}
                   {canReply ? (

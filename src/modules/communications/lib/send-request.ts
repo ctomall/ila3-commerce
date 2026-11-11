@@ -49,6 +49,8 @@ export type SendPayloadHashInput = {
     caption?: string
   } | null
   parentMessageId?: string | null
+  /** Inbox conversation the reply was composed in; only sent by newer clients. */
+  threadId?: string | null
 }
 
 /**
@@ -105,6 +107,9 @@ export function computeSendPayloadHash(input: SendPayloadHashInput): string {
         }
       : null,
     parentMessageId: input.parentMessageId ?? null,
+    // Omitted entirely when absent so hashes recorded by older clients keep
+    // matching on retry.
+    ...(input.threadId ? { threadId: input.threadId } : {}),
   }
   return createHash('sha256').update(JSON.stringify(canonicalize(normalized))).digest('hex')
 }
