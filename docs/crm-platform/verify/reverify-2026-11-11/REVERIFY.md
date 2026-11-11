@@ -290,3 +290,27 @@ Chromium `prefers-color-scheme: dark`（html class=dark，body `rgb(10,10,10)`�
 - 原 T1–T16 修复范围：T4/T11/T14 已关闭；T7 只剩“声明硬编码 + 状态数据值”，需产品豁免口径；T8 需信息架构决策；T2/T9/T16 仍待口径。
 - 可以按“T4/T11/T14 已验收、T7 条件通过、T8 保留”做**有条件签收**；不建议宣称 T1–T16 全部达成。
 - DSH 替换未完成：生产未切换、B 迁移未应用、C/D 未闭环、真实模型未调用。
+
+---
+
+## 8. 2026-11-11 14:5x 状态补充（不覆盖第 7 节）
+
+> 第 7 节记录 `6a721d1` 时刻；此后生产已切换 DSH，UI 入口/会话隔离已修复并通过独立 QA。本节只更新状态与签收建议。
+
+| 项 | 当前状态 | 证据 |
+| --- | --- | --- |
+| T4 `-v2` 收敛 | 通过（未回退） | 第 7 节 |
+| T11 三态 | 通过（config 301→settings；升级页错误态） | 第 7 节 |
+| T14 版本同源 | 通过 | 页脚 `v0.2.2 (<sha>)` |
+| T13 暗色基线 | 已重拍并通过（对比度沿用最小 6.94） | `docs/visual-baseline/` |
+| T7 英文残留 | **条件通过**：9/12 目标页归零；44 条包内硬编码（integrations 25、search 19）+ 1 条 `success` 状态值待产品豁免 | `release-6a721d1/t7-classification.json` |
+| T8 导航分组 | 保留（14 组 > 8），需信息架构决策 | 第 7 节 |
+| T2/T9/T16 | 待口径，未擅自改验收 | — |
+| DSH 引擎 | **生产已切 DSH**（`OM_AI_ENGINE=dsh` + `OM_DSH_PERSIST=orm` + `OM_DSH_AGENTIC=1`）；正式 `/api/ai_assistant/chat` 与 UI `ai/chat` 实测执行 DSH | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` §10–§17 |
+| DSH 独立 QA | release `5113ec9` 5/5 PASS（默认入口/会话隔离/回归/双员工隔离） | `/tmp/reverify-loop/real-5113ec9/` |
+
+**签收建议（2026-11-11）**
+
+- UI 修复线：可按“T4/T11/T14/T13 已验收、T7 条件通过、T8/T2/T9/T16 保留”做**有条件签收**；不建议宣称 T1–T16 全部达成。
+- DSH 替换线：生产可用、核心链路与 QA 通过，但 **不满足 complete**：工具卡/审批富事件未接、写工具未开、其余 3 名员工未抽样、同 uid OS 隔离未实现、`customer_access` 未产品化。
+- 需要产品决策的最小集：T7 44 条包内硬编码豁免口径；T8 14 组导航是否合并；助手入口默认可见性。
