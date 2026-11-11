@@ -209,14 +209,18 @@ describe('POST /api/internal/dsh-bindings/revoke', () => {
 
     expect(response.status).toBe(200)
     await expect(response.json()).resolves.toEqual({ bindingId: BINDING_ID, revokedRuns: 1 })
-    const service = await mockCreateRequestRunService.mock.results[0].value
+    const service = (await mockCreateRequestRunService.mock.results[0].value) as ReturnType<
+      typeof fakeService
+    >
     expect(service.revokeBinding).toHaveBeenCalledWith(BINDING_ID, { reason: 'offboarding' })
   })
 
   it('uses the store default reason when the body omits it', async () => {
     await POST(revokeRequest({ targetUserId: 'target-user' }))
 
-    const service = await mockCreateRequestRunService.mock.results[0].value
+    const service = (await mockCreateRequestRunService.mock.results[0].value) as ReturnType<
+      typeof fakeService
+    >
     expect(service.revokeBinding).toHaveBeenCalledWith(BINDING_ID, {})
   })
 
