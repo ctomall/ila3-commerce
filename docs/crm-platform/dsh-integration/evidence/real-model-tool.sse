@@ -1,0 +1,77 @@
+id: 1
+data: {"type":"thinking"}
+
+id: 2
+data: {"type":"dsh.event","dshType":"session.event","seq":1,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"agent/inbox/spliced","seq":0,"time":1794395945671,"data":{"target":"next-turn","start":0,"inserted":[{"content":[{"type":"text","text":"Use the crm_find_companies tool with query Acme and limit 3, then tell me the company names you got."}],"source":{"kind":"user"},"role":"user","id":"52e05964-0951-4ad8-b31c-bf96497a998a"}]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 3
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","status":"running"}}
+
+id: 4
+data: {"type":"thinking"}
+
+id: 5
+data: {"type":"dsh.event","dshType":"session.event","seq":4,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"agent/inbox/spliced","seq":2,"time":1794395945686,"data":{"target":"next-turn","start":0,"removedCount":1,"inserted":[]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 6
+data: {"type":"dsh.event","dshType":"session.event","seq":5,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"step/start","seq":3,"time":1794395945772,"data":{"turn":1,"step":1}}},"dshEventType":"step/start"}
+
+id: 7
+data: {"type":"dsh.event","dshType":"session.event","seq":6,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"system/message","seq":4,"time":1794395945780,"data":{"turn":1,"step":1,"message":{"role":"system","content":[{"type":"text","text":"You are a helpful software engineer assistant.\n\n## MCP resource servers\n\nUse list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: [\"crm\"]."}],"source":{"kind":"system-prompt"},"id":"5d407976-681c-458f-89c4-d1791db179e3"}},"surfaceOp":"append"}},"dshEventType":"system/message"}
+
+id: 8
+data: {"type":"dsh.event","dshType":"session.event","seq":7,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"user/message","seq":5,"time":1794395945784,"data":{"content":[{"type":"text","text":"Use the crm_find_companies tool with query Acme and limit 3, then tell me the company names you got."}],"source":{"kind":"user"},"role":"user","id":"52e05964-0951-4ad8-b31c-bf96497a998a"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 9
+data: {"type":"dsh.event","dshType":"session.event","seq":8,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"user/message","seq":6,"time":1794395945785,"data":{"content":[{"type":"text","text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/runs-real2/workspaces/667d4bd36fff7269595a29fbadcd2f66/d15e0307-f2db-4ba5-9f7e-b01b54c334f6\"."}],"source":{"kind":"runtime-context","form":"snapshot","sections":[{"name":"working-directory:current","text":"Current working directory: \"/tmp/dsh-e2e/runs-real2/workspaces/667d4bd36fff7269595a29fbadcd2f66/d15e0307-f2db-4ba5-9f7e-b01b54c334f6\"."}]},"role":"user","id":"a078bd33-35a5-4a48-a178-f160f111e168"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 10
+data: {"type":"dsh.event","dshType":"session.event","seq":9,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"request/header","seq":7,"time":1794395945787,"data":{"header":{"config":{"provider":"deepseek-official","model":"deepseek-flash","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"reasoningEffort":true,"maxTokens":true},"tools":[{"name":"bash","description":"Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* Network access depends on the task environment. Prefer configured mirrors/proxies when they are available.\n* State is persistent across command calls and discussions with the user.\n* To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.\n* Please avoid commands that may produce a very large amount of output.\n* Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background.","parameters":{"type":"object","properties":{"command":{"type":"string","description":"The bash command to run. Relative path is preferred in the command."}},"required":["command"]}},{"name":"list_mcp_resource_templates","description":"List parameterized resource URI templates from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"list_mcp_resources","description":"List resources available from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"mcp__crm__crm_find_companies","description":"Find CRM companies visible to the authenticated employee (read-only). Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters.","parameters":{"type":"object","properties":{"query":{"type":"string","maxLength":120,"description":"Case-insensitive substring matched against company name, domain, website or industry."},"limit":{"type":"integer","minimum":1,"maximum":20,"description":"Maximum companies to return (default 5, hard cap 20)."}},"additionalProperties":false}},{"name":"read_image","description":"Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image.","parameters":{"type":"object","properties":{"file_path":{"type":"string","description":"Path to the image file, resolved by the filesystem backend."}},"required":["file_path"]}},{"name":"read_mcp_resource","description":"Read an MCP resource by URI from the named server. Use a listed URI or an expanded resource template.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"uri":{"type":"string","description":"Resource URI to read."}},"required":["server","uri"]}},{"name":"working_directory","description":"Read the current working directory, or change it with cd. Relative paths use the current directory. Existing shells and running processes keep their own directories.","parameters":{"type":"object","properties":{"cd":{"type":"string","description":"Existing directory to enter. Omit to read the current directory."}}}}]},"reason":"initial"}}},"dshEventType":"request/header"}
+
+id: 11
+data: {"type":"dsh.event","dshType":"session.event","seq":10,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"request/context","seq":8,"time":1794395945788,"data":{"provider":"deepseek-official","model":"deepseek-flash","contextWindow":1048576,"systemPromptUpdate":"in-history"}}},"dshEventType":"request/context"}
+
+id: 12
+data: {"type":"dsh.event","dshType":"session.event","seq":11,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"session/title","seq":9,"time":1794395945794,"data":{"title":"Use the crm_find_companies tool with","messageSeqs":[5],"source":{"kind":"fallback"}}}},"dshEventType":"session/title"}
+
+id: 13
+data: {"type":"dsh.event","dshType":"session.event","seq":12,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"session-log-deepseek/delivery-accepted","seq":10,"time":1794395945943,"data":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","sessionFormatVersion":4,"throughSeq":9}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 14
+data: {"type":"debug","partType":"thinking","data":{"text":""}}
+
+id: 15
+data: {"type":"text","content":"I'll search the CRM for companies matching \"Acme\"."}
+
+id: 16
+data: {"type":"tool-call","id":"call_00_ET_f3p3h2cYFSMInMQziQCp6989","toolName":"mcp__crm__crm_find_companies","args":{"query":"Acme","limit":3}}
+
+id: 17
+data: {"type":"tool-call","id":"call_00_ET_f3p3h2cYFSMInMQziQCp6989","toolName":"mcp__crm__crm_find_companies","args":{"query":"Acme","limit":3}}
+
+id: 18
+data: {"type":"tool-result","id":"call_00_ET_f3p3h2cYFSMInMQziQCp6989","result":[{"type":"text","text":"{\"companies\":[],\"scanned\":3,\"scope\":{\"mode\":\"organization\",\"tenantId\":\"f27fa168-796c-4532-b9a4-1491a2e8c65e\",\"organizationId\":\"328bc848-d4cd-41ae-bcc3-0bcb4b215e55\"},\"note\":\"只读查询；结果限定为调用者所在组织（组织隔离≠员工客户隔离）\"}"}]}
+
+id: 19
+data: {"type":"dsh.event","dshType":"session.event","seq":16,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"step/end","seq":14,"time":1794395946914,"data":{"turn":1,"step":1}}},"dshEventType":"step/end"}
+
+id: 20
+data: {"type":"dsh.event","dshType":"session.event","seq":17,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"step/start","seq":15,"time":1794395946927,"data":{"turn":1,"step":2}}},"dshEventType":"step/start"}
+
+id: 21
+data: {"type":"dsh.event","dshType":"session.event","seq":18,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"session-log-deepseek/delivery-accepted","seq":16,"time":1794395947029,"data":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","sessionFormatVersion":4,"throughSeq":15}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 22
+data: {"type":"debug","partType":"thinking","data":{"text":"The tool returned no companies. Tell user."}}
+
+id: 23
+data: {"type":"text","content":"I ran `crm_find_companies` with query **Acme** and limit **3**, but it returned **no companies** — the result set was empty (3 records scanned, no matches in your organization's CRM).\n\nIf you'd like, I can try a broader or differently spelled query (e.g., \"Acme Corp\", \"ACME\", or a partial term)."}
+
+id: 24
+data: {"type":"dsh.event","dshType":"session.event","seq":20,"payload":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","event":{"type":"step/end","seq":18,"time":1794395948180,"data":{"turn":1,"step":2}}},"dshEventType":"step/end"}
+
+id: 25
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-2a928497e1d449e8a409648dc0be9bfd","status":"idle"}}
+
+data: {"type":"done","sessionId":"session-2a928497e1d449e8a409648dc0be9bfd"}
+

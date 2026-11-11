@@ -1,0 +1,53 @@
+id: 1
+data: {"type":"thinking"}
+
+id: 2
+data: {"seq":1,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":0,"data":{"start":0,"target":"next-turn","inserted":[{"id":"f274f939-9d15-4204-8cb7-29c4a415fca6","role":"user","source":{"kind":"user"},"content":[{"text":"Reply with exactly READY and nothing else.","type":"text"}]}]},"time":1794395923729,"type":"agent/inbox/spliced"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"agent/inbox/spliced"}
+
+id: 3
+data: {"data":{"status":"running","sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"type":"debug","partType":"status"}
+
+id: 4
+data: {"type":"thinking"}
+
+id: 5
+data: {"seq":4,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":2,"data":{"start":0,"target":"next-turn","inserted":[],"removedCount":1},"time":1794395923737,"type":"agent/inbox/spliced"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"agent/inbox/spliced"}
+
+id: 6
+data: {"seq":5,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":3,"data":{"step":1,"turn":1},"time":1794395923807,"type":"step/start"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"step/start"}
+
+id: 7
+data: {"seq":6,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":4,"data":{"step":1,"turn":1,"message":{"id":"54f89e1f-7f73-4c68-8af6-77a4257249e1","role":"system","source":{"kind":"system-prompt"},"content":[{"text":"You are a helpful software engineer assistant.\n\n## MCP resource servers\n\nUse list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: [\"crm\"].","type":"text"}]}},"time":1794395923816,"type":"system/message","surfaceOp":"append"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"system/message"}
+
+id: 8
+data: {"seq":7,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":5,"data":{"id":"f274f939-9d15-4204-8cb7-29c4a415fca6","role":"user","source":{"kind":"user"},"content":[{"text":"Reply with exactly READY and nothing else.","type":"text"}]},"time":1794395923818,"type":"user/message","surfaceOp":"append"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"user/message"}
+
+id: 9
+data: {"seq":8,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":6,"data":{"id":"1333bbaa-a4c6-4691-83c6-fc53216624a0","role":"user","source":{"form":"snapshot","kind":"runtime-context","sections":[{"name":"working-directory:current","text":"Current working directory: \"/tmp/dsh-e2e/runs-real2/workspaces/667d4bd36fff7269595a29fbadcd2f66/98ef3f6d-f775-46cc-8831-f5e514c8f62c\"."}]},"content":[{"text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/runs-real2/workspaces/667d4bd36fff7269595a29fbadcd2f66/98ef3f6d-f775-46cc-8831-f5e514c8f62c\".","type":"text"}]},"time":1794395923820,"type":"user/message","surfaceOp":"append"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"user/message"}
+
+id: 10
+data: {"seq":9,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":7,"data":{"header":{"tools":[{"name":"bash","parameters":{"type":"object","required":["command"],"properties":{"command":{"type":"string","description":"The bash command to run. Relative path is preferred in the command."}}},"description":"Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* Network access depends on the task environment. Prefer configured mirrors/proxies when they are available.\n* State is persistent across command calls and discussions with the user.\n* To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.\n* Please avoid commands that may produce a very large amount of output.\n* Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background."},{"name":"list_mcp_resource_templates","parameters":{"type":"object","required":["server"],"properties":{"cursor":{"type":"string","description":"Continuation cursor returned by this server."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"List parameterized resource URI templates from an MCP server."},{"name":"list_mcp_resources","parameters":{"type":"object","required":["server"],"properties":{"cursor":{"type":"string","description":"Continuation cursor returned by this server."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"List resources available from an MCP server."},{"name":"mcp__crm__crm_find_companies","parameters":{"type":"object","properties":{"limit":{"type":"integer","maximum":20,"minimum":1,"description":"Maximum companies to return (default 5, hard cap 20)."},"query":{"type":"string","maxLength":120,"description":"Case-insensitive substring matched against company name, domain, website or industry."}},"additionalProperties":false},"description":"Find CRM companies visible to the authenticated employee (read-only). Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters."},{"name":"read_image","parameters":{"type":"object","required":["file_path"],"properties":{"file_path":{"type":"string","description":"Path to the image file, resolved by the filesystem backend."}}},"description":"Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image."},{"name":"read_mcp_resource","parameters":{"type":"object","required":["server","uri"],"properties":{"uri":{"type":"string","description":"Resource URI to read."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"Read an MCP resource by URI from the named server. Use a listed URI or an expanded resource template."},{"name":"working_directory","parameters":{"type":"object","properties":{"cd":{"type":"string","description":"Existing directory to enter. Omit to read the current directory."}}},"description":"Read the current working directory, or change it with cd. Relative paths use the current directory. Existing shells and running processes keep their own directories."}],"config":{"model":"deepseek-flash","provider":"deepseek-official","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"maxTokens":true,"reasoningEffort":true}},"reason":"initial"},"time":1794395923822,"type":"request/header"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"request/header"}
+
+id: 11
+data: {"seq":10,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":8,"data":{"model":"deepseek-flash","provider":"deepseek-official","contextWindow":1048576,"systemPromptUpdate":"in-history"},"time":1794395923823,"type":"request/context"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"request/context"}
+
+id: 12
+data: {"seq":11,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":9,"data":{"title":"Reply with exactly READY and","source":{"kind":"fallback"},"messageSeqs":[5]},"time":1794395923829,"type":"session/title"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"session/title"}
+
+id: 13
+data: {"seq":12,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":10,"data":{"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62","throughSeq":9,"sessionFormatVersion":4},"time":1794395923991,"type":"session-log-deepseek/delivery-accepted"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 14
+data: {"data":{"text":"We need answer exactly READY. No tools."},"type":"debug","partType":"thinking"}
+
+id: 15
+data: {"type":"text","content":"READY"}
+
+id: 16
+data: {"seq":14,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":12,"data":{"step":1,"turn":1},"time":1794395924855,"type":"step/end"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"step/end"}
+
+id: 17
+data: {"data":{"status":"idle","sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"type":"debug","partType":"status"}
+
+data: {"type":"done","sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"}
+

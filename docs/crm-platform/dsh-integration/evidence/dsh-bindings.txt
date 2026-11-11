@@ -1,0 +1,2 @@
+e95d9232-35bb-4969-b45b-05d9ae72887c|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|active|crm-assistant
+5fcff877-32bb-4d42-af75-59f919f28673|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|active|crm-assistant

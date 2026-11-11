@@ -1,0 +1,6 @@
+20892412-7520-4a62-8d1f-a832c9c370e4|cancelled|cancel-real-2|13|
+c787a8ea-0e9f-4b24-9215-d7cfd3c88dd2|cancelled|revoke-real-3|13|
+cbf9c457-f74e-4f96-97bd-ced42714c00e|cancelled|revoke-real-2|0|
+2a002c21-fdbb-496b-b2b1-10b283593943|completed|revoke-real-1|38|{"finishReason": "completed", "finalResponse": "## Europe's CRM Software Market:
+540ddc13-477d-485b-b15b-dedc24f14257|cancelled|cancel-real-1|13|
+d15e0307-f2db-4ba5-9f7e-b01b54c334f6|completed|tool-real-1|25|{"finishReason": "completed", "finalResponse": "I ran `crm_find_companies` with 

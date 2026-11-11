@@ -1,0 +1,8 @@
+id: 16
+data: {"seq":14,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":12,"data":{"step":1,"turn":1},"time":1794395924855,"type":"step/end"},"sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"dshEventType":"step/end"}
+
+id: 17
+data: {"data":{"status":"idle","sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"},"type":"debug","partType":"status"}
+
+data: {"type":"done","sessionId":"session-8e121a606c134f0cb8c5e1b6c4a1ec62"}
+
