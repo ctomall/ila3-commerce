@@ -353,3 +353,17 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 | 子进程 | 结束后 0 |
 
 证据：`timeout-run.sse`。生产超时为 120 s，未在生产人为触发。
+
+## 22. 生产重启恢复（`f1bd7f3`，`OM_DSH_SINGLE_INSTANCE=1`）
+
+步骤：发起 900 词长任务 → 确认 DB `running` → 重启 `ila3-auto-deploy-app.service`（同时会杀掉子进程）→ 下一个请求。
+
+| 项 | 结果 |
+| --- | --- |
+| 重启前 | run `7127220a…` status `running` |
+| 重启后 | 该 run **`failed`**，error `dsh exited before the run completed …`；无 `queued/running/awaiting_approval` 行 |
+| 新请求 | 200，`RECOVER2_OK`，completed |
+| 子进程 | 0 |
+
+**说明**：该次收口来自父进程对子进程退出的处理；`f1bd7f3` 的 pre-boot sweep（单实例）是兜底，
+用于父进程被直接杀掉、来不及 finish 的场景。两者结果一致：终态、可重试、不再显示“运行中”。
