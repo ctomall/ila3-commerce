@@ -1,7 +1,7 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
 
 const findOne = jest.fn<() => Promise<unknown>>()
-const create = jest.fn<(entity: unknown, data: unknown) => unknown>()
+const create = jest.fn((_entity: unknown, data: unknown) => data)
 const persist = jest.fn<() => void>()
 const flush = jest.fn<() => Promise<void>>()
 const fork = jest.fn(() => ({ findOne, create, persist, flush }))
@@ -18,7 +18,6 @@ describe('ensure-binding-on-login', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     findOne.mockResolvedValue(null)
-    create.mockImplementation((_entity, data) => data)
   })
 
   it('creates an active binding when the employee has none', async () => {
