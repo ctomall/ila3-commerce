@@ -115,7 +115,9 @@ test('a later call resumes the partial left by an aborted earlier call', async (
     downloadArtifactZip({url: base, file, expectedBytes: BYTES.length, timeoutMs: 10_000, maxAttempts: 1, retryDelayMs: 10}),
     /artifact download/,
   )
-  const partial = fs.statSync(file).size
+  const partialPath = `${file}.part`
+  assert.equal(fs.existsSync(file), false, 'a failed attempt must not leave bytes at the final path')
+  const partial = fs.statSync(partialPath).size
   assert.ok(partial > 0 && partial < BYTES.length, `expected a partial file, got ${partial}`)
   requests = []
   dropped = false
@@ -129,6 +131,26 @@ test('a later call resumes the partial left by an aborted earlier call', async (
   assert.equal(result.sha256, SHA)
   assertComplete(file)
   assert.match(requests[0].range ?? '', /^bytes=\d+-$/)
+  fs.rmSync(dir, {recursive: true, force: true})
+})
+
+test('a completed artifact is reused without touching the network', async () => {
+  mode = 'drop-first'
+  requests = []
+  dropped = false
+  const {dir, file} = freshFile('artifact.zip')
+  fs.writeFileSync(file, BYTES)
+  const result = await downloadArtifactZip({
+    url: base,
+    file,
+    expectedBytes: BYTES.length,
+    timeoutMs: 10_000,
+    retryDelayMs: 10,
+  })
+  assert.equal(result.cached, true)
+  assert.equal(result.sha256, SHA)
+  assert.equal(requests.length, 0, 'a complete artifact must not be re-downloaded')
+  assertComplete(file)
   fs.rmSync(dir, {recursive: true, force: true})
 })
 

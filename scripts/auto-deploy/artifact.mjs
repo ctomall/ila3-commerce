@@ -722,9 +722,39 @@ export async function downloadArtifactZip({
   const knownSize = Number.isFinite(expected) && expected > 0
   let lastError = null
 
+  // Network writes never touch the final path: a killed attempt must not destroy
+  // an artifact a previous attempt already completed. Bytes accumulate in
+  // `<file>.part` and only a size-verified transfer is renamed into place.
+  const partial = `${file}.part`
+  if (fs.existsSync(file)) {
+    const finalSize = fs.statSync(file).size
+    if (knownSize && finalSize === expected) {
+      const bytes = finalSize
+      const sha256 = sha256File(file)
+      if (logPath) {
+        fs.appendFileSync(
+          logPath,
+          `[${nowIso()}] [artifact-download] cached bytes=${bytes} sha256=${sha256} ms=${Date.now() - startedAt}\n`,
+        )
+      }
+      return {file, bytes, sha256, ms: Date.now() - startedAt, cached: true}
+    }
+    if (knownSize && finalSize > expected) {
+      fs.rmSync(file, {force: true})
+    } else if (!fs.existsSync(partial)) {
+      // Upgrade path: a partial left at the final path by an older version is
+      // adopted as the resumable partial instead of being thrown away.
+      fs.renameSync(file, partial)
+    } else if (finalSize > fs.statSync(partial).size) {
+      fs.renameSync(file, partial)
+    } else {
+      fs.rmSync(file, {force: true})
+    }
+  }
+
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
-    const existing = fs.existsSync(file) ? fs.statSync(file).size : 0
-    if (knownSize && existing > expected) fs.rmSync(file)
+    const existing = fs.existsSync(partial) ? fs.statSync(partial).size : 0
+    if (knownSize && existing > expected) fs.rmSync(partial)
     // A partial file from an earlier attempt (or an earlier deploy run, because
     // the caller keeps this path stable per artifact) is continued with Range.
     const resumeFrom = knownSize && existing > 0 && existing < expected ? existing : 0
@@ -766,7 +796,7 @@ export async function downloadArtifactZip({
         // The server says the range is unsatisfiable because we already have it.
         break
       }
-      fs.rmSync(file, {force: true})
+      fs.rmSync(partial, {force: true})
       lastError = new Error('range not satisfiable')
       if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] 416 at ${resumeFrom}; restarting\n`)
       continue
@@ -781,15 +811,15 @@ export async function downloadArtifactZip({
     // 206 -> append the continuation; 200 means the server ignored Range, so the
     // partial must be replaced by the full body.
     const append = response.status === 206 && resumeFrom > 0
-    if (resumeFrom > 0 && response.status === 200) fs.rmSync(file, {force: true})
+    if (resumeFrom > 0 && response.status === 200) fs.rmSync(partial, {force: true})
     let wrote
     try {
-      wrote = await streamResponseToFile(response, file, {append})
+      wrote = await streamResponseToFile(response, partial, {append})
     } catch (error) {
-      const empty = !fs.existsSync(file) || fs.statSync(file).size === 0
+      const empty = !fs.existsSync(partial) || fs.statSync(partial).size === 0
       if (isRetryableDownloadError(error) && attempt < maxAttempts) {
         lastError = error
-        const sizeNow = empty ? 0 : fs.statSync(file).size
+        const sizeNow = empty ? 0 : fs.statSync(partial).size
         if (logPath) {
           fs.appendFileSync(
             logPath,
@@ -828,6 +858,16 @@ export async function downloadArtifactZip({
     break
   }
 
+  if (fs.existsSync(partial)) {
+    if (knownSize && fs.statSync(partial).size !== expected) {
+      const sizeNow = fs.statSync(partial).size
+      throw fail('artifact-size-mismatch', `artifact size ${sizeNow} does not match CI metadata ${expected}`, {
+        bytes: sizeNow,
+        expectedBytes: expected,
+      })
+    }
+    fs.renameSync(partial, file)
+  }
   if (!fs.existsSync(file)) {
     throw fail('artifact-download-failed', `artifact download produced no file: ${lastError?.message || 'unknown'}`, {
       url,
