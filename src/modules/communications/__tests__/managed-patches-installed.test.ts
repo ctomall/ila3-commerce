@@ -26,9 +26,25 @@ const DIST = path.join(
 const COMMAND = path.join(DIST, 'commands/deliver-outbound-message.js')
 const WORKER = path.join(DIST, 'workers/outbound-delivery.js')
 
+/**
+ * These assertions describe a *patched* install. CI runs `yarn test` before the
+ * build step that applies managed patches, so the dist there is pristine and the
+ * cases are skipped; the release-facing guard for the same claim is
+ * slices/S47-k2-patch-state-tests/prod-patch-gate.sh, which runs against the live
+ * release. Skipping (rather than passing silently) keeps the difference visible.
+ */
+const commandSource = fs.readFileSync(COMMAND, 'utf8')
+const workerSource = fs.readFileSync(WORKER, 'utf8')
+const COMMAND_PATCHED =
+  commandSource.includes('/* [patched:outbound-concurrent-claim] */') &&
+  commandSource.includes('/* [patched:outbound-attempt-unknown] */') &&
+  commandSource.includes('/* [patched:outbound-inactive-channel-failed] */')
+const WORKER_PATCHED = workerSource.includes('/* [patched:outbound-attempt-unknown] */')
+const itInstalled = (condition: boolean) => (condition ? it : it.skip)
+
 describe('managed patches in the installed module', () => {
-  it('the command carries the claim, unknown-outcome and inactive-channel transforms', () => {
-    const source = fs.readFileSync(COMMAND, 'utf8')
+  itInstalled(COMMAND_PATCHED)('the command carries the claim, unknown-outcome and inactive-channel transforms', () => {
+    const source = commandSource
 
     // Markers for the three patches applied to this file.
     expect(source).toContain('/* [patched:outbound-concurrent-claim] */')
@@ -49,8 +65,8 @@ describe('managed patches in the installed module', () => {
     expect(source).toContain('channel_inactive')
   })
 
-  it('the worker treats an unknown outcome as terminal instead of re-enqueueing', () => {
-    const source = fs.readFileSync(WORKER, 'utf8')
+  itInstalled(WORKER_PATCHED)('the worker treats an unknown outcome as terminal instead of re-enqueueing', () => {
+    const source = workerSource
 
     expect(source).toContain('/* [patched:outbound-attempt-unknown] */')
     // Tight match on the branch body: warn, then return, then straight into

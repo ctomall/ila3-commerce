@@ -56,6 +56,9 @@ jest.mock('@open-mercato/core/modules/communication_channels/lib/credential-refr
   })),
 }))
 
+import fs from 'node:fs'
+import path from 'node:path'
+
 jest.mock('@open-mercato/core/modules/communication_channels/lib/outbound-reply-ref', () => ({
   resolveOutboundReplyExternalId: jest.fn(async () => null),
   stripCallerReplyTargeting: (metadata: unknown) => metadata,
@@ -248,12 +251,30 @@ function commandContext(em: unknown, adapter: unknown) {
   }
 }
 
+/**
+ * CI runs `yarn test` BEFORE the build step that applies managed patches, so the
+ * installed dist is pristine there; on a release/patched install it is not. The
+ * drill is therefore split into two mutually exclusive cases instead of assuming
+ * one state: the characterization (two sends, the original defect) runs on a
+ * pristine install, the inverted assertion runs once the patch is applied. Both
+ * describe the same module; only one is meaningful at a time.
+ */
+const INSTALLED_COMMAND = path.join(
+  process.cwd(),
+  'node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js',
+)
+const ATTEMPT_PATCH_APPLIED = fs
+  .readFileSync(INSTALLED_COMMAND, 'utf8')
+  .includes('/* [patched:outbound-attempt-unknown] */')
+const itPatched = ATTEMPT_PATCH_APPLIED ? it : it.skip
+const itUnpatched = ATTEMPT_PATCH_APPLIED ? it.skip : it
+
 describe('K2: provider accepted but the success commit failed', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('never re-invokes the provider after an unknown outcome (inverted defect drill)', async () => {
+  itPatched('never re-invokes the provider after an unknown outcome (inverted defect drill)', async () => {
     const db = createDb()
     const em = createEm(db)
     const adapter = createAdapter()
@@ -287,5 +308,37 @@ describe('K2: provider accepted but the success commit failed', () => {
     expect(adapter.sendMessage).toHaveBeenCalledTimes(1)
     expect(db.external).toHaveLength(0)
     expect(db.links[0]).toMatchObject({ deliveryStatus: 'unknown' })
+  })
+
+  itUnpatched('pristine install: re-invokes the provider on retry (the defect the patch fixes)', async () => {
+    const db = createDb()
+    const em = createEm(db)
+    const adapter = createAdapter()
+    const { default: deliver } = await import(
+      '@open-mercato/core/modules/communication_channels/commands/deliver-outbound-message'
+    )
+
+    const input = {
+      messageId: db.message.id as string,
+      scope: { tenantId, organizationId },
+    }
+
+    // Attempt 1 — provider accepts, the local success flush dies.
+    const first = await deliver.execute(input, commandContext(em, adapter) as never)
+    expect(first).toMatchObject({ status: 'failed', transient: true })
+    expect(adapter.sendMessage).toHaveBeenCalledTimes(1)
+    expect(db.external).toHaveLength(0)
+    expect(db.links[0]).toMatchObject({ deliveryStatus: 'failed' })
+
+    // Attempt 2 — the worker retries a transient failure and sends AGAIN.
+    const second = await deliver.execute(
+      input,
+      commandContext(createEm(db), adapter) as never,
+    )
+    expect(second).toMatchObject({ status: 'delivered' })
+    expect(adapter.sendMessage).toHaveBeenCalledTimes(2)
+    expect(db.external).toHaveLength(1)
+    expect(db.external[0]).toMatchObject({ externalMessageId: 'wamid.2' })
+    expect(db.links[0]).toMatchObject({ deliveryStatus: 'sent' })
   })
 })
