@@ -138,15 +138,15 @@ describe('POST /api/internal/dsh-tools/[tool]', () => {
     expect(auditCalls()[0][1]).toMatchObject({ decision: 'unknown_tool' })
   })
 
-  it('returns 403 write_not_enabled for a write tool, before the binding lookup', async () => {
+  it('returns 403 write_denied for a write tool after identity checks', async () => {
     const response = await POST(
       post('crm.update_company', {}, tokenFor({ tools: ['crm.update_company'] })),
       context('crm.update_company'),
     )
     expect(response.status).toBe(403)
     await expect(response.json()).resolves.toEqual({
-      error: 'Write tools are not enabled',
-      code: 'write_not_enabled',
+      error: 'CRM writes are not allowed for this run',
+      code: 'write_denied',
     })
     expect(harness.bindings).not.toHaveBeenCalled()
   })
