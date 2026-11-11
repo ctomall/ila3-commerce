@@ -30,3 +30,18 @@ export const ORGANIZATION_CUSTOMER_SCOPE: CustomerScope = {
  * organization are carried by the run token, not by this function.
  */
 export const resolveOrganizationCustomerScope: CustomerScopeResolver = async () => ORGANIZATION_CUSTOMER_SCOPE
+
+/**
+ * Operator-selected scope for the bridge. `organization` stays the default
+ * because that is the product's current list behaviour; `own` restricts every
+ * company read to rows owned by the calling employee, which is the shape
+ * `customer_access` will eventually resolve from data.
+ *
+ * The switch is explicit on purpose: flipping it changes what the assistant can
+ * see, so it must never be inferred from the model's prompt.
+ */
+export const resolveConfiguredCustomerScope: CustomerScopeResolver = async ({ userId }) => {
+  const mode = (process.env.OM_DSH_CUSTOMER_SCOPE ?? 'organization').trim().toLowerCase()
+  if (mode === 'own') return { mode: 'own', ownerUserIds: [userId] }
+  return ORGANIZATION_CUSTOMER_SCOPE
+}

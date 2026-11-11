@@ -21,7 +21,7 @@ import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
 import { DshAssistantBinding } from '@/modules/dsh_runs/data/entities'
 import type { BindingLookup, CustomerScopeResolver, FeatureCheck } from './authorize'
-import { resolveOrganizationCustomerScope } from './scope'
+import { resolveConfiguredCustomerScope } from './scope'
 
 export type ToolBridgeDeps = {
   em: EntityManager
@@ -60,6 +60,6 @@ export async function buildToolBridgeDeps(): Promise<ToolBridgeDeps> {
     em,
     bindings,
     checkFeatures,
-    resolveCustomerScope: resolveOrganizationCustomerScope,
+    resolveCustomerScope: resolveConfiguredCustomerScope,
   }
 }
