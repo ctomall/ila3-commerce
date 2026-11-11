@@ -38,6 +38,8 @@ type ThreadDetail = {
   conversation: { id: string; subject: string | null; externalConversationId: string; customer: ThreadRow['customer'] }
   channel: ThreadRow['channel'] & { status?: string | null }
   items: MessageRow[]
+  /** Older-page cursor; absent when the window is already the oldest. */
+  nextBefore?: string | null
 }
 
 function customerLabel(customer: ThreadRow['customer'] | undefined): string {
@@ -120,9 +122,12 @@ function loadErrorMessage(status: number, scope: LoadErrorScope): string {
  */
 export async function InboxView({
   selectedId: selectedIdProp,
+  before = null,
   canReply = false,
 }: {
   selectedId?: string | null
+  /** Older-page cursor from the URL; null/absent means the newest window. */
+  before?: string | null
   /** Resolved server-side with the same reply grants the send route enforces. */
   canReply?: boolean
 }) {
@@ -133,8 +138,11 @@ export async function InboxView({
 
   const listResult = await selfFetch<{ items: ThreadRow[] }>('/api/communications/me/threads', cookie, host)
   const threads = listResult.ok ? listResult.data.items ?? [] : []
+  const detailQuery = before
+    ? `?limit=100&before=${encodeURIComponent(before)}`
+    : '?limit=100'
   const detailResult = selectedId
-    ? await selfFetch<ThreadDetail>(`/api/communications/me/threads/${selectedId}/messages`, cookie, host)
+    ? await selfFetch<ThreadDetail>(`/api/communications/me/threads/${selectedId}/messages${detailQuery}`, cookie, host)
     : null
   const detail = detailResult?.ok ? detailResult.data : null
   const listError = listResult.ok ? null : listResult.status
@@ -245,6 +253,20 @@ export async function InboxView({
                     </article>
                   ))}
                   {detail.items.length === 0 ? <p className="text-sm text-muted-foreground">该会话暂无消息。</p> : null}
+                </div>
+                <div className="flex items-center justify-between border-t px-5 py-2 text-xs">
+                  {detail.nextBefore ? (
+                    <Link href={`/backend/communications/inbox/${selectedId}/before/${encodeURIComponent(detail.nextBefore)}`} className="text-primary underline-offset-2 hover:underline">
+                      加载更早消息
+                    </Link>
+                  ) : (
+                    <span className="text-muted-foreground">已到最早</span>
+                  )}
+                  {before ? (
+                    <Link href={`/backend/communications/inbox/${selectedId}`} className="text-primary underline-offset-2 hover:underline">
+                      返回最新
+                    </Link>
+                  ) : null}
                 </div>
                 <footer className="border-t px-5 py-3">
                   <p className="text-xs text-muted-foreground">

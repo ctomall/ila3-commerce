@@ -56,19 +56,25 @@ function createFakeEm(rows: {
   const persisted: Row[] = []
   const removed: Row[] = []
   const created: Row[] = []
-  const find = jest.fn(async (entity: unknown, where: Row = {}) => {
+  const find = jest.fn(async (entity: unknown, where: Row = {}, options?: Row) => {
     if (entity === CommunicationChannel) return rows.channels ?? []
     if (entity === ExternalConversation) return rows.conversations ?? []
     if (entity === CustomerEntity) return rows.customers ?? []
     if (entity === MessageChannelLink) return rows.links ?? []
     if (entity === ChannelThreadMapping) return rows.mappings ?? []
     if (entity === ExternalMessage) {
-      const list = rows.messages ?? []
+      let list = rows.messages ?? []
       // Legacy fixtures omit conversationId; only filter rows that carry one so
       // per-conversation isolation can be asserted without rewriting them all.
       if (where.conversationId) {
-        return list.filter((row) => row.conversationId === undefined || row.conversationId === where.conversationId)
+        list = list.filter((row) => row.conversationId === undefined || row.conversationId === where.conversationId)
       }
+      const cutoff = where.createdAt as Row | undefined
+      if (cutoff?.$lt) list = list.filter((row) => new Date(row.createdAt as string) < new Date(cutoff.$lt as string))
+      if (cutoff?.$gt) list = list.filter((row) => new Date(row.createdAt as string) > new Date(cutoff.$gt as string))
+      const order = (options?.orderBy as Row | undefined)?.createdAt
+      if (order === 'desc') list = [...list].sort((a, b) => new Date(b.createdAt as string).getTime() - new Date(a.createdAt as string).getTime())
+      if (order === 'asc') list = [...list].sort((a, b) => new Date(a.createdAt as string).getTime() - new Date(b.createdAt as string).getTime())
       return list
     }
     if (entity === Message) return rows.platformMessages ?? []
@@ -625,10 +631,10 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     })
     useContainer(() => undefined, em)
     const { GET } = await import('../api/me/threads/[id]/messages/route')
-    const res = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages?limit=1'), params)
+    const res = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages?limit=2'), params)
     expect(res.status).toBe(200)
     const payload = await res.json()
-    expect(payload.items).toHaveLength(1)
+    expect(payload.items).toHaveLength(2)
     expect(payload.items[0]).toMatchObject({
       id: 'em-1',
       messageId: 'msg-1',
@@ -636,7 +642,8 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
       media: {kind: 'document', fileName: '报价单.pdf', mimeType: 'application/pdf', externalId: 'media-1', downloaded: false},
     })
     expect(payload.channel.capabilities).toMatchObject({fileSharing: true})
-    expect(payload.nextAfter).toBe(createdAt.toISOString())
+    expect(payload.nextAfter).toBe('2026-11-09T10:05:00.000Z')
+    expect(payload.nextBefore).toBeNull()
   })
 
   it('never leaks another conversation body into the requested thread', async () => {
@@ -721,6 +728,40 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     expect(where.tenantId).toBe('t1')
     expect(where.deletedAt).toBeNull()
     expect(JSON.stringify(where.organizationId)).toContain('o1')
+  })
+
+  it('pages from the newest window and exposes an older cursor', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      conversations: [{ id: 'conv-1', channelId: 'ch-own', externalConversationId: 'x1', subject: 'Demo' }],
+      channels: [{ id: 'ch-own', userId: 'u1', providerKey: 'imap', channelType: 'email', displayName: '我的邮箱', status: 'connected', visibility: 'private' }],
+      messages: [
+        { id: 'em-1', direction: 'inbound', externalMessageId: 'ext-1', senderIdentifier: 'a@example.test', createdAt: new Date('2026-11-09T10:00:00Z') },
+        { id: 'em-2', direction: 'outbound', externalMessageId: 'ext-2', senderIdentifier: 'b@example.test', createdAt: new Date('2026-11-09T10:05:00Z') },
+        { id: 'em-3', direction: 'inbound', externalMessageId: 'ext-3', senderIdentifier: 'a@example.test', createdAt: new Date('2026-11-09T10:10:00Z') },
+      ],
+      links: [
+        { externalMessageId: 'em-1', messageId: 'msg-1' },
+        { externalMessageId: 'em-2', messageId: 'msg-2' },
+        { externalMessageId: 'em-3', messageId: 'msg-3' },
+      ],
+      platformMessages: [],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const first = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages?limit=2'), params)
+    expect(first.status).toBe(200)
+    const page1 = await first.json()
+    expect(page1.items.map((i: { id: string }) => i.id)).toEqual(['em-2', 'em-3'])
+    expect(page1.nextBefore).toBe('2026-11-09T10:05:00.000Z')
+    const older = await GET(
+      new Request(`http://localhost/api/communications/me/threads/conv-1/messages?limit=2&before=${encodeURIComponent(page1.nextBefore)}`),
+      params,
+    )
+    expect(older.status).toBe(200)
+    const page2 = await older.json()
+    expect(page2.items.map((i: { id: string }) => i.id)).toEqual(['em-1'])
+    expect(page2.nextBefore).toBeNull()
   })
 
   it('flattens an html body to sanitized plain text and never returns raw html', async () => {

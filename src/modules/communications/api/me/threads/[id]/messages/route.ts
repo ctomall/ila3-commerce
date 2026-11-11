@@ -95,6 +95,16 @@ export async function GET(
   if (afterRaw && (!after || Number.isNaN(after.getTime()))) {
     return NextResponse.json({ error: 'after must be an ISO timestamp' }, { status: 422 })
   }
+  // Older-page cursor. Additive to `after`: callers that never send it keep the
+  // existing ascending window unchanged.
+  const beforeRaw = url.searchParams.get('before')
+  const before = beforeRaw ? new Date(beforeRaw) : null
+  if (beforeRaw && (!before || Number.isNaN(before.getTime()))) {
+    return NextResponse.json({ error: 'before must be an ISO timestamp' }, { status: 422 })
+  }
+  if (before && after) {
+    return NextResponse.json({ error: 'before and after cannot be combined' }, { status: 422 })
+  }
 
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
@@ -146,15 +156,30 @@ export async function GET(
   if (after) {
     messageWhere.createdAt = { $gt: after }
   }
+  if (before) {
+    messageWhere.createdAt = { $lt: before }
+  }
 
+  // Two window modes:
+  //  - `after` (incremental sync): oldest-first window plus a `nextAfter` cursor.
+  //  - default/before (inbox reading): newest-first fetch, displayed ascending,
+  //    plus a `nextBefore` cursor for older pages. Without this the inbox
+  //    showed only the first N messages ever and never the newest ones.
+  const newestWindow = !after
   const messages = await em.find(
     ExternalMessage,
     messageWhere as FilterQuery<ExternalMessage>,
-    { orderBy: { createdAt: 'asc' }, limit: limit + 1 },
+    { orderBy: { createdAt: newestWindow ? 'desc' : 'asc' }, limit: limit + 1 },
   )
   const page = messages.slice(0, limit)
-  const nextAfter =
-    messages.length > limit ? (page[page.length - 1]?.createdAt?.toISOString() ?? null) : null
+  if (newestWindow) page.reverse()
+  const hasMore = messages.length > limit
+  const nextAfter = newestWindow
+    ? (page[page.length - 1]?.createdAt?.toISOString() ?? null)
+    : hasMore
+      ? (page[page.length - 1]?.createdAt?.toISOString() ?? null)
+      : null
+  const nextBefore = newestWindow && hasMore ? (page[0]?.createdAt?.toISOString() ?? null) : null
 
   const messageIds = page.map((message) => message.id)
   const links = messageIds.length
@@ -242,6 +267,7 @@ export async function GET(
     },
     items,
     nextAfter,
+    nextBefore,
   })
 }
 

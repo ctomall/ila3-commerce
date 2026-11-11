@@ -4,8 +4,7 @@ import { resolveInboxCanReply } from '../reply-grant'
 
 export default async function CommunicationsThreadPage({ params }: { params: Promise<{ thread: string }> }) {
   const { thread } = await params
-  // The thread detail URL is where replies actually happen, so it resolves the
-  // same reply grant as the list page instead of defaulting to read-only.
+  // The newest window: replies and attachment actions live here.
   const canReply = await resolveInboxCanReply()
   return <InboxView selectedId={thread} canReply={canReply} />
 }
