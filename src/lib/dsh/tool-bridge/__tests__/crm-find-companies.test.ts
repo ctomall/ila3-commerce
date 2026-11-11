@@ -44,7 +44,7 @@ function firstCall(find: jest.Mock): FindCall {
 }
 
 describe('crm.find_companies bridge handler', () => {
-  it('ANDs tenant, organization and soft-delete, and selects only the minimal fields', async () => {
+  it('ANDs tenant, organization and soft-delete, and returns only the minimal fields', async () => {
     const { find, context } = setup(organizationScope)
     const result = await findCompanies({ limit: 3 }, context)
 
@@ -55,16 +55,16 @@ describe('crm.find_companies bridge handler', () => {
       entity: { deletedAt: null },
     })
     expect(options.limit).toBe(3)
-    expect(options.fields).toEqual([
-      'id',
-      'legalName',
-      'brandName',
+    // No column projection: encrypted custom types must hydrate/decrypt.
+    expect(options.fields).toBeUndefined()
+    expect(Object.keys(result.companies[0]).sort()).toEqual([
       'domain',
-      'websiteUrl',
+      'id',
       'industry',
+      'name',
       'sizeBucket',
+      'websiteUrl',
     ])
-    expect(options.fields).not.toContain('annualRevenue')
     expect(result.scope).toEqual({ mode: 'organization', tenantId: 'tenant-1', organizationId: 'org-1' })
     expect(result.companies[0]).toEqual({
       id: 'c-1',

@@ -104,10 +104,15 @@ export async function findCompanies(
   const where = withCustomerScope(query.where, context.scope)
   // Through the ORM: the columns are encrypted at rest and the ORM decrypts
   // them; a raw SELECT would hand the model ciphertext.
-  const records = await context.em.find(CustomerCompanyProfile, where as FilterQuery<CustomerCompanyProfile>, {
-    ...query.options,
-    fields: [...COMPANY_FIELDS],
-  })
+  // No `fields` projection here: company names/domains are encrypted at rest
+  // through custom types, and a column projection bypasses hydration, handing
+  // the model ciphertext. Load the entity and reduce it to COMPANY_FIELDS only
+  // after decryption has happened server-side.
+  const records = await context.em.find(
+    CustomerCompanyProfile,
+    where as FilterQuery<CustomerCompanyProfile>,
+    query.options,
+  )
   const shaped = shapeCompanyRecords(records)
 
   // The search is a literal, case-insensitive substring match over decrypted
