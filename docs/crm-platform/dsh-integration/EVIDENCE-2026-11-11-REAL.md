@@ -416,3 +416,18 @@ admin 与 acceptance 员工同时发起任务：
 - 触发一次正常聊天（`PRUNE2_OK`，200）；
 - 假目录被删除（`fake_exists=no`），实际工作区目录数 35 → 35（只删了假目录）；
 - 单测覆盖：老目录删除、新目录保留、符号链接不跟随、根不存在 no-op。
+
+## 26. 登录即绑定（v33 `78bbe15`）
+
+`auth.user.created` 未发射，改用 `auth.login.success`（payload 含 user/tenant/org）订阅：
+
+- `src/modules/dsh_runs/subscribers/ensure-binding-on-login.ts`：缺失则插入 active binding；
+  已有则 no-op；唯一键竞争吞掉；任何失败只记 warn，不阻塞登录。
+- 单测 4 项：创建/已存在/23505/身份不全。
+
+**生产验证**：
+| 项 | 结果 |
+| --- | --- |
+| 构建产物包含订阅器 | 是（45 个构建文件命中 `ensure-binding-on-login`） |
+| admin 登录 | 200；bindings 5→5（已存在，no-op）；无错误日志 |
+| 创建路径 E2E | 未做：需要新建测试员工账号（生产账号写操作未授权） |
