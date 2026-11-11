@@ -144,12 +144,37 @@ test('a completed artifact is reused without touching the network', async () => 
     url: base,
     file,
     expectedBytes: BYTES.length,
+    expectedSha256: SHA,
     timeoutMs: 10_000,
     retryDelayMs: 10,
   })
   assert.equal(result.cached, true)
   assert.equal(result.sha256, SHA)
   assert.equal(requests.length, 0, 'a complete artifact must not be re-downloaded')
+  assertComplete(file)
+  fs.rmSync(dir, {recursive: true, force: true})
+})
+
+test('a same-size corrupt cached file is replaced instead of reused', async () => {
+  mode = 'ignore-range'
+  requests = []
+  dropped = false
+  const {dir, file} = freshFile('artifact.zip')
+  // Correct length, wrong bytes: the previous version treated this as a cache
+  // hit (size matches), so every later deploy failed on the digest and the file
+  // survived until an operator deleted it.
+  fs.writeFileSync(file, crypto.randomBytes(BYTES.length))
+  const result = await downloadArtifactZip({
+    url: base,
+    file,
+    expectedBytes: BYTES.length,
+    expectedSha256: SHA,
+    timeoutMs: 10_000,
+    retryDelayMs: 10,
+  })
+  assert.equal(result.cached, undefined)
+  assert.equal(result.sha256, SHA)
+  assert.ok(requests.length >= 1, 'a corrupt cache entry must be re-downloaded')
   assertComplete(file)
   fs.rmSync(dir, {recursive: true, force: true})
 })

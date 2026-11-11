@@ -712,6 +712,8 @@ export async function downloadArtifactZip({
   token = null,
   timeoutMs = 900000,
   expectedBytes = null,
+  /** CI sha256 of the archive; a cached file with this size but another digest must be replaced. */
+  expectedSha256 = null,
   logPath = null,
   maxAttempts = 4,
   retryDelayMs = 2000,
@@ -731,24 +733,37 @@ export async function downloadArtifactZip({
     if (knownSize && finalSize === expected) {
       const bytes = finalSize
       const sha256 = sha256File(file)
+      if (!expectedSha256 || sha256 === expectedSha256) {
+        if (logPath) {
+          fs.appendFileSync(
+            logPath,
+            `[${nowIso()}] [artifact-download] cached bytes=${bytes} sha256=${sha256} ms=${Date.now() - startedAt}\n`,
+          )
+        }
+        return {file, bytes, sha256, ms: Date.now() - startedAt, cached: true}
+      }
+      // Same size, wrong bytes: keep the deploy loop self-healing instead of
+      // wedging every run on a corrupt cache entry until an operator deletes it.
       if (logPath) {
         fs.appendFileSync(
           logPath,
-          `[${nowIso()}] [artifact-download] cached bytes=${bytes} sha256=${sha256} ms=${Date.now() - startedAt}\n`,
+          `[${nowIso()}] [artifact-download] cached digest mismatch expected=${expectedSha256} actual=${sha256}; replacing\n`,
         )
       }
-      return {file, bytes, sha256, ms: Date.now() - startedAt, cached: true}
+      fs.rmSync(file, {force: true})
     }
-    if (knownSize && finalSize > expected) {
-      fs.rmSync(file, {force: true})
-    } else if (!fs.existsSync(partial)) {
-      // Upgrade path: a partial left at the final path by an older version is
-      // adopted as the resumable partial instead of being thrown away.
-      fs.renameSync(file, partial)
-    } else if (finalSize > fs.statSync(partial).size) {
-      fs.renameSync(file, partial)
-    } else {
-      fs.rmSync(file, {force: true})
+    if (fs.existsSync(file)) {
+      if (knownSize && finalSize > expected) {
+        fs.rmSync(file, {force: true})
+      } else if (!fs.existsSync(partial)) {
+        // Upgrade path: a partial left at the final path by an older version is
+        // adopted as the resumable partial instead of being thrown away.
+        fs.renameSync(file, partial)
+      } else if (finalSize > fs.statSync(partial).size) {
+        fs.renameSync(file, partial)
+      } else {
+        fs.rmSync(file, {force: true})
+      }
     }
   }
 
@@ -1157,6 +1172,7 @@ export async function installFromArtifact({
           token,
           timeoutMs: downloadTimeoutMs,
           expectedBytes: resolved.artifact.size,
+          expectedSha256: archiveSha256,
           logPath: log,
         })
       }
@@ -1202,6 +1218,8 @@ export async function installFromArtifact({
 
     if (download.sha256 !== archiveSha256) {
       // Every source path above compares, this is a belt-and-braces check.
+      // Remove the bad bytes so the next run downloads instead of reusing them.
+      try { fs.rmSync(zipFile, {force: true}) } catch { /* best effort */ }
       throw fail('artifact-digest-mismatch', 'local archive sha256 does not match the CI digest', {
         expected: archiveSha256,
         actual: download.sha256,
