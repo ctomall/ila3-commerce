@@ -94,8 +94,12 @@ export async function runPreflight({ env = process.env, fetchImpl = fetch, log =
 
   const threadsResponse = await fetchImpl(`${config.baseUrl}/api/communications/me/threads?limit=5`, { headers })
   const threadsBody = await readJson(threadsResponse)
-  result.threads = Array.isArray(threadsBody.items) ? threadsBody.items.length : null
+  const threadItems = Array.isArray(threadsBody.items) ? threadsBody.items : []
+  result.threads = Array.isArray(threadsBody.items) ? threadItems.length : null
   if (!threadsResponse.ok) throw new Error(`threads failed: HTTP ${threadsResponse.status}`)
+  const threadChannels = [...new Set(threadItems.map((item) => item?.channelId).filter(Boolean))]
+  result.threadChannels = threadChannels
+  result.channelVisible = config.channelId ? threadChannels.includes(config.channelId) : null
 
   log(`preflight: login=${result.login} channels=${result.channels} threads=${result.threads} mode=${result.mode}`)
 
@@ -107,6 +111,9 @@ export async function runPreflight({ env = process.env, fetchImpl = fetch, log =
     throw new Error('K5_RECIPIENT must appear exactly in K5_ALLOWED_RECIPIENTS')
   }
   if (!UUID_RE.test(config.channelId)) throw new Error('K5_CHANNEL_ID must be a uuid')
+  if (result.channelVisible === false) {
+    throw new Error('K5_CHANNEL_ID is not visible in /me/threads (wrong channel or no access)')
+  }
 
   const clientRequestId = randomUUID()
   const sendResponse = await fetchImpl(`${config.baseUrl}/api/communications/me/send`, {

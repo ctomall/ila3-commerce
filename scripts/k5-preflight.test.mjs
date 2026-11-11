@@ -43,7 +43,7 @@ const routes = ({ method, url }) => {
     return { status: 200, body: { items: [{ id: 'ch-1' }] } }
   }
   if (url?.startsWith('/api/communications/me/threads')) {
-    return { status: 200, body: { items: [] } }
+    return { status: 200, body: { items: [{ channelId: '11111111-1111-4111-8111-111111111111' }] } }
   }
   if (url === '/api/communications/me/send' && method === 'POST') {
     return { status: 202, body: { messageId: 'm-1' } }
@@ -81,6 +81,18 @@ test('send mode rejects a recipient outside the allowlist', async () => {
       K5_CHANNEL_ID: '11111111-1111-4111-8111-111111111111',
     })
     await assert.rejects(() => runPreflight({ env }), /ALLOWED_RECIPIENTS/)
+    assert.equal(ctx.requests.filter((r) => r.url === '/api/communications/me/send').length, 0)
+  })
+})
+
+test('send mode refuses a channel id that is not visible in the thread list', async () => {
+  await withStub(routes, async (ctx) => {
+    const env = baseEnv(ctx, {
+      K5_MODE: 'send', K5_ALLOW_SEND: '1', K5_RECIPIENT: '+15550000001',
+      K5_ALLOWED_RECIPIENTS: '+15550000001',
+      K5_CHANNEL_ID: '22222222-2222-4222-8222-222222222222',
+    })
+    await assert.rejects(() => runPreflight({ env }), /not visible/)
     assert.equal(ctx.requests.filter((r) => r.url === '/api/communications/me/send').length, 0)
   })
 })
