@@ -17,3 +17,30 @@
         env:
           OM_DSH_BRIDGE_URL: !!js process.env.OM_DSH_BRIDGE_URL
           OM_DSH_TOOL_TOKEN: !!js process.env.OM_DSH_TOOL_TOKEN
+
+# The CRM assistant must not receive host-level capabilities. `sdk-minimal`
+# otherwise mounts generic filesystem, working-directory and persistent-shell
+# tools plus the reverse-engineering MCP server; any of them would let a model
+# read another employee's DSH_HOME or the host directly. Identity and data
+# access stay behind the signed CRM tool bridge, so these rows are disabled.
+- id: tool-fs
+  # The row is nested in the SDK layer, so disabling by id does not reach it;
+  # replace its config with every file operation off instead.
+  config:
+    read: false
+    readImage: false
+    write: false
+    edit: false
+    applyPatch: false
+
+- id: tool-working-directory
+  disabled: true
+
+- id: persistent-bash
+  disabled: true
+
+- id: persistent-pwsh
+  disabled: true
+
+- id: rea-mcp
+  disabled: true
