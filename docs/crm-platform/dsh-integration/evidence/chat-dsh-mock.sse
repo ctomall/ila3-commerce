@@ -1,0 +1,34 @@
+data: {"type":"thinking"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":1,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"agent/inbox/spliced","seq":0,"time":1794385865131,"data":{"target":"next-turn","start":0,"inserted":[{"content":[{"type":"text","text":"Reply with exactly MOCK_OK and nothing else."}],"source":{"kind":"user"},"role":"user","id":"91bf68d7-26ae-4f2b-a3bd-56e87f86a6d2"}]}}},"dshEventType":"agent/inbox/spliced"}
+
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","status":"running"}}
+
+data: {"type":"thinking"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":4,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"agent/inbox/spliced","seq":2,"time":1794385865136,"data":{"target":"next-turn","start":0,"removedCount":1,"inserted":[]}}},"dshEventType":"agent/inbox/spliced"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":5,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"step/start","seq":3,"time":1794385865158,"data":{"turn":1,"step":1}}},"dshEventType":"step/start"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":6,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"system/message","seq":4,"time":1794385865161,"data":{"turn":1,"step":1,"message":{"role":"system","content":[{"type":"text","text":"You are a helpful software engineer assistant."}],"source":{"kind":"system-prompt"},"id":"8206e7c7-fedd-46c5-b6f2-27d27b2218c4"}},"surfaceOp":"append"}},"dshEventType":"system/message"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":7,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"user/message","seq":5,"time":1794385865163,"data":{"content":[{"type":"text","text":"Reply with exactly MOCK_OK and nothing else."}],"source":{"kind":"user"},"role":"user","id":"91bf68d7-26ae-4f2b-a3bd-56e87f86a6d2"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":8,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"user/message","seq":6,"time":1794385865164,"data":{"content":[{"type":"text","text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/runs/workspaces/667d4bd36fff7269595a29fbadcd2f66/12719c1f-c7a4-4cbd-a267-5231d4f3d336\"."}],"source":{"kind":"runtime-context","form":"snapshot","sections":[{"name":"working-directory:current","text":"Current working directory: \"/tmp/dsh-e2e/runs/workspaces/667d4bd36fff7269595a29fbadcd2f66/12719c1f-c7a4-4cbd-a267-5231d4f3d336\"."}]},"role":"user","id":"b0df5a24-5ad0-44ce-9ae6-73b928520e9e"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":9,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"request/header","seq":7,"time":1794385865165,"data":{"header":{"config":{"provider":"deepseek-official","model":"deepseek-v4-flash","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"reasoningEffort":true,"maxTokens":true},"tools":[{"name":"bash","description":"Run commands in a bash shell\n* When invoking this tool, the contents of the \"command\" parameter does NOT need to be XML-escaped.\n* Network access depends on the task environment. Prefer configured mirrors/proxies when they are available.\n* State is persistent across command calls and discussions with the user.\n* To inspect a particular line range of a file, e.g. lines 10-25, try 'sed -n 10,25p /path/to/the/file'.\n* Please avoid commands that may produce a very large amount of output.\n* Please run long lived commands in the background, e.g. 'sleep 10 &' or start a server in the background.","parameters":{"type":"object","properties":{"command":{"type":"string","description":"The bash command to run. Relative path is preferred in the command."}},"required":["command"]}},{"name":"read_image","description":"Read a PNG/JPEG/WebP/GIF file and return the image itself. Large images are downscaled automatically; do not install image libraries or create thumbnails to inspect an image.","parameters":{"type":"object","properties":{"file_path":{"type":"string","description":"Path to the image file, resolved by the filesystem backend."}},"required":["file_path"]}},{"name":"working_directory","description":"Read the current working directory, or change it with cd. Relative paths use the current directory. Existing shells and running processes keep their own directories.","parameters":{"type":"object","properties":{"cd":{"type":"string","description":"Existing directory to enter. Omit to read the current directory."}}}}]},"reason":"initial"}}},"dshEventType":"request/header"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":10,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"request/context","seq":8,"time":1794385865165,"data":{"provider":"deepseek-official","model":"deepseek-v4-flash","contextWindow":1000000}}},"dshEventType":"request/context"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":11,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"session/title","seq":9,"time":1794385865168,"data":{"title":"Reply with exactly MOCK_OK and","messageSeqs":[5],"source":{"kind":"fallback"}}}},"dshEventType":"session/title"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":12,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"session-log-deepseek/delivery-accepted","seq":10,"time":1794385865239,"data":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","sessionFormatVersion":4,"throughSeq":9}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+data: {"type":"text","content":"MOCK_OK"}
+
+data: {"type":"dsh.event","dshType":"session.event","seq":14,"payload":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","event":{"type":"step/end","seq":12,"time":1794385865256,"data":{"turn":1,"step":1}}},"dshEventType":"step/end"}
+
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-3357d0a59d6c45349660c63bf691cbda","status":"idle"}}
+
+data: {"type":"done","sessionId":"session-3357d0a59d6c45349660c63bf691cbda"}
+

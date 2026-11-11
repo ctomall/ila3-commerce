@@ -1,0 +1,190 @@
+{
+  "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+  "eventCount": 16,
+  "sample": [
+    {
+      "seq": 1,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "agent/inbox/spliced",
+          "seq": 0,
+          "time": 1794384838413,
+          "data": {
+            "target": "next-turn",
+            "start": 0,
+            "inserted": [
+              {
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "Reply with exactly MOCK_OK and nothing else."
+                  }
+                ],
+                "source": {
+                  "kind": "user"
+                },
+                "role": "user",
+                "id": "05ea7375-8d2b-4a0b-820b-e86e8c1b4bd7"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "seq": 2,
+      "type": "session.status",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "status": "running"
+      }
+    },
+    {
+      "seq": 3,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "turn/start",
+          "seq": 1,
+          "time": 1794384838416,
+          "data": {
+            "turn": 1
+          }
+        }
+      }
+    },
+    {
+      "seq": 4,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "agent/inbox/spliced",
+          "seq": 2,
+          "time": 1794384838417,
+          "data": {
+            "target": "next-turn",
+            "start": 0,
+            "removedCount": 1,
+            "inserted": []
+          }
+        }
+      }
+    },
+    {
+      "seq": 5,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "step/start",
+          "seq": 3,
+          "time": 1794384838436,
+          "data": {
+            "turn": 1,
+            "step": 1
+          }
+        }
+      }
+    },
+    {
+      "seq": 6,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "system/message",
+          "seq": 4,
+          "time": 1794384838440,
+          "data": {
+            "turn": 1,
+            "step": 1,
+            "message": {
+              "role": "system",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "You are a helpful software engineer assistant."
+                }
+              ],
+              "source": {
+                "kind": "system-prompt"
+              },
+              "id": "dc4db799-250f-4d13-a604-4d77f500e22b"
+            }
+          },
+          "surfaceOp": "append"
+        }
+      }
+    },
+    {
+      "seq": 7,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "user/message",
+          "seq": 5,
+          "time": 1794384838441,
+          "data": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Reply with exactly MOCK_OK and nothing else."
+              }
+            ],
+            "source": {
+              "kind": "user"
+            },
+            "role": "user",
+            "id": "05ea7375-8d2b-4a0b-820b-e86e8c1b4bd7"
+          },
+          "surfaceOp": "append"
+        }
+      }
+    },
+    {
+      "seq": 8,
+      "type": "session.event",
+      "payload": {
+        "sessionId": "session-d662027976014835b6c33f051caa8c9e",
+        "event": {
+          "type": "user/message",
+          "seq": 6,
+          "time": 1794384838442,
+          "data": {
+            "content": [
+              {
+                "type": "text",
+                "text": "Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/work\"."
+              }
+            ],
+            "source": {
+              "kind": "runtime-context",
+              "form": "snapshot",
+              "sections": [
+                {
+                  "name": "working-directory:current",
+                  "text": "Current working directory: \"/tmp/dsh-e2e/work\"."
+                }
+              ]
+            },
+            "role": "user",
+            "id": "eb8e0b48-d05a-4ac6-a49d-2a6c4997941e"
+          },
+          "surfaceOp": "append"
+        }
+      }
+    }
+  ],
+  "result": {
+    "finalResponse": "MOCK_OK",
+    "finishReason": "completed"
+  },
+  "closed": {
+    "stopped": true
+  }
+}
