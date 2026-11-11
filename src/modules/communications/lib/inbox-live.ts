@@ -26,3 +26,20 @@ export function livePollDelayMs(visibility: 'visible' | 'hidden' | string, inter
   if (visibility !== 'visible') return null
   return Math.max(5_000, Math.min(intervalMs, 300_000))
 }
+
+/**
+ * What the live poll should do with a given HTTP status.
+ *
+ * A retry cannot repair an auth or existence failure: 401 (session expired) and
+ * 403 (grant revoked) would otherwise loop every interval forever, hammering the
+ * API while the page keeps showing stale messages as if it were live. 404 means
+ * the thread is gone or masked. Those stop the loop and surface the failure by
+ * refreshing the server component, whose error states already distinguish the
+ * cases. Transport errors (0) and other statuses (5xx, 429) stay retryable.
+ */
+export type PollOutcome = 'continue' | 'surface-and-stop'
+
+export function pollOutcome(status: number): PollOutcome {
+  if (status === 401 || status === 403 || status === 404) return 'surface-and-stop'
+  return 'continue'
+}

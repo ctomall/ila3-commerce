@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { hasNewMessages, livePollDelayMs, newestCursor } from '../lib/inbox-live'
+import { hasNewMessages, livePollDelayMs, newestCursor, pollOutcome } from '../lib/inbox-live'
 
 describe('inbox live refresh helpers', () => {
   it('takes the newest createdAt from an ascending page', () => {
@@ -20,5 +20,17 @@ describe('inbox live refresh helpers', () => {
     expect(livePollDelayMs('visible', 1_000)).toBe(5_000)
     expect(livePollDelayMs('visible', 20_000)).toBe(20_000)
     expect(livePollDelayMs('visible', 999_999)).toBe(300_000)
+  })
+
+  it('keeps polling on transient statuses and transport errors', () => {
+    for (const status of [200, 204, 0, 429, 500, 502, 503]) {
+      expect(pollOutcome(status)).toBe('continue')
+    }
+  })
+
+  it('stops and surfaces an auth or existence failure instead of polling forever', () => {
+    for (const status of [401, 403, 404]) {
+      expect(pollOutcome(status)).toBe('surface-and-stop')
+    }
   })
 })

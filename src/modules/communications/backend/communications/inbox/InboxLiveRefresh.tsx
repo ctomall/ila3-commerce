@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { hasNewMessages, livePollDelayMs } from '../../../lib/inbox-live'
+import { hasNewMessages, livePollDelayMs, pollOutcome } from '../../../lib/inbox-live'
 
 /**
  * Poll the incremental `after` cursor while the tab is visible and refresh the
@@ -45,6 +45,14 @@ export function InboxLiveRefresh({
             router.refresh()
             return
           }
+        } else if (pollOutcome(response.status) === 'surface-and-stop') {
+          // Session expired, grant revoked or the thread is gone: retrying cannot
+          // help and silently polling would keep stale messages looking live.
+          // Refresh once so the server-rendered error state explains it, then stop.
+          stopped = true
+          if (timer) clearTimeout(timer)
+          router.refresh()
+          return
         }
       } catch {
         /* offline/transient: retry on the next tick */
