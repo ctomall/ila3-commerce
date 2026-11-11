@@ -1,6 +1,6 @@
 # DSH 替换：真实模型 + 真实数据库闭环证据（2026-11-11）
 
-> 性质：**隔离实例**（:3901，release `53e08fd`）+ **真实 DeepSeek 模型** + **生产库已应用迁移** 的闭环证据。
+> 性质：**隔离实例**（:3901；链路自 v14 起，独立 QA 复验于 release `fb8f6fc`/v19）+ **真实 DeepSeek 模型** + **生产库已应用迁移** 的闭环证据。
 > 生产 `mercato.ila3.top` 仍运行 OpenCode；本轮未切换生产引擎。
 
 ## 0. 前置（已批准执行）
@@ -55,14 +55,14 @@ tool-result 200: {"companies":[],"scanned":3,
 | 主管撤权（in-flight） | **858 ms** | run `cancelled`（reason `e2e-revoke-3`），binding `revoked` | 200，error + done（修复后不再 503） |
 
 > 撤权场景首版在 submit→begin 竞态下返回 503；`1af6213` 修复为受控终态（200 SSE error+done），本表为修复后复测。
-> 遗留：撤权流的 error 文案仍是通用 `persistence_unavailable`，应改成 `revoked/cancelled`（下轮修）。
+> 已修（v18/v19）：撤权/取消流按终态行判定，SSE error 为 `run_cancelled`；独立 QA 在 `fb8f6fc` 复测停流 **59 ms**。
 
 ## 5. 明确未完成
 
 | 项 | 状态 |
 | --- | --- |
 | 生产切换 `OM_AI_ENGINE=dsh` | 未做 |
-| 重启恢复（服务重启后 in-flight 行的收口/续跑） | 未接线；当前只有 `recoverInFlight` 查询与服务函数 |
+| 重启恢复 | v18 起已实现 stale-run sweep（超时+60s 的遗留行置 `failed/server_restart`）；**不承诺续跑**，客户端重试。QA 在 `fb8f6fc` 未重跑该项，以 §7 证据为准 |
 | 两员工文件/记忆/产物/浏览器/凭据隔离 | 未测；同 Unix 用户，0700 ≠ 隔离 |
 | `customer_access` 员工级客户范围 | 不存在，当前 `organization` 模式 |
 | `answerQuestion` | 501（DSH 未迁移） |
@@ -113,6 +113,8 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 | 工具 | 两人都只剩 CRM MCP；无 shell/fs |
 
 证据：`iso-admin.sse`、`iso-employee.sse`、`shell-tool-absent.sse`、`mcp-tool-after-hardening.sse`、`per-employee-homes.txt`、`two-employee-runs.txt`。
+
+独立 QA 在 `fb8f6fc` 以 `OM_DSH_ROOT=/tmp/dsh-e2e/runs-qa` 复跑：admin/employee 仍落在同一对 identity 目录（`667d4bd3…`/`91b8e5d0…`，0700），run `QA_ADMIN_OK`、`QA_EMPLOYEE_OK`；其证据在 `/tmp/reverify-loop/real-fb8f6fc/`。
 
 ### 8.5 残留风险（不掩盖）
 仍以同一 Unix 用户运行；若 DSH 进程或 MCP 服务本身被攻破，OS 层仍可读兄弟目录。
