@@ -44,6 +44,16 @@ import type {
   DshRunResult,
   DshRuntime,
 } from '@/lib/dsh/runtime/types'
+import type {
+  FinishRunInput,
+  RunService,
+  SubmitServiceResult,
+} from '@/modules/dsh_runs/services/run-service'
+import type {
+  BindingRecord,
+  RunEventRecord,
+  RunRecord,
+} from '@/modules/dsh_runs/services/run-store'
 
 // Static app routes bypass the `/api/[...slug]` catch-all, so the DI/auth
 // registrations that entry normally performs must be applied here as well.
@@ -63,11 +73,11 @@ const DEFAULT_DSH_ROOT = path.join(os.tmpdir(), 'om-dsh')
 /** Must match `FIND_COMPANIES_TOOL` in `src/lib/dsh/tool-bridge/crm-find-companies.ts`. */
 const DSH_BRIDGE_TOOL = 'crm.find_companies'
 /**
- * B1 (binding persistence) is not wired yet, but the run-token payload requires
- * a non-empty binding id. This placeholder deliberately can never match a real
- * `dsh_assistant_bindings` row, so the bridge answers 403 `binding_inactive` —
- * the expected fail-closed behaviour until a real binding exists. It is not a
- * fake binding and must not be replaced with a guessed one.
+ * Legacy (OM_DSH_PERSIST off) runs have no persisted binding, but the run-token
+ * payload requires a non-empty binding id. This placeholder deliberately can
+ * never match a real `dsh_assistant_bindings` row, so the bridge answers 403
+ * `binding_inactive` — the expected fail-closed behaviour on that path. The
+ * persisted path passes the real binding id instead.
  */
 const UNBOUND_BINDING_ID = 'unbound'
 /** Extra seconds the run token stays valid beyond the run timeout. */
@@ -102,6 +112,12 @@ type ChatRequest = {
   prompt: string
   /** Resuming an existing DSH session; omitted for a new conversation. */
   sessionId?: string
+  /** Persisted-run reconnect target (OM_DSH_PERSIST=orm only). */
+  runId?: string
+  /** Last persisted event seq already seen by the browser. */
+  cursor?: number
+  /** Client-supplied idempotency key; derived from identity + request hash when absent. */
+  idempotencyKey?: string
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -120,13 +136,55 @@ function readStringField(
   return null
 }
 
+const INVALID_CURSOR = -1
+
+/** Parse a body/header cursor; null means absent, INVALID_CURSOR means malformed. */
+function parseCursorValue(value: unknown): number | null {
+  if (value === undefined || value === null || value === '') return null
+  const numeric =
+    typeof value === 'number'
+      ? value
+      : typeof value === 'string' && /^\d+$/.test(value.trim())
+        ? Number(value.trim())
+        : Number.NaN
+  return Number.isSafeInteger(numeric) && numeric >= 0 ? numeric : INVALID_CURSOR
+}
+
 /**
  * Validate the body without trusting anything inside it except `messages`
- * (prompt content) and `sessionId` (a DSH session handle). Identity always
- * comes from `getAuthFromRequest`; actor/userId fields in the body are ignored.
+ * (prompt content), `sessionId` (a DSH session handle), and the B3 replay
+ * fields. Identity always comes from `getAuthFromRequest`; actor/userId fields
+ * in the body are ignored.
+ *
+ * A replay request (`runId` present) deliberately does not need messages: the
+ * browser reconnecting to an existing run is not sending a new prompt.
  */
 function parseChatRequest(body: unknown): ChatRequest | { error: string } {
   if (!isRecord(body)) return { error: 'Request body must be a JSON object' }
+
+  const runId = readStringField(body, ['runId'])
+  const idempotencyKey = readStringField(body, ['idempotencyKey'])
+  const bodyCursor = parseCursorValue(body.cursor)
+  if (bodyCursor === INVALID_CURSOR) {
+    return { error: 'cursor must be a non-negative integer' }
+  }
+  if (runId) {
+    return {
+      prompt: '',
+      runId,
+      ...(bodyCursor !== null ? { cursor: bodyCursor } : {}),
+      ...(idempotencyKey ? { idempotencyKey } : {}),
+    }
+  }
+  if (body.runId !== undefined) {
+    return { error: 'runId must be a non-empty string when provided' }
+  }
+  if (body.idempotencyKey !== undefined && !idempotencyKey) {
+    return { error: 'idempotencyKey must be a non-empty string when provided' }
+  }
+  if (bodyCursor !== null) {
+    return { error: 'cursor requires runId' }
+  }
 
   const { messages, sessionId } = body
   if (!Array.isArray(messages) || messages.length === 0) {
@@ -160,6 +218,7 @@ function parseChatRequest(body: unknown): ChatRequest | { error: string } {
   return {
     prompt: lastUserMessage.content,
     ...(typeof sessionId === 'string' ? { sessionId } : {}),
+    ...(idempotencyKey ? { idempotencyKey } : {}),
   }
 }
 
@@ -205,7 +264,12 @@ function resolveCrmPatchPath(): string {
  * tools) when the tenant/organization/secret is missing — fail closed, never a
  * default secret and never a guessed identity.
  */
-function signBridgeToken(auth: AuthContext, runId: string, timeoutMs: number): string | null {
+function signBridgeToken(
+  auth: AuthContext,
+  runId: string,
+  bindingId: string,
+  timeoutMs: number,
+): string | null {
   const tenantId = auth.tenantId?.trim()
   const organizationId = auth.orgId?.trim()
   const secret = resolveRunTokenSecret()
@@ -215,8 +279,7 @@ function signBridgeToken(auth: AuthContext, runId: string, timeoutMs: number): s
     return signRunToken(
       {
         runId,
-        // Real binding wiring is B1; the placeholder can never match a row.
-        bindingId: UNBOUND_BINDING_ID,
+        bindingId,
         userId: auth.sub,
         tenantId,
         organizationId,
@@ -246,6 +309,7 @@ function signBridgeToken(auth: AuthContext, runId: string, timeoutMs: number): s
 function resolveToolBridgeWiring(
   auth: AuthContext,
   runId: string,
+  bindingId: string,
   timeoutMs: number,
 ): { args: string[]; env: Record<string, string> } {
   const args = ['--profile', 'sdk-minimal']
@@ -258,7 +322,7 @@ function resolveToolBridgeWiring(
     return { args, env: {} }
   }
 
-  const token = signBridgeToken(auth, runId, timeoutMs)
+  const token = signBridgeToken(auth, runId, bindingId, timeoutMs)
   if (!token) {
     logger.warn('DSH CRM MCP disabled: run token unavailable (tenant, organization or secret missing)', {})
     return { args, env: {} }
@@ -284,12 +348,13 @@ function buildRunInput(
   auth: AuthContext,
   request: ChatRequest,
   signal: AbortSignal,
+  runId: string,
+  bindingId: string = UNBOUND_BINDING_ID,
 ): DshRunInput {
-  const runId = randomUUID()
   const timeoutMs = runTimeoutMs()
   const root = process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT
   const employee = identityKey([auth.tenantId, auth.orgId, auth.sub])
-  const wiring = resolveToolBridgeWiring(auth, runId, timeoutMs)
+  const wiring = resolveToolBridgeWiring(auth, runId, bindingId, timeoutMs)
 
   return {
     runId,
@@ -552,28 +617,67 @@ async function writeSse(
   writer: WritableStreamDefaultWriter<Uint8Array>,
   encoder: TextEncoder,
   event: SseEvent,
+  id?: number,
 ): Promise<void> {
-  await writer.write(encoder.encode(`data: ${JSON.stringify(event)}\n\n`))
+  const payload = JSON.stringify(event)
+  // `id:` is what makes EventSource send Last-Event-ID on reconnect. Legacy
+  // frames keep their exact existing shape (no id) so the old tests/contract
+  // stay untouched; the persisted path supplies the durable event seq.
+  const frame = id === undefined ? `data: ${payload}\n\n` : `id: ${id}\ndata: ${payload}\n\n`
+  await writer.write(encoder.encode(frame))
+}
+
+/** Stream the run to the browser, then always emit one `done` and confirm close. */
+type PumpOutcome = {
+  result: DshRunResult | null
+  streamError: unknown
+  textEmitted: boolean
+}
+
+/** Persistence failed mid-stream; the route fails closed instead of going memory-only. */
+class PersistenceFailure extends Error {
+  constructor(readonly failure: unknown) {
+    super('persistence failure')
+    this.name = 'PersistenceFailure'
+  }
 }
 
 /** Stream the run to the browser, then always emit one `done` and confirm close. */
 async function pumpRun(
   handle: DshRunHandle,
-  write: (event: SseEvent) => Promise<void>,
-): Promise<void> {
+  write: (event: SseEvent, id?: number) => Promise<void>,
+  persist?: (event: SseEvent) => Promise<number | void>,
+): Promise<PumpOutcome> {
   let streamError: unknown = null
   let result: DshRunResult | null = null
   let textEmitted = false
   const context: MappingContext = { emittedAssistantMessages: new Set() }
 
+  const emit = async (event: SseEvent): Promise<void> => {
+    if (!persist) {
+      await write(event)
+      return
+    }
+    let seq: number | void
+    try {
+      seq = await persist(event)
+    } catch (error) {
+      // A repository failure must abort the stream, not be mistaken for a DSH
+      // event-stream failure that then tries to persist an error event again.
+      throw new PersistenceFailure(error)
+    }
+    await write(event, typeof seq === 'number' ? seq : undefined)
+  }
+
   try {
     for await (const event of handle.events) {
       for (const mapped of mapDshEvent(event, context)) {
         if (mapped.type === 'text') textEmitted = true
-        await write(mapped)
+        await emit(mapped)
       }
     }
   } catch (error) {
+    if (error instanceof PersistenceFailure) throw error
     streamError = error
   }
 
@@ -585,20 +689,445 @@ async function pumpRun(
 
   if (streamError) {
     logger.error('DSH run stream failed', { err: errorMessage(streamError) })
-    await write({ type: 'error', error: errorMessage(streamError) })
+    await emit({ type: 'error', error: errorMessage(streamError) })
   } else if (result && result.finishReason !== 'completed') {
-    await write({
+    await emit({
       type: 'error',
       error: result.error || `DSH run ${result.finishReason}`,
     })
   } else if (result && !textEmitted && result.finalResponse) {
-    await write({ type: 'text', content: result.finalResponse })
+    await emit({ type: 'text', content: result.finalResponse })
     textEmitted = true
   }
 
   // The frontend only leaves its streaming state on `done`; send it even after
-  // an error so a failed run cannot strand the command palette.
-  await write({ type: 'done', sessionId: handle.sessionId })
+  // an error so a failed run cannot strand the command palette. `done` is
+  // synthetic and is never persisted: replay appends it after the stored events.
+  // The persisted caller emits it itself, after finish(), so a reconnect never
+  // sees `done` before the terminal row is durable.
+  if (!persist) await write({ type: 'done', sessionId: handle.sessionId })
+  return { result, streamError, textEmitted }
+}
+
+/* ------------------------------------------------------------------------- *
+ * B3 persisted path (OM_DSH_PERSIST=orm)
+ *
+ * This path is opt-in and completely separate from the legacy stream above:
+ * it provisions a binding, persists every mapped SSE event with a durable seq,
+ * finishes the run before `done`, and replays terminal runs from the cursor.
+ * Any repository/table failure is fail-closed; there is deliberately no
+ * fallback to an in-memory run.
+ * ------------------------------------------------------------------------- */
+
+const IN_FLIGHT_RUN_STATUSES = new Set(['queued', 'running', 'awaiting_approval'])
+
+function persistMode(): boolean {
+  return (process.env.OM_DSH_PERSIST ?? '').trim().toLowerCase() === 'orm'
+}
+
+function isInFlightStatus(status: string): boolean {
+  return IN_FLIGHT_RUN_STATUSES.has(status)
+}
+
+function hashPrompt(prompt: string): string {
+  return createHash('sha256').update(prompt).digest('hex')
+}
+
+type RunServiceModule = {
+  createRequestRunService: () => Promise<RunService>
+}
+
+async function resolveRunService(): Promise<RunService> {
+  const mod = (await import('@/modules/dsh_runs/services/run-service')) as unknown as RunServiceModule
+  if (typeof mod.createRequestRunService !== 'function') {
+    throw new Error('dsh_runs service module does not export createRequestRunService()')
+  }
+  return mod.createRequestRunService()
+}
+
+function errorCode(error: unknown): string | null {
+  if (typeof error !== 'object' || error === null) return null
+  const code = (error as { code?: unknown }).code
+  return typeof code === 'string' ? code : null
+}
+
+function persistenceUnavailable(): NextResponse {
+  return NextResponse.json(
+    { error: 'DSH run persistence is unavailable', code: 'persistence_unavailable' },
+    { status: 503 },
+  )
+}
+
+function invalidCursorResponse(): NextResponse {
+  return NextResponse.json(
+    { error: 'cursor must be a non-negative integer', code: 'invalid_cursor' },
+    { status: 400 },
+  )
+}
+
+function idempotencyConflictResponse(): NextResponse {
+  return NextResponse.json(
+    { error: 'Idempotency key was already used with a different request', code: 'idempotency_conflict' },
+    { status: 409 },
+  )
+}
+
+function bindingInactiveResponse(): NextResponse {
+  return NextResponse.json(
+    { error: 'The assistant binding is not active', code: 'binding_inactive' },
+    { status: 403 },
+  )
+}
+
+function runInProgressResponse(run: RunRecord): NextResponse {
+  return NextResponse.json(
+    {
+      error: 'Run is already in progress',
+      code: 'run_in_progress',
+      runId: run.id,
+      cursor: run.cursor,
+    },
+    { status: 409 },
+  )
+}
+
+function replayErrorResponse(error: unknown): NextResponse {
+  const code = errorCode(error)
+  if (code === 'run-forbidden') {
+    return NextResponse.json({ error: 'Forbidden', code: 'run_forbidden' }, { status: 403 })
+  }
+  if (code === 'run-not-found') {
+    return NextResponse.json({ error: 'Run not found', code: 'run_not_found' }, { status: 404 })
+  }
+  if (code === 'invalid-cursor') return invalidCursorResponse()
+  if (code === 'invalid-request') {
+    return NextResponse.json({ error: errorMessage(error), code: 'invalid_request' }, { status: 400 })
+  }
+  logger.error('Persisted DSH replay failed', { err: errorMessage(error) })
+  return persistenceUnavailable()
+}
+
+function submitErrorResponse(error: unknown): NextResponse {
+  const code = errorCode(error)
+  if (code === 'idempotency-conflict') return idempotencyConflictResponse()
+  if (code === 'concurrent-run') {
+    return NextResponse.json(
+      { error: 'Run is already in progress', code: 'run_in_progress' },
+      { status: 409 },
+    )
+  }
+  if (code === 'binding-not-active') return bindingInactiveResponse()
+  if (code === 'binding-not-found') {
+    return NextResponse.json({ error: 'Binding not found', code: 'binding_not_found' }, { status: 404 })
+  }
+  if (code === 'invalid-request') {
+    return NextResponse.json({ error: errorMessage(error), code: 'invalid_request' }, { status: 400 })
+  }
+  logger.error('Persisted DSH submit failed', { err: errorMessage(error) })
+  return persistenceUnavailable()
+}
+
+function persistedEventToSse(event: RunEventRecord): SseEvent {
+  const payload = event.payloadJson
+  if (isRecord(payload) && typeof payload.type === 'string') return payload as SseEvent
+  return { type: event.type, payload }
+}
+
+type SseWriter = (event: SseEvent, id?: number) => Promise<void>
+
+/**
+ * Shared SSE response for the persisted path. `work` owns the events; the
+ * wrapper owns writer closure and converts a thrown persistence failure into a
+ * visible `persistence_unavailable` frame (the HTTP status is already 200).
+ */
+function createPersistedSseResponse(
+  work: (write: SseWriter) => Promise<void>,
+  onFinally?: () => Promise<void>,
+): Response {
+  const encoder = new TextEncoder()
+  const stream = new TransformStream<Uint8Array, Uint8Array>()
+  const writer = stream.writable.getWriter()
+  let closed = false
+
+  const write: SseWriter = async (event, id) => {
+    if (closed) return
+    try {
+      await writeSse(writer, encoder, event, id)
+    } catch (error) {
+      logger.warn('Failed to write persisted DSH SSE event', {
+        eventType: event.type,
+        err: errorMessage(error),
+      })
+      closed = true
+    }
+  }
+
+  void (async () => {
+    try {
+      await work(write)
+    } catch (error) {
+      logger.error('Persisted DSH stream failed', { err: errorMessage(error) })
+      if (error instanceof PersistenceFailure) {
+        await write({ type: 'error', error: 'persistence_unavailable' })
+      } else {
+        await write({ type: 'error', error: errorMessage(error) })
+      }
+      await write({ type: 'done' })
+    } finally {
+      closed = true
+      try {
+        await writer.close()
+      } catch {
+        // Already closed by the client.
+      }
+      if (onFinally) {
+        try {
+          await onFinally()
+        } catch (error) {
+          logger.error('Persisted DSH cleanup failed', { err: errorMessage(error) })
+        }
+      }
+    }
+  })()
+
+  return new Response(stream.readable, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      Connection: 'keep-alive',
+    },
+  })
+}
+
+function replayResponse(run: RunRecord, events: RunEventRecord[]): Response {
+  return createPersistedSseResponse(async (write) => {
+    for (const event of events) {
+      await write(persistedEventToSse(event), event.seq)
+    }
+    await write({
+      type: 'done',
+      ...(run.sessionId ? { sessionId: run.sessionId } : {}),
+    })
+  })
+}
+
+function terminalOutcome(outcome: PumpOutcome): FinishRunInput {
+  if (outcome.streamError) {
+    return {
+      status: 'failed',
+      ...(outcome.result ? { result: outcome.result } : {}),
+      error: errorMessage(outcome.streamError),
+    }
+  }
+  const result = outcome.result
+  if (!result) return { status: 'failed', error: 'DSH run ended without a result' }
+  switch (result.finishReason) {
+    case 'completed':
+      return { status: 'completed', result }
+    case 'cancelled':
+      return { status: 'cancelled', result, error: result.error ?? 'cancelled' }
+    case 'timed-out':
+      return { status: 'failed', result, error: result.error ?? 'DSH run timed out' }
+    case 'failed':
+      return { status: 'failed', result, error: result.error ?? 'DSH run failed' }
+    default:
+      return { status: 'failed', result, error: `DSH run ${result.finishReason}` }
+  }
+}
+
+async function finishQuietly(
+  service: RunService,
+  runId: string,
+  status: FinishRunInput['status'],
+  error: string,
+): Promise<void> {
+  try {
+    await service.finish(runId, { status, error })
+  } catch (failure) {
+    if (errorCode(failure) !== 'run-terminal') {
+      logger.warn('Persisted DSH run could not be finished during failure handling', {
+        runId,
+        err: errorMessage(failure),
+      })
+    }
+  }
+}
+
+async function startPersistedRun(
+  req: NextRequest,
+  auth: AuthContext,
+  parsed: ChatRequest,
+  service: RunService,
+  run: RunRecord,
+): Promise<Response> {
+  let runtime: DshRuntime
+  try {
+    runtime = await resolveRuntime()
+  } catch (error) {
+    logger.error('DSH runtime module unavailable', { err: errorMessage(error) })
+    await finishQuietly(service, run.id, 'failed', 'DSH runtime unavailable')
+    return NextResponse.json({ error: 'DSH runtime unavailable' }, { status: 503 })
+  }
+
+  let handle: DshRunHandle
+  try {
+    handle = await runtime.start(
+      buildRunInput(auth, parsed, req.signal, run.id, run.bindingId),
+    )
+  } catch (error) {
+    logger.error('DSH run failed to start', { err: errorMessage(error) })
+    await finishQuietly(service, run.id, 'failed', errorMessage(error))
+    return NextResponse.json({ error: 'DSH runtime failed to start' }, { status: 502 })
+  }
+
+  try {
+    await service.begin(run.id, { sessionId: handle.sessionId })
+  } catch (error) {
+    logger.error('Persisted DSH run could not be marked running', { err: errorMessage(error) })
+    await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
+    try {
+      await handle.close()
+    } catch {
+      // The runtime is already unusable; the failure above is the one to report.
+    }
+    return persistenceUnavailable()
+  }
+
+  return createPersistedSseResponse(
+    async (write) => {
+      const persist = async (event: SseEvent): Promise<number> => {
+        try {
+          const stored = await service.appendEvent(run.id, {
+            type: event.type,
+            payload: event,
+          })
+          return stored.seq
+        } catch (error) {
+          throw new PersistenceFailure(error)
+        }
+      }
+
+      try {
+        const thinking: SseEvent = { type: 'thinking' }
+        const thinkingSeq = await persist(thinking)
+        await write(thinking, thinkingSeq)
+
+        const outcome = await pumpRun(handle, write, persist)
+        const terminal = terminalOutcome(outcome)
+        try {
+          await service.finish(run.id, terminal)
+        } catch (error) {
+          if (errorCode(error) === 'run-terminal') {
+            // A concurrent revoke won; the run is already terminal, which is
+            // the correct outcome. Do not turn that into a persistence error.
+            logger.info('Persisted DSH run was already terminal before finish', { runId: run.id })
+          } else {
+            logger.error('Persisted DSH run finish failed', { err: errorMessage(error) })
+            await write({ type: 'error', error: 'persistence_unavailable' })
+          }
+        }
+        await write({ type: 'done', sessionId: handle.sessionId })
+      } catch (error) {
+        if (error instanceof PersistenceFailure) {
+          logger.error('Persisted DSH event could not be stored', { err: errorMessage(error.failure) })
+          await write({ type: 'error', error: 'persistence_unavailable' })
+          await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
+        } else {
+          logger.error('Persisted DSH stream failed', { err: errorMessage(error) })
+          await write({ type: 'error', error: errorMessage(error) })
+          await finishQuietly(service, run.id, 'failed', errorMessage(error))
+        }
+        await write({ type: 'done', sessionId: handle.sessionId })
+      }
+    },
+    async () => {
+      try {
+        const closed = await handle.close()
+        if (!closed.stopped) {
+          logger.error('DSH run close was not confirmed', {})
+        }
+      } catch (error) {
+        logger.error('DSH run close failed', { err: errorMessage(error) })
+      }
+    },
+  )
+}
+
+async function persistedChat(
+  req: NextRequest,
+  auth: AuthContext,
+  parsed: ChatRequest,
+): Promise<Response> {
+  const tenantId = auth.tenantId?.trim() ?? ''
+  const organizationId = auth.orgId?.trim() ?? ''
+  if (!tenantId || !organizationId) {
+    return NextResponse.json(
+      { error: 'Tenant and organization are required for a persisted run', code: 'identity_scope_required' },
+      { status: 400 },
+    )
+  }
+
+  const headerCursor = parseCursorValue(req.headers.get('last-event-id'))
+  if (headerCursor === INVALID_CURSOR) return invalidCursorResponse()
+  const cursor = parsed.cursor ?? headerCursor ?? 0
+  const identity = { tenantId, organizationId, userId: auth.sub }
+
+  let service: RunService
+  try {
+    service = await resolveRunService()
+  } catch (error) {
+    logger.error('DSH run persistence is unavailable', { err: errorMessage(error) })
+    return persistenceUnavailable()
+  }
+
+  // Reconnect/resume by durable run id: terminal runs replay from the cursor,
+  // in-flight runs are rejected so a second process cannot attach.
+  if (parsed.runId) {
+    try {
+      const replay = await service.replay(identity.userId, parsed.runId, cursor)
+      if (!replay.resumable) return runInProgressResponse(replay.run)
+      return replayResponse(replay.run, replay.events)
+    } catch (error) {
+      return replayErrorResponse(error)
+    }
+  }
+
+  let binding: BindingRecord
+  try {
+    binding = await service.ensureBinding(identity)
+  } catch (error) {
+    if (errorCode(error) === 'invalid-request') {
+      return NextResponse.json({ error: errorMessage(error), code: 'invalid_request' }, { status: 400 })
+    }
+    logger.error('DSH assistant binding could not be provisioned', { err: errorMessage(error) })
+    return persistenceUnavailable()
+  }
+
+  let submitted: SubmitServiceResult
+  try {
+    submitted = await service.submit({
+      identity,
+      ...(parsed.idempotencyKey ? { idempotencyKey: parsed.idempotencyKey } : {}),
+      requestHash: hashPrompt(parsed.prompt),
+      prompt: parsed.prompt,
+      bindingId: binding.id,
+      ...(parsed.sessionId ? { sessionId: parsed.sessionId } : {}),
+    })
+  } catch (error) {
+    return submitErrorResponse(error)
+  }
+
+  if (submitted.replay) {
+    if (isInFlightStatus(submitted.run.status)) return runInProgressResponse(submitted.run)
+    try {
+      const replay = await service.replay(identity.userId, submitted.run.id, cursor)
+      return replayResponse(replay.run, replay.events)
+    } catch (error) {
+      return replayErrorResponse(error)
+    }
+  }
+
+  return startPersistedRun(req, auth, parsed, service, submitted.run)
 }
 
 export async function POST(req: NextRequest) {
@@ -633,6 +1162,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
 
+  if (persistMode()) {
+    return persistedChat(req, auth, parsed)
+  }
+
+  // Replay/idempotency fields only exist on the persisted path. Reject them
+  // rather than silently ignoring an opt-in the deployment did not enable.
+  if (parsed.runId || parsed.cursor !== undefined || parsed.idempotencyKey !== undefined) {
+    return NextResponse.json(
+      {
+        error: 'runId, cursor and idempotencyKey require OM_DSH_PERSIST=orm',
+        code: 'persistence_disabled',
+      },
+      { status: 400 },
+    )
+  }
+
   let runtime: DshRuntime
   try {
     runtime = await resolveRuntime()
@@ -643,7 +1188,7 @@ export async function POST(req: NextRequest) {
 
   let handle: DshRunHandle
   try {
-    handle = await runtime.start(buildRunInput(auth, parsed, req.signal))
+    handle = await runtime.start(buildRunInput(auth, parsed, req.signal, randomUUID()))
   } catch (error) {
     // Fail before opening the SSE stream so the browser gets a real HTTP error
     // instead of an empty event stream.
