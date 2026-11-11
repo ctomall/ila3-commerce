@@ -89,9 +89,30 @@ export async function POST(req: NextRequest) {
             const payload = line.slice(5).trim()
             if (!payload) continue
             try {
-              const event = JSON.parse(payload) as { type?: string; content?: unknown }
+              const event = JSON.parse(payload) as {
+                type?: string
+                content?: unknown
+                id?: unknown
+                toolName?: unknown
+                args?: unknown
+                result?: unknown
+              }
               if (event.type === 'text' && typeof event.content === 'string' && event.content) {
                 writer.write({ type: 'text-delta', id, delta: event.content })
+              } else if (
+                event.type === 'tool-call' &&
+                typeof event.id === 'string' &&
+                typeof event.toolName === 'string'
+              ) {
+                writer.write({ type: 'tool-input-start', toolCallId: event.id, toolName: event.toolName })
+                writer.write({
+                  type: 'tool-input-available',
+                  toolCallId: event.id,
+                  toolName: event.toolName,
+                  input: event.args ?? {},
+                })
+              } else if (event.type === 'tool-result' && typeof event.id === 'string') {
+                writer.write({ type: 'tool-output-available', toolCallId: event.id, output: event.result })
               }
             } catch {
               // Non-JSON keepalives are intentionally ignored.
