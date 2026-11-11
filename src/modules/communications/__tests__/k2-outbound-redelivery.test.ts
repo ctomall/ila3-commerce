@@ -8,15 +8,13 @@ import {
 import { Message } from '@open-mercato/core/modules/messages/data/entities'
 
 /**
- * CHARACTERIZATION TEST — documents OPEN defect D2, not a regression guard.
+ * CHARACTERIZATION TEST — now INVERTED, as the file's original note required.
  *
- * A managed patch now exists at
- * `scripts/patches/apply-outbound-attempt-unknown.mjs` (manifest id
- * `outbound-attempt-unknown`) that marks an accepted-but-uncommitted send
- * `unknown` instead of retrying. It is deliberately NOT applied yet, so this
- * test still drives the unpatched installed command and asserts the buggy
- * behavior. When the patch is approved and applied, this test MUST BE INVERTED:
- * it must expect one provider send and an `unknown` link, not two sends.
+ * The managed patch `scripts/patches/apply-outbound-attempt-unknown.mjs`
+ * (manifest id `outbound-attempt-unknown`) is applied — verified in both this
+ * tree and the current production release. It marks an accepted-but-uncommitted
+ * send `unknown` instead of retrying, so the drill below must now expect ONE
+ * provider send and an `unknown` link, never a second send.
  *
  * K2 drill — provider accepted, local commit failed → retry re-sends.
  *
@@ -170,7 +168,22 @@ function createEm(db: Db) {
       pendingNew = []
     }),
     fork: () => createEm(db),
-    getConnection: () => ({ execute: async () => [] }),
+    // Model the `patched:outbound-concurrent-claim` UPDATE ... RETURNING: the
+    // claim succeeds only for a link that is neither terminal nor already
+    // marked `attempting`, and the marker is committed immediately (it is not
+    // part of the entity-manager unit of work).
+    getConnection: () => ({
+      execute: async () => {
+        const link = db.links.find((row) => row.messageId === db.message.id)
+        if (!link) return []
+        const metadata = (link.channelMetadata ?? {}) as Record<string, unknown>
+        const status = String(link.deliveryStatus)
+        const terminal = ['sent', 'delivered', 'read'].includes(status)
+        if (terminal || metadata.attempting === true) return []
+        link.channelMetadata = { ...metadata, attempting: true, lastAttemptAt: new Date().toISOString() }
+        return [{ id: link.id }]
+      },
+    }),
   }
   return em
 }
@@ -240,7 +253,7 @@ describe('K2: provider accepted but the success commit failed', () => {
     jest.clearAllMocks()
   })
 
-  it('re-invokes the provider on retry because the link never reached a terminal state', async () => {
+  it('never re-invokes the provider after an unknown outcome (inverted defect drill)', async () => {
     const db = createDb()
     const em = createEm(db)
     const adapter = createAdapter()
@@ -253,24 +266,26 @@ describe('K2: provider accepted but the success commit failed', () => {
       scope: { tenantId, organizationId },
     }
 
-    // Attempt 1 — provider accepts, local success flush dies.
+    // Attempt 1 — provider accepts, then the local success flush dies (08006).
+    // The outcome is UNKNOWN, not a retryable failure: the customer may already
+    // have the message, so the link must never look like a clean retry.
     const first = await deliver.execute(input, commandContext(em, adapter) as never)
-    expect(first).toMatchObject({ status: 'failed', transient: true })
+    expect(first).toMatchObject({ status: 'unknown', reason: 'local_commit_failed' })
     expect(adapter.sendMessage).toHaveBeenCalledTimes(1)
+    // Nothing committed: the accepted provider id is not in the CRM.
     expect(db.external).toHaveLength(0)
-    expect(db.links[0]).toMatchObject({ deliveryStatus: 'failed' })
+    expect(db.links[0]).toMatchObject({ deliveryStatus: 'unknown' })
+    expect(db.links[0].channelMetadata).toMatchObject({ unknownResult: true, attempting: false })
 
-    // Attempt 2 — the worker re-enqueues a transient failure (attempt < 3).
+    // Attempt 2 — a replay (stalled job, worker restart, manual re-run) must not
+    // call the provider again; the unknown link short-circuits on entry.
     const second = await deliver.execute(
       input,
       commandContext(createEm(db), adapter) as never,
     )
-    expect(second).toMatchObject({ status: 'delivered' })
-    expect(adapter.sendMessage).toHaveBeenCalledTimes(2)
-    // Exactly one ExternalMessage is stored — for the SECOND provider id. The
-    // first accepted send (wamid.1) is invisible to the CRM.
-    expect(db.external).toHaveLength(1)
-    expect(db.external[0]).toMatchObject({ externalMessageId: 'wamid.2' })
-    expect(db.links[0]).toMatchObject({ deliveryStatus: 'sent' })
+    expect(second).toMatchObject({ status: 'unknown', error: 'local_commit_failed' })
+    expect(adapter.sendMessage).toHaveBeenCalledTimes(1)
+    expect(db.external).toHaveLength(0)
+    expect(db.links[0]).toMatchObject({ deliveryStatus: 'unknown' })
   })
 })
