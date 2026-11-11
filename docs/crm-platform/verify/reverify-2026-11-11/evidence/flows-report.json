@@ -1,0 +1,2192 @@
+{
+  "meta": {
+    "task": "ILA3 Commerce 生产实例只读 QA 复验（六页三态 / 暗色对比度 / 字典缓存头 / 性能）",
+    "generatedAt": "2026-11-11T01:44:10.443Z",
+    "base": "http://127.0.0.1:3000",
+    "appVersion": "v0.9.0 (56d319d)",
+    "readOnly": true,
+    "restrictions": "未部署、未重启、未改数据库/生产数据、未改 /home/pro/apps/mercato；仅 GET/登录 POST 与浏览器只读交互；产物只写 /tmp/verify96/flows/",
+    "auth": "superadmin via POST /api/auth/login (密码未打印)",
+    "tooling": {
+      "node": "v24.22.2",
+      "playwright": "1.64.1 (mercato/node_modules)",
+      "browser": "chromium headless 1440x900"
+    },
+    "caveats": [
+      "公网链路在复验窗口内严重抖动：同一 URL 出现 30s 超时与 1.59s 成功两种结果，公网 TTFB 标 UNVERIFIED。",
+      "任务给定的 /backend/system/updates 返回 404；按导航「系统升级」实际路径 /backend/config/system-update 复验并记录。",
+      "任务给定的 /backend/config 返回 404，无法进行三态/暗色测量；暗色用 /backend/config/dictionaries 作替代页并清楚标注。"
+    ]
+  },
+  "A": {
+    "pathProbes": {
+      "measuredAt": "2026-11-11T01:43:32.612Z",
+      "paths": {
+        "/backend/config": {
+          "status": 404,
+          "location": null,
+          "bytes": 1678798,
+          "has404": true,
+          "titleSystemUpdate": true
+        },
+        "/backend/config/": {
+          "status": 308,
+          "location": "/backend/config",
+          "bytes": 15,
+          "has404": false,
+          "titleSystemUpdate": false
+        },
+        "/backend/system/updates": {
+          "status": 404,
+          "location": null,
+          "bytes": 1678855,
+          "has404": true,
+          "titleSystemUpdate": true
+        },
+        "/backend/config/system-update": {
+          "status": 200,
+          "location": null,
+          "bytes": 1715747,
+          "has404": true,
+          "titleSystemUpdate": true
+        }
+      },
+      "navSystemUpdate": [
+        {
+          "label": "系统升级",
+          "href": "/backend/config/system-update"
+        }
+      ]
+    },
+    "stateVerdicts": {
+      "backend": {
+        "load": "PASS",
+        "empty": "N/A",
+        "error": "PASS"
+      },
+      "companies": {
+        "load": "PASS",
+        "empty": "PASS",
+        "error": "PASS"
+      },
+      "deals": {
+        "load": "PASS",
+        "empty": "PASS",
+        "error": "PASS"
+      },
+      "config": {
+        "load": "FAIL",
+        "empty": "N/A",
+        "error": "N/A"
+      },
+      "updates": {
+        "load": "PASS",
+        "empty": "N/A",
+        "error": "FAIL"
+      },
+      "login": {
+        "load": "PASS",
+        "empty": "N/A",
+        "error": "PASS"
+      }
+    },
+    "pages": {
+      "backend": {
+        "path": "/backend",
+        "kind": "dashboard",
+        "load": {
+          "httpStatus": 200,
+          "dclMs": 524,
+          "atDcl": {
+            "hasLoadingText": true,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "",
+            "tableRows": 0,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 加载中… ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私"
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "工作台",
+            "tableRows": 0,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作台 排列并个性化管理首页上显示的组件。 自定义 客户任务 查看与客户关联的最新任务，并直接跳转到对应记录。 暂无客户任务。"
+          },
+          "paint": {
+            "paints": [
+              {
+                "name": "first-paint",
+                "startTime": 400
+              },
+              {
+                "name": "first-contentful-paint",
+                "startTime": 436
+              }
+            ],
+            "ttfb": 284,
+            "domContentLoaded": 517
+          },
+          "apiCalls": [
+            "/api/dashboards/layout",
+            "/api/crm_navigation/navigation?chrome=1",
+            "/api/events/stream",
+            "/api/ai_assistant/health",
+            "/api/ai_assistant/ai/agents",
+            "/api/progress/active",
+            "/api/ai_assistant/ai/conversations?limit=100",
+            "/api/customers/dashboard/widgets/customer-todos?limit=5",
+            "/api/customers/dashboard/widgets/new-customers?limit=5",
+            "/api/customers/dashboard/widgets/new-deals?limit=5",
+            "/api/customers/dashboard/widgets/next-interactions?limit=5&includePast=false",
+            "/api/staff/team-members/self",
+            "/api/ai_assistant/tools",
+            "/api/settings_home/me",
+            "/api/sales/dashboard/widgets/new-orders?limit=5&datePeriod=last24h",
+            "/api/sales/dashboard/widgets/new-quotes?limit=5&datePeriod=last24h",
+            "/api/warranty_claims/stats",
+            "/api/staff/timesheets/time-entries?staffMemberId=fa6953c9-9e80-4720-9cc2-1f2dc1f72f7b&running=true&pageSize=50",
+            "/api/directory/organization-switcher",
+            "/api/messages?folder=inbox&page=1&pageSize=20",
+            "/api/messages/unread-count",
+            "/api/auth/feature-check",
+            "/api/notifications?pageSize=50",
+            "/api/notifications/unread-count"
+          ],
+          "verdict": "PASS_LOADING_THEN_CONTENT",
+          "note": "DOMContentLoaded 时已有加载指示，随后被真实内容替换"
+        },
+        "empty": {
+          "verdict": "N/A",
+          "note": "工作台为组件化仪表盘，无列表级空态概念；组件自身有「暂无…」占位文案，不属于列表空态验收"
+        },
+        "error": {
+          "blockedPattern": [
+            "**/api/customers/dashboard/**",
+            "**/api/sales/dashboard/**"
+          ],
+          "httpStatus": 200,
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作台 排列并个性化管理首页上显示的组件。 自定义 客户任务 查看与客户关联的最新任务，并直接跳转到对应记录。 无法加载客户任务。 新增客户 显示最近新增的客户。 无法加载新增客户。 新增商机 显示最近创建的客户商机。 无法加载新增商机。 即将到来的客户互动 显示已安排下一次互动的客户。 无法加载即将到来的互动。 新订单 显示最近创建的销售订单。 加载订单失败 新报价单 显示最近创建的销售报价单。 加载报价单失败 保修工单队列 显示待处理工单、SLA 风险和逾期数量，点击进入工单处理台。 暂无未结工单 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私",
+          "alerts": [],
+          "errorPhrase": true,
+          "retry": false,
+          "emptyPhrase": true,
+          "rows": 0,
+          "recovered": {
+            "alertCount": 0,
+            "rows": 0,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作台 排列并个性化管理首页上显示的组件。 自"
+          },
+          "verdict": "PASS",
+          "note": "错误文案可见（无 role=alert）；重试入口=false；解除拦截后重载恢复"
+        },
+        "screenshots": [
+          "backend-load.png",
+          "backend-error.png",
+          "backend-recovered.png"
+        ],
+        "label": "工作台 /backend",
+        "stateVerdicts": {
+          "load": "PASS",
+          "empty": "N/A",
+          "error": "PASS"
+        }
+      },
+      "companies": {
+        "path": "/backend/customers/companies",
+        "kind": "list",
+        "load": {
+          "httpStatus": 200,
+          "dclMs": 675,
+          "atDcl": {
+            "hasLoadingText": true,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "公司",
+            "tableRows": 1,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 公司 公司 刷新 导出 新建公司 筛选 名称 邮件 主要电话 状态 生命周期阶段 下次互动 来源 负责人 法定名称 品牌名称 域名 网站 所属行业 公司规模 年营业额 描述 操作 加载中… 正在加载表格… ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私"
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "公司",
+            "tableRows": 3,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 "
+          },
+          "paint": {
+            "paints": [
+              {
+                "name": "first-paint",
+                "startTime": 420
+              },
+              {
+                "name": "first-contentful-paint",
+                "startTime": 540
+              }
+            ],
+            "ttfb": 330,
+            "domContentLoaded": 661
+          },
+          "apiCalls": [
+            "/api/auth/feature-check",
+            "/api/entities/definitions?entityId=customers%3Acustomer_entity&entityId=customers%3Acustomer_company_profile",
+            "/api/customers/dictionaries/statuses",
+            "/api/customers/dictionaries/sources",
+            "/api/customers/dictionaries/lifecycle-stages",
+            "/api/staff/team-members/assignable?page=1&pageSize=100",
+            "/api/customers/companies?page=1&pageSize=20",
+            "/api/crm_navigation/navigation?chrome=1",
+            "/api/events/stream",
+            "/api/perspectives/customers.companies.list",
+            "/api/ai_assistant/health",
+            "/api/ai_assistant/ai/agents",
+            "/api/progress/active",
+            "/api/ai_assistant/ai/conversations?limit=100",
+            "/api/directory/organization-switcher",
+            "/api/messages?folder=inbox&page=1&pageSize=20",
+            "/api/messages/unread-count",
+            "/api/notifications?pageSize=50",
+            "/api/notifications/unread-count",
+            "/api/ai_assistant/tools",
+            "/api/staff/team-members/self",
+            "/api/staff/timesheets/time-entries?staffMemberId=fa6953c9-9e80-4720-9cc2-1f2dc1f72f7b&running=true&pageSize=50",
+            "/api/settings_home/me"
+          ],
+          "verdict": "PASS_LOADING_THEN_CONTENT",
+          "note": "DOMContentLoaded 时已有加载指示，随后被真实内容替换"
+        },
+        "empty": {
+          "query": "zzzz-no-such-record-96",
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 名称 状态 生命周期阶段 关系健康度 操作 未找到结果 未找到与“zzzz-no-such-record-96”匹配的公司，请调整搜索或筛选条件。 清除搜索 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私",
+          "emptyText": "公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 名称 状态 生命周期阶段 关系健康度 操作 未找到结果 未找到与“zzzz-no-such-record-96”匹配的公司，请调整搜索或筛选条件。 清除搜索 ILA3 Commerce · v0.9.",
+          "hasChineseEmpty": true,
+          "hasIllustration": true,
+          "clearAction": true,
+          "rows": 1,
+          "verdict": "PASS",
+          "note": "中文空状态：「公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 名称 状态 生命周期阶段 关系健康度 操作 未找到结果 未找到与“zzzz-no-such-record-96”匹配的公司，请调整搜索或筛选条件。 清除搜索 ILA3 Commerce · v0.9.」，清除搜索入口=true，插图=true"
+        },
+        "error": {
+          "blockedPattern": [
+            "**/api/customers/companies**"
+          ],
+          "httpStatus": 200,
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 无法连接服务器，请检查网络后重试 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 名称 状态 生命周期阶段 关系健康度 操作 无法连接服务器，请检查网络后重试 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私",
+          "alerts": [
+            "无法连接服务器，请检查网络后重试"
+          ],
+          "errorPhrase": true,
+          "retry": true,
+          "emptyPhrase": false,
+          "rows": 1,
+          "recovered": {
+            "alertCount": 0,
+            "rows": 3,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 公司 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 "
+          },
+          "verdict": "PASS",
+          "note": "错误态可见（role=alert: [\"无法连接服务器，请检查网络后重试\"]）；解除拦截后重载恢复"
+        },
+        "screenshots": [
+          "companies-load.png",
+          "companies-empty.png",
+          "companies-error.png",
+          "companies-recovered.png"
+        ],
+        "label": "公司列表 /backend/customers/companies",
+        "stateVerdicts": {
+          "load": "PASS",
+          "empty": "PASS",
+          "error": "PASS"
+        }
+      },
+      "deals": {
+        "path": "/backend/customers/deals",
+        "kind": "list",
+        "load": {
+          "httpStatus": 200,
+          "dclMs": 577,
+          "atDcl": {
+            "hasLoadingText": true,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "商机",
+            "tableRows": 1,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 商机 看板 列表 地图 漏斗金额 加载中… 进行中的商机 加载中… 本季度成交 加载中… 成交率 加载中… 商机 刷新 导出 新建商机 筛选 标题 状态 漏斗阶段 漏斗 金额 成交概率 预计成交 负责人 公司 联系人 更新时间 操作 暂无商机 你添加的项目将显示在此处。 新建商机 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私"
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "商机",
+            "tableRows": 6,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 商机 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 看板 列表 地图 漏斗金额 -- 0 ≈ CNY 全部漏斗 · 本"
+          },
+          "paint": {
+            "paints": [
+              {
+                "name": "first-paint",
+                "startTime": 416
+              },
+              {
+                "name": "first-contentful-paint",
+                "startTime": 484
+              }
+            ],
+            "ttfb": 323,
+            "domContentLoaded": 574
+          },
+          "apiCalls": [
+            "/api/customers/deals/summary",
+            "/api/auth/feature-check",
+            "/api/entities/definitions?entityId=customers%3Acustomer_deal",
+            "/api/customers/dictionaries/deal-statuses",
+            "/api/customers/dictionaries/pipeline-stages",
+            "/api/customers/pipelines",
+            "/api/customers/deals?page=1&pageSize=20",
+            "/api/staff/team-members/assignable?page=1&pageSize=100",
+            "/api/crm_navigation/navigation?chrome=1",
+            "/api/events/stream",
+            "/api/perspectives/customers.deals.list",
+            "/api/auth/profile",
+            "/api/ai_assistant/health",
+            "/api/ai_assistant/ai/agents",
+            "/api/progress/active",
+            "/api/ai_assistant/ai/conversations?limit=100",
+            "/api/directory/organization-switcher",
+            "/api/ai_assistant/tools",
+            "/api/staff/team-members/self",
+            "/api/messages?folder=inbox&page=1&pageSize=20",
+            "/api/messages/unread-count",
+            "/api/notifications?pageSize=50",
+            "/api/notifications/unread-count",
+            "/api/staff/timesheets/time-entries?staffMemberId=fa6953c9-9e80-4720-9cc2-1f2dc1f72f7b&running=true&pageSize=50",
+            "/api/settings_home/me"
+          ],
+          "verdict": "PASS_LOADING_THEN_CONTENT",
+          "note": "DOMContentLoaded 时已有加载指示，随后被真实内容替换"
+        },
+        "empty": {
+          "query": "zzzz-no-such-record-96",
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 商机 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 看板 列表 地图 漏斗金额 -- 0 ≈ CNY 全部漏斗 · 本季度 4 个进行中商机，分布在 1 个漏斗 为近似值；缺少汇率的 USD 商机未计入。 谈判 1 方案报价 1 商机 1 销售认可线索（SQL） 1 进行中的商机 -- 4 全部漏斗 · 本季度 0 位负责人 · 0 项需要关注 本季度成交 -- 0 ≈ CNY 全部漏斗 · 本季度 本季度已关闭 1 个商机 平均商机 0 ≈ CNY 为近似值；缺少汇率的 USD 商机未计入。 成交率 50pp 50 % 全部漏斗 · 本季度 较上季度 0% 商机 刷新 自定义列 导出 新建商机 AI 筛选 视图 全部视图 标题 ",
+          "emptyText": "商机 刷新 自定义列 导出 新建商机 AI 筛选 视图 全部视图 标题 状态 金额 预计成交 操作 未找到结果 未找到与“zzzz-no-such-record-96”匹配的商机，请调整搜索或筛选条件。 清除搜索",
+          "hasChineseEmpty": true,
+          "hasIllustration": true,
+          "clearAction": true,
+          "rows": 1,
+          "verdict": "PASS",
+          "note": "中文空状态：「商机 刷新 自定义列 导出 新建商机 AI 筛选 视图 全部视图 标题 状态 金额 预计成交 操作 未找到结果 未找到与“zzzz-no-such-record-96”匹配的商机，请调整搜索或筛选条件。 清除搜索」，清除搜索入口=true，插图=true"
+        },
+        "error": {
+          "blockedPattern": [
+            "**/api/customers/deals**"
+          ],
+          "httpStatus": 200,
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 商机 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Failed to fetch 看板 列表 地图 无法加载商机指标 重试 商机 刷新 自定义列 导出 新建商机 AI 筛选 视图 全部视图 标题 状态 金额 预计成交 操作 暂无商机 你添加的项目将显示在此处。 新建商机 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私",
+          "alerts": [
+            "Failed to fetch"
+          ],
+          "errorPhrase": true,
+          "retry": true,
+          "emptyPhrase": true,
+          "rows": 1,
+          "recovered": {
+            "alertCount": 0,
+            "rows": 6,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 商机 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 "
+          },
+          "verdict": "PASS",
+          "note": "错误态可见（role=alert: [\"Failed to fetch\"]）；解除拦截后重载恢复"
+        },
+        "screenshots": [
+          "deals-load.png",
+          "deals-empty.png",
+          "deals-error.png",
+          "deals-recovered.png"
+        ],
+        "label": "商机列表 /backend/customers/deals",
+        "stateVerdicts": {
+          "load": "PASS",
+          "empty": "PASS",
+          "error": "PASS"
+        }
+      },
+      "config": {
+        "path": "/backend/config",
+        "kind": "missing",
+        "load": {
+          "httpStatus": 404,
+          "dclMs": 506,
+          "atDcl": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "",
+            "tableRows": 0,
+            "hasForm": false,
+            "text": ""
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "404",
+            "tableRows": 0,
+            "hasForm": false,
+            "text": "404 This page could not be found. 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie"
+          },
+          "paint": {
+            "paints": [],
+            "ttfb": 285,
+            "domContentLoaded": 504
+          },
+          "apiCalls": [],
+          "verdict": "FAIL_PAGE_MISSING",
+          "note": "页面 /backend/config 返回 404，无实际页面可测"
+        },
+        "empty": {
+          "verdict": "N/A",
+          "note": "页面 404，无列表可测空态"
+        },
+        "error": {
+          "verdict": "N/A",
+          "note": "页面本身 404，无页面级错误态可测；404 证据见 load"
+        },
+        "screenshots": [
+          "config-load.png"
+        ],
+        "label": "配置 /backend/config",
+        "stateVerdicts": {
+          "load": "FAIL",
+          "empty": "N/A",
+          "error": "N/A"
+        }
+      },
+      "updates": {
+        "path": "/backend/config/system-update",
+        "kind": "page",
+        "load": {
+          "httpStatus": 200,
+          "dclMs": 356,
+          "atDcl": {
+            "hasLoadingText": false,
+            "ariaBusy": 1,
+            "skeletonEls": 3,
+            "h1": "",
+            "tableRows": 0,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 系统升级 系统升级 真实发布状态：当前运行版本、最新候选与 ila3-auto-deploy 发布记录（只读）。 刷新 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私"
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "",
+            "tableRows": 5,
+            "hasForm": false,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 系统升级 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 系统升级 真实发布状态：当前运行版本、最新候选与 ila3-auto-deploy 发布记录（只读）。 刷新 发布进"
+          },
+          "paint": {
+            "paints": [
+              {
+                "name": "first-paint",
+                "startTime": 256
+              },
+              {
+                "name": "first-contentful-paint",
+                "startTime": 256
+              }
+            ],
+            "ttfb": 148,
+            "domContentLoaded": 350
+          },
+          "apiCalls": [
+            "/api/system_update/status",
+            "/api/crm_navigation/navigation?chrome=1",
+            "/api/events/stream",
+            "/api/ai_assistant/health",
+            "/api/ai_assistant/ai/agents",
+            "/api/progress/active",
+            "/api/ai_assistant/ai/conversations?limit=100",
+            "/api/directory/organization-switcher",
+            "/api/messages?folder=inbox&page=1&pageSize=20",
+            "/api/messages/unread-count",
+            "/api/auth/feature-check",
+            "/api/notifications?pageSize=50",
+            "/api/notifications/unread-count",
+            "/api/staff/team-members/self",
+            "/api/ai_assistant/tools",
+            "/api/settings_home/me",
+            "/api/staff/timesheets/time-entries?staffMemberId=fa6953c9-9e80-4720-9cc2-1f2dc1f72f7b&running=true&pageSize=50"
+          ],
+          "verdict": "PASS_LOADING_THEN_CONTENT",
+          "note": "DOMContentLoaded 时页面标题为 h2「系统升级」，aria-busy=1、骨架元素=3、0 行数据；约 1s 后骨架消失、h2 仍为「系统升级」、发布记录表 5 行真实内容。页面标题使用 h2 而非 h1（与其它页不同，记录为观察项）。",
+          "titleTag": "h2",
+          "contentMarker": {
+            "h2": "系统升级",
+            "tableRows": 5,
+            "ariaBusyAfter": 0
+          }
+        },
+        "empty": {
+          "verdict": "N/A",
+          "note": "该页为非列表页面，无空态概念，N/A"
+        },
+        "error": {
+          "blockedPattern": [
+            "**/api/system_update/status**"
+          ],
+          "httpStatus": 200,
+          "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 系统升级 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 系统升级 真实发布状态：当前运行版本、最新候选与 ila3-auto-deploy 发布记录（只读）。 刷新 ILA3 Commerce · v0.9.0 (56d319d) 条款 隐私",
+          "alerts": [],
+          "errorPhrase": false,
+          "retry": false,
+          "emptyPhrase": false,
+          "rows": 0,
+          "recovered": {
+            "alertCount": 2,
+            "rows": 5,
+            "text": "跳到主要内容 ILA3 Commerce 工作台 工作台 日历 我的工作 工作收件箱 客户 销售 商品目录 仓储运营 售后 人员与项目 排班与工时 支付 文档 消息 自动化 业务合规（欧盟零毁林专项） 管理中心 S 个人账户 系统升级 Acme Corp 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 系统升级 真实发布状态：当前运行版本",
+            "note": "解除拦截后重载恢复：发布记录 5 行、aria-busy=0"
+          },
+          "verdict": "FAIL",
+          "note": "拦截 /api/system_update/status 后 11s 仍停留在骨架状态（aria-busy=1、骨架元素=3、0 行），无 role=alert、无「加载失败」文案、无重试入口；页面不呈现错误态，属于无限加载。解除拦截后重载恢复内容。",
+          "observedAfterMs": 11000
+        },
+        "screenshots": [
+          "updates-load.png",
+          "updates-error.png",
+          "updates-recovered.png"
+        ],
+        "label": "系统升级 /backend/config/system-update（导航实测路径）",
+        "stateVerdicts": {
+          "load": "PASS",
+          "empty": "N/A",
+          "error": "FAIL"
+        }
+      },
+      "login": {
+        "path": "/login",
+        "kind": "login",
+        "load": {
+          "httpStatus": 200,
+          "dclMs": 149,
+          "atDcl": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "Open Mercato",
+            "tableRows": 0,
+            "hasForm": true,
+            "text": "Open Mercato 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私"
+          },
+          "settled": {
+            "hasLoadingText": false,
+            "ariaBusy": 0,
+            "skeletonEls": 0,
+            "h1": "Open Mercato",
+            "tableRows": 0,
+            "hasForm": true,
+            "text": "Open Mercato 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie"
+          },
+          "paint": {
+            "paints": [
+              {
+                "name": "first-paint",
+                "startTime": 140
+              },
+              {
+                "name": "first-contentful-paint",
+                "startTime": 176
+              }
+            ],
+            "ttfb": 61,
+            "domContentLoaded": 147
+          },
+          "apiCalls": [
+            "/api/auth/feature-check"
+          ],
+          "verdict": "PASS_CONTENT_AT_DCL_NO_SKELETON",
+          "note": "DOMContentLoaded 时已直接渲染真实内容（SSR），未观察到骨架；无白屏"
+        },
+        "empty": {
+          "verdict": "N/A",
+          "note": "登录页无列表/空态概念，N/A"
+        },
+        "error": {
+          "method": "route abort POST /api/auth/login + submit (no server-side login attempt)",
+          "text": "Open Mercato 登录你的工作空间 Failed to fetch 邮件 密码 记住我 登录 忘记密码？ 条款 隐私 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie",
+          "alerts": [
+            "Failed to fetch"
+          ],
+          "errorPhrase": true,
+          "emptyPhrase": false,
+          "formStillPresent": true,
+          "recovered": {
+            "alertCount": 0,
+            "formStillPresent": true
+          },
+          "verdict": "PASS",
+          "note": "错误态可见（role=alert: [\"Failed to fetch\"]），非空状态伪装；解除拦截后重载页面恢复",
+          "featureCheckBlock": {
+            "alerts": 0,
+            "form": true,
+            "text": "Open Mercato 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私 我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie",
+            "note": "阻断 /api/auth/feature-check 后页面仍正常渲染且未提示错误（静默降级）"
+          }
+        },
+        "screenshots": [
+          "login-load.png",
+          "login-error.png"
+        ],
+        "label": "登录 /login",
+        "stateVerdicts": {
+          "load": "PASS",
+          "empty": "N/A",
+          "error": "PASS"
+        }
+      }
+    },
+    "notes": [
+      "「载」证据：DOMContentLoaded 时的加载标记 + 稳定后的真实内容；直接首屏为 SSR 时如实记录无骨架。",
+      "「空」证据：列表页搜索框输入 zzzz-no-such-record-96，记录中文空态文案/清除入口/插图与残余行数。",
+      "「错」证据：只拦截该页数据 API（不拦文档），记录 role=alert/错误文案/重试入口，并确认是否伪装成空状态；解除拦截后重载验证恢复。"
+    ]
+  },
+  "B": {
+    "theme": "dark",
+    "pages": {
+      "backend": {
+        "path": "/backend",
+        "httpStatus": 200,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "排列并个性化管理首页上显示的组件。",
+            "tag": "P",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "missing": true
+          },
+          {
+            "name": "page title",
+            "ratio": 18.97,
+            "threshold": 3,
+            "size": 24,
+            "weight": 600,
+            "large": true,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "工作台",
+            "tag": "H1",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "日历",
+            "tag": "A",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "客户",
+            "tag": "BUTTON",
+            "ok": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 17.5,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(21,21,21)",
+            "text": "自定义",
+            "tag": "BUTTON",
+            "ok": true
+          }
+        ],
+        "badges": [],
+        "requiredMeasured": 5,
+        "minRatio": 7.66,
+        "minSample": "body",
+        "failures": [],
+        "screenshot": "backend-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [
+          "table header"
+        ],
+        "naNote": "工作台无表格，table header 标 N/A。"
+      },
+      "companies": {
+        "path": "/backend/customers/companies",
+        "httpStatus": 200,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 18.97,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "Brightside Solar",
+            "tag": "TD",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "名称",
+            "tag": "TH",
+            "ok": true
+          },
+          {
+            "name": "page title",
+            "ratio": 17.18,
+            "threshold": 4.5,
+            "size": 20,
+            "weight": 600,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(23,23,23)",
+            "text": "公司",
+            "tag": "H1",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "工作台",
+            "tag": "A",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "客户",
+            "tag": "BUTTON",
+            "ok": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 14.23,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(7.78201 -0.0000149012 0)",
+            "bg": "rgb(229,229,229)",
+            "text": "新建公司",
+            "tag": "A",
+            "ok": true
+          }
+        ],
+        "badges": [],
+        "requiredMeasured": 6,
+        "minRatio": 7.66,
+        "minSample": "table header",
+        "failures": [],
+        "screenshot": "companies-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [],
+        "naNote": null
+      },
+      "deals": {
+        "path": "/backend/customers/deals",
+        "httpStatus": 200,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 18.97,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "Sunset Lofts Battery Upgrade",
+            "tag": "TD",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "标题",
+            "tag": "TH",
+            "ok": true
+          },
+          {
+            "name": "page title",
+            "ratio": 17.18,
+            "threshold": 4.5,
+            "size": 20,
+            "weight": 600,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(23,23,23)",
+            "text": "商机",
+            "tag": "H1",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "工作台",
+            "tag": "A",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "客户",
+            "tag": "BUTTON",
+            "ok": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 14.23,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(7.78201 -0.0000149012 0)",
+            "bg": "rgb(229,229,229)",
+            "text": "新建商机",
+            "tag": "A",
+            "ok": true
+          }
+        ],
+        "badges": [
+          {
+            "name": "badge:未关闭",
+            "ratio": 7.98,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 600,
+            "large": false,
+            "color": "lab(74.0235 8.54138 -41.6075)",
+            "bg": "rgb(30,26,77)",
+            "text": "未关闭",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:未关闭",
+            "ratio": 7.98,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 600,
+            "large": false,
+            "color": "lab(74.0235 8.54138 -41.6075)",
+            "bg": "rgb(30,26,77)",
+            "text": "未关闭",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:赢单",
+            "ratio": 10.67,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 600,
+            "large": false,
+            "color": "lab(86.9953 -47.2691 25.0054)",
+            "bg": "rgb(3,46,21)",
+            "text": "赢单",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:输单",
+            "ratio": 8.42,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 600,
+            "large": false,
+            "color": "lab(76.5514 36.422 15.5335)",
+            "bg": "rgb(70,8,9)",
+            "text": "输单",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:进行中",
+            "ratio": 10.37,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 600,
+            "large": false,
+            "color": "lab(86.4156 6.13147 78.3961)",
+            "bg": "rgb(70,25,1)",
+            "text": "进行中",
+            "tag": "DIV",
+            "ok": true
+          }
+        ],
+        "requiredMeasured": 6,
+        "minRatio": 7.66,
+        "minSample": "table header",
+        "failures": [],
+        "screenshot": "deals-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [],
+        "naNote": null
+      },
+      "config": {
+        "path": "/backend/config",
+        "httpStatus": 404,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(0,0,0,1)",
+        "measures": [
+          {
+            "name": "body",
+            "missing": true
+          },
+          {
+            "name": "table header",
+            "missing": true
+          },
+          {
+            "name": "page title",
+            "ratio": 21,
+            "threshold": 3,
+            "size": 24,
+            "weight": 500,
+            "large": true,
+            "color": "rgb(255, 255, 255)",
+            "bg": "rgb(0,0,0)",
+            "text": "404",
+            "tag": "H1",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.75,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(8,8,8)",
+            "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私.",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "missing": true
+          },
+          {
+            "name": "primary button",
+            "missing": true
+          }
+        ],
+        "badges": [],
+        "requiredMeasured": 2,
+        "minRatio": 7.75,
+        "minSample": "muted text",
+        "failures": [],
+        "screenshot": "config-dark.png",
+        "verdict": "UNVERIFIED_PAGE_MISSING",
+        "missingSamples": [
+          "body",
+          "table header",
+          "sidebar group",
+          "primary button"
+        ],
+        "naNote": "404 页无 body/table header/sidebar/primary button，样本缺失；该页整体 UNVERIFIED。"
+      },
+      "updates": {
+        "path": "/backend/config/system-update",
+        "httpStatus": 200,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "真实发布状态：当前运行版本、最新候选与 ila3-auto-deploy 发布记",
+            "tag": "P",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "时间",
+            "tag": "TH",
+            "ok": true
+          },
+          {
+            "name": "page title",
+            "ratio": 18.97,
+            "threshold": 4.5,
+            "size": 18,
+            "weight": 600,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "系统升级",
+            "tag": "H2",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "工作台",
+            "tag": "A",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "客户",
+            "tag": "BUTTON",
+            "ok": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 17.5,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(21,21,21)",
+            "text": "刷新",
+            "tag": "BUTTON",
+            "ok": true
+          }
+        ],
+        "badges": [
+          {
+            "name": "badge:发布进行中",
+            "ratio": 10.37,
+            "threshold": 4.5,
+            "size": 10,
+            "weight": 600,
+            "large": false,
+            "color": "lab(86.4156 6.13147 78.3961)",
+            "bg": "rgb(70,25,1)",
+            "text": "发布进行中",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:检查未完成",
+            "ratio": 12.21,
+            "threshold": 4.5,
+            "size": 10,
+            "weight": 600,
+            "large": false,
+            "color": "lab(85.152 0 -0.0000119209)",
+            "bg": "rgb(23,23,23)",
+            "text": "检查未完成",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:包版本一致",
+            "ratio": 10.67,
+            "threshold": 4.5,
+            "size": 10,
+            "weight": 600,
+            "large": false,
+            "color": "lab(86.9953 -47.2691 25.0054)",
+            "bg": "rgb(3,46,21)",
+            "text": "包版本一致",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:暂不支持检测",
+            "ratio": 12.21,
+            "threshold": 4.5,
+            "size": 10,
+            "weight": 600,
+            "large": false,
+            "color": "lab(85.152 0 -0.0000119209)",
+            "bg": "rgb(23,23,23)",
+            "text": "暂不支持检测",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "badge:未知",
+            "ratio": 18.97,
+            "threshold": 4.5,
+            "size": 10,
+            "weight": 600,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "未知",
+            "tag": "DIV",
+            "ok": true
+          }
+        ],
+        "requiredMeasured": 6,
+        "minRatio": 7.66,
+        "minSample": "body",
+        "failures": [],
+        "screenshot": "updates-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [],
+        "naNote": null
+      },
+      "login": {
+        "path": "/login",
+        "httpStatus": 200,
+        "substituteFor": null,
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 17.18,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(23,23,23)",
+            "text": "邮件",
+            "tag": "LABEL",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "missing": true
+          },
+          {
+            "name": "page title",
+            "ratio": 17.18,
+            "threshold": 3,
+            "size": 24,
+            "weight": 600,
+            "large": true,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(23,23,23)",
+            "text": "Open Mercato",
+            "tag": "H1",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 6.94,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 400,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(23,23,23)",
+            "text": "登录你的工作空间",
+            "tag": "DIV",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "missing": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 14.23,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(7.78201 -0.0000149012 0)",
+            "bg": "rgb(229,229,229)",
+            "text": "登录",
+            "tag": "BUTTON",
+            "ok": true
+          }
+        ],
+        "badges": [],
+        "requiredMeasured": 4,
+        "minRatio": 6.94,
+        "minSample": "muted text",
+        "failures": [],
+        "screenshot": "login-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [
+          "table header",
+          "sidebar group"
+        ],
+        "naNote": "登录页无表格/侧栏，table header 与 sidebar group 标 N/A；body 取表单标签。"
+      },
+      "config_substitute": {
+        "path": "/backend/config/dictionaries",
+        "httpStatus": 200,
+        "substituteFor": "config",
+        "prefersDark": true,
+        "htmlClass": "dark",
+        "htmlBg": "rgba(0,0,0,0)",
+        "bodyBg": "rgba(10,10,10,1)",
+        "measures": [
+          {
+            "name": "body",
+            "ratio": 18.97,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(10,10,10)",
+            "text": "Holidays",
+            "tag": "TD",
+            "ok": true
+          },
+          {
+            "name": "table header",
+            "ratio": 7.07,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(21,21,21)",
+            "text": "值",
+            "tag": "TH",
+            "ok": true
+          },
+          {
+            "name": "page title",
+            "ratio": 17.18,
+            "threshold": 4.5,
+            "size": 16,
+            "weight": 600,
+            "large": false,
+            "color": "lab(98.26 0 0)",
+            "bg": "rgb(23,23,23)",
+            "text": "数据字典",
+            "tag": "H2",
+            "ok": true
+          },
+          {
+            "name": "muted text",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "工作台",
+            "tag": "A",
+            "ok": true
+          },
+          {
+            "name": "sidebar group",
+            "ratio": 7.66,
+            "threshold": 4.5,
+            "size": 12,
+            "weight": 500,
+            "large": false,
+            "color": "lab(66.128 -0.0000298023 0.0000119209)",
+            "bg": "rgb(10,10,10)",
+            "text": "客户",
+            "tag": "BUTTON",
+            "ok": true
+          },
+          {
+            "name": "primary button",
+            "ratio": 14.23,
+            "threshold": 4.5,
+            "size": 14,
+            "weight": 500,
+            "large": false,
+            "color": "lab(7.78201 -0.0000149012 0)",
+            "bg": "rgb(229,229,229)",
+            "text": "新建字典",
+            "tag": "BUTTON",
+            "ok": true
+          }
+        ],
+        "badges": [],
+        "requiredMeasured": 6,
+        "minRatio": 7.07,
+        "minSample": "table header",
+        "failures": [],
+        "screenshot": "config_substitute-dark.png",
+        "verdict": "PASS",
+        "missingSamples": [],
+        "naNote": null
+      }
+    },
+    "threshold": {
+      "normalText": 4.5,
+      "largeText": 3
+    },
+    "notes": []
+  },
+  "C": {
+    "dictionary": {
+      "/api/dictionaries": {
+        "status": 200,
+        "cacheControl": null,
+        "etag": null,
+        "lastModified": null,
+        "contentEncoding": null,
+        "transferEncoding": "chunked",
+        "contentLength": null,
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "decodedBytes": 8046,
+        "rawBytes": 8046,
+        "ttfbMs": 39.6,
+        "contentType": "application/json"
+      },
+      "/api/customers/dictionaries/currency": {
+        "status": 200,
+        "cacheControl": null,
+        "etag": null,
+        "lastModified": null,
+        "contentEncoding": null,
+        "transferEncoding": "chunked",
+        "contentLength": null,
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "decodedBytes": 15442,
+        "rawBytes": 15442,
+        "ttfbMs": 59,
+        "contentType": "application/json"
+      }
+    },
+    "probes404": [
+      {
+        "path": "/api/i18n/zh",
+        "status": 404,
+        "bytes": 21,
+        "body": "{\"error\":\"未找到\"}",
+        "cacheControl": null,
+        "etag": null,
+        "contentEncoding": null
+      },
+      {
+        "path": "/api/i18n/en",
+        "status": 404,
+        "bytes": 21,
+        "body": "{\"error\":\"未找到\"}",
+        "cacheControl": null,
+        "etag": null,
+        "contentEncoding": null
+      },
+      {
+        "path": "/api/i18n",
+        "status": 404,
+        "bytes": 21,
+        "body": "{\"error\":\"未找到\"}",
+        "cacheControl": null,
+        "etag": null,
+        "contentEncoding": null
+      },
+      {
+        "path": "/api/translations",
+        "status": 404,
+        "bytes": 21,
+        "body": "{\"error\":\"未找到\"}",
+        "cacheControl": null,
+        "etag": null,
+        "contentEncoding": null
+      },
+      {
+        "path": "/api/locales",
+        "status": 404,
+        "bytes": 21,
+        "body": "{\"error\":\"未找到\"}",
+        "cacheControl": null,
+        "etag": null,
+        "contentEncoding": null
+      }
+    ],
+    "htmlCarrier": {
+      "login_unauth": {
+        "path": "/login",
+        "status": 200,
+        "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "etag": null,
+        "lastModified": null,
+        "contentEncoding": "gzip",
+        "contentLength": null,
+        "decodedBytes": 114274,
+        "rawBytes": 27180,
+        "inlineDictKeyMatches": 1427,
+        "inlineDictKeyUnique": 1427,
+        "sampleKeys": [
+          "auth.accessDenied.dashboard",
+          "auth.accessDenied.home",
+          "auth.accessDenied.message",
+          "auth.accessDenied.title",
+          "auth.acl.allModuleFeatures"
+        ],
+        "keyRegex": "\\\\\"([a-zA-Z][\\w-]*(?:\\.[\\w-]+)+)\\\\\":"
+      },
+      "backend_auth": {
+        "path": "/backend",
+        "status": 200,
+        "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+        "etag": null,
+        "lastModified": null,
+        "contentEncoding": "gzip",
+        "contentLength": null,
+        "decodedBytes": 1665447,
+        "rawBytes": 331382,
+        "inlineDictKeyMatches": 23107,
+        "inlineDictKeyUnique": 23107,
+        "sampleKeys": [
+          "dashboards.analytics.chartVariant.donut",
+          "dashboards.analytics.chartVariant.pie",
+          "dashboards.analytics.comparison.vsDayBefore",
+          "dashboards.analytics.comparison.vsLastMonth",
+          "dashboards.analytics.comparison.vsLastQuarter"
+        ],
+        "keyRegex": "\\\\\"([a-zA-Z][\\w-]*(?:\\.[\\w-]+)+)\\\\\":"
+      }
+    },
+    "public": {
+      "url": "https://mercato.ila3.top/login",
+      "status": 200,
+      "method": "curl -sS -D public-login-2.headers (未启用 --compressed)",
+      "attempts": [
+        {
+          "at": "2026-11-11T01:31:33Z",
+          "status": 200,
+          "ttfbSeconds": 1.27,
+          "note": "首次探测 200，cf-cache-status: DYNAMIC"
+        },
+        {
+          "at": "2026-11-11T01:38Z",
+          "status": "TIMEOUT",
+          "maxTimeSeconds": 30,
+          "receivedBytes": 15852,
+          "note": "网络降级，30s 未完成"
+        },
+        {
+          "at": "2026-11-11T01:41Z",
+          "status": 200,
+          "ttfbSeconds": 1.594271,
+          "totalSeconds": 4.498645,
+          "downloadedBytes": 114274,
+          "note": "最终用于本段结论的实测样本"
+        }
+      ],
+      "cfCacheStatus": "DYNAMIC",
+      "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+      "etag": null,
+      "contentEncoding": null,
+      "contentType": "text/html; charset=utf-8",
+      "server": "cloudflare",
+      "cfRay": "a58993db8dd64e81-LAX",
+      "note": "公网链路抖动明显：同一 URL 在 01:38 超时、01:41 成功（TTFB 1.59s）。cf-cache-status=DYNAMIC 来自实际 200 响应头。"
+    },
+    "notes": [],
+    "verdicts": {
+      "dedicated_i18n_endpoint": {
+        "verdict": "N/A",
+        "detail": "不存在 /api/i18n/* 专用字典接口（5 条探针均 404）；i18n 字典内联在服务端 RSC/HTML 中"
+      },
+      "dictionary_api_reachable": {
+        "verdict": "PASS",
+        "detail": "GET /api/dictionaries -> 200, 8046 bytes"
+      },
+      "dictionary_cache_headers": {
+        "verdict": "FAIL",
+        "detail": "cache-control=缺失; etag=缺失; content-encoding=缺失; transfer-encoding=chunked"
+      },
+      "login_html_dict_carrier": {
+        "verdict": "PASS",
+        "detail": "1427 keys, 114274 decoded bytes, cache-control=private, no-cache, no-store, max-age=0, must-revalidate"
+      },
+      "public_cf_cache_status": {
+        "verdict": "PASS",
+        "detail": "cf-cache-status=DYNAMIC"
+      }
+    }
+  },
+  "D": {
+    "loopback": {
+      "note": "loopback = 本机 127.0.0.1:3000，keep-alive 单连接，Node http.request 到 response 头为 TTFB；gzip 传输",
+      "login": {
+        "label": "login",
+        "path": "/login",
+        "n": 20,
+        "okCount": 20,
+        "ttfbMs": {
+          "p50": 27.9,
+          "p95": 39.7,
+          "min": 26.8,
+          "max": 50,
+          "avg": 30.1
+        },
+        "htmlBytesDecoded": 114274,
+        "htmlBytesCompressed": 27180,
+        "contentEncoding": "gzip",
+        "statuses": [
+          200
+        ],
+        "samples": [
+          {
+            "i": 0,
+            "status": 200,
+            "ttfbMs": 50,
+            "totalMs": 53.8,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 1,
+            "status": 200,
+            "ttfbMs": 31.9,
+            "totalMs": 38.3,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 2,
+            "status": 200,
+            "ttfbMs": 29.1,
+            "totalMs": 32.5,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 3,
+            "status": 200,
+            "ttfbMs": 36.4,
+            "totalMs": 39.7,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 4,
+            "status": 200,
+            "ttfbMs": 27.9,
+            "totalMs": 31.2,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 5,
+            "status": 200,
+            "ttfbMs": 27.2,
+            "totalMs": 30.6,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 6,
+            "status": 200,
+            "ttfbMs": 26.9,
+            "totalMs": 30.2,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 7,
+            "status": 200,
+            "ttfbMs": 26.8,
+            "totalMs": 30.3,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 8,
+            "status": 200,
+            "ttfbMs": 27.6,
+            "totalMs": 30.9,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 9,
+            "status": 200,
+            "ttfbMs": 28.2,
+            "totalMs": 31.7,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 10,
+            "status": 200,
+            "ttfbMs": 27.9,
+            "totalMs": 31.3,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 11,
+            "status": 200,
+            "ttfbMs": 28.4,
+            "totalMs": 31.8,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 12,
+            "status": 200,
+            "ttfbMs": 28.2,
+            "totalMs": 31.5,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 13,
+            "status": 200,
+            "ttfbMs": 27.8,
+            "totalMs": 31.2,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 14,
+            "status": 200,
+            "ttfbMs": 27.5,
+            "totalMs": 30.8,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 15,
+            "status": 200,
+            "ttfbMs": 27.4,
+            "totalMs": 30.9,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 16,
+            "status": 200,
+            "ttfbMs": 39.7,
+            "totalMs": 43.1,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 17,
+            "status": 200,
+            "ttfbMs": 28.5,
+            "totalMs": 31.8,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 18,
+            "status": 200,
+            "ttfbMs": 28,
+            "totalMs": 31.4,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 19,
+            "status": 200,
+            "ttfbMs": 27.6,
+            "totalMs": 31.1,
+            "rawBytes": 27180,
+            "decodedBytes": 114274,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          }
+        ]
+      },
+      "companies": {
+        "label": "companies",
+        "path": "/backend/customers/companies",
+        "n": 20,
+        "okCount": 20,
+        "ttfbMs": {
+          "p50": 260.5,
+          "p95": 374.9,
+          "min": 177.5,
+          "max": 531.5,
+          "avg": 276
+        },
+        "htmlBytesDecoded": 1731215,
+        "htmlBytesCompressed": 344415,
+        "contentEncoding": "gzip",
+        "statuses": [
+          200
+        ],
+        "samples": [
+          {
+            "i": 0,
+            "status": 200,
+            "ttfbMs": 297.9,
+            "totalMs": 357.3,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 1,
+            "status": 200,
+            "ttfbMs": 374.9,
+            "totalMs": 422.4,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 2,
+            "status": 200,
+            "ttfbMs": 187.2,
+            "totalMs": 230.8,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 3,
+            "status": 200,
+            "ttfbMs": 191.4,
+            "totalMs": 234.6,
+            "rawBytes": 342712,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 4,
+            "status": 200,
+            "ttfbMs": 177.5,
+            "totalMs": 221.6,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 5,
+            "status": 200,
+            "ttfbMs": 193.7,
+            "totalMs": 237.1,
+            "rawBytes": 343303,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 6,
+            "status": 200,
+            "ttfbMs": 260.5,
+            "totalMs": 406.6,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 7,
+            "status": 200,
+            "ttfbMs": 213.3,
+            "totalMs": 276.6,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 8,
+            "status": 200,
+            "ttfbMs": 531.5,
+            "totalMs": 585,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 9,
+            "status": 200,
+            "ttfbMs": 204.6,
+            "totalMs": 257.1,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 10,
+            "status": 200,
+            "ttfbMs": 242.1,
+            "totalMs": 287.2,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 11,
+            "status": 200,
+            "ttfbMs": 246,
+            "totalMs": 441.3,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 12,
+            "status": 200,
+            "ttfbMs": 316,
+            "totalMs": 481.8,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 13,
+            "status": 200,
+            "ttfbMs": 323.9,
+            "totalMs": 398.7,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 14,
+            "status": 200,
+            "ttfbMs": 300.6,
+            "totalMs": 462.3,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 15,
+            "status": 200,
+            "ttfbMs": 315.6,
+            "totalMs": 482.4,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 16,
+            "status": 200,
+            "ttfbMs": 295.8,
+            "totalMs": 338.8,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 17,
+            "status": 200,
+            "ttfbMs": 187.4,
+            "totalMs": 230.1,
+            "rawBytes": 343300,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 18,
+            "status": 200,
+            "ttfbMs": 339.1,
+            "totalMs": 413.1,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          },
+          {
+            "i": 19,
+            "status": 200,
+            "ttfbMs": 320.5,
+            "totalMs": 364,
+            "rawBytes": 344415,
+            "decodedBytes": 1731215,
+            "contentEncoding": "gzip",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentType": "text/html; charset=utf-8"
+          }
+        ]
+      }
+    },
+    "public": {
+      "login": {
+        "url": "https://mercato.ila3.top/login",
+        "UNVERIFIED": true,
+        "n_attempted": 6,
+        "n_ok": 2,
+        "note": "公网在当前窗口严重降级/超时，未取得 >=3 个完整样本，按 UNVERIFIED 处理；loopback 数据不受影响。",
+        "samples": [
+          {
+            "i": 0,
+            "http": 200,
+            "ttfb": 3.370516,
+            "total": 7.451658,
+            "size": 114274,
+            "cfCacheStatus": "DYNAMIC",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentEncoding": null
+          },
+          {
+            "i": 1,
+            "error": "Error: Command failed: curl -sS -o /dev/null -D - -w {\"http\":%{http_code},\"ttfb\":%{time_starttransfer},\"total\":%{time_to"
+          },
+          {
+            "i": 2,
+            "http": 200,
+            "ttfb": 2.375552,
+            "total": 5.534687,
+            "size": 114274,
+            "cfCacheStatus": "DYNAMIC",
+            "cacheControl": "private, no-cache, no-store, max-age=0, must-revalidate",
+            "contentEncoding": null
+          },
+          {
+            "i": 3,
+            "error": "Error: Command failed: curl -sS -o /dev/null -D - -w {\"http\":%{http_code},\"ttfb\":%{time_starttransfer},\"total\":%{time_to"
+          },
+          {
+            "i": 4,
+            "error": "Error: Command failed: curl -sS -o /dev/null -D - -w {\"http\":%{http_code},\"ttfb\":%{time_starttransfer},\"total\":%{time_to"
+          },
+          {
+            "i": 5,
+            "error": "Error: Command failed: curl -sS -o /dev/null -D - -w {\"http\":%{http_code},\"ttfb\":%{time_starttransfer},\"total\":%{time_to"
+          }
+        ]
+      }
+    },
+    "inlineDict": {
+      "regex": "\\\\\"([a-zA-Z][\\w-]*(?:\\.[\\w-]+)+)\\\\\":",
+      "matches": 1427,
+      "uniqueKeys": 1427,
+      "sampleKeys": [
+        "auth.accessDenied.dashboard",
+        "auth.accessDenied.home",
+        "auth.accessDenied.message",
+        "auth.accessDenied.title",
+        "auth.acl.allModuleFeatures",
+        "auth.acl.allowAllOrganizations",
+        "auth.acl.deps.missing.add",
+        "auth.acl.deps.missing.item"
+      ],
+      "htmlDecodedBytes": 114274
+    },
+    "notes": [
+      "D 段 loopback 与公网口径分别记录，未混用。",
+      "loopback TTFB 为 Node http.request 发出到响应头条目到达；public 为 curl time_starttransfer（每次新建连接，含握手）。"
+    ],
+    "verdicts": {
+      "login_loopback": {
+        "verdict": "PASS",
+        "detail": "p50=27.9ms p95=39.7ms (n=20), HTML 114274B (gzip 27180B)"
+      },
+      "companies_loopback": {
+        "verdict": "PASS",
+        "detail": "p50=260.5ms p95=374.9ms (n=20), HTML 1731215B (gzip 344415B)"
+      },
+      "inline_dict_keys": {
+        "verdict": "PASS",
+        "detail": "/login HTML 内联字典键 1427（唯一 1427）"
+      },
+      "public_login": {
+        "verdict": "UNVERIFIED",
+        "detail": "公网仅 2/6 个完整样本，网络超时；与 loopback 口径分开"
+      }
+    }
+  }
+}

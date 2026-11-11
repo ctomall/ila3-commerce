@@ -116,6 +116,36 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
       }
     })(),
   },
+  // T4: bundled packages still emit `-v2` detail links; keep the legacy URLs
+  // reachable but converge them on the canonical paths. 301 (not 308) is the
+  // requested contract. Next.js applies config redirects before filesystem
+  // routes, so the registered `-v2` pages are never rendered, and the original
+  // query string is appended to the destination automatically.
+  // T11: bookmark-compatible aliases for entries whose canonical location moved.
+  async redirects() {
+    return [
+      {
+        source: '/backend/customers/companies-v2/:id',
+        destination: '/backend/customers/companies/:id',
+        statusCode: 301,
+      },
+      {
+        source: '/backend/customers/people-v2/:id',
+        destination: '/backend/customers/people/:id',
+        statusCode: 301,
+      },
+      {
+        source: '/backend/config',
+        destination: '/backend/config/settings',
+        statusCode: 301,
+      },
+      {
+        source: '/backend/system/updates',
+        destination: '/backend/config/system-update',
+        statusCode: 301,
+      },
+    ]
+  },
   async headers() {
     const originHeaderName = (process.env.CUSTOMER_DOMAIN_ORIGIN_HEADER ?? 'X-Open-Mercato-Origin').trim()
     return [

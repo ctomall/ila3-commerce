@@ -1,0 +1,151 @@
+[
+  {
+    "path": "/backend/customers/companies",
+    "status": 200,
+    "tableHeaders": 5,
+    "headers": [
+      "名称",
+      "状态",
+      "生命周期阶段",
+      "关系健康度",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/customers/deals",
+    "status": 200,
+    "tableHeaders": 5,
+    "headers": [
+      "标题",
+      "状态",
+      "金额",
+      "预计成交",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/sales/orders",
+    "status": 200,
+    "tableHeaders": 8,
+    "headers": [
+      "订单",
+      "客户",
+      "渠道",
+      "条目",
+      "合计（不含税）",
+      "合计（含税）",
+      "日期",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/sales/quotes",
+    "status": 200,
+    "tableHeaders": 8,
+    "headers": [
+      "报价单",
+      "客户",
+      "渠道",
+      "条目",
+      "合计（不含税）",
+      "合计（含税）",
+      "日期",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/wms",
+    "status": 200,
+    "tableHeaders": 5,
+    "headers": [
+      "事件",
+      "详情",
+      "位置",
+      "时间",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/catalog/products",
+    "status": 200,
+    "tableHeaders": 22,
+    "headers": [
+      "标题",
+      "SKU",
+      "类型",
+      "可配置",
+      "启用",
+      "价格",
+      "渠道",
+      "已更新",
+      "款号",
+      "缓震类型"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/customer-tasks",
+    "status": 200,
+    "tableHeaders": 4,
+    "headers": [
+      "客户",
+      "任务",
+      "完成",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  },
+  {
+    "path": "/backend/checkout/transactions",
+    "status": 200,
+    "tableHeaders": 8,
+    "headers": [
+      "链接",
+      "金额",
+      "状态",
+      "支付状态",
+      "日期",
+      "客户",
+      "邮件",
+      "操作"
+    ],
+    "hScroll": false,
+    "scrollW": 1280,
+    "clientW": 1280,
+    "enums": [],
+    "dates": []
+  }
+]

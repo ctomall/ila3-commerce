@@ -1,0 +1,177 @@
+{
+  "navStatus": 200,
+  "sectionCount": 10,
+  "settingsCount": 28,
+  "hrefs": [
+    "/backend/config/scheduled-jobs",
+    "/backend/config/ai-assistant/models",
+    "/backend/config/ai-agents",
+    "/backend/config/ai-assistant/agents",
+    "/backend/config/ai-assistant/settings",
+    "/backend/config/ai-assistant/usage",
+    "/backend/config/ai-assistant/playground",
+    "/backend/config/ai-assistant/legacy",
+    "/backend/config/ai-assistant/allowlist",
+    "/backend/config/ai-assistant/moderation-flags",
+    "/backend/config/sales",
+    "/backend/config/catalog",
+    "/backend/config/customers",
+    "/backend/config/dictionaries",
+    "/backend/config/currency-fetching",
+    "/backend/config/wms",
+    "/backend/config/workflows",
+    "/backend/config/notifications",
+    "/backend/config/system-status",
+    "/backend/config/module-telemetry",
+    "/backend/config/cache",
+    "/backend/config/modules",
+    "/backend/config/translations",
+    "/backend/config/attachments",
+    "/backend/config/system-update",
+    "/backend/config/search",
+    "/backend/config/settings",
+    "/backend/config/encryption"
+  ],
+  "detail": [
+    {
+      "section": "渠道集成",
+      "label": "定时任务",
+      "href": "/backend/config/scheduled-jobs"
+    },
+    {
+      "section": "AI管理",
+      "label": "模型配置",
+      "href": "/backend/config/ai-assistant/models"
+    },
+    {
+      "section": "AI管理",
+      "label": "智能体列表",
+      "href": "/backend/config/ai-agents"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 智能体",
+      "href": "/backend/config/ai-assistant/agents"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 设置",
+      "href": "/backend/config/ai-assistant/settings"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 用量",
+      "href": "/backend/config/ai-assistant/usage"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 调试台",
+      "href": "/backend/config/ai-assistant/playground"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 助手（旧版）",
+      "href": "/backend/config/ai-assistant/legacy"
+    },
+    {
+      "section": "AI管理",
+      "label": "AI 白名单",
+      "href": "/backend/config/ai-assistant/allowlist"
+    },
+    {
+      "section": "AI管理",
+      "label": "审核标记",
+      "href": "/backend/config/ai-assistant/moderation-flags"
+    },
+    {
+      "section": "业务设置",
+      "label": "销售",
+      "href": "/backend/config/sales"
+    },
+    {
+      "section": "业务设置",
+      "label": "商品目录",
+      "href": "/backend/config/catalog"
+    },
+    {
+      "section": "业务设置",
+      "label": "客户",
+      "href": "/backend/config/customers"
+    },
+    {
+      "section": "业务设置",
+      "label": "数据字典",
+      "href": "/backend/config/dictionaries"
+    },
+    {
+      "section": "业务设置",
+      "label": "汇率抓取",
+      "href": "/backend/config/currency-fetching"
+    },
+    {
+      "section": "业务设置",
+      "label": "仓储配置",
+      "href": "/backend/config/wms"
+    },
+    {
+      "section": "规则流程",
+      "label": "工作流命令",
+      "href": "/backend/config/workflows"
+    },
+    {
+      "section": "通知设备",
+      "label": "通知投递",
+      "href": "/backend/config/notifications"
+    },
+    {
+      "section": "系统维护",
+      "label": "系统状态",
+      "href": "/backend/config/system-status"
+    },
+    {
+      "section": "系统维护",
+      "label": "模块遥测",
+      "href": "/backend/config/module-telemetry"
+    },
+    {
+      "section": "系统维护",
+      "label": "缓存",
+      "href": "/backend/config/cache"
+    },
+    {
+      "section": "系统维护",
+      "label": "模块应用",
+      "href": "/backend/config/modules"
+    },
+    {
+      "section": "系统维护",
+      "label": "翻译管理",
+      "href": "/backend/config/translations"
+    },
+    {
+      "section": "系统维护",
+      "label": "存储",
+      "href": "/backend/config/attachments"
+    },
+    {
+      "section": "系统维护",
+      "label": "系统升级",
+      "href": "/backend/config/system-update"
+    },
+    {
+      "section": "系统维护",
+      "label": "搜索设置",
+      "href": "/backend/config/search"
+    },
+    {
+      "section": "高级",
+      "label": "自定义实体",
+      "href": "/backend/config/settings"
+    },
+    {
+      "section": "高级",
+      "label": "加密",
+      "href": "/backend/config/encryption"
+    }
+  ]
+}

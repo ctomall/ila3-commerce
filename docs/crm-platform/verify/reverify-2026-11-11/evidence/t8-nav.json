@@ -1,0 +1,224 @@
+{
+  "groups": [
+    {
+      "i": 0,
+      "text": "工作台",
+      "expanded": "true"
+    },
+    {
+      "i": 1,
+      "text": "客户",
+      "expanded": "false"
+    },
+    {
+      "i": 2,
+      "text": "销售",
+      "expanded": "false"
+    },
+    {
+      "i": 3,
+      "text": "商品目录",
+      "expanded": "false"
+    },
+    {
+      "i": 4,
+      "text": "仓储运营",
+      "expanded": "false"
+    },
+    {
+      "i": 5,
+      "text": "售后",
+      "expanded": "false"
+    },
+    {
+      "i": 6,
+      "text": "人员与项目",
+      "expanded": "false"
+    },
+    {
+      "i": 7,
+      "text": "排班与工时",
+      "expanded": "false"
+    },
+    {
+      "i": 8,
+      "text": "支付",
+      "expanded": "false"
+    },
+    {
+      "i": 9,
+      "text": "文档",
+      "expanded": "false"
+    },
+    {
+      "i": 10,
+      "text": "消息",
+      "expanded": "false"
+    },
+    {
+      "i": 11,
+      "text": "自动化",
+      "expanded": "false"
+    },
+    {
+      "i": 12,
+      "text": "业务合规（欧盟零毁林专项）",
+      "expanded": "false"
+    },
+    {
+      "i": 13,
+      "text": "管理中心",
+      "expanded": "false"
+    }
+  ],
+  "audit": {
+    "groupCount": 14,
+    "groupNames": [
+      "工作台",
+      "客户",
+      "销售",
+      "商品目录",
+      "仓储运营",
+      "售后",
+      "人员与项目",
+      "排班与工时",
+      "支付",
+      "文档",
+      "消息",
+      "自动化",
+      "业务合规（欧盟零毁林专项）",
+      "管理中心"
+    ],
+    "linkCount": 63,
+    "unnamed": [],
+    "ariaMissing": [],
+    "sample": [
+      {
+        "href": "/backend",
+        "name": "前往工作台",
+        "aria": "前往工作台"
+      },
+      {
+        "href": "/backend",
+        "name": "工作台",
+        "aria": "工作台"
+      },
+      {
+        "href": "/backend/calendar",
+        "name": "日历",
+        "aria": "日历"
+      },
+      {
+        "href": "/backend/staff/time-tracking",
+        "name": "我的工作",
+        "aria": "我的工作"
+      },
+      {
+        "href": "/backend/work-inbox",
+        "name": "工作收件箱",
+        "aria": "工作收件箱"
+      },
+      {
+        "href": "/backend/customers/companies",
+        "name": "公司",
+        "aria": "公司"
+      },
+      {
+        "href": "/backend/customers/deals",
+        "name": "商机",
+        "aria": "商机"
+      },
+      {
+        "href": "/backend/customers/deals/map",
+        "name": "商机地图",
+        "aria": "商机地图"
+      }
+    ]
+  },
+  "tabOrder": [
+    {
+      "tag": "A",
+      "role": null,
+      "name": "跳到主要内容",
+      "href": "#main-content"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "name": "切换侧边栏",
+      "href": null
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "前往工作台",
+      "href": "/backend"
+    },
+    {
+      "tag": "INPUT",
+      "role": null,
+      "name": "搜索导航",
+      "href": null
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "name": "工作台",
+      "href": null
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "工作台",
+      "href": "/backend"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "日历",
+      "href": "/backend/calendar"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "我的工作",
+      "href": "/backend/staff/time-tracking"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "工作收件箱",
+      "href": "/backend/work-inbox"
+    },
+    {
+      "tag": "BUTTON",
+      "role": null,
+      "name": "客户",
+      "href": null
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "公司",
+      "href": "/backend/customers/companies"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "商机",
+      "href": "/backend/customers/deals"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "商机地图",
+      "href": "/backend/customers/deals/map"
+    },
+    {
+      "tag": "A",
+      "role": null,
+      "name": "客户相关任务",
+      "href": "/backend/customer-tasks"
+    }
+  ]
+}

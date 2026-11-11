@@ -1,0 +1,46 @@
+{
+  "capturedAt": "2026-11-11T01:29:22.639Z",
+  "production": {
+    "sha": "56d319dc7b423618257b2f7dcc2c3a136b6f8ec6",
+    "version": "0.2.2",
+    "createdAt": "2026-11-11T00:54:50.762Z",
+    "source": {
+      "method": "ci-artifact",
+      "repository": "ctomall/ila3-commerce",
+      "workflowRunId": 42932072943,
+      "workflow": {
+        "path": ".github/workflows/build-artifact.yml",
+        "name": "build-artifact"
+      },
+      "runUrl": "https://github.com/ctomall/ila3-commerce/actions/runs/42932072943",
+      "artifactName": "mercato-release-56d319dc7b423618257b2f7dcc2c3a136b6f8ec6",
+      "note": "Installed from the CI release package; no Next build ran on this host."
+    },
+    "artifact": {
+      "id": 13817151450,
+      "files": 14589,
+      "contentDigest": "17129f56cfb493de7a8460f6646f8d803f8e1e2995049a6d7afda63ff1cb314b",
+      "manifestSha256": "f5b032671cd0247f9703cadcbfe62721afc038ea4ed9277c1fe13ac387ade671",
+      "archive": {
+        "file": "release.tar.gz",
+        "sha256": "b78534a4781b9b990a163b2ee3e445e617718e7cb2b15a4f746df66109256de8",
+        "bytes": 236651568
+      }
+    },
+    "installMs": 29415
+  },
+  "runtime": {
+    "pid": "2071847",
+    "cwd": "/home/pro/releases/mercato/56d319dc7b423618257b2f7dcc2c3a136b6f8ec6",
+    "matchesRelease": true
+  },
+  "source": {
+    "head": "e055b80fa0d582c710d11cda25300277c46c15df",
+    "originMain": "e055b80fa0d582c710d11cda25300277c46c15df",
+    "dirty": "",
+    "aheadOfRelease": [
+      "e055b80 fix(communications): hide reply hints from read-only inbox users",
+      "7ee01b7 feat(communications): render the inbox composer only with reply access"
+    ]
+  }
+}

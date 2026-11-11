@@ -1,0 +1,933 @@
+[
+  {
+    "path": "/backend",
+    "zhRatio": 0.6215,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/customers/companies",
+    "zhRatio": 0.6845,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "AI",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  },
+  {
+    "path": "/backend/customers/deals",
+    "zhRatio": 0.5958,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "AI",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  },
+  {
+    "path": "/backend/customers/people",
+    "zhRatio": 0.5039,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "AI",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  },
+  {
+    "path": "/backend/customer-tasks",
+    "zhRatio": 0.789,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/calendar",
+    "zhRatio": 0.7979,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/sales/orders",
+    "zhRatio": 0.4758,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/sales/quotes",
+    "zhRatio": 0.809,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/sales/channels",
+    "zhRatio": 0.4276,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/catalog/products",
+    "zhRatio": 0.2238,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "AI",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      },
+      {
+        "tag": "th",
+        "text": "SKU",
+        "cls": "text-left font-medium px-4 py-2 whitespace-nowrap text-muted"
+      },
+      {
+        "tag": "th",
+        "text": "EUDR",
+        "cls": "text-left font-medium px-4 py-2 whitespace-nowrap text-muted"
+      }
+    ]
+  },
+  {
+    "path": "/backend/catalog/categories",
+    "zhRatio": 0.4205,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/catalog/prices",
+    "zhRatio": 0.3449,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/wms",
+    "zhRatio": 0.8726,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/checkout/pay-links",
+    "zhRatio": 0.512,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h1",
+        "text": "Pay Links",
+        "cls": "text-base font-semibold"
+      }
+    ]
+  },
+  {
+    "path": "/backend/checkout/transactions",
+    "zhRatio": 0.7542,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h1",
+        "text": "Transactions",
+        "cls": "text-base font-semibold"
+      }
+    ]
+  },
+  {
+    "path": "/backend/messages",
+    "zhRatio": 0.784,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/integrations",
+    "zhRatio": 0.0878,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Data Sync",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Communication",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Notification",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Storage",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Webhook",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/documents",
+    "zhRatio": 0.7311,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Favorites",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/scheduled-jobs",
+    "zhRatio": 0.1628,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/models",
+    "zhRatio": 0.8364,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-agents",
+    "zhRatio": 0.6438,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/agents",
+    "zhRatio": 0.0887,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Catalog Assistant (catalog.catalog_assistant)",
+        "cls": "inline-flex items-center justify-between gap-2 rounded-md bo"
+      },
+      {
+        "tag": "h2",
+        "text": "Catalog Assistant",
+        "cls": "text-xl font-semibold"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/settings",
+    "zhRatio": 0.5918,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/usage",
+    "zhRatio": 0.4667,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/playground",
+    "zhRatio": 0.2654,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/legacy",
+    "zhRatio": 0.6,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/allowlist",
+    "zhRatio": 0.5162,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "label",
+        "text": "Anthropic",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "claude-sonnet-4-6-20260107",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "claude-opus-4-6-20260107",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "OpenAI",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "gpt-5",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "gpt-4o-mini",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "gpt-4o",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Google",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "gemini-3-pro",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Azure OpenAI",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "gpt-5",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "gpt-5.5",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "DeepInfra",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "zai-org/GLM-4.7-Flash",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "meta-llama/Llama-4-Scout-17B-16E-Instruct",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "deepseek-ai/DeepSeek-V3.2-Exp",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Qwen/Qwen3-Coder-30B-A3B-Instruct",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Groq",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "llama-4-scout-17b",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "mixtral-8x22b-32768",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Together AI",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "Qwen/Qwen2.5-72B-Instruct-Turbo",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "Fireworks AI",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "LiteLLM",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "Ollama (local)",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "qwen2.5-coder",
+        "cls": "flex items-center gap-2 text-sm"
+      },
+      {
+        "tag": "label",
+        "text": "OpenRouter",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "Requesty",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      },
+      {
+        "tag": "label",
+        "text": "LM Studio (local)",
+        "cls": "flex items-center gap-2 text-sm leading-none select-none gro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/ai-assistant/moderation-flags",
+    "zhRatio": 0.7937,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/sales",
+    "zhRatio": 0.5153,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/catalog",
+    "zhRatio": 0.7778,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/customers",
+    "zhRatio": 0.6389,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/dictionaries",
+    "zhRatio": 0.4395,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/currency-fetching",
+    "zhRatio": 0.5642,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "label",
+        "text": "Daily Sync Time:",
+        "cls": "text-xs text-muted-foreground whitespace-nowrap"
+      },
+      {
+        "tag": "label",
+        "text": "Last Sync:",
+        "cls": "text-xs text-muted-foreground whitespace-nowrap"
+      },
+      {
+        "tag": "button",
+        "text": "Fetch Now",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      },
+      {
+        "tag": "h3",
+        "text": "Raiffeisen Bank Poland",
+        "cls": "text-sm font-medium"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/wms",
+    "zhRatio": 0.8981,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/workflows",
+    "zhRatio": 0.2471,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/notifications",
+    "zhRatio": 0.6258,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "th",
+        "text": "Security",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "Checkout",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "Communication",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "EUDR",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "Warranty claims",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "Webhooks",
+        "cls": "px-4 py-3 text-left font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "Workflows",
+        "cls": "px-4 py-3 text-left font-semibold"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/system-status",
+    "zhRatio": 0.279,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h2",
+        "text": "System status",
+        "cls": "text-lg font-semibold"
+      },
+      {
+        "tag": "h3",
+        "text": "Security",
+        "cls": "text-base font-semibold"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/module-telemetry",
+    "zhRatio": 0.0927,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h2",
+        "text": "Module telemetry",
+        "cls": "text-lg font-semibold"
+      },
+      {
+        "tag": "th",
+        "text": "CPU",
+        "cls": "px-3 py-2 text-right"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/cache",
+    "zhRatio": 0.5433,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/modules",
+    "zhRatio": 0.3838,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/translations",
+    "zhRatio": 0.3533,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h2",
+        "text": "Translations",
+        "cls": "text-xl font-semibold"
+      },
+      {
+        "tag": "button",
+        "text": "EN",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "PL",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "ES",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "DE",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "KO",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "ZH",
+        "cls": "group relative -mb-px inline-flex items-center gap-2 rounded"
+      },
+      {
+        "tag": "button",
+        "text": "Save translations",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/attachments",
+    "zhRatio": 0.2642,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h2",
+        "text": "Attachment partitions",
+        "cls": "text-lg font-semibold"
+      },
+      {
+        "tag": "button",
+        "text": "Add partition",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "th",
+        "text": "OCR",
+        "cls": "text-left font-medium px-4 py-2 whitespace-nowrap text-muted"
+      },
+      {
+        "tag": "th",
+        "text": "Storage",
+        "cls": "text-left font-medium px-4 py-2 whitespace-nowrap text-muted"
+      },
+      {
+        "tag": "th",
+        "text": "Env variable",
+        "cls": "text-left font-medium px-4 py-2 whitespace-nowrap text-muted"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/system-update",
+    "zhRatio": 0.6488,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "th",
+        "text": "SHA",
+        "cls": "whitespace-nowrap px-3 py-2 font-medium"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/search",
+    "zhRatio": 0.236,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "h1",
+        "text": "Search Settings",
+        "cls": "text-2xl font-bold"
+      },
+      {
+        "tag": "button",
+        "text": "OpenAI Set OPENAI_API_KEY to enable OpenAI",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      },
+      {
+        "tag": "button",
+        "text": "Google Generative AI Set GOOGLE_GENERATIVE_AI_API_KEY to enable Google Generative AI",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      },
+      {
+        "tag": "button",
+        "text": "Mistral Set MISTRAL_API_KEY to enable Mistral",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      },
+      {
+        "tag": "button",
+        "text": "Cohere Set COHERE_API_KEY to enable Cohere",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      },
+      {
+        "tag": "button",
+        "text": "Amazon Bedrock Set AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY to enable Bedrock",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      },
+      {
+        "tag": "button",
+        "text": "Ollama (Local) Ollama not reachable at http://localhost:11434",
+        "cls": "inline-flex items-center gap-2 text-sm font-medium cursor-po"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/settings",
+    "zhRatio": 0.5259,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      }
+    ]
+  },
+  {
+    "path": "/backend/config/encryption",
+    "zhRatio": 0.6789,
+    "items": [
+      {
+        "tag": "button",
+        "text": "Acme Corp",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "dashboards:dashboard_layout",
+        "cls": "inline-flex w-full items-center justify-between gap-2 rounde"
+      },
+      {
+        "tag": "button",
+        "text": "Add field",
+        "cls": "inline-flex items-center justify-center whitespace-nowrap ro"
+      },
+      {
+        "tag": "button",
+        "text": "Save encryption map",
+        "cls": "inline-flex items-center justify-center gap-2 whitespace-now"
+      }
+    ]
+  }
+]

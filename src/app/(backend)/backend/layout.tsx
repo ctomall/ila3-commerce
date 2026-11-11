@@ -9,10 +9,35 @@ import { resolveForcedLocale } from '@open-mercato/shared/lib/i18n/locale'
 import { I18nProvider } from '@open-mercato/shared/lib/i18n/context'
 import { authorizeFeatures } from '@open-mercato/shared/security/featurePolicy'
 import { APP_VERSION } from '@open-mercato/shared/lib/version'
+import fs from 'node:fs'
+import path from 'node:path'
 
-// Footer shows the exact build, not just the package version.
+// Footer shows the exact build, not just the package version. scripts/build.mjs
+// exports NEXT_PUBLIC_BUILD_VERSION from package.json and stamps the same value
+// into .mercato/build-info.json; that stamp travels with the build directory, so
+// it is the runtime fallback when the bundle was built without the env var.
+// APP_VERSION is the last resort: it is the @open-mercato/shared package's own
+// version, which can differ from the application release.
 const BUILD_SHA = process.env.NEXT_PUBLIC_BUILD_SHA?.trim() || ''
-const DISPLAY_VERSION = BUILD_SHA ? `${APP_VERSION} (${BUILD_SHA})` : APP_VERSION
+const BUILD_VERSION = process.env.NEXT_PUBLIC_BUILD_VERSION?.trim() || ''
+
+function readRuntimeBuildVersion(): string {
+  try {
+    const stampPath = path.join(process.cwd(), '.mercato', 'build-info.json')
+    const stamp = JSON.parse(fs.readFileSync(stampPath, 'utf8')) as { version?: unknown }
+    if (typeof stamp.version === 'string' && stamp.version.trim().length > 0) {
+      return stamp.version.trim()
+    }
+  } catch {
+    return ''
+  }
+  return ''
+}
+
+function resolveDisplayVersion(): string {
+  const version = BUILD_VERSION || readRuntimeBuildVersion() || APP_VERSION
+  return BUILD_SHA ? `${version} (${BUILD_SHA})` : version
+}
 import { parseBooleanWithDefault } from '@open-mercato/shared/lib/boolean'
 import { PageInjectionBoundary } from '@open-mercato/ui/backend/injection/PageInjectionBoundary'
 import { BrowserTelemetry } from '@open-mercato/telemetry/browser'
@@ -131,7 +156,7 @@ export default async function BackendLayout({
           />
         )}
         adminNavApi="/api/crm_navigation/navigation?chrome=1"
-        version={DISPLAY_VERSION}
+        version={resolveDisplayVersion()}
         hideFooter={hideBackendFooter}
       >
         <PageInjectionBoundary path={path} context={injectionContext}>

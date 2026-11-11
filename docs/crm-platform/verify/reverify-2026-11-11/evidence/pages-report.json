@@ -1,0 +1,761 @@
+[
+  {
+    "path": "/backend",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend",
+    "title": "ILA3 Commerce",
+    "zhRatio": 0.6215,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 979ch h1=\"工作台\" zhRatio=0.6215",
+    "screenshot": "shots/backend.png"
+  },
+  {
+    "path": "/backend/customers/companies",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/customers/companies",
+    "title": "公司",
+    "zhRatio": 0.6845,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 476ch h1=\"公司\" zhRatio=0.6845",
+    "screenshot": "shots/backend_customers_companies.png"
+  },
+  {
+    "path": "/backend/customers/deals",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/customers/deals",
+    "title": "商机",
+    "zhRatio": 0.5958,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 1078ch h1=\"商机\" zhRatio=0.5958",
+    "screenshot": "shots/backend_customers_deals.png"
+  },
+  {
+    "path": "/backend/customers/people",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/customers/people",
+    "title": "联系人",
+    "zhRatio": 0.5039,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 985ch h1=\"联系人\" zhRatio=0.5039",
+    "screenshot": "shots/backend_customers_people.png"
+  },
+  {
+    "path": "/backend/customer-tasks",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/customer-tasks",
+    "title": "客户相关任务",
+    "zhRatio": 0.789,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 303ch h1=\"客户相关任务\" zhRatio=0.789",
+    "screenshot": "shots/backend_customer-tasks.png"
+  },
+  {
+    "path": "/backend/calendar",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/calendar",
+    "title": "日历",
+    "zhRatio": 0.7979,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 594ch h1=\"2026年11月11日\" zhRatio=0.7979",
+    "screenshot": "shots/backend_calendar.png"
+  },
+  {
+    "path": "/backend/sales/orders",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/sales/orders",
+    "title": "订单",
+    "zhRatio": 0.4758,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 992ch h1=\"销售订单\n查看单据详情，含客户信息、金额合计与渠道。\" zhRatio=0.4758",
+    "screenshot": "shots/backend_sales_orders.png"
+  },
+  {
+    "path": "/backend/sales/quotes",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/sales/quotes",
+    "title": "报价单",
+    "zhRatio": 0.809,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 454ch h1=\"销售报价单\n查看单据详情，含客户信息、金额合计与渠道。\" zhRatio=0.809",
+    "screenshot": "shots/backend_sales_quotes.png"
+  },
+  {
+    "path": "/backend/sales/channels",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/sales/channels",
+    "title": "销售渠道",
+    "zhRatio": 0.4276,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 648ch h1=\"销售渠道\n按市场或店铺管理商品报价。\" zhRatio=0.4276",
+    "screenshot": "shots/backend_sales_channels.png"
+  },
+  {
+    "path": "/backend/catalog/products",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/catalog/products",
+    "title": "产品与服务",
+    "zhRatio": 0.2238,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "表头 SKU/EUDR 为行业缩写，属领域术语，不计英文残留。",
+    "screenshot": "shots/backend_catalog_products.png"
+  },
+  {
+    "path": "/backend/catalog/categories",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/catalog/categories",
+    "title": "分类",
+    "zhRatio": 0.4205,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 762ch h1=\"分类\" zhRatio=0.4205",
+    "screenshot": "shots/backend_catalog_categories.png"
+  },
+  {
+    "path": "/backend/catalog/prices",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/catalog/prices",
+    "title": "价格规则",
+    "zhRatio": 0.3449,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 1459ch h1=\"价格规则\" zhRatio=0.3449",
+    "screenshot": "shots/backend_catalog_prices.png"
+  },
+  {
+    "path": "/backend/wms",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/wms",
+    "title": "运营看板",
+    "zhRatio": 0.8726,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 781ch h1=\"运营看板\" zhRatio=0.8726",
+    "screenshot": "shots/backend_wms.png"
+  },
+  {
+    "path": "/backend/checkout/pay-links",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/checkout/pay-links",
+    "title": "支付链接",
+    "zhRatio": 0.512,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Create",
+        "element": "a.inline-flex (primary CTA)",
+        "text": "Create Link"
+      },
+      {
+        "term": "Pay Links",
+        "element": "h1 page heading",
+        "text": "Pay Links"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "页面标题 h1 与主 CTA 为英文；其余表头/导航为中文。命中词表词 \"Create\"（元素 <a>Create Link</a>）。",
+    "screenshot": "shots/backend_checkout_pay-links.png"
+  },
+  {
+    "path": "/backend/checkout/transactions",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/checkout/transactions",
+    "title": "交易记录",
+    "zhRatio": 0.7542,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Transactions",
+        "element": "h1 page heading",
+        "text": "Transactions"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "页面 h1 为英文 \"Transactions\"，而左侧导航同一页面显示\"交易记录\"，属未翻译标题。",
+    "screenshot": "shots/backend_checkout_transactions.png"
+  },
+  {
+    "path": "/backend/messages",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/messages",
+    "title": "消息",
+    "zhRatio": 0.784,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 296ch h1=\"\" zhRatio=0.784",
+    "screenshot": "shots/backend_messages.png"
+  },
+  {
+    "path": "/backend/integrations",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/integrations",
+    "title": "集成",
+    "zhRatio": 0.0878,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Configure",
+        "element": "a (button-styled, per provider card)",
+        "text": "Configure"
+      },
+      {
+        "term": "0 log events (30d)",
+        "element": "p (card meta)",
+        "text": "0 log events (30d)"
+      },
+      {
+        "term": "Error rate: 0%",
+        "element": "p (card meta)",
+        "text": "Error rate: 0%"
+      },
+      {
+        "term": "Data Sync / Communication / Notification / Storage / Webhook",
+        "element": "button (category filter)",
+        "text": "Data Sync"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "整页基本未本地化（zhRatio 0.088）：卡片描述、Configure 按钮、日志/错误率元信息、分类标签均为英文；仅\"未配置\"为中文。rawKey \"gmail.users.messages.send\" 系英文说明句中的 Google API 方法名，不计为裸键。",
+    "screenshot": "shots/backend_integrations.png"
+  },
+  {
+    "path": "/backend/documents",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/documents",
+    "title": "文档",
+    "zhRatio": 0.7311,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Favorites",
+        "element": "button",
+        "text": "Favorites"
+      },
+      {
+        "term": "Templates",
+        "element": "a (button-styled link)",
+        "text": "Templates"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "中文页面中混入英文控件 \"Favorites\" 与 \"Templates\"（同区块其余为\"从模板新建/创建文档/刷新\"）。",
+    "screenshot": "shots/backend_documents.png"
+  },
+  {
+    "path": "/backend/config/scheduled-jobs",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/scheduled-jobs",
+    "title": "定时任务",
+    "zhRatio": 0.1628,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "zhRatio 低（0.163）源于任务名/cron/目标等英文数据；界面文案（定时任务/刷新/新建定时任务/表头）为中文。",
+    "screenshot": "shots/backend_config_scheduled-jobs.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/models",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/models",
+    "title": "模型配置",
+    "zhRatio": 0.8364,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 831ch h1=\"模型配置\" zhRatio=0.8364",
+    "screenshot": "shots/backend_config_ai-assistant_models.png"
+  },
+  {
+    "path": "/backend/config/ai-agents",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-agents",
+    "title": "智能体列表",
+    "zhRatio": 0.6438,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 1327ch h1=\"智能体列表\" zhRatio=0.6438",
+    "screenshot": "shots/backend_config_ai-agents.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/agents",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/agents",
+    "title": "AI 智能体",
+    "zhRatio": 0.0887,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "残留命中（Save/Search/Add）均在 <pre> 系统提示词预览块内，属内容展示；允许的工具名（Hybrid search + search.hybrid_search）属工具注册数据，不计。",
+    "screenshot": "shots/backend_config_ai-assistant_agents.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/settings",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/settings",
+    "title": "AI 设置",
+    "zhRatio": 0.5918,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 727ch h1=\"AI 助手设置\" zhRatio=0.5918",
+    "screenshot": "shots/backend_config_ai-assistant_settings.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/usage",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/usage",
+    "title": "AI 用量",
+    "zhRatio": 0.4667,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 669ch h1=\"\" zhRatio=0.4667",
+    "screenshot": "shots/backend_config_ai-assistant_usage.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/playground",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/playground",
+    "title": "AI 调试台",
+    "zhRatio": 0.2654,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "zhRatio 低（0.265）源于提示词/模型输出等英文内容，界面文案为中文。",
+    "screenshot": "shots/backend_config_ai-assistant_playground.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/legacy",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/legacy",
+    "title": "AI 助手（旧版）",
+    "zhRatio": 0.6,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 755ch h1=\"AI 助手设置\" zhRatio=0.6",
+    "screenshot": "shots/backend_config_ai-assistant_legacy.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/allowlist",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/allowlist",
+    "title": "AI 白名单",
+    "zhRatio": 0.5162,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "标签为模型/供应商名（Anthropic、claude-*、gpt-*、Ollama (local) 等），属刻意展示的数据。",
+    "screenshot": "shots/backend_config_ai-assistant_allowlist.png"
+  },
+  {
+    "path": "/backend/config/ai-assistant/moderation-flags",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/ai-assistant/moderation-flags",
+    "title": "审核标记",
+    "zhRatio": 0.7937,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 313ch h1=\"\" zhRatio=0.7937",
+    "screenshot": "shots/backend_config_ai-assistant_moderation-flags.png"
+  },
+  {
+    "path": "/backend/config/sales",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/sales",
+    "title": "销售",
+    "zhRatio": 0.5153,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 3113ch h1=\"\" zhRatio=0.5153",
+    "screenshot": "shots/backend_config_sales.png"
+  },
+  {
+    "path": "/backend/config/catalog",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/catalog",
+    "title": "商品目录",
+    "zhRatio": 0.7778,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 475ch h1=\"\" zhRatio=0.7778",
+    "screenshot": "shots/backend_config_catalog.png"
+  },
+  {
+    "path": "/backend/config/customers",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/customers",
+    "title": "客户",
+    "zhRatio": 0.6389,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "值列展示管道阶段键（in_progress/open/lost/closed）与中文标签（进行中/未关闭/输单/已关闭）并列，属\"值列刻意展示\"，不计残留。",
+    "screenshot": "shots/backend_config_customers.png"
+  },
+  {
+    "path": "/backend/config/dictionaries",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/dictionaries",
+    "title": "数据字典",
+    "zhRatio": 0.4395,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 678ch h1=\"\" zhRatio=0.4395",
+    "screenshot": "shots/backend_config_dictionaries.png"
+  },
+  {
+    "path": "/backend/config/currency-fetching",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/currency-fetching",
+    "title": "汇率抓取",
+    "zhRatio": 0.5642,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Fetch Now",
+        "element": "button",
+        "text": "Fetch Now"
+      },
+      {
+        "term": "Daily Sync Time:",
+        "element": "field label",
+        "text": "Daily Sync Time:"
+      },
+      {
+        "term": "Last Sync:",
+        "element": "field label",
+        "text": "Last Sync:"
+      },
+      {
+        "term": "Rates Fetched: 0",
+        "element": "p (status text)",
+        "text": "Rates Fetched: 0"
+      },
+      {
+        "term": "success",
+        "element": "status badge",
+        "text": "success"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "中文配置页中同步控件/状态为英文（\"Daily Sync Time:\"、\"Last Sync:\"、\"Fetch Now\"、\"success\"、\"Rates Fetched: 0\"）。",
+    "screenshot": "shots/backend_config_currency-fetching.png"
+  },
+  {
+    "path": "/backend/config/wms",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/wms",
+    "title": "仓储配置",
+    "zhRatio": 0.8981,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 750ch h1=\"WMS 配置\" zhRatio=0.8981",
+    "screenshot": "shots/backend_config_wms.png"
+  },
+  {
+    "path": "/backend/config/workflows",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/workflows",
+    "title": "工作流命令",
+    "zhRatio": 0.2471,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "命令 ID（catalog.products.update 等，10 个）与中文描述\"更新产品\"及 \"Requires:\" 并列，属刻意展示的权限/命令标识；英文说明段与 \"Requires:\" 标签未判失败（非控件/标题），列为口径外风险。",
+    "screenshot": "shots/backend_config_workflows.png"
+  },
+  {
+    "path": "/backend/config/notifications",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/notifications",
+    "title": "通知投递",
+    "zhRatio": 0.6258,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Security",
+        "element": "th (category header)",
+        "text": "Security"
+      },
+      {
+        "term": "Checkout",
+        "element": "th",
+        "text": "Checkout"
+      },
+      {
+        "term": "Communication",
+        "element": "th",
+        "text": "Communication"
+      },
+      {
+        "term": "Warranty claims",
+        "element": "th",
+        "text": "Warranty claims"
+      },
+      {
+        "term": "Webhooks",
+        "element": "th",
+        "text": "Webhooks"
+      },
+      {
+        "term": "Workflows",
+        "element": "th",
+        "text": "Workflows"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "通知矩阵的分类表头为英文（同表列头\"通知类型/应用内/邮件/推送\"为中文）；另有一段英文说明 \"Delivery channels per notification type...\"。疑似模块提供的分类名，需产品确认是否应本地化。",
+    "screenshot": "shots/backend_config_notifications.png"
+  },
+  {
+    "path": "/backend/config/system-status",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/system-status",
+    "title": "系统状态",
+    "zhRatio": 0.279,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "System status",
+        "element": "h2",
+        "text": "System status"
+      },
+      {
+        "term": "Runtime mode: Production",
+        "element": "p (status line)",
+        "text": "Runtime mode: Production"
+      },
+      {
+        "term": "Snapshot generated 2026/11/11 01:31:43",
+        "element": "p (status line)",
+        "text": "Snapshot generated 2026/11/11 01:31:43"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "页面 h1 为中文\"系统状态\"，紧随的 h2 与状态行仍为英文。",
+    "screenshot": "shots/backend_config_system-status.png"
+  },
+  {
+    "path": "/backend/config/module-telemetry",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/module-telemetry",
+    "title": "模块遥测",
+    "zhRatio": 0.0927,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Module telemetry",
+        "element": "h2",
+        "text": "Module telemetry"
+      },
+      {
+        "term": "Report generated 2026/11/11 01:31:45",
+        "element": "p",
+        "text": "Report generated 2026/11/11 01:31:45"
+      },
+      {
+        "term": "Collecting since 2026/11/11 00:50:00",
+        "element": "p",
+        "text": "Collecting since 2026/11/11 00:50:00"
+      },
+      {
+        "term": "From ... to now · 9 buckets (5m interval)",
+        "element": "p",
+        "text": "From 11月11日 00:50 to now · 9 buckets (5m interval)"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "h1 中文\"模块遥测\"，但其下 h2 与时间/统计行为英文；事件名（application.request.received 等）与模块 id 属刻意展示的数据标识，不计为残留。",
+    "screenshot": "shots/backend_config_module-telemetry.png"
+  },
+  {
+    "path": "/backend/config/cache",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/cache",
+    "title": "缓存",
+    "zhRatio": 0.5433,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 405ch h1=\"\" zhRatio=0.5433",
+    "screenshot": "shots/backend_config_cache.png"
+  },
+  {
+    "path": "/backend/config/modules",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/modules",
+    "title": "模块应用",
+    "zhRatio": 0.3838,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "模块 id \"search\"（等宽字体，旁为中文\"搜索\"）属标识展示；\"Loading\" 命中位于英文模块描述长句中，属内容文本，不计 UI 残留。",
+    "screenshot": "shots/backend_config_modules.png"
+  },
+  {
+    "path": "/backend/config/translations",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/translations",
+    "title": "翻译管理",
+    "zhRatio": 0.3533,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Save",
+        "element": "button",
+        "text": "Save translations"
+      },
+      {
+        "term": "Translations",
+        "element": "h2",
+        "text": "Translations"
+      },
+      {
+        "term": "Which languages content can be translated into...",
+        "element": "p (intro copy)",
+        "text": "Which languages content can be translated into. A language the application ships an interface for is also offered in the admin language switcher; the rest are available for content only."
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "中文页面（翻译管理）中 h2、说明段与保存按钮为英文。命中词表词 \"Save\"（元素 <button>Save translations</button>）。值列展示的语言名/值为刻意展示，不计。",
+    "screenshot": "shots/backend_config_translations.png"
+  },
+  {
+    "path": "/backend/config/attachments",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/attachments",
+    "title": "存储",
+    "zhRatio": 0.2642,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Attachment partitions",
+        "element": "h2",
+        "text": "Attachment partitions"
+      },
+      {
+        "term": "Add",
+        "element": "button",
+        "text": "Add partition"
+      },
+      {
+        "term": "Define storage partitions and visibility for uploads.",
+        "element": "p (intro copy)",
+        "text": "Define storage partitions and visibility for uploads."
+      },
+      {
+        "term": "Storage",
+        "element": "th",
+        "text": "Storage"
+      },
+      {
+        "term": "Env variable",
+        "element": "th",
+        "text": "Env variable"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "中文页面中 h2 \"Attachment partitions\"、英文说明、按钮 \"Add partition\" 及表头 \"Storage/Env variable\" 未翻译。命中词表词 \"Add\"。",
+    "screenshot": "shots/backend_config_attachments.png"
+  },
+  {
+    "path": "/backend/config/system-update",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/system-update",
+    "title": "系统升级",
+    "zhRatio": 0.6488,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 1730ch h1=\"\" zhRatio=0.6488",
+    "screenshot": "shots/backend_config_system-update.png"
+  },
+  {
+    "path": "/backend/config/search",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/search",
+    "title": "搜索设置",
+    "zhRatio": 0.236,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Search",
+        "element": "h1 page heading",
+        "text": "Search Settings"
+      },
+      {
+        "term": "Driver: No fulltext driver configured.",
+        "element": "p (status text)",
+        "text": "Driver: No fulltext driver configured."
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "导航显示\"搜索设置\"，页面 h1 为英文 \"Search Settings\"；另有英文状态句。命中词表词 \"Search\"。",
+    "screenshot": "shots/backend_config_search.png"
+  },
+  {
+    "path": "/backend/config/settings",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/settings",
+    "title": "自定义实体",
+    "zhRatio": 0.5259,
+    "rawKeys": [],
+    "residue": [],
+    "verdict": "PASS",
+    "note": "HTTP200 353ch h1=\"\" zhRatio=0.5259",
+    "screenshot": "shots/backend_config_settings.png"
+  },
+  {
+    "path": "/backend/config/encryption",
+    "status": 200,
+    "finalUrl": "http://127.0.0.1:3000/backend/config/encryption",
+    "title": "加密",
+    "zhRatio": 0.6789,
+    "rawKeys": [],
+    "residue": [
+      {
+        "term": "Save",
+        "element": "button",
+        "text": "Save encryption map"
+      },
+      {
+        "term": "Add",
+        "element": "button",
+        "text": "Add field"
+      }
+    ],
+    "verdict": "FAIL",
+    "note": "中文配置页（加密）中两个操作按钮为英文；实体字段名 dashboards:dashboard_layout 属刻意展示的标识，不计。命中词表词 \"Save\"、\"Add\"。",
+    "screenshot": "shots/backend_config_encryption.png"
+  }
+]
