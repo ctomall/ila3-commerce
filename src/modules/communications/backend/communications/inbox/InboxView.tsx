@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { headers } from 'next/headers'
+import Link from 'next/link'
 import { describeMedia } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
@@ -117,7 +118,14 @@ function loadErrorMessage(status: number, scope: LoadErrorScope): string {
  * view is a plain link (?thread=<id>) rather than client state. Sending remains
  * a server-side API call owned by the BFF (capability/window gates included).
  */
-export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: string | null }) {
+export async function InboxView({
+  selectedId: selectedIdProp,
+  canReply = false,
+}: {
+  selectedId?: string | null
+  /** Resolved server-side with the same reply grants the send route enforces. */
+  canReply?: boolean
+}) {
   const headerStore = await headers()
   const host = headerStore.get('host') ?? '127.0.0.1:3100'
   const cookie = headerStore.get('cookie') ?? ''
@@ -142,14 +150,14 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                 <h1 className="text-base font-semibold">全渠道收件箱</h1>
                 <p className="text-xs text-muted-foreground">客户 · 渠道 · 来源账号</p>
               </div>
-              <a className="text-xs underline" href="/backend/communications/channels/connect">
+              <Link className="text-xs underline" href="/backend/communications/channels/connect">
                 连接渠道
-              </a>
+              </Link>
             </div>
             <ul className="divide-y overflow-y-auto">
               {threads.map((thread) => (
                 <li key={thread.id}>
-                  <a
+                  <Link
                     className={`block px-4 py-3 hover:bg-muted/60 ${selectedId === thread.id ? 'bg-muted' : ''}`}
                     href={`/backend/communications/inbox/${encodeURIComponent(thread.id)}`}
                   >
@@ -161,7 +169,7 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                       {thread.channel.displayName} · {thread.channel.visibility === 'shared' ? '团队共享' : '个人'}
                       {thread.lastMessageAt ? ` · ${when(thread.lastMessageAt)}` : ''}
                     </div>
-                  </a>
+                  </Link>
                 </li>
               ))}
               {listError !== null ? (
@@ -227,9 +235,13 @@ export async function InboxView({ selectedId: selectedIdProp }: { selectedId?: s
                   <p className="text-xs text-muted-foreground">
                     回复身份：{detail.channel.displayName}（{detail.channel.visibility === 'shared' ? '团队共享渠道' : '个人渠道'}）· 服务端会再次校验归属与发送窗口
                   </p>
-                  {['whatsapp', 'messenger', 'email', 'imap', 'gmail'].includes(
-                    (detail.channel.channelType ?? '').toLowerCase(),
-                  ) ? (
+                  {!canReply ? (
+                    <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
+                      只读：当前账号没有回复权限（需要 communications.reply，或已授予的旧版连接权限）。可继续查看客户消息。
+                    </p>
+                  ) : ['whatsapp', 'messenger', 'email', 'imap', 'gmail'].includes(
+                      (detail.channel.channelType ?? '').toLowerCase(),
+                    ) ? (
                     <ReplyComposer
                       channelId={detail.channel.id}
                       to={pickReplyRecipient(detail.items, detail.conversation.externalConversationId)}

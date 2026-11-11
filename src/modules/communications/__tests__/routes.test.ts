@@ -122,11 +122,12 @@ function useContainer(
   resolve: (name: string) => unknown,
   em: ReturnType<typeof createFakeEm>,
   grantedFeatures: string[] = ['communication_channels.connect_user_channel'],
+  rbacOverride?: { userHasAllFeatures: (userId: string, features: string[], scope: unknown) => Promise<boolean> },
 ) {
   // The reply split resolves the caller's RBAC grants inside the handler; tests
   // default to the legacy connect grant so existing send cases keep exercising
   // the hub path, and pass another list to prove reply-only / denied callers.
-  const rbac = {
+  const rbac = rbacOverride ?? {
     userHasAllFeatures: jest.fn(async (_userId: string, features: string[]) =>
       features.every((feature) => grantedFeatures.includes(feature)),
     ),
@@ -824,6 +825,23 @@ describe('customer-service window policy', () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()
     useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))), [])
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }),
+    )
+    expect(res.status).toBe(403)
+    await expect(res.json()).resolves.toMatchObject({code: 'REPLY_FORBIDDEN'})
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('fails closed with 403 when the reply permission check itself throws', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 60 * 60 * 1000))), [], {
+      userHasAllFeatures: async () => {
+        throw new Error('rbac unavailable')
+      },
+    })
     const { POST } = await import('../api/me/send/route')
     const res = await POST(
       new Request('http://localhost/api/communications/me/send', { method: 'POST', body: JSON.stringify(base) }),

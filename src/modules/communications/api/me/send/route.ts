@@ -14,8 +14,7 @@ import {
 import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
 import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
-import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
-import { canReply } from '../../../lib/reply-permission'
+import { canActorReply } from '../../../lib/reply-permission-server'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -207,26 +206,11 @@ export async function POST(req: Request): Promise<Response> {
   // needs an explicit reply grant. The legacy connect capability is accepted
   // until roles are migrated to `communications.reply`; otherwise every current
   // employee would lose the ability to answer.
-  let grantedReply = false
-  try {
-    const rbac = container.resolve<RbacService>('rbacService')
-    const featureContext = {
-      tenantId: (auth.tenantId as string | undefined) ?? null,
-      organizationId,
-    }
-    const check = async (feature: string): Promise<boolean> => {
-      try {
-        return await rbac.userHasAllFeatures(auth.sub as string, [feature], featureContext)
-      } catch {
-        return false
-      }
-    }
-    grantedReply = await canReply(check)
-  } catch {
-    // No RBAC service means the route guard could not have run either; fail
-    // closed rather than letting the send through on a broken authorization path.
-    grantedReply = false
-  }
+  const grantedReply = await canActorReply(
+    { sub: auth.sub as string, tenantId: auth.tenantId as string | null, orgId: organizationId },
+    container,
+    { organizationId },
+  )
   if (!grantedReply) {
     // Operationally useful and free of message content: an operator can tell a
     // read-only staff member from a misconfigured role without reading the body.
