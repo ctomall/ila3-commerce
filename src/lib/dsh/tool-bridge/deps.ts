@@ -29,6 +29,7 @@ export type ToolBridgeDeps = {
   bindings: BindingLookup
   checkFeatures: FeatureCheck
   resolveCustomerScope: CustomerScopeResolver
+  canWriteToCrm?: (input: { runId: string; bindingId: string }) => Promise<boolean>
 }
 
 export async function buildToolBridgeDeps(): Promise<ToolBridgeDeps> {
