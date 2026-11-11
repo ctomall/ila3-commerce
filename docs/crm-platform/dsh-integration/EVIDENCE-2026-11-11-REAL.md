@@ -282,3 +282,19 @@ Playwright（admin，生产 3000，agentic UI）：
 截图：`prod-ui-default-entry.png`。
 
 > 注：MikroORM 的 `execute` 会把数组参数展开，`any(?)` 语法报错并静默回退；改用逐 id 占位符（`845b802`）。
+
+## 17. DSH 子进程凭据面（2026-11-11，隔离实例）
+
+用仅记录**键名**的包装器启动一次真实员工会话，DSH 子进程环境共 **16** 个键：
+
+```
+DEEPSEEK_API_KEY DEEPSEEK_BASE_URL DSH_BIN DSH_HOME DSH_PROFILE DSH_PROFILE_DIR
+DSH_SESSION_ID DSH_SHELL DSH_WEB_URL HOME NODE_ENV OM_DSH_BRIDGE_URL
+OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
+```
+
+- 无 `AUTH_SECRET` / `DATABASE_URL` / `JWT_*` / `*COOKIE*` / 应用会话令牌；
+- 仅有的敏感键是模型 key（DSH 必需）与**限定 run/binding 的** `OM_DSH_TOOL_TOKEN`；
+- 键名证据：`dsh-child-env-keys.txt`（不记录值）。
+
+**边界**：`HOME` 仍是同一 Unix 用户目录；文件级隔离仍依赖未来独立服务用户/容器。
