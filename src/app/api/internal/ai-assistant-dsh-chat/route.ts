@@ -244,6 +244,7 @@ async function resolveDshModelEnv(): Promise<ModelEnv> {
     ])
     const container = await createRequestContainer()
     const service = providerConfig.resolveModuleConfigService(container)
+    if (!service) return { env: {} }
     const value = await modelEnvModule.resolveModelEnv({
       loadConfig: () => providerConfig.loadProviderConfig(service),
       decrypt: (ciphertext) => credentials.decryptSecret(ciphertext),

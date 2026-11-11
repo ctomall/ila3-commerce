@@ -8,8 +8,8 @@
 
 export type ProviderConfigLike = {
   defaultModel?: { providerId?: string; modelId?: string } | null
-  customProviders: Array<{ id: string; enabled: boolean; baseURL?: string; apiKeyEnc?: string }>
-  credentials: Record<string, { apiKeyEnc?: string; baseURL?: string }>
+  customProviders: Array<{ id: string; enabled: boolean; baseURL?: string | null; apiKeyEnc?: string | null }>
+  credentials: Record<string, { apiKeyEnc?: string | null; baseURL?: string | null }>
 }
 
 export type ModelEnvDeps = {
@@ -52,7 +52,7 @@ export async function resolveModelEnv(deps: ModelEnvDeps): Promise<ModelEnv> {
   }
   if (!apiKey) return EMPTY_MODEL_ENV
 
-  const baseURL = custom?.baseURL ?? credential?.baseURL
+  const baseURL = custom?.baseURL ?? credential?.baseURL ?? undefined
   const env: Record<string, string> = { DEEPSEEK_API_KEY: apiKey }
   if (baseURL) env.DEEPSEEK_BASE_URL = baseURL
 
