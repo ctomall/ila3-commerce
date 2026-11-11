@@ -119,3 +119,25 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 ### 8.5 残留风险（不掩盖）
 仍以同一 Unix 用户运行；若 DSH 进程或 MCP 服务本身被攻破，OS 层仍可读兄弟目录。
 0700 只防其他用户，不防同 uid。真正隔离需独立服务用户/容器（基础设施变更，另批）。
+
+## 9. 员工级客户范围（v21 / `41612e4`）
+
+`customer_access` 仍未落地，因此默认范围保持 `organization`，不伪装成员工隔离。桥已支持并可按显式开关验证 `own`：
+
+- `OM_DSH_CUSTOMER_SCOPE=own` → 仅返回 `owner_user_id = 调用员工` 的公司；未知/缺省值回退 organization（不会静默收窄）。
+- 单元测试：`src/lib/dsh/__tests__/scope.test.ts`（默认 organization、own、未知值）。
+
+### 9.1 真实模型 + 真实库实测（隔离 :3901，own 模式）
+临时把 `b026cb18…`（Brightside Solar）的 owner 设为 acceptance 员工，测后已恢复 `NULL`。
+
+| 调用者 | 结果 |
+| --- | --- |
+| acceptance 员工 | 1 家公司：**Brightside Solar**、`brightsidesolar.com`、Renewable Energy；`mode:"own"`，note“本人负责的客户” |
+| superadmin（不拥有该公司） | 0 家公司，`scanned:0`，`mode:"own"` |
+
+证据：`own-scope-employee.sse`、`own-scope-admin.sse`。
+
+### 9.2 顺带修复：加密字段以密文泄露给模型
+旧实现用 MikroORM `fields` 投影，绕过加密自定义类型的水合，模型拿到 `enc:v1…` 密文（可用性故障，非明文泄露）。v21 改为加载实体后再裁剪最小字段；实测返回明文 `Brightside Solar`，SSE 中密文命中 0。
+
+> 结论边界：这证明“可配置的员工级范围”是真实执行的，不等同于 `customer_access` 已交付；产品默认仍是组织范围，需口径决策后再切换。

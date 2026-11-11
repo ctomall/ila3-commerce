@@ -1,0 +1,74 @@
+id: 1
+data: {"type":"thinking"}
+
+id: 2
+data: {"type":"dsh.event","dshType":"session.event","seq":1,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"agent/inbox/spliced","seq":0,"time":1794400983742,"data":{"target":"next-turn","start":0,"inserted":[{"content":[{"type":"text","text":"Use crm_find_companies with an empty query and limit 5, then list the company names."}],"source":{"kind":"user"},"role":"user","id":"c1896518-060c-4ac2-b987-9b5b1864a07d"}]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 3
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","status":"running"}}
+
+id: 4
+data: {"type":"thinking"}
+
+id: 5
+data: {"type":"dsh.event","dshType":"session.event","seq":4,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"agent/inbox/spliced","seq":2,"time":1794400983747,"data":{"target":"next-turn","start":0,"removedCount":1,"inserted":[]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 6
+data: {"type":"dsh.event","dshType":"session.event","seq":5,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"step/start","seq":3,"time":1794400983786,"data":{"turn":1,"step":1}}},"dshEventType":"step/start"}
+
+id: 7
+data: {"type":"dsh.event","dshType":"session.event","seq":6,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"system/message","seq":4,"time":1794400983790,"data":{"turn":1,"step":1,"message":{"role":"system","content":[{"type":"text","text":"You are a helpful software engineer assistant.\n\n## MCP resource servers\n\nUse list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: [\"crm\"]."}],"source":{"kind":"system-prompt"},"id":"08e90afb-c130-47b5-a674-71dd04b6ee40"}},"surfaceOp":"append"}},"dshEventType":"system/message"}
+
+id: 8
+data: {"type":"dsh.event","dshType":"session.event","seq":7,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"user/message","seq":5,"time":1794400983791,"data":{"content":[{"type":"text","text":"Use crm_find_companies with an empty query and limit 5, then list the company names."}],"source":{"kind":"user"},"role":"user","id":"c1896518-060c-4ac2-b987-9b5b1864a07d"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 9
+data: {"type":"dsh.event","dshType":"session.event","seq":8,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"user/message","seq":6,"time":1794400983793,"data":{"content":[{"type":"text","text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/runs-own2/workspaces/91b8e5d004df5dcf8d56858c2e377be3/9c1eb06d-a95f-4208-a49f-84868dfbf038\"."}],"source":{"kind":"runtime-context","form":"snapshot","sections":[{"name":"working-directory:current","text":"Current working directory: \"/tmp/dsh-e2e/runs-own2/workspaces/91b8e5d004df5dcf8d56858c2e377be3/9c1eb06d-a95f-4208-a49f-84868dfbf038\"."}]},"role":"user","id":"294d6122-1f60-41b3-8283-3c0f12f70221"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 10
+data: {"type":"dsh.event","dshType":"session.event","seq":9,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"request/header","seq":7,"time":1794400983794,"data":{"header":{"config":{"provider":"deepseek-official","model":"deepseek-flash","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"reasoningEffort":true,"maxTokens":true},"tools":[{"name":"list_mcp_resource_templates","description":"List parameterized resource URI templates from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"list_mcp_resources","description":"List resources available from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"mcp__crm__crm_find_companies","description":"Find CRM companies visible to the authenticated employee (read-only). Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters.","parameters":{"type":"object","properties":{"query":{"type":"string","maxLength":120,"description":"Case-insensitive substring matched against company name, domain, website or industry."},"limit":{"type":"integer","minimum":1,"maximum":20,"description":"Maximum companies to return (default 5, hard cap 20)."}},"additionalProperties":false}},{"name":"read_mcp_resource","description":"Read an MCP resource by URI from the named server. Use a listed URI or an expanded resource template.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"uri":{"type":"string","description":"Resource URI to read."}},"required":["server","uri"]}}]},"reason":"initial"}}},"dshEventType":"request/header"}
+
+id: 11
+data: {"type":"dsh.event","dshType":"session.event","seq":10,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"request/context","seq":8,"time":1794400983794,"data":{"provider":"deepseek-official","model":"deepseek-flash","contextWindow":1048576,"systemPromptUpdate":"in-history"}}},"dshEventType":"request/context"}
+
+id: 12
+data: {"type":"dsh.event","dshType":"session.event","seq":11,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"session/title","seq":9,"time":1794400983798,"data":{"title":"Use crm_find_companies with an empty","messageSeqs":[5],"source":{"kind":"fallback"}}}},"dshEventType":"session/title"}
+
+id: 13
+data: {"type":"dsh.event","dshType":"session.event","seq":12,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"session-log-deepseek/delivery-accepted","seq":10,"time":1794400983940,"data":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","sessionFormatVersion":4,"throughSeq":9}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 14
+data: {"type":"debug","partType":"thinking","data":{"text":""}}
+
+id: 15
+data: {"type":"tool-call","id":"call_00_ET_cVTflSZv8bHi5K8iI68Y0739","toolName":"mcp__crm__crm_find_companies","args":{"query":"","limit":5}}
+
+id: 16
+data: {"type":"tool-call","id":"call_00_ET_cVTflSZv8bHi5K8iI68Y0739","toolName":"mcp__crm__crm_find_companies","args":{"query":"","limit":5}}
+
+id: 17
+data: {"type":"tool-result","id":"call_00_ET_cVTflSZv8bHi5K8iI68Y0739","result":[{"type":"text","text":"{\"companies\":[{\"id\":\"55a29b0e-2005-45bd-8a6f-f32aa8dc3143\",\"name\":\"Brightside Solar\",\"domain\":\"brightsidesolar.com\",\"websiteUrl\":\"https://brightsidesolar.com\",\"industry\":\"Renewable Energy\",\"sizeBucket\":\"51-200\"}],\"scanned\":1,\"scope\":{\"mode\":\"own\",\"tenantId\":\"f27fa168-796c-4532-b9a4-1491a2e8c65e\",\"organizationId\":\"328bc848-d4cd-41ae-bcc3-0bcb4b215e55\"},\"note\":\"只读查询；结果限定为调用者本人负责的客户\"}"}]}
+
+id: 18
+data: {"type":"dsh.event","dshType":"session.event","seq":16,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"step/end","seq":14,"time":1794400984718,"data":{"turn":1,"step":1}}},"dshEventType":"step/end"}
+
+id: 19
+data: {"type":"dsh.event","dshType":"session.event","seq":17,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"step/start","seq":15,"time":1794400984724,"data":{"turn":1,"step":2}}},"dshEventType":"step/start"}
+
+id: 20
+data: {"type":"dsh.event","dshType":"session.event","seq":18,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"session-log-deepseek/delivery-accepted","seq":16,"time":1794400984874,"data":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","sessionFormatVersion":4,"throughSeq":15}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 21
+data: {"type":"debug","partType":"thinking","data":{"text":""}}
+
+id: 22
+data: {"type":"text","content":"The search returned **1 company**:\n\n1. **Brightside Solar** (brightsidesolar.com) — Renewable Energy"}
+
+id: 23
+data: {"type":"dsh.event","dshType":"session.event","seq":20,"payload":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","event":{"type":"step/end","seq":18,"time":1794400985526,"data":{"turn":1,"step":2}}},"dshEventType":"step/end"}
+
+id: 24
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7","status":"idle"}}
+
+data: {"type":"done","sessionId":"session-fafdc9bf88294fb3b46cc6a57ec2bbc7"}
+
