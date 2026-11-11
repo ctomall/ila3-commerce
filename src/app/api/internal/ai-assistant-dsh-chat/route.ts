@@ -792,6 +792,17 @@ function hashPrompt(prompt: string): string {
   return createHash('sha256').update(prompt).digest('hex')
 }
 
+/**
+ * Optional per-employee canary. When set, only these user ids run on DSH; every
+ * other authenticated employee keeps the packaged OpenCode route unchanged.
+ * Unset means "all users" once the engine is switched at the proxy.
+ */
+function dshEngineAllowed(userId: string): boolean {
+  const raw = process.env.OM_DSH_ENGINE_USERS?.trim()
+  if (!raw) return true
+  return raw.split(',').map((id) => id.trim()).filter(Boolean).includes(userId)
+}
+
 type RunServiceModule = {
   createRequestRunService: () => Promise<RunService>
 }
@@ -1345,6 +1356,15 @@ export async function POST(req: NextRequest) {
   const auth = await getAuthFromRequest(req)
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  // Canary: non-listed employees must get the exact packaged OpenCode route,
+  // not a degraded DSH one. The proxy only rewrites here when the engine is
+  // switched, so this is the one place that can restore per-user behaviour.
+  if (!dshEngineAllowed(auth.sub)) {
+    const { callOpenCodeChat } = await import('@/lib/dsh/opencode-fallback')
+    logger.info('DSH engine canary: delegating to the packaged OpenCode route', {})
+    return (await callOpenCodeChat(req)) as unknown as NextResponse
   }
 
   let body: unknown

@@ -60,6 +60,12 @@ jest.mock('@/modules/dsh_runs/services/run-service', () => ({
   createRequestRunService: mockCreateRequestRunService,
 }))
 
+const mockOpenCodePost = jest.fn(async () => new Response('opencode', { status: 200 }))
+
+jest.mock('@/lib/dsh/opencode-fallback', () => ({
+  callOpenCodeChat: mockOpenCodePost,
+}))
+
 import { POST } from '../route'
 import type { DshEvent, DshRunResult } from '@/lib/dsh/runtime/types'
 import { verifyRunToken } from '@/lib/dsh/tool-bridge/run-token'
@@ -241,6 +247,10 @@ afterAll(() => {
   delete process.env.OM_DSH_RUN_TIMEOUT_MS
   delete process.env.PORT
   for (const key of TOOL_WIRING_ENV_KEYS) delete process.env[key]
+})
+
+beforeEach(() => {
+  delete process.env.OM_DSH_ENGINE_USERS
 })
 
 describe('POST /api/internal/ai-assistant-dsh-chat', () => {
@@ -579,6 +589,16 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
     expect(input.args).toEqual(['--profile', 'sdk-minimal'])
     expect(input.env).toEqual({})
     expect(mockLog.warn).toHaveBeenCalled()
+  })
+
+  it('delegates a non-allowlisted employee to the packaged OpenCode route', async () => {
+    process.env.OM_DSH_ENGINE_USERS = 'someone-else'
+    const response = await POST(chatRequest({ messages: userMessages }))
+
+    expect(response.status).toBe(200)
+    expect(mockOpenCodePost).toHaveBeenCalledTimes(1)
+    expect(mockStartDshRun).not.toHaveBeenCalled()
+    delete process.env.OM_DSH_ENGINE_USERS
   })
 
   it('does not mount MCP tools when no run-token secret is configured (fail closed)', async () => {
