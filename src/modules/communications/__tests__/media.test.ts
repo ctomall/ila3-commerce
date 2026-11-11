@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals'
-import { describeMedia, extractMediaSummary } from '../lib/media'
+import { describeMedia, extractMediaSummary, mediaHref } from '../lib/media'
 
 describe('extractMediaSummary', () => {
   it('reads WhatsApp _meta media', () => {
@@ -50,5 +50,20 @@ describe('extractMediaSummary', () => {
     expect(summary).toMatchObject({downloaded: true, attachmentId: 'att-1', fileName: 'photo.png', fileSize: 2048})
     expect(describeMedia(summary!)).toContain('已下载')
     expect(describeMedia(summary!)).toContain('2.0 KB')
+  })
+})
+
+
+describe('mediaHref', () => {
+  it('links only a downloaded attachment to the installed file endpoint', () => {
+    expect(mediaHref({kind: 'image', downloaded: true, attachmentId: 'att-1'})).toBe('/api/attachments/file/att-1')
+    expect(mediaHref({kind: 'image', downloaded: false})).toBeNull()
+    expect(mediaHref({kind: 'image', downloaded: true})).toBeNull()
+  })
+
+  it('encodes an attachment id so a hostile value cannot change the path', () => {
+    expect(mediaHref({kind: 'file', downloaded: true, attachmentId: '../x?y=1'})).toBe(
+      '/api/attachments/file/..%2Fx%3Fy%3D1',
+    )
   })
 })

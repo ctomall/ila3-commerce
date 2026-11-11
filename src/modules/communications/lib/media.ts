@@ -80,6 +80,19 @@ export function describeMedia(media: MediaSummary): string {
   return `附件：${label} · 未下载`
 }
 
+/**
+ * Browser URL for an inbound attachment the media worker already persisted.
+ *
+ * The installed attachments module serves bytes at `/api/attachments/file/{id}`
+ * and enforces the tenant/organization scope itself, so the inbox only needs to
+ * link to it. `null` when the bytes were never downloaded: a provider URL would
+ * expire, and rendering one would pretend the CRM has the file.
+ */
+export function mediaHref(media: MediaSummary): string | null {
+  if (!media.downloaded || !media.attachmentId) return null
+  return `/api/attachments/file/${encodeURIComponent(media.attachmentId)}`
+}
+
 function formatBytes(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`

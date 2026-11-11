@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { headers } from 'next/headers'
 import Link from 'next/link'
-import { describeMedia } from '../../../lib/media'
+import { describeMedia, mediaHref } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
 import { deliveryStatusLabel } from '../../../lib/delivery-status'
@@ -224,7 +224,22 @@ export async function InboxView({
                       <p className="mt-1 break-all text-xs text-muted-foreground">平台消息号：{item.externalMessageId}</p>
                       {item.media ? (
                         <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
-                          {describeMedia(item.media)}（媒体下载待 G3，不在本切片伪造本地文件）
+                          {describeMedia(item.media)}
+                          {mediaHref(item.media) ? (
+                            <>
+                              {' · '}
+                              <a
+                                className="underline"
+                                href={mediaHref(item.media) as string}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                打开附件
+                              </a>
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground">（附件尚未下载，渠道恢复后由媒体 Worker 拉取）</span>
+                          )}
                         </p>
                       ) : null}
                     </article>
