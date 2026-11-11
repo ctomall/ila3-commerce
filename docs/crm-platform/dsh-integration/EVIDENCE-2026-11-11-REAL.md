@@ -340,3 +340,16 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 | 子进程 | 结束后 DSH 子进程数 0 |
 
 证据：`concurrency-same-key.json`、`concurrency-diff-key.json`、`concurrency-winner.sse`。
+
+## 21. 超时收口（隔离实例，`9983638`）
+
+以 `OM_DSH_RUN_TIMEOUT_MS=3000` 启动隔离实例，发 900 词任务：
+
+| 项 | 结果 |
+| --- | --- |
+| HTTP | 200 SSE，5.3 s 结束 |
+| SSE | `{"type":"error","error":"dsh run timed out after 3000ms"}` + done |
+| DB run | `failed`，`error:"dsh run timed out after 3000ms"`，result `finishReason:"timed-out"` |
+| 子进程 | 结束后 0 |
+
+证据：`timeout-run.sse`。生产超时为 120 s，未在生产人为触发。
