@@ -252,11 +252,13 @@ export async function InboxView({
                       }
                     />
                   ) : null}
-                  <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
-                    {['whatsapp', 'messenger'].includes((detail.channel.channelType ?? '').toLowerCase())
-                      ? '客服窗口内可直接回复文本；超出 24 小时窗口需改用已审核模板，服务端会返回 422 WINDOW_CLOSED 而不是让平台拒收。'
-                      : '邮件渠道可在此回复文本；附件与模板选择器与 Android 共用同一 BFF。'}
-                  </p>
+                  {canReply ? (
+                    <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
+                      {['whatsapp', 'messenger'].includes((detail.channel.channelType ?? '').toLowerCase())
+                        ? '客服窗口内可直接回复文本；超出 24 小时窗口需改用已审核模板，服务端会返回 422 WINDOW_CLOSED 而不是让平台拒收。'
+                        : '邮件渠道可在此回复文本；附件与模板选择器与 Android 共用同一 BFF。'}
+                    </p>
+                  ) : null}
                 </footer>
               </>
             )}
