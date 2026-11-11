@@ -44,6 +44,7 @@ import type {
   DshRunResult,
   DshRuntime,
 } from '@/lib/dsh/runtime/types'
+import type { ModelEnv } from '@/lib/dsh/model-env'
 import type {
   FinishRunInput,
   RunService,
@@ -222,6 +223,39 @@ function parseChatRequest(body: unknown): ChatRequest | { error: string } {
   }
 }
 
+/**
+ * The CRM's configured model provider, mapped to DSH env. Cached briefly: the
+ * provider settings are global, and resolving them touches the module config
+ * service. `OM_DSH_MODEL_ENV=off` keeps isolated mock-model tests hermetic.
+ */
+let modelEnvCache: { at: number; value: ModelEnv } | null = null
+
+async function resolveDshModelEnv(): Promise<ModelEnv> {
+  if ((process.env.OM_DSH_MODEL_ENV ?? '').trim().toLowerCase() === 'off') return { env: {} }
+  const now = Date.now()
+  if (modelEnvCache && now - modelEnvCache.at < 60_000) return modelEnvCache.value
+
+  try {
+    const [{ createRequestContainer }, providerConfig, credentials, modelEnvModule] = await Promise.all([
+      import('@open-mercato/shared/lib/di/container'),
+      import('@/modules/ai_model_config/lib/provider-config'),
+      import('@/modules/ai_model_config/lib/credentials'),
+      import('@/lib/dsh/model-env'),
+    ])
+    const container = await createRequestContainer()
+    const service = providerConfig.resolveModuleConfigService(container)
+    const value = await modelEnvModule.resolveModelEnv({
+      loadConfig: () => providerConfig.loadProviderConfig(service),
+      decrypt: (ciphertext) => credentials.decryptSecret(ciphertext),
+    })
+    modelEnvCache = { at: now, value }
+    return value
+  } catch (error) {
+    logger.warn('DSH model env unavailable', { err: errorMessage(error) })
+    return { env: {} }
+  }
+}
+
 /** Stable, non-reversible directory key: no user/tenant id appears in a path. */
 function identityKey(parts: Array<string | null | undefined>): string {
   return createHash('sha256').update(parts.map((part) => part ?? '').join('\u0000')).digest('hex').slice(0, 32)
@@ -350,6 +384,7 @@ function buildRunInput(
   signal: AbortSignal,
   runId: string,
   bindingId: string = UNBOUND_BINDING_ID,
+  modelEnv: ModelEnv = { env: {} },
 ): DshRunInput {
   const timeoutMs = runTimeoutMs()
   const root = process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT
@@ -365,7 +400,10 @@ function buildRunInput(
     dshHome: path.join(root, 'homes', employee),
     // Explicit launch: the base profile plus the CRM MCP overlay when enabled.
     args: wiring.args,
-    env: wiring.env,
+    // Credentials only ever travel to the child: never logged, never returned.
+    env: { ...modelEnv.env, ...wiring.env },
+    ...(modelEnv.provider ? { provider: modelEnv.provider } : {}),
+    ...(modelEnv.model ? { model: modelEnv.model } : {}),
     // The runtime owns cancellation: it aborts the subprocess when the browser
     // disconnects. Called through here so the route does not spawn or signal.
     signal,
@@ -1043,6 +1081,7 @@ async function startPersistedRun(
   service: RunService,
   run: RunRecord,
 ): Promise<Response> {
+  const modelEnv = await resolveDshModelEnv()
   let runtime: DshRuntime
   try {
     runtime = await resolveRuntime()
@@ -1055,7 +1094,7 @@ async function startPersistedRun(
   let handle: DshRunHandle
   try {
     handle = await runtime.start(
-      buildRunInput(auth, parsed, req.signal, run.id, run.bindingId),
+      buildRunInput(auth, parsed, req.signal, run.id, run.bindingId, modelEnv),
     )
   } catch (error) {
     logger.error('DSH run failed to start', { err: errorMessage(error) })
@@ -1241,6 +1280,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Request body must be valid JSON' }, { status: 400 })
   }
 
+  const modelEnv = await resolveDshModelEnv()
+
   // MIGRATION GAP: DSH has no equivalent of OpenCode's pending question / answer
   // round trip yet. Answering is a distinct POST that the original SSE stream
   // depends on, so returning an empty success would hang the UI. Fail loudly and
@@ -1286,7 +1327,7 @@ export async function POST(req: NextRequest) {
 
   let handle: DshRunHandle
   try {
-    handle = await runtime.start(buildRunInput(auth, parsed, req.signal, randomUUID()))
+    handle = await runtime.start(buildRunInput(auth, parsed, req.signal, randomUUID(), undefined, modelEnv))
   } catch (error) {
     // Fail before opening the SSE stream so the browser gets a real HTTP error
     // instead of an empty event stream.
