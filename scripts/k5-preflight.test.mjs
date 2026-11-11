@@ -97,6 +97,19 @@ test('send mode refuses a channel id that is not visible in the thread list', as
   })
 })
 
+test('thread reply requires both threadId and parentMessageId together', async () => {
+  await withStub(routes, async (ctx) => {
+    const env = baseEnv(ctx, {
+      K5_MODE: 'send', K5_ALLOW_SEND: '1', K5_RECIPIENT: '+15550000001',
+      K5_ALLOWED_RECIPIENTS: '+15550000001',
+      K5_CHANNEL_ID: '11111111-1111-4111-8111-111111111111',
+      K5_THREAD_ID: '33333333-3333-4333-8333-333333333333',
+    })
+    await assert.rejects(() => runPreflight({ env }), /provided together/)
+    assert.equal(ctx.requests.filter((r) => r.url === '/api/communications/me/send').length, 0)
+  })
+})
+
 test('send mode posts one idempotent request to an allowlisted recipient', async () => {
   await withStub(routes, async (ctx) => {
     const env = baseEnv(ctx, {
@@ -113,5 +126,23 @@ test('send mode posts one idempotent request to an allowlisted recipient', async
     assert.deepEqual(payload.to, ['+15550000001'])
     assert.equal(payload.clientRequestId, result.clientRequestId)
     assert.match(sends[0].cookie, /session=abc/)
+  })
+})
+
+test('thread reply carries threadId and parentMessageId when both are provided', async () => {
+  await withStub(routes, async (ctx) => {
+    const env = baseEnv(ctx, {
+      K5_MODE: 'send', K5_ALLOW_SEND: '1', K5_RECIPIENT: '+15550000001',
+      K5_ALLOWED_RECIPIENTS: '+15550000001',
+      K5_CHANNEL_ID: '11111111-1111-4111-8111-111111111111',
+      K5_THREAD_ID: '33333333-3333-4333-8333-333333333333',
+      K5_PARENT_MESSAGE_ID: '44444444-4444-4444-8444-444444444444',
+    })
+    await runPreflight({ env })
+    const sends = ctx.requests.filter((r) => r.url === '/api/communications/me/send')
+    assert.equal(sends.length, 1)
+    const payload = JSON.parse(sends[0].body)
+    assert.equal(payload.threadId, '33333333-3333-4333-8333-333333333333')
+    assert.equal(payload.parentMessageId, '44444444-4444-4444-8444-444444444444')
   })
 })

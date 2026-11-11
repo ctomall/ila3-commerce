@@ -59,6 +59,8 @@ export function resolvePreflightConfig(env = process.env) {
     subject: env.K5_SUBJECT || 'K5 preflight',
     text: env.K5_TEXT || 'K5 preflight message',
     allowSend: env.K5_ALLOW_SEND === '1',
+    threadId: env.K5_THREAD_ID || '',
+    parentMessageId: env.K5_PARENT_MESSAGE_ID || '',
   }
 }
 
@@ -114,6 +116,9 @@ export async function runPreflight({ env = process.env, fetchImpl = fetch, log =
   if (result.channelVisible === false) {
     throw new Error('K5_CHANNEL_ID is not visible in /me/threads (wrong channel or no access)')
   }
+  if (Boolean(config.threadId) !== Boolean(config.parentMessageId)) {
+    throw new Error('K5_THREAD_ID and K5_PARENT_MESSAGE_ID must be provided together')
+  }
 
   const clientRequestId = randomUUID()
   const sendResponse = await fetchImpl(`${config.baseUrl}/api/communications/me/send`, {
@@ -125,6 +130,7 @@ export async function runPreflight({ env = process.env, fetchImpl = fetch, log =
       subject: config.subject,
       body: { plain: config.text },
       clientRequestId,
+      ...(config.threadId ? { threadId: config.threadId, parentMessageId: config.parentMessageId } : {}),
     }),
   })
   result.sent = sendResponse.status
