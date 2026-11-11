@@ -7,6 +7,7 @@ import { InboxLiveRefresh } from './InboxLiveRefresh'
 import { newestCursor } from '../../../lib/inbox-live'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
 import { deliveryStatusLabel } from '../../../lib/delivery-status'
+import { loadErrorMessage, selfFetch } from '../../../lib/inbox-fetch'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 
 type ThreadRow = {
@@ -56,66 +57,6 @@ function when(value: string | null): string {
   return Number.isNaN(date.getTime()) ? '' : date.toLocaleString('zh-CN', { hour12: false })
 }
 
-type SelfFetchResult<T> =
-  | { ok: true; data: T }
-  | { ok: false; status: number }
-
-/**
- * Self-fetch that KEEPS the failure: an expired session or a 5xx must not look
- * like "you have no conversations". Only a 2xx with an empty list is empty.
- */
-/**
- * The app's own base URL for server-side self-fetches.
- *
- * Using the public Host header sent the request out through the edge (or failed
- * DNS/loopback in production: the drill hitting 127.0.0.1 worked while prod
- * rendered "收件箱暂时无法连接服务"). Loopback + the port the server actually
- * listens on keeps the call in-process, and INTERNAL_API_BASE_URL stays
- * available for deployments where that is not true.
- */
-function internalApiBase(): string {
-  const explicit = process.env.INTERNAL_API_BASE_URL?.trim()
-  if (explicit) return explicit.replace(/\/$/, '')
-  return `http://127.0.0.1:${process.env.PORT ?? '3000'}`
-}
-
-async function selfFetch<T>(path: string, cookie: string, _host: string): Promise<SelfFetchResult<T>> {
-  try {
-    const response = await fetch(`${internalApiBase()}${path}`, { headers: { cookie }, cache: 'no-store' })
-    if (!response.ok) return { ok: false, status: response.status }
-    return { ok: true, data: (await response.json()) as T }
-  } catch {
-    return { ok: false, status: 0 }
-  }
-}
-
-type LoadErrorScope = 'list' | 'detail'
-
-/**
- * One wording table for both reads, so a failed detail fetch can never look
- * like "you have not selected a conversation". `status === 0` is transport
- * (selfFetch maps a thrown fetch to it), 401/403 are auth/permission, a detail
- * 404 is the API's masked unknown-thread answer, and anything else is an HTTP
- * failure that must stay visibly distinct from an empty list/thread.
- */
-function loadErrorMessage(status: number, scope: LoadErrorScope): string {
-  if (status === 401) return '会话已过期，请重新登录后刷新。'
-  if (status === 403) {
-    return scope === 'list'
-      ? '当前账号没有全渠道收件箱权限：需要 communication_channels.view，请联系管理员开通。'
-      : '当前账号没有查看该会话的权限：需要 communication_channels.view，请联系管理员开通。'
-  }
-  if (status === 0) {
-    return scope === 'list' ? '收件箱暂时无法连接服务，请稍后重试。' : '会话暂时无法连接服务，请稍后重试。'
-  }
-  if (scope === 'detail' && status === 404) {
-    return '会话不存在或无权访问（可能已被删除，或你没有访问权限）。'
-  }
-  return scope === 'list'
-    ? `收件箱加载失败（HTTP ${status}），这不是"没有会话"。`
-    : `会话加载失败（HTTP ${status}），这不是"空会话"。`
-}
-
 /**
  * Server-rendered so the inbox is readable without client hydration: staff see
  * the customer, channel and source account on the first paint, and the detail
@@ -134,17 +75,16 @@ export async function InboxView({
   canReply?: boolean
 }) {
   const headerStore = await headers()
-  const host = headerStore.get('host') ?? '127.0.0.1:3100'
   const cookie = headerStore.get('cookie') ?? ''
   const selectedId = selectedIdProp ?? null
 
-  const listResult = await selfFetch<{ items: ThreadRow[] }>('/api/communications/me/threads', cookie, host)
+  const listResult = await selfFetch<{ items: ThreadRow[] }>('/api/communications/me/threads', cookie)
   const threads = listResult.ok ? listResult.data.items ?? [] : []
   const detailQuery = before
     ? `?limit=100&before=${encodeURIComponent(before)}`
     : '?limit=100'
   const detailResult = selectedId
-    ? await selfFetch<ThreadDetail>(`/api/communications/me/threads/${selectedId}/messages${detailQuery}`, cookie, host)
+    ? await selfFetch<ThreadDetail>(`/api/communications/me/threads/${selectedId}/messages${detailQuery}`, cookie)
     : null
   const detail = detailResult?.ok ? detailResult.data : null
   const listError = listResult.ok ? null : listResult.status
