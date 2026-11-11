@@ -314,3 +314,22 @@ Chromium `prefers-color-scheme: dark`（html class=dark，body `rgb(10,10,10)`�
 - UI 修复线：可按“T4/T11/T14/T13 已验收、T7 条件通过、T8/T2/T9/T16 保留”做**有条件签收**；不建议宣称 T1–T16 全部达成。
 - DSH 替换线：生产可用、核心链路与 QA 通过，但 **不满足 complete**：工具卡/审批富事件未接、写工具未开、其余 3 名员工未抽样、同 uid OS 隔离未实现、`customer_access` 未产品化。
 - 需要产品决策的最小集：T7 44 条包内硬编码豁免口径；T8 14 组导航是否合并；助手入口默认可见性。
+
+### 8.1 全量复验重跑（2026-11-11 15:44Z，运行 `9983638`）
+
+命令：`node /tmp/reverify-loop/run-all.mjs --expect=9983638…`（只读生产 :3000）
+
+| 检查 | 判定 | 说明 |
+| --- | --- | --- |
+| identify | PASS | pid/cwd/release 匹配 |
+| T4 `-v2` 301 | PASS | 602 ms |
+| T11 三态 | PASS | 7.8 s |
+| T14 版本同源 | PASS | 页脚 SHA 与运行 release 一致 |
+| T7 英文残留 | **FAIL（已知）** | 12/46 页、44 条包内硬编码 + 1 状态值，待产品豁免 |
+| T8 导航分组 | **FAIL（已知）** | 14 组 > 8，待信息架构决策 |
+| AI fallback 脚本 | UNVERIFIED | 该脚本面向旧 OpenCode 引擎；当前生产为 DSH，不适用 |
+| 总判定 | FAIL | 失败项均为已知待口径，不是新回归 |
+
+T13 暗色基线已在当前构建重拍 6 张（`docs/visual-baseline/dark-*.png`，1440×900，html.dark）。
+
+**结论不变**：T4/T11/T14/T13 通过；T7/T8 保留待决策；DSH 生产可用但目标不标 complete。
