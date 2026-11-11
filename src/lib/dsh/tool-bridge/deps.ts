@@ -19,9 +19,10 @@
 import type { EntityManager } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
-import { DshAssistantBinding } from '@/modules/dsh_runs/data/entities'
+import { DshAssistantBinding, DshRun } from '@/modules/dsh_runs/data/entities'
 import type { BindingLookup, CustomerScopeResolver, FeatureCheck } from './authorize'
 import { resolveConfiguredCustomerScope } from './scope'
+import { canWriteToCrm as decideWrite } from '@/lib/dsh/run'
 
 export type ToolBridgeDeps = {
   em: EntityManager
@@ -56,10 +57,35 @@ export async function buildToolBridgeDeps(): Promise<ToolBridgeDeps> {
   const checkFeatures: FeatureCheck = ({ userId, tenantId, organizationId, features }) =>
     rbac.userHasAllFeatures(userId, [...features], { tenantId, organizationId })
 
+  const canWriteToCrm: ToolBridgeDeps['canWriteToCrm'] = async ({ runId, bindingId }) => {
+    try {
+      const run = await em.findOne(DshRun, { id: runId })
+      const binding = await em.findOne(DshAssistantBinding, { id: bindingId })
+      const decision = decideWrite({
+        run: run
+          ? {
+              id: run.id,
+              bindingId: run.bindingId,
+              employeeUserId: run.userId,
+              status: run.status as never,
+              startedAt: run.startedAt ? new Date(run.startedAt).toISOString() : null,
+            }
+          : null,
+        bindingId,
+        bindingState: (binding?.status ?? 'revoked') as 'active' | 'suspended' | 'revoked',
+        now: new Date().toISOString(),
+      })
+      return decision.allowed
+    } catch {
+      return false
+    }
+  }
+
   return {
     em,
     bindings,
     checkFeatures,
     resolveCustomerScope: resolveConfiguredCustomerScope,
+    canWriteToCrm,
   }
 }

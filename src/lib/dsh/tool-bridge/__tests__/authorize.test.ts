@@ -84,7 +84,7 @@ describe('authorizeToolCall', () => {
     expect(d.bindings).not.toHaveBeenCalled()
   })
 
-  it('refuses a write tool before consulting the binding or the token tool list', async () => {
+  it('refuses a write tool after identity checks when the write gate is unavailable', async () => {
     const writeTool: ToolDescriptor = {
       name: 'crm.update_company',
       readOnly: false,
@@ -98,9 +98,26 @@ describe('authorizeToolCall', () => {
         claims: { ...claims, tools: ['crm.update_company'] },
         deps: d,
       }),
+    ).resolves.toMatchObject({ ok: false, status: 403, code: 'write_denied' })
+    expect(d.bindings).toHaveBeenCalled()
+    expect(d.checkFeatures).toHaveBeenCalled()
+  })
+
+  it('still fails closed when the write gate allows but no handler exists', async () => {
+    const writeTool: ToolDescriptor = {
+      name: 'crm.update_company',
+      readOnly: false,
+      requiredFeatures: ['customers.companies.manage'],
+    }
+    const d = deps({ canWriteToCrm: jest.fn(async () => true) })
+    await expect(
+      call({
+        tool: 'crm.update_company',
+        descriptor: writeTool,
+        claims: { ...claims, tools: ['crm.update_company'] },
+        deps: d,
+      }),
     ).resolves.toMatchObject({ ok: false, status: 403, code: 'write_not_enabled' })
-    expect(d.bindings).not.toHaveBeenCalled()
-    expect(d.checkFeatures).not.toHaveBeenCalled()
   })
 
   it('refuses a tool that is not in the run token tools[]', async () => {

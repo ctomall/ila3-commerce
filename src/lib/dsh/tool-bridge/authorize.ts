@@ -83,6 +83,7 @@ export type AuthorizeDeps = {
 export type AuthorizationCode =
   | 'unknown_tool'
   | 'write_not_enabled'
+  | 'write_denied'
   | 'tool_not_allowed'
   | 'binding_inactive'
   | 'binding_mismatch'
@@ -130,13 +131,6 @@ export async function authorizeToolCall(input: {
     return reject(404, 'unknown_tool', 'Unknown tool')
   }
 
-  // Writes come first, before the token's tool list: a non-read-only tool is
-  // refused even if a token was issued with it, and the answer is the same for
-  // every caller. Phase C replaces this branch with canWriteToCrm().
-  if (descriptor.readOnly !== true) {
-    return reject(403, 'write_not_enabled', 'Write tools are not enabled')
-  }
-
   if (!claims.tools.includes(tool)) {
     return reject(403, 'tool_not_allowed', 'Tool is not allowed for this run')
   }
@@ -182,6 +176,23 @@ export async function authorizeToolCall(input: {
     return reject(403, 'feature_unavailable', 'Forbidden')
   }
   if (!granted) return reject(403, 'feature_denied', 'Forbidden')
+
+  // Write decisions come after identity/feature checks and are re-evaluated at
+  // the moment of the call: the run must still be running and the binding still
+  // active. Until a write handler ships, an allowed write still fails closed.
+  if (descriptor.readOnly !== true) {
+    let allowed = false
+    if (deps.canWriteToCrm) {
+      try {
+        allowed = await deps.canWriteToCrm({ runId: claims.runId, bindingId: claims.bindingId })
+      } catch {
+        allowed = false
+      }
+    }
+    return allowed
+      ? reject(403, 'write_not_enabled', 'Write tool handler is not implemented')
+      : reject(403, 'write_denied', 'CRM writes are not allowed for this run')
+  }
 
   let scope: CustomerScope | null
   try {
