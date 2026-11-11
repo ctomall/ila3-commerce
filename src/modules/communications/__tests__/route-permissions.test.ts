@@ -2,6 +2,8 @@ import { describe, expect, it, jest } from '@jest/globals'
 import { metadata as threadsMetadata } from '../api/me/threads/route'
 import { metadata as messagesMetadata } from '../api/me/threads/[id]/messages/route'
 import { metadata as sendMetadata } from '../api/me/send/route'
+import { metadata as threadPageMetadata } from '../backend/communications/inbox/[thread]/page.meta'
+import { metadata as olderPageMetadata } from '../backend/communications/inbox/[thread]/before/[cursor]/page.meta'
 
 // The route modules import the DI container, which pulls the ESM-only `kysely`
 // build; the sibling route tests mock these two seams for the same reason.
@@ -27,6 +29,17 @@ describe('communications route permission gates', () => {
 
   it('gates the message read on view', () => {
     expect(messagesMetadata.GET.requireFeatures).toEqual(['communication_channels.view'])
+  })
+
+  it('gates both inbox detail pages (auth + view), including the older window', () => {
+    expect(threadPageMetadata).toMatchObject({
+      requireAuth: true,
+      requireFeatures: ['communication_channels.view'],
+    })
+    expect(olderPageMetadata).toMatchObject({
+      requireAuth: true,
+      requireFeatures: ['communication_channels.view'],
+    })
   })
 
   it('gates sending on the read feature and leaves the reply grant to the handler', () => {
