@@ -1115,13 +1115,28 @@ async function startPersistedRun(
   try {
     await service.begin(run.id, { sessionId: handle.sessionId })
   } catch (error) {
-    logger.error('Persisted DSH run could not be marked running', { err: errorMessage(error) })
-    await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
     try {
       await handle.close()
     } catch {
-      // The runtime is already unusable; the failure above is the one to report.
+      // The runtime is already unusable; the failure below is the one to report.
     }
+    // A run can be cancelled/revoked between submit and begin. That is a
+    // controlled outcome, not a persistence outage: the caller should learn the
+    // run is terminal instead of a misleading 503.
+    if (errorCode(error) === 'run-terminal') {
+      let status = 'cancelled'
+      try {
+        status = (await service.getRun(run.id))?.status ?? status
+      } catch {
+        // keep the conservative status
+      }
+      return NextResponse.json(
+        { error: 'Run was cancelled or already finished', code: 'run_terminal', runId: run.id, status },
+        { status: 409 },
+      )
+    }
+    logger.error('Persisted DSH run could not be marked running', { err: errorMessage(error) })
+    await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
     return persistenceUnavailable()
   }
 

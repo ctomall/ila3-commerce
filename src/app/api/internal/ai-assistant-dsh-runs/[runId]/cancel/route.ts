@@ -142,6 +142,16 @@ export async function POST(
     return persistenceUnavailable()
   }
 
-  logger.info('DSH run cancel: cancelled', { runId: cancelled.id, status: cancelled.status })
-  return NextResponse.json({ runId: cancelled.id, status: cancelled.status })
+  // The store can hand back the pre-transition row when the update raced; the
+  // browser must see the settled status, not a stale 'running'.
+  let status = cancelled.status
+  if (status !== 'cancelled') {
+    try {
+      status = (await service.getRun(cancelled.id))?.status ?? status
+    } catch {
+      // Keep the transition result; the row is already terminal.
+    }
+  }
+  logger.info('DSH run cancel: cancelled', { runId: cancelled.id, status })
+  return NextResponse.json({ runId: cancelled.id, status })
 }
