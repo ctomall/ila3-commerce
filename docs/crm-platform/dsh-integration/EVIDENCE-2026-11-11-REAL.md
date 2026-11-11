@@ -298,3 +298,19 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 - 键名证据：`dsh-child-env-keys.txt`（不记录值）。
 
 **边界**：`HOME` 仍是同一 Unix 用户目录；文件级隔离仍依赖未来独立服务用户/容器。
+
+## 18. 写工具调用时闸门（v29 `7e85549`）
+
+**实现**：非只读工具不再“进门即拒”。鉴权顺序改为：token → binding 身份/状态 → 功能权限 →
+`canWriteToCrm`（每次调用重读 run 与 binding 行）。不允许 → `write_denied`；允许但无 handler →
+`write_not_enabled`（仍 fail closed）。
+
+**生产实测（生产 3000，`7e85549`）**：
+| 场景 | 结果 |
+| --- | --- |
+| 完成态 run 的有效签名 token 调 `crm.update_company` | **403** `{code:"write_denied"}`（run 非 running，闸门拒绝） |
+| 同实例 `crm.find_companies` 读路径（真实模型） | 200 SSE，`READ_OK_29` |
+
+证据：`write-denied.json`、`read-after-write-gate.sse`。
+
+**边界**：写 handler 仍未实现；即使闸门评估通过也只会返回 `write_not_enabled`，不会写 CRM。
