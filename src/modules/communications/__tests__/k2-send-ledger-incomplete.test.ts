@@ -193,7 +193,7 @@ describe('K2: hub accepted the send but the idempotency ledger commit failed', (
     errorSpy.mockRestore()
   })
 
-  it('still refuses the same key afterwards, so the message is never sent twice', async () => {
+  it('still refuses the same key immediately afterwards, so no second send within the lease', async () => {
     const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
     const { em, sendRequests, failFlushAt } = createFakeEm([])
     failFlushAt(2)
@@ -204,7 +204,9 @@ describe('K2: hub accepted the send but the idempotency ledger commit failed', (
     expect((await post(payload())).status).toBe(202)
 
     // Same key, same payload, ledger healthy again — the point of failure is not
-    // a send license: the outstanding claim must still block a second send.
+    // a send license: while the claim is younger than IN_FLIGHT_TTL_MS the route
+    // still answers 409 and never sends twice. (The lease expiry is characterized
+    // in the next case: this guard is bounded, not permanent.)
     ;(em.flush as jest.Mock).mockImplementation(async () => undefined)
     const retry = await post(payload())
     expect(retry.status).toBe(409)
@@ -232,5 +234,40 @@ describe('K2: hub accepted the send but the idempotency ledger commit failed', (
     // A definite refusal frees the reservation; nothing was sent.
     expect(sendRequests).toHaveLength(0)
     expect(send).toHaveBeenCalledTimes(1)
+  })
+
+  it('after the in-flight lease expires the replay may send again — bounded guard, not a guarantee', async () => {
+    // The accepted-but-unrecorded row only blocks a retry while it is younger
+    // than IN_FLIGHT_TTL_MS (2 minutes). After that the ledger treats it as a
+    // dead attempt: it drops the row, re-claims the key and the message is sent
+    // a second time. The route cannot tell this apart from an ordinary crashed
+    // attempt, so the 202 warning plus operator reconciliation are the real
+    // safeguard. This case pins that boundary so the protection is never
+    // described as permanent.
+    const { em, sendRequests } = createFakeEm([
+      {
+        id: 'sr-unrecorded',
+        tenantId: 't1',
+        userId: 'u1',
+        clientRequestId: 'client-req-ledger-0001',
+        channelId: '11111111-1111-4111-8111-111111111111',
+        messageId: null,
+        messageThreadId: null,
+        // Accepted by the hub earlier, never recorded on the ledger.
+        createdAt: new Date(Date.now() - 3 * 60 * 1000),
+      },
+    ])
+    const channelId = '11111111-1111-4111-8111-111111111111'
+    const send = acceptedSend(channelId)
+    mockContainer.mockResolvedValue(containerWith(em, send) as never)
+
+    const res = await post(payload())
+
+    expect(res.status).toBe(202)
+    // A SECOND provider send is allowed once the lease lapsed.
+    expect(send).toHaveBeenCalledTimes(1)
+    expect(sendRequests).toHaveLength(1)
+    expect(sendRequests[0].id).not.toBe('sr-unrecorded')
+    expect(sendRequests[0].messageId).toBe('m-accepted-1')
   })
 })
