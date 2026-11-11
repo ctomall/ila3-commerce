@@ -1,0 +1,53 @@
+id: 1
+data: {"type":"thinking"}
+
+id: 2
+data: {"type":"dsh.event","dshType":"session.event","seq":1,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"agent/inbox/spliced","seq":0,"time":1794401959484,"data":{"target":"next-turn","start":0,"inserted":[{"content":[{"type":"text","text":"Reply with exactly PROD_ADMIN_DSH."}],"source":{"kind":"user"},"role":"user","id":"29eb1290-b780-480a-8603-fdcda5e456f5"}]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 3
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","status":"running"}}
+
+id: 4
+data: {"type":"thinking"}
+
+id: 5
+data: {"type":"dsh.event","dshType":"session.event","seq":4,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"agent/inbox/spliced","seq":2,"time":1794401959488,"data":{"target":"next-turn","start":0,"removedCount":1,"inserted":[]}}},"dshEventType":"agent/inbox/spliced"}
+
+id: 6
+data: {"type":"dsh.event","dshType":"session.event","seq":5,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"step/start","seq":3,"time":1794401959578,"data":{"turn":1,"step":1}}},"dshEventType":"step/start"}
+
+id: 7
+data: {"type":"dsh.event","dshType":"session.event","seq":6,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"system/message","seq":4,"time":1794401959582,"data":{"turn":1,"step":1,"message":{"role":"system","content":[{"type":"text","text":"You are a helpful software engineer assistant.\n\n## MCP resource servers\n\nUse list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: [\"crm\"]."}],"source":{"kind":"system-prompt"},"id":"df6452a1-234b-439e-b837-babd14db3b58"}},"surfaceOp":"append"}},"dshEventType":"system/message"}
+
+id: 8
+data: {"type":"dsh.event","dshType":"session.event","seq":7,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"user/message","seq":5,"time":1794401959583,"data":{"content":[{"type":"text","text":"Reply with exactly PROD_ADMIN_DSH."}],"source":{"kind":"user"},"role":"user","id":"29eb1290-b780-480a-8603-fdcda5e456f5"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 9
+data: {"type":"dsh.event","dshType":"session.event","seq":8,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"user/message","seq":6,"time":1794401959584,"data":{"content":[{"type":"text","text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/home/pro/.local/state/ila3-dsh/root/workspaces/667d4bd36fff7269595a29fbadcd2f66/aa518d4e-642d-4709-9144-0151c7762771\"."}],"source":{"kind":"runtime-context","form":"snapshot","sections":[{"name":"working-directory:current","text":"Current working directory: \"/home/pro/.local/state/ila3-dsh/root/workspaces/667d4bd36fff7269595a29fbadcd2f66/aa518d4e-642d-4709-9144-0151c7762771\"."}]},"role":"user","id":"19764727-17b5-4cb3-9708-42f67a18a26d"},"surfaceOp":"append"}},"dshEventType":"user/message"}
+
+id: 10
+data: {"type":"dsh.event","dshType":"session.event","seq":9,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"request/header","seq":7,"time":1794401959585,"data":{"header":{"config":{"provider":"deepseek-official","model":"deepseek-flash","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"reasoningEffort":true,"maxTokens":true},"tools":[{"name":"list_mcp_resource_templates","description":"List parameterized resource URI templates from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"list_mcp_resources","description":"List resources available from an MCP server.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"cursor":{"type":"string","description":"Continuation cursor returned by this server."}},"required":["server"]}},{"name":"mcp__crm__crm_find_companies","description":"Find CRM companies visible to the authenticated employee (read-only). Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters.","parameters":{"type":"object","properties":{"query":{"type":"string","maxLength":120,"description":"Case-insensitive substring matched against company name, domain, website or industry."},"limit":{"type":"integer","minimum":1,"maximum":20,"description":"Maximum companies to return (default 5, hard cap 20)."}},"additionalProperties":false}},{"name":"read_mcp_resource","description":"Read an MCP resource by URI from the named server. Use a listed URI or an expanded resource template.","parameters":{"type":"object","properties":{"server":{"type":"string","description":"Configured MCP server name."},"uri":{"type":"string","description":"Resource URI to read."}},"required":["server","uri"]}}]},"reason":"initial"}}},"dshEventType":"request/header"}
+
+id: 11
+data: {"type":"dsh.event","dshType":"session.event","seq":10,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"request/context","seq":8,"time":1794401959586,"data":{"provider":"deepseek-official","model":"deepseek-flash","contextWindow":1048576,"systemPromptUpdate":"in-history"}}},"dshEventType":"request/context"}
+
+id: 12
+data: {"type":"dsh.event","dshType":"session.event","seq":11,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"session/title","seq":9,"time":1794401959589,"data":{"title":"Reply with exactly PROD_ADMIN_DSH.","messageSeqs":[5],"source":{"kind":"fallback"}}}},"dshEventType":"session/title"}
+
+id: 13
+data: {"type":"dsh.event","dshType":"session.event","seq":12,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"session-log-deepseek/delivery-accepted","seq":10,"time":1794401959750,"data":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","sessionFormatVersion":4,"throughSeq":9}}},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 14
+data: {"type":"debug","partType":"thinking","data":{"text":"The user asks to reply exactly \"PROD_ADMIN_DSH\". This seems like a test for instruction following. No tool needed. But maybe there's something hidden? \"Current runtime context\" mentions DSH. Just reply exactly."}}
+
+id: 15
+data: {"type":"text","content":"PROD_ADMIN_DSH"}
+
+id: 16
+data: {"type":"dsh.event","dshType":"session.event","seq":14,"payload":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","event":{"type":"step/end","seq":12,"time":1794401960526,"data":{"turn":1,"step":1}}},"dshEventType":"step/end"}
+
+id: 17
+data: {"type":"debug","partType":"status","data":{"sessionId":"session-42527cc67ba0407f9a112a172e1ca909","status":"idle"}}
+
+data: {"type":"done","sessionId":"session-42527cc67ba0407f9a112a172e1ca909"}
+

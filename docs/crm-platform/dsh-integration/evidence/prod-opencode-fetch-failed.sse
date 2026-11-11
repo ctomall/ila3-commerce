@@ -1,0 +1,6 @@
+data: {"type":"session-authorized","sessionToken":"sess_01404bf..."}
+
+data: {"type":"thinking"}
+
+data: {"type":"error","error":"fetch failed"}
+

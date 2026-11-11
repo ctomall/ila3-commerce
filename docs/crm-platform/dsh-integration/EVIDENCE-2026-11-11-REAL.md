@@ -141,3 +141,39 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 旧实现用 MikroORM `fields` 投影，绕过加密自定义类型的水合，模型拿到 `enc:v1…` 密文（可用性故障，非明文泄露）。v21 改为加载实体后再裁剪最小字段；实测返回明文 `Brightside Solar`，SSE 中密文命中 0。
 
 > 结论边界：这证明“可配置的员工级范围”是真实执行的，不等同于 `customer_access` 已交付；产品默认仍是组织范围，需口径决策后再切换。
+
+## 10. 生产切换（v22 / `b8bf3e4`，2026-11-11 12:57Z 起）
+
+### 10.1 切换前发现：旧 OpenCode 引擎已不可用
+生产 `POST /api/ai_assistant/chat`（引擎未切换、原生 OpenCode 路由）实测返回
+`{"type":"error","error":"fetch failed"}`，日志显示 session 建立后 478 ms 失败。
+根因：OpenCode 路由依赖本地 OpenCode server `http://localhost:4096`，本机无该二进制、
+无该服务。**这不是 DSH 改动引入的回归；切换前聊天对所有人都是失败态。**
+
+### 10.2 切换方式
+- systemd drop-in `ila3-auto-deploy-app.service.d/20-dsh-canary.conf`
+  → `EnvironmentFile=/home/pro/.local/state/ila3-dsh/canary.env`（0600）
+- `canary.env`：`OM_AI_ENGINE=dsh`、`OM_DSH_PERSIST=orm`、`DSH_BIN=/home/pro/.local/bin/ila3-dsh-run`、
+  `OM_DSH_ROOT=/home/pro/.local/state/ila3-dsh/root`、`OM_DSH_RUN_TOKEN_SECRET`、
+  `OM_DSH_MCP_SCRIPT`、`OM_DSH_BRIDGE_URL=http://127.0.0.1:3000/api/internal/dsh-tools`、
+  `OM_DSH_MODEL_BASE_URL=https://api.deepseek.com/anthropic`
+- `OM_DSH_ENGINE_USERS` 先只放 acceptance 员工，验证通过后移除 → 全部员工走 DSH。
+
+### 10.3 生产实测
+| 账号 | 结果 |
+| --- | --- |
+| acceptance 员工 | 200；11 个 `dsh.event`；文本 `PROD_DSH_OK` / `PROD_EMP_DSH2`；run completed |
+| superadmin | 200；11 个 `dsh.event`；文本 `PROD_ADMIN_DSH`；run completed |
+| 未登录 | 401 |
+
+证据：`prod-admin-dsh.sse`、`prod-employee-dsh.sse`；旧引擎失败：`prod-opencode-fetch-failed.sse`、`prod-opencode-fetch-failed-native.sse`。
+
+### 10.4 回退边界
+删除 drop-in 并重启即回到“原生 OpenCode 路由”，但该路由当前因缺 OpenCode server
+仍然失败；真实可用的回退需要先部署 OpenCode server。**当前状态下 DSH 是唯一可用聊天引擎。**
+
+### 10.5 未验证/未完成
+- 除 admin + acceptance 外的其他员工未逐个实测（绑定为首次聊天懒创建）。
+- `answerQuestion` 仍 501；写工具仍关闭；工具集仅 `crm_find_companies`。
+- UI 前端对 DSH SSE 的完整交互（停止、重试、问题卡片）未逐个回归。
+- 同 uid OS 隔离未实现。
