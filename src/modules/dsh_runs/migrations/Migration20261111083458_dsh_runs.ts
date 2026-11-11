@@ -36,7 +36,6 @@ export class Migration20261111083458_dsh_runs extends Migration {
   "updated_at" timestamptz not null,
   constraint "dsh_assistant_bindings_pkey" primary key ("id"),
   constraint "dsh_assistant_bindings_tenant_org_user_uq" unique ("tenant_id", "organization_id", "user_id")
-  constraint "dsh_assistant_bindings_revision_check" check ("revision" >= 1)
 );`)
     this.addSql(
       `create index "dsh_assistant_bindings_scope_status_idx" on "dsh_assistant_bindings" ("tenant_id", "organization_id", "status");`,
@@ -60,7 +59,6 @@ export class Migration20261111083458_dsh_runs extends Migration {
   "created_at" timestamptz not null,
   constraint "dsh_runs_pkey" primary key ("id"),
   constraint "dsh_runs_binding_idempotency_uq" unique ("binding_id", "idempotency_key")
-  constraint "dsh_runs_status_check" check ("status" in ('queued', 'running', 'awaiting_approval', 'completed', 'failed', 'cancelled', 'budget_exhausted', 'expired'))
 );`)
     this.addSql(
       `create index "dsh_runs_binding_status_idx" on "dsh_runs" ("binding_id", "status");`,
@@ -87,7 +85,6 @@ export class Migration20261111083458_dsh_runs extends Migration {
   "created_at" timestamptz not null,
   constraint "dsh_run_events_pkey" primary key ("id"),
   constraint "dsh_run_events_run_seq_uq" unique ("run_id", "seq")
-  constraint "dsh_run_events_seq_check" check ("seq" >= 1)
 );`)
     this.addSql(
       `create index "dsh_run_events_run_created_idx" on "dsh_run_events" ("run_id", "created_at");`,

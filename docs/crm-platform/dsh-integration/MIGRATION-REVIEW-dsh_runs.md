@@ -42,3 +42,15 @@ psql -c "\d dsh_runs" ; psql -c "\d dsh_run_events"
 ## 5. 批准请求
 
 请确认是否批准在共享生产库 `open_mercato` 应用上述**单个**迁移；批准后按第 3 节执行并保留输出。未批准前保持 DRAFT。
+
+## 6. DDL 语法验证（未落库）
+
+在 `open_mercato` 连接上以事务 + 临时 schema 执行全部 9 条 DDL，再 `ROLLBACK`：
+
+```sql
+begin; create schema dsh_mig_verify; set local search_path to dsh_mig_verify;
+-- migration up() statements
+rollback;
+```
+
+结果：`ON_ERROR_STOP=1` 通过（9/9 语句），事务回滚，未残留 schema/表。另由 `orm-repository` 单测覆盖 23505/CAS 语义（47 passed, 1 skipped=env-gated 真实 DB）。
