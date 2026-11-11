@@ -1226,10 +1226,13 @@ async function startPersistedRun(
         await write({ type: 'done', sessionId: handle.sessionId })
       } catch (error) {
         if (error instanceof PersistenceFailure) {
-          if (errorCode(error.failure) === 'run-terminal') {
-            // A cancel/revoke won the race; the row is already terminal and the
-            // user should see that, not a misleading persistence outage.
-            logger.info('Persisted DSH run became terminal mid-stream', { runId: run.id })
+          // A cancel/revoke can win the race between a DSH event and its
+          // insert. Trust the row's terminal status over the driver error code:
+          // any write failure against a terminal run is a cancellation, not a
+          // persistence outage.
+          const latest = await service.getRun(run.id).catch(() => null)
+          if (latest && !isInFlightStatus(latest.status)) {
+            logger.info('Persisted DSH run became terminal mid-stream', { runId: run.id, status: latest.status })
             await write({ type: 'error', error: 'run_cancelled' })
           } else {
             logger.error('Persisted DSH event could not be stored', { err: errorMessage(error.failure) })
