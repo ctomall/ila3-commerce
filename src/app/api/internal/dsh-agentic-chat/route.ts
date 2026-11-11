@@ -8,7 +8,7 @@
  * an AI-SDK stream. Tool cards/approvals are not translated yet, so the bridge
  * is gated behind OM_DSH_AGENTIC and can be rolled back without a build.
  */
-import { createUIMessageStream } from 'ai'
+import { createUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { randomUUID } from 'node:crypto'
@@ -102,5 +102,5 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  return stream.toUIMessageStreamResponse()
+  return createUIMessageStreamResponse({ stream })
 }
