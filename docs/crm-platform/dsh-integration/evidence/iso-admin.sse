@@ -1,0 +1,53 @@
+id: 1
+data: {"type":"thinking"}
+
+id: 2
+data: {"seq":1,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":0,"data":{"start":0,"target":"next-turn","inserted":[{"id":"a909bbd5-2ab5-4c7c-9cf0-e18fcdf40ba2","role":"user","source":{"kind":"user"},"content":[{"text":"Reply with exactly ISOLATED_a and nothing else.","type":"text"}]}]},"time":1794399293226,"type":"agent/inbox/spliced"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"agent/inbox/spliced"}
+
+id: 3
+data: {"data":{"status":"running","sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"type":"debug","partType":"status"}
+
+id: 4
+data: {"type":"thinking"}
+
+id: 5
+data: {"seq":4,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":2,"data":{"start":0,"target":"next-turn","inserted":[],"removedCount":1},"time":1794399293230,"type":"agent/inbox/spliced"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"agent/inbox/spliced"}
+
+id: 6
+data: {"seq":5,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":3,"data":{"step":1,"turn":1},"time":1794399293312,"type":"step/start"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"step/start"}
+
+id: 7
+data: {"seq":6,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":4,"data":{"step":1,"turn":1,"message":{"id":"c61413da-ed6b-4921-ba30-605a91dc9fd1","role":"system","source":{"kind":"system-prompt"},"content":[{"text":"You are a helpful software engineer assistant.\n\n## MCP resource servers\n\nUse list_mcp_resources, list_mcp_resource_templates, or read_mcp_resource with one of these names as the server argument: [\"crm\"].","type":"text"}]}},"time":1794399293316,"type":"system/message","surfaceOp":"append"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"system/message"}
+
+id: 8
+data: {"seq":7,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":5,"data":{"id":"a909bbd5-2ab5-4c7c-9cf0-e18fcdf40ba2","role":"user","source":{"kind":"user"},"content":[{"text":"Reply with exactly ISOLATED_a and nothing else.","type":"text"}]},"time":1794399293317,"type":"user/message","surfaceOp":"append"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"user/message"}
+
+id: 9
+data: {"seq":8,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":6,"data":{"id":"4fc352fa-8166-4810-a189-22cabe031f56","role":"user","source":{"form":"snapshot","kind":"runtime-context","sections":[{"name":"working-directory:current","text":"Current working directory: \"/tmp/dsh-e2e/runs-real6/workspaces/667d4bd36fff7269595a29fbadcd2f66/ab05edf4-255a-429a-9b44-e62bce253888\"."}]},"content":[{"text":"Current runtime context. This snapshot supersedes earlier runtime-context snapshots.\n\nCurrent working directory: \"/tmp/dsh-e2e/runs-real6/workspaces/667d4bd36fff7269595a29fbadcd2f66/ab05edf4-255a-429a-9b44-e62bce253888\".","type":"text"}]},"time":1794399293318,"type":"user/message","surfaceOp":"append"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"user/message"}
+
+id: 10
+data: {"seq":9,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":7,"data":{"header":{"tools":[{"name":"list_mcp_resource_templates","parameters":{"type":"object","required":["server"],"properties":{"cursor":{"type":"string","description":"Continuation cursor returned by this server."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"List parameterized resource URI templates from an MCP server."},{"name":"list_mcp_resources","parameters":{"type":"object","required":["server"],"properties":{"cursor":{"type":"string","description":"Continuation cursor returned by this server."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"List resources available from an MCP server."},{"name":"mcp__crm__crm_find_companies","parameters":{"type":"object","properties":{"limit":{"type":"integer","maximum":20,"minimum":1,"description":"Maximum companies to return (default 5, hard cap 20)."},"query":{"type":"string","maxLength":120,"description":"Case-insensitive substring matched against company name, domain, website or industry."}},"additionalProperties":false},"description":"Find CRM companies visible to the authenticated employee (read-only). Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters."},{"name":"read_mcp_resource","parameters":{"type":"object","required":["server","uri"],"properties":{"uri":{"type":"string","description":"Resource URI to read."},"server":{"type":"string","description":"Configured MCP server name."}}},"description":"Read an MCP resource by URI from the named server. Use a listed URI or an expanded resource template."}],"config":{"model":"deepseek-flash","provider":"deepseek-official","maxTokens":256000,"reasoningEffort":"high"},"adapterDefaults":{"maxTokens":true,"reasoningEffort":true}},"reason":"initial"},"time":1794399293319,"type":"request/header"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"request/header"}
+
+id: 11
+data: {"seq":10,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":8,"data":{"model":"deepseek-flash","provider":"deepseek-official","contextWindow":1048576,"systemPromptUpdate":"in-history"},"time":1794399293319,"type":"request/context"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"request/context"}
+
+id: 12
+data: {"seq":11,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":9,"data":{"title":"Reply with exactly ISOLATED_a and","source":{"kind":"fallback"},"messageSeqs":[5]},"time":1794399293322,"type":"session/title"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"session/title"}
+
+id: 13
+data: {"seq":12,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":10,"data":{"sessionId":"session-98739f2374dc404a96c9f87bf9311589","throughSeq":9,"sessionFormatVersion":4},"time":1794399293473,"type":"session-log-deepseek/delivery-accepted"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"session-log-deepseek/delivery-accepted"}
+
+id: 14
+data: {"data":{"text":"The user asks to reply exactly \"ISOLATED_a\" and nothing else. No tools needed."},"type":"debug","partType":"thinking"}
+
+id: 15
+data: {"type":"text","content":"ISOLATED_a"}
+
+id: 16
+data: {"seq":14,"type":"dsh.event","dshType":"session.event","payload":{"event":{"seq":12,"data":{"step":1,"turn":1},"time":1794399294123,"type":"step/end"},"sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"dshEventType":"step/end"}
+
+id: 17
+data: {"data":{"status":"idle","sessionId":"session-98739f2374dc404a96c9f87bf9311589"},"type":"debug","partType":"status"}
+
+data: {"type":"done","sessionId":"session-98739f2374dc404a96c9f87bf9311589"}
+

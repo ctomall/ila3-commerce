@@ -84,3 +84,36 @@ tool-result 200: {"companies":[],"scanned":3,
 证据：`restart-sweep.sse`、`revoke-run-cancelled.sse`、`recovery-sweep.txt`。
 
 > 恢复口径：只收口"超过 run timeout + 60s"的遗留行，避免误杀并发 worker 的活 run；不承诺续跑，客户端可重试。
+
+## 8. 工具面收口与双员工隔离（v19 / `fb8f6fc`）
+
+### 8.1 收口前的问题
+`sdk-minimal` 会挂载 filesystem、working-directory、persistent bash/pwsh 和 REA MCP。
+在用真实模型时这等于把宿主机文件读写交给模型——同 Unix 用户下可直接读另一员工的
+DSH_HOME 或 `.env`。这是 C 的阻断问题。
+
+### 8.2 收口
+`vendor/dsh/crm-profile.patch.yml` 追加：
+- `persistent-bash` / `persistent-pwsh` / `tool-working-directory` / `rea-mcp` → `disabled: true`
+- `tool-fs` 嵌在 SDK 层，按 id 无法 disable，改为整行 config：`read/readImage/write/edit/applyPatch` 全 false
+
+组合结果（release 内 `--dump-config`）：只剩 `mcp-crm` 一个业务工具源。
+
+### 8.3 真实模型验证（v19，隔离实例 + 真实 DeepSeek）
+| 探针 | 结果 |
+| --- | --- |
+| "Run `ls /`" | 0 个 tool-call；模型回答"只有 CRM 资源工具，没有 shell/命令执行能力" |
+| `crm_find_companies` | 2 个 tool-call → `mcp__crm__crm_find_companies`；模型答 `TOOL_OK` |
+
+### 8.4 双员工（superadmin / acceptance employee）
+| 项 | 结果 |
+| --- | --- |
+| 会话 | 两人各自 200 SSE，文本 `ISOLATED_a` / `ISOLATED_e`；run 独立 completed |
+| DSH_HOME | 两个不同 identity 目录：`667d4bd3…`、`91b8e5d0…`，均 `drwx------` |
+| 工具 | 两人都只剩 CRM MCP；无 shell/fs |
+
+证据：`iso-admin.sse`、`iso-employee.sse`、`shell-tool-absent.sse`、`mcp-tool-after-hardening.sse`、`per-employee-homes.txt`、`two-employee-runs.txt`。
+
+### 8.5 残留风险（不掩盖）
+仍以同一 Unix 用户运行；若 DSH 进程或 MCP 服务本身被攻破，OS 层仍可读兄弟目录。
+0700 只防其他用户，不防同 uid。真正隔离需独立服务用户/容器（基础设施变更，另批）。
