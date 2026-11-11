@@ -391,3 +391,17 @@ admin 与 acceptance 员工同时发起任务：
 说明：当前是“首次聊天懒创建”；3 个已存在员工尚无 binding。`--apply` 可补齐，
 但会写生产账号数据，**未获批准前未执行**。创建/启用员工时的自动绑定链路仍缺
 （包内 `auth.user.created` 未发射，不能直接订阅）。
+
+## 24. 员工绑定补齐（2026-11-11，`f1bd7f3` + scripts）
+
+`node scripts/dsh-bind-employees.mjs --apply` 执行结果：
+
+```
+[dsh-bind] users=5 bindings=2 missing=3
+[dsh-bind] inserted=3
+```
+
+复核：`users=5 bindings=5 missing=0`；`dsh_assistant_bindings` active 5 行、5 个不同 user_id。
+
+**边界**：这是对**已存在**员工的补齐；员工创建/启用时的自动绑定仍未接线
+（包内 `auth.user.created` 未发射），新增员工仍需首次聊天或再次运行该工具。
