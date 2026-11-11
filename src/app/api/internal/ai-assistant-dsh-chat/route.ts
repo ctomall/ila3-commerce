@@ -45,6 +45,7 @@ import type {
   DshRuntime,
 } from '@/lib/dsh/runtime/types'
 import type { ModelEnv } from '@/lib/dsh/model-env'
+import { pruneOldWorkspaces } from '@/lib/dsh/workspace-retention'
 import type {
   FinishRunInput,
   RunService,
@@ -919,6 +920,16 @@ async function sweepStaleRuns(service: RunService): Promise<void> {
       }
     }
     if (settled > 0) logger.info('Settled stale DSH runs after restart', { settled })
+
+    // Per-run workspaces grow one directory per chat; prune only directories
+    // older than the TTL and never follow links. Failures stay non-fatal.
+    const ttlRaw = Number(process.env.OM_DSH_WORKSPACE_TTL_MS)
+    const ttlMs = Number.isFinite(ttlRaw) && ttlRaw > 0 ? ttlRaw : 7 * 24 * 3600 * 1000
+    const pruned = pruneOldWorkspaces({
+      root: process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT,
+      ttlMs,
+    })
+    if (pruned.removed > 0) logger.info('Pruned old DSH workspaces', pruned)
   } catch (error) {
     logger.warn('DSH restart recovery sweep failed', { err: errorMessage(error) })
   }
