@@ -658,9 +658,16 @@ export async function resolveDownloadUrl({url, token = null, timeoutMs = 20000})
   })
 }
 
-async function writeResponseToFile(response, file) {
-  const tmp = `${file}.part-${process.pid}`
-  const handle = await fs.promises.open(tmp, 'w')
+/**
+ * Stream a response body straight into `file`.
+ *
+ * Deliberately NOT staged through a temp file: when the transfer aborts (a slow
+ * link hits the per-attempt timeout) the bytes already received are the resume
+ * point for the next attempt. A completed file is only trusted after its sha256
+ * and size are verified by the caller.
+ */
+async function streamResponseToFile(response, file, {append}) {
+  const handle = await fs.promises.open(file, append ? 'a' : 'w')
   let bytes = 0
   try {
     const body = response.body
@@ -678,8 +685,21 @@ async function writeResponseToFile(response, file) {
   } finally {
     await handle.close()
   }
-  fs.renameSync(tmp, file)
   return bytes
+}
+
+function isRetryableDownloadError(error) {
+  const name = error?.name ?? ''
+  const message = String(error?.message ?? '')
+  return (
+    name === 'TimeoutError' ||
+    name === 'AbortError' ||
+    /aborted|ECONNRESET|ETIMEDOUT|socket|terminated|fetch failed|other side closed/i.test(message)
+  )
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 /**
@@ -693,49 +713,137 @@ export async function downloadArtifactZip({
   timeoutMs = 900000,
   expectedBytes = null,
   logPath = null,
+  maxAttempts = 4,
+  retryDelayMs = 2000,
 }) {
   fs.mkdirSync(path.dirname(file), {recursive: true})
   const startedAt = Date.now()
-  let signedUrl
-  try {
-    signedUrl = await resolveDownloadUrl({url, token})
-  } catch (error) {
-    if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] ${error.code}: ${error.message}\n`)
-    throw error
+  const expected = expectedBytes != null ? Number(expectedBytes) : NaN
+  const knownSize = Number.isFinite(expected) && expected > 0
+  let lastError = null
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const existing = fs.existsSync(file) ? fs.statSync(file).size : 0
+    if (knownSize && existing > expected) fs.rmSync(file)
+    // A partial file from an earlier attempt (or an earlier deploy run, because
+    // the caller keeps this path stable per artifact) is continued with Range.
+    const resumeFrom = knownSize && existing > 0 && existing < expected ? existing : 0
+
+    let signedUrl
+    try {
+      signedUrl = await resolveDownloadUrl({url, token})
+    } catch (error) {
+      if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] ${error.code}: ${error.message}\n`)
+      throw error
+    }
+
+    const headers = {'user-agent': 'ila3-auto-deploy/1.0'}
+    if (resumeFrom > 0) headers.range = `bytes=${resumeFrom}-`
+    let response
+    try {
+      response = await fetch(signedUrl, {headers, signal: AbortSignal.timeout(timeoutMs)})
+    } catch (error) {
+      const reason = error?.name === 'TimeoutError' ? 'timeout' : 'network'
+      if (isRetryableDownloadError(error) && attempt < maxAttempts) {
+        lastError = error
+        if (logPath) {
+          fs.appendFileSync(
+            logPath,
+            `[${nowIso()}] [artifact-download] attempt ${attempt}/${maxAttempts} ${reason}; resuming at ${resumeFrom}\n`,
+          )
+        }
+        await sleep(retryDelayMs * attempt)
+        continue
+      }
+      const detail = {url, reason, error: String(error?.message || error)}
+      if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] failed: ${JSON.stringify(detail)}\n`)
+      throw fail('artifact-download-failed', `artifact download failed: ${reason}`, detail)
+    }
+
+    if (response.status === 416 && resumeFrom > 0) {
+      await response.body?.cancel?.().catch(() => undefined)
+      if (knownSize && resumeFrom === expected) {
+        // The server says the range is unsatisfiable because we already have it.
+        break
+      }
+      fs.rmSync(file, {force: true})
+      lastError = new Error('range not satisfiable')
+      if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] 416 at ${resumeFrom}; restarting\n`)
+      continue
+    }
+    if (!response.ok) {
+      await response.body?.cancel?.().catch(() => undefined)
+      const detail = {url, status: response.status}
+      if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] HTTP ${response.status}\n`)
+      throw fail('artifact-download-failed', `artifact download returned HTTP ${response.status}`, detail)
+    }
+
+    // 206 -> append the continuation; 200 means the server ignored Range, so the
+    // partial must be replaced by the full body.
+    const append = response.status === 206 && resumeFrom > 0
+    if (resumeFrom > 0 && response.status === 200) fs.rmSync(file, {force: true})
+    let wrote
+    try {
+      wrote = await streamResponseToFile(response, file, {append})
+    } catch (error) {
+      const empty = !fs.existsSync(file) || fs.statSync(file).size === 0
+      if (isRetryableDownloadError(error) && attempt < maxAttempts) {
+        lastError = error
+        const sizeNow = empty ? 0 : fs.statSync(file).size
+        if (logPath) {
+          fs.appendFileSync(
+            logPath,
+            `[${nowIso()}] [artifact-download] attempt ${attempt}/${maxAttempts} aborted at ${sizeNow} bytes: ${error?.message || error}\n`,
+          )
+        }
+        await sleep(retryDelayMs * attempt)
+        continue
+      }
+      if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] write failed: ${error?.message || error}\n`)
+      throw fail('artifact-download-failed', `artifact download aborted while writing: ${error?.message || error}`, {
+        url,
+        error: String(error?.message || error),
+      })
+    }
+
+    const sizeNow = append ? resumeFrom + wrote : wrote
+    if (knownSize && sizeNow !== expected) {
+      lastError = new Error(`size ${sizeNow} != ${expected}`)
+      if (attempt < maxAttempts) {
+        if (logPath) {
+          fs.appendFileSync(
+            logPath,
+            `[${nowIso()}] [artifact-download] attempt ${attempt}/${maxAttempts} incomplete ${sizeNow}/${expected}; resuming\n`,
+          )
+        }
+        await sleep(retryDelayMs * attempt)
+        continue
+      }
+      throw fail('artifact-size-mismatch', `artifact size ${sizeNow} does not match CI metadata ${expected}`, {
+        bytes: sizeNow,
+        expectedBytes: expected,
+      })
+    }
+    lastError = null
+    break
   }
-  let response
-  try {
-    response = await fetch(signedUrl, {
-      headers: {'user-agent': 'ila3-auto-deploy/1.0'},
-      signal: AbortSignal.timeout(timeoutMs),
-    })
-  } catch (error) {
-    const detail = {url, reason: error?.name === 'TimeoutError' ? 'timeout' : 'network', error: String(error?.message || error)}
-    if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] failed: ${JSON.stringify(detail)}\n`)
-    throw fail('artifact-download-failed', `artifact download failed: ${detail.reason}`, detail)
-  }
-  if (!response.ok) {
-    await response.body?.cancel?.().catch(() => undefined)
-    const detail = {url, status: response.status}
-    if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] HTTP ${response.status}\n`)
-    throw fail('artifact-download-failed', `artifact download returned HTTP ${response.status}`, detail)
-  }
-  let bytes
-  try {
-    bytes = await writeResponseToFile(response, file)
-  } catch (error) {
-    if (logPath) fs.appendFileSync(logPath, `[${nowIso()}] [artifact-download] write failed: ${error?.message || error}\n`)
-    throw fail('artifact-download-failed', `artifact download aborted while writing: ${error?.message || error}`, {
+
+  if (!fs.existsSync(file)) {
+    throw fail('artifact-download-failed', `artifact download produced no file: ${lastError?.message || 'unknown'}`, {
       url,
-      error: String(error?.message || error),
+      error: String(lastError?.message || lastError || 'unknown'),
+    })
+  }
+  const bytes = fs.statSync(file).size
+  if (knownSize && bytes !== expected) {
+    throw fail('artifact-size-mismatch', `artifact size ${bytes} does not match CI metadata ${expected}`, {
+      bytes,
+      expectedBytes: expected,
     })
   }
   const sha256 = sha256File(file)
   const line = `[${nowIso()}] [artifact-download] bytes=${bytes} sha256=${sha256} ms=${Date.now() - startedAt}\n`
   if (logPath) fs.appendFileSync(logPath, line)
-  if (expectedBytes != null && Number(expectedBytes) !== bytes) {
-    throw fail('artifact-size-mismatch', `artifact size ${bytes} does not match CI metadata ${expectedBytes}`, {bytes, expectedBytes})
-  }
   return {file, bytes, sha256, ms: Date.now() - startedAt}
 }
 
@@ -996,7 +1104,9 @@ export async function installFromArtifact({
       resolved = await resolveRunArtifact({repo: repository, runId, sha, token})
       artifactMeta = resolved.artifact
       archiveSha256 = resolved.sha256
-      zipFile = path.join(workDir, `artifact-${resolved.artifact.id}.zip`)
+      // Stable per artifact (not per run): a deploy that times out mid-download
+      // leaves a resumable partial, and the next timer run appends with Range.
+      zipFile = path.join(ARTIFACTS_DIR, sha, 'download', `artifact-${resolved.artifact.id}.zip`)
       if (fs.existsSync(zipFile) && sha256File(zipFile) === archiveSha256) {
         download = {file: zipFile, bytes: fs.statSync(zipFile).size, sha256: archiveSha256, cached: true}
         fs.appendFileSync(log, `[${nowIso()}] [artifact-download] cache hit ${zipFile}\n`)
