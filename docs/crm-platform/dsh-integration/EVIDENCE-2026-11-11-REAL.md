@@ -327,3 +327,16 @@ OM_DSH_MCP_SCRIPT OM_DSH_TOOL_TOKEN PATH PWD
 - 截图：`prod-ui-tool-card.png`
 
 **边界**：只覆盖读工具卡片；写工具的审批卡仍不存在（写 handler 未开）。
+
+## 20. 并发与幂等冲突（生产 `9983638`）
+
+同一账号同时发起：
+
+| 场景 | 结果 |
+| --- | --- |
+| 同 idempotencyKey 两个并发请求 | 一个 200 SSE 完成；另一个 **409** `run_in_progress`，返回 `runId`/`cursor` |
+| 不同 key、同 binding 并发 | 第二个 **409** `run_in_progress` |
+| DB | 仅新增 1 个 run（`conc-same-1` completed） |
+| 子进程 | 结束后 DSH 子进程数 0 |
+
+证据：`concurrency-same-key.json`、`concurrency-diff-key.json`、`concurrency-winner.sse`。
