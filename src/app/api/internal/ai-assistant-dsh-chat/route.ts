@@ -886,6 +886,9 @@ function replayErrorResponse(error: unknown): NextResponse {
  */
 let lastRecoverySweepAt = 0
 
+/** Milliseconds when this process started; runs older than this cannot be ours. */
+const PROCESS_STARTED_AT = Date.now()
+
 async function sweepStaleRuns(service: RunService): Promise<void> {
   const now = Date.now()
   const rawInterval = Number(process.env.OM_DSH_RECOVERY_SWEEP_MS)
@@ -893,7 +896,14 @@ async function sweepStaleRuns(service: RunService): Promise<void> {
   if (now - lastRecoverySweepAt < interval) return
   lastRecoverySweepAt = now
   try {
-    const staleBefore = now - runTimeoutMs() - 60_000
+    // Single-instance deployments can trust the process start: a run created
+    // before this process booted cannot be owned by it, so restart recovery does
+    // not have to wait out the full run timeout. Multi-instance deployments keep
+    // the conservative age threshold because a sibling worker may own it.
+    const singleInstance = (process.env.OM_DSH_SINGLE_INSTANCE ?? '').trim() === '1'
+    const staleBefore = singleInstance
+      ? Math.max(now - runTimeoutMs() - 60_000, PROCESS_STARTED_AT - 5_000)
+      : now - runTimeoutMs() - 60_000
     const rows = await service.recoverInFlight()
     let settled = 0
     for (const row of rows) {

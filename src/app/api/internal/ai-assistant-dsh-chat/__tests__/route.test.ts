@@ -643,6 +643,36 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       delete process.env.OM_DSH_RECOVERY_SWEEP_MS
     })
 
+    it('settles a run created before this process started when single-instance is set', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      process.env.OM_DSH_RECOVERY_SWEEP_MS = '0'
+      process.env.OM_DSH_SINGLE_INSTANCE = '1'
+      const service = fakeRunService()
+      service.recoverInFlight.mockResolvedValueOnce([
+        {
+          runId: 'boot-stale-1',
+          bindingId: 'binding-1',
+          userId: 'user-1',
+          tenantId: 'tenant-1',
+          organizationId: 'org-1',
+          sessionId: null,
+          status: 'running',
+          cursor: 2,
+          createdAt: new Date(Date.now() - 10_000).toISOString(),
+        } as never,
+      ])
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      service.submit.mockResolvedValueOnce({ run: persistedRun({ id: 'run-3', status: 'queued' }), replay: false })
+      service.begin.mockResolvedValueOnce(persistedRun({ id: 'run-3', status: 'running', sessionId: 's' }))
+      mockStartDshRun.mockResolvedValueOnce(makeHandle({}))
+
+      await POST(chatRequest({ messages: userMessages }))
+
+      expect(service.finish).toHaveBeenCalledWith('boot-stale-1', { status: 'failed', error: 'server_restart' })
+      delete process.env.OM_DSH_RECOVERY_SWEEP_MS
+      delete process.env.OM_DSH_SINGLE_INSTANCE
+    })
+
     it('persists a new run event-by-event, finishes it, then emits done', async () => {
       process.env.OM_DSH_PERSIST = 'orm'
       const service = fakeRunService()
