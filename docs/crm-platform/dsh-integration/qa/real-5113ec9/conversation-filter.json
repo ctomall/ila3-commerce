@@ -1,0 +1,40 @@
+{
+  "admin": {
+    "login": 200,
+    "status": 200,
+    "items": [
+      {
+        "id": "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+        "agent": "customers.account_assistant",
+        "owner": null,
+        "visibility": "private"
+      },
+      {
+        "id": "f78d9dfd-2444-40e9-a99f-236c7d833939",
+        "agent": "catalog.catalog_assistant",
+        "owner": null,
+        "visibility": "private"
+      }
+    ],
+    "rawKeys": [
+      "items",
+      "nextCursor"
+    ]
+  },
+  "employee": {
+    "login": 200,
+    "status": 200,
+    "items": [
+      {
+        "id": "357a19ce-3e06-4806-95b8-e6cd5f7ef255",
+        "agent": "customers.account_assistant",
+        "owner": null,
+        "visibility": "private"
+      }
+    ],
+    "rawKeys": [
+      "items",
+      "nextCursor"
+    ]
+  }
+}

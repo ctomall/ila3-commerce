@@ -1,0 +1,16 @@
+# DB checks  2026-11-11T23:01:32Z
+## latest admin runs
+37b4fb76-149a-4a47-be95-c806e017c2a7|cancelled|faf465b2c4bc8436ec5a4a465c5e2fec|{"error": "", "finishReason": "cancelled", "finalResponse": ""}|2026-11-11 23:00:34.557+00
+340d11fb-71a1-45c3-98a2-a1d26ce64cde|completed|02d1c0e15f85a5b3a7d70bbda53260c6|{"finishReason": "completed", "finalResponse": "UI07112A6-MWCQ2FS6"}|2026-11-11 23:00:30.736+00
+9721b7fe-8aa2-4a1f-879d-9dff18762f2e|completed|f0671a93e8fa73b0d75920c9ae2e95c6|{"finishReason": "completed", "finalResponse": "RETRY_QA_07112A6_MWCQ24JS_NEW"}|2026-11-11 23:00:11.593+00
+e69818bc-6a6b-4a98-beaf-94da01a2403e|completed|e44ed5b2f3a2c5ee961bb8ef05107ddd|{"finishReason": "completed", "finalResponse": "RETRY_QA_07112A6_MWCQ24JS"}|2026-11-11 23:00:08.336+00
+f9416163-0102-489e-b09f-cef2233a2f24|completed|86d7ff1050cfed238f842504366407a6|{"finishReason": "completed", "finalResponse": "BRIDGE_IDEM_OK"}|2026-11-11 22:59:22.842+00
+## latest employee runs
+a34162b6-fdbb-4655-9a54-46efd6c24898|cancelled|qa-ui-revoke-07112a6||2026-11-11 23:01:07.423+00
+6194534c-3b79-4e41-be07-87334dc863da|cancelled|qa-ui-revoke-78bbe15||2026-11-11 22:48:35.681+00
+## bindings
+e95d9232-35bb-4969-b45b-05d9ae72887c|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|active|19
+b64bc56d-7482-4a9c-af84-ddccd19adff9|11f0dd3c-99df-43b3-be3c-2bd90e24b165|active|1
+d8dffc01-6a4b-42c4-836a-8fa3a428dcf7|7a176d46-6474-47c1-be56-d11b2d9452f1|active|1
+6adde9ed-7e51-420d-9965-301fa5619a6c|7cc7d8ec-f0f0-4161-893f-4d10684908f8|active|1
+5fcff877-32bb-4d42-af75-59f919f28673|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|active|1

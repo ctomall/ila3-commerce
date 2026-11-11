@@ -1,0 +1,18 @@
+{
+  "api": [
+    "200 GET /api/ai_assistant/ai/agents",
+    "200 GET /api/ai_assistant/health",
+    "200 GET /api/ai_assistant/ai/conversations",
+    "200 GET /api/ai_assistant/ai/conversations/ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+    "200 GET /api/ai_assistant/tools",
+    "200 GET /api/ai_assistant/ai/agents/customers.account_assistant/models",
+    "200 GET /api/ai_assistant/ai/conversations/357a19ce-3e06-4806-95b8-e6cd5f7ef255",
+    "200 POST /api/ai_assistant/ai/chat"
+  ],
+  "info": {
+    "toolLists": [],
+    "toolCalls": [],
+    "lastAssistant": "助手\n\nTOOL_OK",
+    "hasTOOL_OK": true
+  }
+}

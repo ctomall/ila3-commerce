@@ -1,0 +1,9 @@
+{
+  "marker": "UI07112A6-MWCQ2FS6",
+  "writable": true,
+  "text": "助手\n\nUI07112A6-MWCQ2FS6",
+  "textRun": "340d11fb-71a1-45c3-98a2-a1d26ce64cde|completed|{\"finishReason\": \"completed\", \"finalResponse\": \"UI07112A6-MWCQ2FS6\"}",
+  "stopRun": "37b4fb76-149a-4a47-be95-c806e017c2a7|cancelled|{\"error\": \"\", \"finishReason\": \"cancelled\", \"finalResponse\": \"\"}",
+  "procs": "",
+  "stopGone": true
+}

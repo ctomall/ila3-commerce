@@ -1,0 +1,22 @@
+{
+  "marker": "DEFAULTUI-5113EC9-MWC8VIJA",
+  "pre": {
+    "conv": "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+    "readonly": false,
+    "composer": true,
+    "composerVisible": "flex/flex",
+    "placeholder": "随便问…"
+  },
+  "sent": true,
+  "reply": "助手\n\nDEFAULTUI-5113EC9-MWC8VIJA",
+  "err": "",
+  "api": [
+    "200 GET /api/ai_assistant/health",
+    "200 GET /api/ai_assistant/ai/agents",
+    "200 GET /api/ai_assistant/ai/conversations?limit=100",
+    "200 GET /api/ai_assistant/tools",
+    "200 GET /api/ai_assistant/ai/agents/customers.account_assistant/models",
+    "200 GET /api/ai_assistant/ai/conversations/ad0a60a5-bd37-4642-aa35-10a217cd14b3?limit=100",
+    "200 POST /api/ai_assistant/ai/chat?agent=customers.account_assistant"
+  ]
+}

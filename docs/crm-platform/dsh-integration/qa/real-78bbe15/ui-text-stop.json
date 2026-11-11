@@ -1,0 +1,10 @@
+{
+  "marker": "QA78B-UI-MWCPMM4S",
+  "writable": true,
+  "conv": "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+  "text": "助手\n\nQA78B-UI-MWCPMM4S",
+  "textRun": "8eb30451-8be8-4036-becc-704a62309329|completed|{\"finishReason\": \"completed\", \"finalResponse\": \"QA78B-UI-MWCPMM4S\"}",
+  "stopRun": "25a008c0-cd65-4d1f-a988-3e8775d113f6|cancelled|{\"error\": \"\", \"finishReason\": \"cancelled\", \"finalResponse\": \"\"}",
+  "procs": "",
+  "stopGone": true
+}

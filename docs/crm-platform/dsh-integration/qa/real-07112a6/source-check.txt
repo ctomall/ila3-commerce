@@ -1,0 +1,18 @@
+# source check  2026-11-11T23:01:32Z
+## idempotency key computation
+45-
+46-  // A retry of the same turn (same conversation + same transcript) must replay
+47-  // the original run instead of paying for a second model call. A new turn
+48-  // changes the transcript, so its key changes too.
+49:  const idempotencyKey = createHash('sha256')
+50-    .update(`${body.sessionId ?? ''}\u0000${prompt}`)
+51-    .digest('hex')
+52-    .slice(0, 32)
+53-
+54-  const target = new URL('/api/internal/ai-assistant-dsh-chat', req.nextUrl.origin)
+55-  let upstream: Response
+56-  try {
+57-    upstream = await fetch(target, {
+## randomUUID usages (UI stream id only)
+14:import { createHash, randomUUID } from 'node:crypto'
+79:  const id = `t-${randomUUID()}`

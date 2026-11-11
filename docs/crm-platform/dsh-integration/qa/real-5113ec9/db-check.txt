@@ -1,0 +1,22 @@
+# DB checks  2026-11-11T15:02:54Z
+## conversation owners
+357a19ce-3e06-4806-95b8-e6cd5f7ef255|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|customers.account_assistant|private
+ad0a60a5-bd37-4642-aa35-10a217cd14b3|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|customers.account_assistant|private
+f78d9dfd-2444-40e9-a99f-236c7d833939|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|catalog.catalog_assistant|private
+## latest admin runs
+f19a6be8-ee1e-481c-9bc8-f1a8b9946cc4|cancelled|{"error": "", "finishReason": "cancelled", "finalResponse": ""}|2026-11-11 15:01:20.033+00
+82982371-2f5e-4c25-afe7-44d416a0bb09|completed|{"finishReason": "completed", "finalResponse": "TOOL_OK\n\nCustomer relationship management, or CRM, is both a business strategy and a category of software used to organize, unders|2026-11-11 15:00:43.353+00
+8d20d02e-bfc6-4c59-a0d0-84b173cd804b|completed|{"finishReason": "completed", "finalResponse": "DEFAULTUI-5113EC9-MWC8VIJA"}|2026-11-11 14:59:13.743+00
+4107eccb-0762-4054-8c5c-4aebd6750ca1|completed|{"finishReason": "completed", "finalResponse": "DEFAULTUI2_1794409072782_OK"}|2026-11-11 14:58:03.014+00
+## latest employee runs
+7c0282c5-a400-4fd9-9987-a60d80e957f3|cancelled|qa-ui-revoke-5113ec9||2026-11-11 15:01:50.634+00
+b87064fd-883d-431a-a81c-c0e447491a14|completed||{"finishReason": "completed", "finalResponse": "ENV2_OK"}|2026-11-11 14:59:52.919+00
+## bindings
+e95d9232-35bb-4969-b45b-05d9ae72887c|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|active|13
+5fcff877-32bb-4d42-af75-59f919f28673|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|active|1
+## homes
+700 pro pro /home/pro/.local/state/ila3-dsh/root/homes/667d4bd36fff7269595a29fbadcd2f66
+700 pro pro /home/pro/.local/state/ila3-dsh/root/homes/91b8e5d004df5dcf8d56858c2e377be3
+## workspace mapping (run id -> identity home)
+/home/pro/.local/state/ila3-dsh/root/workspaces/667d4bd36fff7269595a29fbadcd2f66/8d20d02e-bfc6-4c59-a0d0-84b173cd804b
+/home/pro/.local/state/ila3-dsh/root/workspaces/91b8e5d004df5dcf8d56858c2e377be3/7c0282c5-a400-4fd9-9987-a60d80e957f3

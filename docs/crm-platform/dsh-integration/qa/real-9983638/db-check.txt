@@ -1,0 +1,15 @@
+# DB checks  2026-11-11T15:41:23Z
+## latest admin runs
+36c43e27-7487-4cff-a850-4ffc1175b0c2|cancelled|f7fc44ab-6f13-41c1-aacd-27cd3af922a3|{"error": "", "finishReason": "cancelled", "finalResponse": ""}|2026-11-11 15:40:49.332+00
+ed2fa152-1bdb-4d88-82ac-888ecb7c338d|completed|qa-conc-same-9983638-mwcackq0|{"finishReason": "completed", "finalResponse": "# Customer Relationship Management: The Discipline of Putting Relationships First\n\nCustomer Relationship Management, or CRM, is fa|2026-11-11 15:40:22.195+00
+b235e7d7-1ea6-4174-800c-2fad4eb17c3b|completed|5779e0b5-727c-4fae-ac07-6e869818625a|{"finishReason": "completed", "finalResponse": "TOOLCARD_OK\n\nFound 1 company matching “Brightside”: **Brightside Solar** (brightsidesolar.com, Renewable Energy, 51–200 employees)|2026-11-11 15:40:01.902+00
+5f83c8a9-9840-472e-a9ca-6eca42d5bfd7|cancelled|11d4a089-8f7f-43b5-9279-4edcfe362ea6|{"error": "", "finishReason": "cancelled", "finalResponse": ""}|2026-11-11 15:39:38.303+00
+0f8506f4-d3a5-4e0b-88ae-c506a637a643|completed|conc-same-1|{"finishReason": "completed", "finalResponse": "**Customer Relationship Management: The Strategic Heart of Modern Business**\n\nCustomer relationship management, or CRM, refers to |2026-11-11 15:37:27.476+00
+## latest employee runs
+f0f41c41-6435-4ef0-816e-10c920c20347|cancelled|qa-ui-revoke-9983638||2026-11-11 15:41:07.474+00
+7c0282c5-a400-4fd9-9987-a60d80e957f3|cancelled|qa-ui-revoke-5113ec9||2026-11-11 15:01:50.634+00
+## concurrency rows
+ed2fa152-1bdb-4d88-82ac-888ecb7c338d|qa-conc-same-9983638-mwcackq0|completed
+## bindings
+e95d9232-35bb-4969-b45b-05d9ae72887c|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|active|15
+5fcff877-32bb-4d42-af75-59f919f28673|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|active|1

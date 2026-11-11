@@ -1,0 +1,29 @@
+{
+  "sessionId": "qa-session-07112a6-mwcq24js",
+  "marker": "RETRY_QA_07112A6_MWCQ24JS",
+  "first": {
+    "status": 200,
+    "bytes": 273,
+    "containsMarker": true,
+    "ms": 6393
+  },
+  "second": {
+    "status": 200,
+    "bytes": 273,
+    "containsMarker": true,
+    "ms": 3254
+  },
+  "newTurn": {
+    "status": 200,
+    "bytes": 277,
+    "containsMarker": true,
+    "ms": 3125
+  },
+  "counts": {
+    "before": 53,
+    "c1": 54,
+    "c2": 54,
+    "c3": 55
+  },
+  "latest": "9721b7fe-8aa2-4a1f-879d-9dff18762f2e|completed|{\"finishReason\": \"completed\", \"finalResponse\": \"RETRY_QA_07112A6_MWCQ24JS_NEW\"}|2026-11-11 23:00:11.593+00\ne69818bc-6a6b-4a98-beaf-94da01a2403e|completed|{\"finishReason\": \"completed\", \"finalResponse\": \"RETRY_QA_07112A6_MWCQ24JS\"}|2026-11-11 23:00:08.336+00\nf9416163-0102-489e-b09f-cef2233a2f24|completed|{\"finishReason\": \"completed\", \"finalResponse\": \"BRIDGE_IDEM_OK\"}|2026-11-11 22:59:22.842+00"
+}

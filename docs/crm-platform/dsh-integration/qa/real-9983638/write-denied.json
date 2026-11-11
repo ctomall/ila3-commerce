@@ -1,0 +1,13 @@
+{
+  "status": 403,
+  "body": "{\"error\":\"CRM writes are not allowed for this run\",\"code\":\"write_denied\"}",
+  "claims": {
+    "runId": "0f8506f4-d3a5-4e0b-88ae-c506a637a643",
+    "bindingId": "5fcff877-32bb-4d42-af75-59f919f28673",
+    "userId": "32c5dd71-cf97-4584-9bb9-0f81ac2cb688",
+    "tenantId": "f27fa168-796c-4532-b9a4-1491a2e8c65e",
+    "organizationId": "328bc848-d4cd-41ae-bcc3-0bcb4b215e55"
+  },
+  "secretMatchesProduction": true,
+  "tokenLength": 481
+}

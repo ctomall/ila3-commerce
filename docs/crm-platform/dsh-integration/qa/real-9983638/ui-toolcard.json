@@ -1,0 +1,49 @@
+{
+  "conv": "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+  "states": [
+    {
+      "t": 5,
+      "text": "ad0a60a5\n你\nUse crm_find_companies with query Brightside limit 3, then say TOOLCARD_OK\n助手\n工具调用\n1\nmcp.crm.crm_find_companies\n完成\n\nTOOLCARD_OK\n\nFound 1 company matching “Brightside”: Brightside Solar (brightsidesolar.com, Renewable Energy, 51–200 employees).\n\n消息输入框",
+      "cards": 1,
+      "lists": 1,
+      "streaming": false,
+      "error": ""
+    }
+  ],
+  "final": {
+    "text": "ad0a60a5\n你\nUse crm_find_companies with query Brightside limit 3, then say TOOLCARD_OK\n助手\n工具调用\n1\nmcp.crm.crm_find_companies\n完成\n\nTOOLCARD_OK\n\nFound 1 company matching “Brightside”: Brightside Solar (brightsidesolar.com, Renewable Energy, 51–200 employees).\n\n消息输入框",
+    "cards": [
+      {
+        "name": "mcp.crm.crm_find_companies",
+        "text": "mcp.crm.crm_find_companies\n完成"
+      }
+    ],
+    "lists": [
+      {
+        "count": "1",
+        "text": "工具调用\n1\nmcp.crm.crm_find_companies\n完成"
+      }
+    ],
+    "error": ""
+  },
+  "respInfo": [
+    {
+      "status": 200,
+      "headers": {
+        "x-vercel-ai-ui-message-stream": "v1",
+        "transfer-encoding": "chunked",
+        "content-security-policy": "default-src 'self'; base-uri 'self'; font-src 'self' data: https:; form-action 'self'; frame-ancestors 'self'; frame-src 'self' https://js.stripe.com https://hooks.stripe.com; img-src 'self' data: blob: https:; object-src 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; connect-src 'self' https: ws: wss:",
+        "cache-control": "no-cache",
+        "x-accel-buffering": "no",
+        "connection": "keep-alive",
+        "referrer-policy": "strict-origin-when-cross-origin",
+        "x-content-type-options": "nosniff",
+        "date": "Wed, 11 Nov 2026 15:40:03 GMT",
+        "x-middleware-rewrite": "/api/internal/dsh-agentic-chat?agent=customers.account_assistant",
+        "vary": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+        "content-type": "text/event-stream",
+        "x-frame-options": "SAMEORIGIN"
+      }
+    }
+  ]
+}

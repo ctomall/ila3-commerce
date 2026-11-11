@@ -1,0 +1,9 @@
+PASS src/modules/dsh_runs/__tests__/ensure-binding-on-login.test.ts
+22:47:55.218 INFO  [dsh_runs] Provisioned DSH assistant binding on login subscriber=ensure-binding-on-login userId=user-1
+PASS src/lib/dsh/__tests__/workspace-retention.test.ts
+
+Test Suites: 2 passed, 2 total
+Tests:       6 passed, 6 total
+Snapshots:   0 total
+Time:        1.226 s
+Ran all test suites matching src/modules/dsh_runs/__tests__/ensure-binding-on-login.test.ts|src/lib/dsh/__tests__/workspace-retention.test.ts.

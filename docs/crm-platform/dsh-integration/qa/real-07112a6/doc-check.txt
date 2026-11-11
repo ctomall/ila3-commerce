@@ -1,0 +1,19 @@
+# doc check §27  2026-11-11T23:01:32Z
+## 27. UI 桥重试幂等（v34 `07112a6`）
+
+`dsh-agentic-chat` 不再用随机 UUID，而是 `sha256(sessionId + 转发的对话文本)` 作为 DSH
+idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换 key。
+
+生产实测（admin，同一 body + sessionId 连发两次）：
+
+| 项 | 结果 |
+| --- | --- |
+| 第一次 | 200，创建 1 个 run（75→76） |
+| 第二次 | 200，**未新建 run**（76→76），重放同一回答 |
+| 两次响应 | 均含 `BRIDGE_IDEM_OK` |
+
+证据：`bridge-retry-first.sse`、`bridge-retry-second.sse`。
+
+## evidence files
+-rw-r--r-- 1 pro pro 262 Nov 11 22:59 /home/pro/apps/mercato/docs/crm-platform/dsh-integration/evidence/bridge-retry-first.sse
+-rw-r--r-- 1 pro pro 262 Nov 11 22:59 /home/pro/apps/mercato/docs/crm-platform/dsh-integration/evidence/bridge-retry-second.sse

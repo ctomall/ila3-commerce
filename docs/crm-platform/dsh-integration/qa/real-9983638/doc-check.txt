@@ -1,0 +1,43 @@
+# doc check  2026-11-11T15:41:23Z
+
+## 18. 写工具调用时闸门（v29 `7e85549`）
+
+**实现**：非只读工具不再“进门即拒”。鉴权顺序改为：token → binding 身份/状态 → 功能权限 →
+`canWriteToCrm`（每次调用重读 run 与 binding 行）。不允许 → `write_denied`；允许但无 handler →
+`write_not_enabled`（仍 fail closed）。
+
+**生产实测（生产 3000，`7e85549`）**：
+| 场景 | 结果 |
+| --- | --- |
+| 完成态 run 的有效签名 token 调 `crm.update_company` | **403** `{code:"write_denied"}`（run 非 running，闸门拒绝） |
+| 同实例 `crm.find_companies` 读路径（真实模型） | 200 SSE，`READ_OK_29` |
+
+证据：`write-denied.json`、`read-after-write-gate.sse`。
+
+**边界**：写 handler 仍未实现；即使闸门评估通过也只会返回 `write_not_enabled`，不会写 CRM。
+
+## 19. 工具卡渲染（v30 `9983638`）
+
+桥新增 DSH `tool-call` → AI SDK `tool-input-start`/`tool-input-available`，`tool-result` →
+`tool-output-available`。
+
+**生产 UI 实测**（admin，`/backend` → 助手 → customers.account_assistant）：
+- 发送“Use crm_find_companies … then say TOOLCARD_OK”
+- DOM：`[data-ai-chat-tool-calls]` ×1、`[data-ai-chat-tool-call]` ×1
+- 文本：`工具调用 | 1 | mcp.crm.crm_find_companies | 完成 | TOOLCARD_OK`
+- 截图：`prod-ui-tool-card.png`
+
+**边界**：只覆盖读工具卡片；写工具的审批卡仍不存在（写 handler 未开）。
+
+## 20. 并发与幂等冲突（生产 `9983638`）
+
+同一账号同时发起：
+
+| 场景 | 结果 |
+| --- | --- |
+| 同 idempotencyKey 两个并发请求 | 一个 200 SSE 完成；另一个 **409** `run_in_progress`，返回 `runId`/`cursor` |
+| 不同 key、同 binding 并发 | 第二个 **409** `run_in_progress` |
+| DB | 仅新增 1 个 run（`conc-same-1` completed） |
+| 子进程 | 结束后 DSH 子进程数 0 |
+
+证据：`concurrency-same-key.json`、`concurrency-diff-key.json`、`concurrency-winner.sse`。

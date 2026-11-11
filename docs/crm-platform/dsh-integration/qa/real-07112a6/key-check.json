@@ -1,0 +1,8 @@
+{
+  "sessionId": "qa-session-07112a6-mwcq24js",
+  "computedKey": "e44ed5b2f3a2c5ee961bb8ef05107ddd",
+  "dbKey": "e44ed5b2f3a2c5ee961bb8ef05107ddd",
+  "match": true,
+  "formula": "sha256(sessionId + '\\u0000' + forwarded prompt).hex.slice(0,32)",
+  "randomness": "none in idempotencyKey; randomUUID only used for UI text part id"
+}

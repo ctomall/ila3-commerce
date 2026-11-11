@@ -1,0 +1,16 @@
+{
+  "writable": true,
+  "runAtRevoke": "4111d066-aea3-4b6d-9b9f-e6f70487ab25|running",
+  "revoke": {
+    "status": 200,
+    "body": "{\"bindingId\":\"e95d9232-35bb-4969-b45b-05d9ae72887c\",\"revokedRuns\":1}",
+    "ms": 103
+  },
+  "uiStopped": true,
+  "uiStopMs": 135,
+  "latestRun": "4111d066-aea3-4b6d-9b9f-e6f70487ab25|cancelled|qa-ui-revoke-9251031",
+  "bindingBefore": "e95d9232-35bb-4969-b45b-05d9ae72887c|active|9",
+  "bindingAfter": "e95d9232-35bb-4969-b45b-05d9ae72887c|revoked|10",
+  "restore": "e95d9232-35bb-4969-b45b-05d9ae72887c|active|11\nUPDATE 1",
+  "bindingRestored": "e95d9232-35bb-4969-b45b-05d9ae72887c|active|11"
+}

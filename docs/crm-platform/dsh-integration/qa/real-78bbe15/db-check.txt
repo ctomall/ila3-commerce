@@ -1,0 +1,15 @@
+# DB / workspace state  2026-11-11T22:48:50Z
+## bindings
+e95d9232-35bb-4969-b45b-05d9ae72887c|77f676ed-7ab0-4245-a67a-d3b3e2d5170b|active|17
+b64bc56d-7482-4a9c-af84-ddccd19adff9|11f0dd3c-99df-43b3-be3c-2bd90e24b165|active|1
+d8dffc01-6a4b-42c4-836a-8fa3a428dcf7|7a176d46-6474-47c1-be56-d11b2d9452f1|active|1
+6adde9ed-7e51-420d-9965-301fa5619a6c|7cc7d8ec-f0f0-4161-893f-4d10684908f8|active|1
+5fcff877-32bb-4d42-af75-59f919f28673|32c5dd71-cf97-4584-9bb9-0f81ac2cb688|active|1
+## latest runs
+6194534c-3b79-4e41-be07-87334dc863da|cancelled||2026-11-11 22:48:35.681+00
+25a008c0-cd65-4d1f-a988-3e8775d113f6|cancelled|{"error": "", "finishReason": "cancelled", "finalResponse": ""}|2026-11-11 22:48:18.101+00
+8eb30451-8be8-4036-becc-704a62309329|completed|{"finishReason": "completed", "finalResponse": "QA78B-UI-MWCPMM4S"}|2026-11-11 22:48:14.585+00
+f1a7dd4d-5321-401d-8e7d-7f933073f0cc|completed|{"finishReason": "completed", "finalResponse": "PRUNE_QA_OK"}|2026-11-11 22:47:21.161+00
+8ede9bd7-7301-4977-91ce-282f11e3f5d0|completed|{"finishReason": "completed", "finalResponse": "PRUNE2_OK"}|2026-11-11 22:17:53.201+00
+## workspace counts (two-level run dirs)
+39

@@ -1,0 +1,130 @@
+{
+  "qa-ok.sse": {
+    "bytes": 6856,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 11,
+      "debug": 3,
+      "text": 1,
+      "done": 1
+    },
+    "texts": [
+      "QA_OK"
+    ],
+    "toolCalls": [],
+    "toolResults": [],
+    "errors": [],
+    "done": 1
+  },
+  "shell-probe.sse": {
+    "bytes": 7387,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 11,
+      "debug": 3,
+      "text": 1,
+      "done": 1
+    },
+    "texts": [
+      "I can't run shell commands — I don't have a shell or terminal tool available in this session. The only tools I have access to are read-only CRM lookups (finding companies and reading CRM resources).\n\nIf you need the contents of `/` from this workspace, you'd have to run `ls /` in a terminal yourself and paste the output, or provide me a tool/environment with shell access."
+    ],
+    "toolCalls": [],
+    "toolResults": [],
+    "errors": [],
+    "done": 1
+  },
+  "crm-tool.sse": {
+    "bytes": 8482,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 14,
+      "debug": 4,
+      "tool-call": 2,
+      "tool-result": 1,
+      "text": 1,
+      "done": 1
+    },
+    "texts": [
+      "TOOL_OK"
+    ],
+    "toolCalls": [
+      {
+        "id": "call_00_ET_FXsXlninGSZP7t0AUAFN3283",
+        "toolName": "mcp__crm__crm_find_companies",
+        "args": {
+          "query": "Zzz",
+          "limit": 1
+        }
+      },
+      {
+        "id": "call_00_ET_FXsXlninGSZP7t0AUAFN3283",
+        "toolName": "mcp__crm__crm_find_companies",
+        "args": {
+          "query": "Zzz",
+          "limit": 1
+        }
+      }
+    ],
+    "toolResults": [
+      [
+        {
+          "type": "text",
+          "text": "{\"companies\":[],\"scanned\":3,\"scope\":{\"mode\":\"organization\",\"tenantId\":\"f27fa168-796c-4532-b9a4-1491a2e8c65e\",\"organizationId\":\"328bc848-d4cd-41ae-bcc3-0bcb4b215e55\"},\"note\":\"只读查询；结果限定为调用者所在组织（组织隔离≠员工客户隔离）\"}"
+        }
+      ]
+    ],
+    "errors": [],
+    "done": 1
+  },
+  "iso-admin.sse": {
+    "bytes": 6812,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 11,
+      "debug": 3,
+      "text": 1,
+      "done": 1
+    },
+    "texts": [
+      "QA_ADMIN_OK"
+    ],
+    "toolCalls": [],
+    "toolResults": [],
+    "errors": [],
+    "done": 1
+  },
+  "iso-employee.sse": {
+    "bytes": 6887,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 11,
+      "debug": 3,
+      "text": 1,
+      "done": 1
+    },
+    "texts": [
+      "QA_EMPLOYEE_OK"
+    ],
+    "toolCalls": [],
+    "toolResults": [],
+    "errors": [],
+    "done": 1
+  },
+  "revoke-inflight.sse": {
+    "bytes": 850,
+    "typeCounts": {
+      "thinking": 2,
+      "dsh.event": 1,
+      "debug": 1,
+      "error": 1,
+      "done": 1
+    },
+    "texts": [],
+    "toolCalls": [],
+    "toolResults": [],
+    "errors": [
+      "run_cancelled"
+    ],
+    "done": 1
+  }
+}

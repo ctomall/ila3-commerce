@@ -1,0 +1,25 @@
+{
+  "admin": {
+    "ui": {
+      "conv": "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+      "readonly": false,
+      "composer": "flex"
+    },
+    "status": 200,
+    "items": [
+      "ad0a60a5-bd37-4642-aa35-10a217cd14b3",
+      "f78d9dfd-2444-40e9-a99f-236c7d833939"
+    ]
+  },
+  "employee": {
+    "ui": {
+      "conv": "357a19ce-3e06-4806-95b8-e6cd5f7ef255",
+      "readonly": false,
+      "composer": "flex"
+    },
+    "status": 200,
+    "items": [
+      "357a19ce-3e06-4806-95b8-e6cd5f7ef255"
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "tStopISO": "2026-11-11T14:28:35.143Z",
+  "stopGone": true,
+  "msAfterStop": 1517,
+  "info": {
+    "readonly": false,
+    "text": "一下这家公司最近有没有融资新闻”\n“查一下这个税号对应的工商登记信息”\n“看看他们官网现在在卖什么产品”\n\n但这类我能帮上忙：\n\n公司档案里可能已经存了官网、行业、邮箱、电话 → 我可以查出来给你\n如果你把官网截图、PDF、合同等作为附件挂到对应记录上，我可以读出提取后的文本\n“内部有没有任何记录提到 XYZ？”→ 用混合搜索在公司/人员/商机里找\n\n需要我先把某家公司的档案信息（官网、行业、联系人）拉出来给你吗？\n\n你\nhi\n你\n你好\n助手\n\n你好！👋 我是客户模块助手，随时可以帮你查人员、公司、商机、活动、任务和标签。\n\n想从哪儿开始？几个常见入口：\n\n看全貌 — “列出所有公司” / “列出最近的商机”\n找人找公司 — “查一下 Harborview Analytics” / 输入人名或关键词\n看某条记录的细节 — 给我名字，我拉出它的联系人、商机、活动和地址\n待办跟进 — “有哪些未完成的任务？”\n写操作 — 推进商机阶段、加评论或记录活动（都会先弹审批卡片让你确认）\n\n直接说名字或意图就行，不用先回答一堆问题。\n\n你\nReply with exactly UI_LIVE_OK and nothing else.\n你\nsay NET_PROBE\n你\nReply with exactly UI_LIVE_OK and nothing else.\n助手\n\nUI_LIVE_OK\n\n你\nWrite a 600-word detailed essay about CRM. End with STOP_TEST_1794405235326\n你\nWrite a 2000-word detailed essay about the history of CRM software. Output only the essay, do not stop early.\n助手\n消息输入框",
+    "error": ""
+  },
+  "latestRun": "a7c225ee-b0bc-4fcd-99b1-1b6ca78367b0|cancelled||2c43df3f-6ae4-48bb-bd52-34c2b5c50d8a",
+  "beforeProcs": "3005800 1513156 inotifywait -q -r -t 60 -e modify,create,delete,move,attrib,close_write /home/pro/.dsh-src/sessions /home/pro/.dsh-src/storages /home/pro/.dsh-src/plugin-data /home/pro/.dsh-src/attachments",
+  "afterProcs": "3006020 1513156 inotifywait -q -r -t 60 -e modify,create,delete,move,attrib,close_write /home/pro/.dsh-src/sessions /home/pro/.dsh-src/storages /home/pro/.dsh-src/plugin-data /home/pro/.dsh-src/attachments"
+}

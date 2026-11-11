@@ -1,0 +1,6 @@
+# login/binding evidence  2026-11-11T22:48:49Z
+build_hits=45
+bindings_before=5
+bindings_after=5
+admin_login_status=200
+subscriber_errors:
