@@ -9,6 +9,7 @@ import {
 } from '../services/run-service'
 import {
   RunNotFoundError,
+  TerminalRunError,
   type BindingRecord,
   type DshRunStore,
   type RunEventRecord,
@@ -83,6 +84,7 @@ describe('createRunService', () => {
   let appendEventMock: jest.Mock<DshRunStore['appendEvent']>
   let finishMock: jest.Mock<DshRunStore['finish']>
   let eventsAfterMock: jest.Mock<DshRunStore['eventsAfter']>
+  let revokeBindingMock: jest.Mock<DshRunStore['revokeBinding']>
 
   let findBindingByScopeMock: jest.Mock<RunServiceRepository['findBindingByScope']>
   let insertBindingMock: jest.Mock<RunServiceRepository['insertBinding']>
@@ -96,6 +98,7 @@ describe('createRunService', () => {
     appendEventMock = jest.fn<DshRunStore['appendEvent']>()
     finishMock = jest.fn<DshRunStore['finish']>()
     eventsAfterMock = jest.fn<DshRunStore['eventsAfter']>()
+    revokeBindingMock = jest.fn<DshRunStore['revokeBinding']>()
 
     findBindingByScopeMock = jest.fn<RunServiceRepository['findBindingByScope']>()
     insertBindingMock = jest.fn<RunServiceRepository['insertBinding']>()
@@ -114,7 +117,7 @@ describe('createRunService', () => {
       finish: finishMock,
       recoverInFlight: jest.fn<DshRunStore['recoverInFlight']>(async () => []),
       eventsAfter: eventsAfterMock,
-      revokeBinding: jest.fn<DshRunStore['revokeBinding']>(),
+      revokeBinding: revokeBindingMock,
     }
 
     repository = {
@@ -344,5 +347,95 @@ describe('createRunService', () => {
       getRunMock.mockResolvedValueOnce(null)
       await expect(service.replay(USER_ID, RUN_ID, 0)).rejects.toBeInstanceOf(RunNotFoundError)
     })
+  describe('getBinding', () => {
+    it('reads the existing row without ever creating one', async () => {
+      findBindingByScopeMock.mockResolvedValueOnce(bindingRecord())
+
+      await expect(service.getBinding(identity)).resolves.toEqual(bindingRecord())
+      expect(insertBindingMock).not.toHaveBeenCalled()
+    })
+
+    it('returns null when the employee has no binding', async () => {
+      await expect(service.getBinding(identity)).resolves.toBeNull()
+      expect(insertBindingMock).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('getRun / cancel', () => {
+    it('returns the current run row', async () => {
+      getRunMock.mockResolvedValueOnce(runRecord({ status: 'running' }))
+      await expect(service.getRun(RUN_ID)).resolves.toMatchObject({ id: RUN_ID, status: 'running' })
+    })
+
+    it('rejects a blank run id', async () => {
+      await expect(service.getRun('  ')).rejects.toMatchObject({ code: 'invalid-request' })
+    })
+
+    it('cancels an in-flight run with the given reason', async () => {
+      getRunMock.mockResolvedValueOnce(runRecord({ status: 'running' }))
+      finishMock.mockResolvedValueOnce(
+        runRecord({ status: 'cancelled', error: 'user_cancelled', finishedAt: T0 }),
+      )
+
+      const cancelled = await service.cancel(RUN_ID, 'user_cancelled')
+
+      expect(cancelled.status).toBe('cancelled')
+      expect(finishMock).toHaveBeenCalledWith({
+        runId: RUN_ID,
+        status: 'cancelled',
+        error: 'user_cancelled',
+      })
+    })
+
+    it('defaults to user_cancelled when the reason is blank', async () => {
+      getRunMock.mockResolvedValueOnce(runRecord({ status: 'queued' }))
+      finishMock.mockResolvedValueOnce(runRecord({ status: 'cancelled', error: 'user_cancelled' }))
+
+      await service.cancel(RUN_ID, '   ')
+
+      expect(finishMock).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'cancelled', error: 'user_cancelled' }),
+      )
+    })
+
+    it('returns an already-terminal run unchanged', async () => {
+      getRunMock.mockResolvedValueOnce(runRecord({ status: 'completed' }))
+
+      await expect(service.cancel(RUN_ID)).resolves.toMatchObject({ status: 'completed' })
+      expect(finishMock).not.toHaveBeenCalled()
+    })
+
+    it('re-reads after a concurrent terminal transition instead of failing', async () => {
+      getRunMock
+        .mockResolvedValueOnce(runRecord({ status: 'running' }))
+        .mockResolvedValueOnce(runRecord({ status: 'cancelled', error: 'principal_revoked' }))
+      finishMock.mockRejectedValueOnce(new TerminalRunError(RUN_ID, 'cancelled'))
+
+      await expect(service.cancel(RUN_ID, 'user_cancelled')).resolves.toMatchObject({
+        status: 'cancelled',
+        error: 'principal_revoked',
+      })
+    })
+
+    it('reports a missing run', async () => {
+      getRunMock.mockResolvedValueOnce(null)
+      await expect(service.cancel(RUN_ID)).rejects.toBeInstanceOf(RunNotFoundError)
+    })
+  })
+
+  describe('revokeBinding', () => {
+    it('delegates to the store and returns its cancelled runs', async () => {
+      const result = {
+        binding: bindingRecord({ status: 'revoked' as const, revision: 2 }),
+        cancelled: [runRecord({ status: 'cancelled' as const })],
+        revokedAt: T0,
+      }
+      revokeBindingMock.mockResolvedValueOnce(result)
+
+      await expect(service.revokeBinding(BINDING_ID, { reason: 'offboarding' })).resolves.toBe(result)
+      expect(revokeBindingMock).toHaveBeenCalledWith(BINDING_ID, { reason: 'offboarding' })
+    })
+  })
+
   })
 })

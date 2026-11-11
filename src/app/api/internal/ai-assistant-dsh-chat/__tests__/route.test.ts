@@ -13,6 +13,7 @@ import type {
   SubmitServiceInput,
   SubmitServiceResult,
 } from '@/modules/dsh_runs/services/run-service'
+import { TerminalRunError } from '@/modules/dsh_runs/services/run-store'
 import type { BindingRecord, RunEventRecord, RunRecord } from '@/modules/dsh_runs/services/run-store'
 
 const mockStartDshRun = jest.fn<(input: DshRunInput) => Promise<DshRunHandle>>()
@@ -48,6 +49,7 @@ type FakeRunService = {
     (runId: string, input: { type: string; payload?: unknown }) => Promise<RunEventRecord>
   >
   finish: jest.Mock<(runId: string, input: FinishRunInput) => Promise<RunRecord>>
+  getRun: jest.Mock<(runId: string) => Promise<RunRecord | null>>
   replay: jest.Mock<(userId: string, runId: string, cursor?: number) => Promise<ReplayRunResult>>
 }
 
@@ -200,6 +202,9 @@ function fakeRunService(): FakeRunService {
     finish: jest.fn(async (runId: string, input: FinishRunInput) =>
       persistedRun({ id: runId, status: input.status }),
     ),
+    // Default: still running. The poll is stopped before terminal finish on the
+    // normal path, so tests do not have to advance timers.
+    getRun: jest.fn(async (runId: string) => persistedRun({ id: runId, status: 'running' })),
     replay: jest.fn(async () => ({
       run: persistedRun({ status: 'completed' }),
       events: [] as RunEventRecord[],
@@ -215,6 +220,7 @@ beforeEach(() => {
   mockCreateRequestRunService.mockReset()
   mockCreateRequestRunService.mockResolvedValue(fakeRunService())
   delete process.env.OM_DSH_PERSIST
+  delete process.env.OM_DSH_PERSIST_POLL_MS
   process.env.OM_DSH_ROOT = '/tmp/om-dsh-route-test'
   delete process.env.OM_DSH_RUN_TIMEOUT_MS
   delete process.env.PORT
@@ -228,6 +234,7 @@ beforeEach(() => {
 
 afterAll(() => {
   delete process.env.OM_DSH_PERSIST
+  delete process.env.OM_DSH_PERSIST_POLL_MS
   delete process.env.OM_DSH_ROOT
   delete process.env.OM_DSH_RUN_TIMEOUT_MS
   delete process.env.PORT
@@ -839,6 +846,83 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       await expect(replayAttempt.json()).resolves.toMatchObject({ code: 'persistence_disabled' })
       expect(mockStartDshRun).toHaveBeenCalledTimes(1)
     })
+    it('cancels the DSH process within one poll interval when the persisted run is cancelled/revoked', async () => {
+      jest.useFakeTimers()
+      try {
+        process.env.OM_DSH_PERSIST = 'orm'
+        process.env.OM_DSH_PERSIST_POLL_MS = '1000'
+        const service = fakeRunService()
+        mockCreateRequestRunService.mockResolvedValueOnce(service)
+        service.submit.mockResolvedValueOnce({
+          run: persistedRun({ id: 'run-1', status: 'queued' }),
+          replay: false,
+        })
+        service.begin.mockResolvedValueOnce(
+          persistedRun({ id: 'run-1', status: 'running', sessionId: 'dsh-session-1' }),
+        )
+        // The endpoint/revoke already wrote the terminal row; the pump must see it.
+        service.getRun.mockResolvedValue(
+          persistedRun({
+            id: 'run-1',
+            status: 'cancelled',
+            error: 'user_cancelled',
+            finishedAt: '2026-11-11T09:00:05.000Z',
+          }),
+        )
+        // The cancel endpoint already settled the row; finish() must treat that
+        // as idempotent success rather than surfacing persistence_unavailable.
+        service.finish.mockRejectedValueOnce(new TerminalRunError('run-1', 'cancelled'))
+
+        let resolveResult!: (result: DshRunResult) => void
+        const resultPromise = new Promise<DshRunResult>((resolve) => {
+          resolveResult = resolve
+        })
+        let releaseEvents!: () => void
+        const eventsGate = new Promise<void>((resolve) => {
+          releaseEvents = resolve
+        })
+        const events = (async function* (): AsyncGenerator<DshEvent> {
+          yield { seq: 1, type: 'session.event', payload: { delta: 'partial' } }
+          await eventsGate
+        })()
+        const handle: DshRunHandle = {
+          sessionId: 'dsh-session-1',
+          events,
+          result: resultPromise,
+          cancel: jest.fn(async () => {
+            releaseEvents()
+            resolveResult({ finalResponse: '', finishReason: 'cancelled', error: 'cancelled' })
+          }),
+          close: jest.fn(async () => ({ stopped: true })),
+        }
+        mockStartDshRun.mockResolvedValueOnce(handle)
+
+        const response = await POST(chatRequest({ messages: userMessages }))
+        const framesPromise = readSseFrames(response)
+
+        // One poll interval, well inside the 10 s revocation budget.
+        await jest.advanceTimersByTimeAsync(1000)
+        expect(handle.cancel).toHaveBeenCalledTimes(1)
+        expect(handle.cancel).toHaveBeenCalledWith('revoked-or-cancelled')
+
+        const frames = await framesPromise
+        expect(frames.map((frame) => frame.event.type)).toEqual(['thinking', 'text', 'error', 'done'])
+        expect(frames[2].event).toEqual({ type: 'error', error: 'cancelled' })
+        expect(frames.at(-1)?.event).toEqual({ type: 'done', sessionId: 'dsh-session-1' })
+        expect(frames.some((frame) => frame.event.error === 'persistence_unavailable')).toBe(false)
+
+        // finish is idempotent: exactly one persisted terminal transition.
+        expect(service.finish).toHaveBeenCalledTimes(1)
+        expect(service.finish).toHaveBeenCalledWith(
+          'run-1',
+          expect.objectContaining({ status: 'cancelled', error: 'cancelled' }),
+        )
+        expect(handle.close).toHaveBeenCalledTimes(1)
+      } finally {
+        jest.useRealTimers()
+      }
+    })
+
   })
 
 })

@@ -721,6 +721,17 @@ async function pumpRun(
 
 const IN_FLIGHT_RUN_STATUSES = new Set(['queued', 'running', 'awaiting_approval'])
 
+/** Default revocation poll. C's contract: a DB cancel is observed within 1 s. */
+const DEFAULT_PERSIST_POLL_MS = 1_000
+/** Lower bound so a misconfigured env cannot hammer PostgreSQL in a tight loop. */
+const MIN_PERSIST_POLL_MS = 50
+
+function persistPollIntervalMs(): number {
+  const raw = process.env.OM_DSH_PERSIST_POLL_MS
+  const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN
+  return Number.isFinite(parsed) && parsed >= MIN_PERSIST_POLL_MS ? parsed : DEFAULT_PERSIST_POLL_MS
+}
+
 function persistMode(): boolean {
   return (process.env.OM_DSH_PERSIST ?? '').trim().toLowerCase() === 'orm'
 }
@@ -825,6 +836,78 @@ function submitErrorResponse(error: unknown): NextResponse {
   }
   logger.error('Persisted DSH submit failed', { err: errorMessage(error) })
   return persistenceUnavailable()
+}
+
+/**
+ * Watch the persisted run row while the DSH stream is live.
+ *
+ * Cancellation and revocation are decided outside this process: the cancel
+ * endpoint or `revokeBinding` writes a terminal status, and this poll is how the
+ * running stream learns about it. On the first non-in-flight status (or a row
+ * that vanished) it stops polling and asks the runtime to cancel; the pump then
+ * receives the cancelled result, finishes idempotently and closes with
+ * error/done.
+ *
+ * Why 1 s: the 10 s revocation contract leaves room for one poll (<=1 s) plus
+ * the runtime's bounded stop ladder (shutdown 1 s + SIGTERM grace 2 s + SIGKILL
+ * grace 2 s), with margin. `OM_DSH_PERSIST_POLL_MS` lets tests drive this with
+ * fake timers.
+ *
+ * A transient repository read failure is logged and retried on the next tick;
+ * it must not tear down a healthy conversation by itself. Writes remain gated
+ * by the bridge/run status, so a permanently unavailable DB still cannot let a
+ * revoked run write.
+ */
+function startPersistedRunPoller(input: {
+  runId: string
+  getRun: (runId: string) => Promise<RunRecord | null>
+  intervalMs: number
+  cancel: (reason: string) => Promise<void>
+}): () => void {
+  let stopped = false
+  let checking = false
+
+  const timer = setInterval(() => {
+    void check()
+  }, input.intervalMs)
+  // Never keep the Node process alive solely for this poll.
+  timer.unref?.()
+
+  const stop = (): void => {
+    if (stopped) return
+    stopped = true
+    clearInterval(timer)
+  }
+
+  async function check(): Promise<void> {
+    if (stopped || checking) return
+    checking = true
+    try {
+      const run = await input.getRun(input.runId)
+      if (stopped) return
+      if (!run || !isInFlightStatus(run.status)) {
+        stop()
+        try {
+          await input.cancel('revoked-or-cancelled')
+        } catch (error) {
+          // The pump is still bounded by the run timeout; report, don't loop.
+          logger.warn('Persisted DSH run cancel after terminal status failed', {
+            runId: input.runId,
+            err: errorMessage(error),
+          })
+        }
+      }
+    } catch (error) {
+      logger.warn('Persisted DSH run status poll failed', {
+        runId: input.runId,
+        err: errorMessage(error),
+      })
+    } finally {
+      checking = false
+    }
+  }
+
+  return stop
 }
 
 function persistedEventToSse(event: RunEventRecord): SseEvent {
@@ -1007,12 +1090,25 @@ async function startPersistedRun(
         }
       }
 
+      let stopPolling: (() => void) | null = null
       try {
         const thinking: SseEvent = { type: 'thinking' }
         const thinkingSeq = await persist(thinking)
         await write(thinking, thinkingSeq)
 
+        stopPolling = startPersistedRunPoller({
+          runId: run.id,
+          getRun: (runId) => service.getRun(runId),
+          intervalMs: persistPollIntervalMs(),
+          cancel: (reason) => handle.cancel(reason),
+        })
+
         const outcome = await pumpRun(handle, write, persist)
+        // Normal completion stops the poll before the terminal row is written,
+        // so a finished turn can never see its own `completed` status and issue
+        // a spurious cancel.
+        stopPolling()
+        stopPolling = null
         const terminal = terminalOutcome(outcome)
         try {
           await service.finish(run.id, terminal)
@@ -1038,6 +1134,8 @@ async function startPersistedRun(
           await finishQuietly(service, run.id, 'failed', errorMessage(error))
         }
         await write({ type: 'done', sessionId: handle.sessionId })
+      } finally {
+        stopPolling?.()
       }
     },
     async () => {

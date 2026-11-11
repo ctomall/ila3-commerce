@@ -24,10 +24,14 @@ import { OrmDshRunRepository, createOrmRunStore } from './orm-repository'
 import {
   InvalidRunRequestError,
   RunNotFoundError,
+  RunStoreError,
   isInFlightRunStatus,
+  isTerminalRunStatus,
   type BindingRecord,
   type DshRunRepository,
   type DshRunStore,
+  type RevokeBindingOptions,
+  type RevokeBindingResult,
   type RunEventRecord,
   type RunRecord,
   type RunStoreDeps,
@@ -89,10 +93,20 @@ export type ReplayRunResult = {
 
 export type RunService = {
   ensureBinding(identity: RunIdentity, assistantId?: string): Promise<BindingRecord>
+  /** Read-only lookup; unlike `ensureBinding` it never creates a row. */
+  getBinding(identity: RunIdentity): Promise<BindingRecord | null>
   submit(input: SubmitServiceInput): Promise<SubmitServiceResult>
   begin(runId: string, input: BeginRunInput): Promise<RunRecord>
   appendEvent(runId: string, input: AppendRunEventInput): Promise<RunEventRecord>
   finish(runId: string, input: FinishRunInput): Promise<RunRecord>
+  /** Terminal read; used by the persisted pump's revocation poll. */
+  getRun(runId: string): Promise<RunRecord | null>
+  /**
+   * Cancel an in-flight run. A terminal run is returned unchanged, so the
+   * cancel endpoint is idempotent even when a revoke won the race.
+   */
+  cancel(runId: string, reason?: string): Promise<RunRecord>
+  revokeBinding(bindingId: string, options?: RevokeBindingOptions): Promise<RevokeBindingResult>
   replay(userId: string, runId: string, cursor?: number): Promise<ReplayRunResult>
 }
 
@@ -240,6 +254,51 @@ export function createRunService(deps: RunServiceDeps): RunService {
     })
   }
 
+  const getBinding = async (identity: RunIdentity): Promise<BindingRecord | null> => {
+    assertIdentity(identity)
+    return repository.findBindingByScope(identity)
+  }
+
+  const getRun = async (runId: string): Promise<RunRecord | null> => {
+    if (typeof runId !== 'string' || runId.trim() === '') {
+      throw new InvalidRunRequestError('runId is required')
+    }
+    return repository.getRun(runId)
+  }
+
+  const cancel = async (runId: string, reason = 'user_cancelled'): Promise<RunRecord> => {
+    if (typeof runId !== 'string' || runId.trim() === '') {
+      throw new InvalidRunRequestError('runId is required')
+    }
+    const normalizedReason =
+      typeof reason === 'string' && reason.trim() !== '' ? reason.trim() : 'user_cancelled'
+
+    const run = await repository.getRun(runId)
+    if (!run) throw new RunNotFoundError(runId)
+    // Terminal is immutable and success from this endpoint's point of view.
+    if (isTerminalRunStatus(run.status)) return run
+
+    try {
+      return await store.finish({ runId, status: 'cancelled', error: normalizedReason })
+    } catch (error) {
+      // A concurrent cancel/revoke may have settled the run between the read
+      // and the transition. Re-read and return the terminal row instead of
+      // reporting a false failure.
+      if (error instanceof RunStoreError && error.code === 'run-terminal') {
+        const latest = await repository.getRun(runId)
+        if (latest) return latest
+      }
+      throw error
+    }
+  }
+
+  const revokeBinding = async (
+    bindingId: string,
+    options: RevokeBindingOptions = {},
+  ): Promise<RevokeBindingResult> => {
+    return store.revokeBinding(bindingId, options)
+  }
+
   const replay = async (userId: string, runId: string, cursor = 0): Promise<ReplayRunResult> => {
     if (typeof userId !== 'string' || userId.trim() === '') {
       throw new InvalidRunRequestError('userId is required')
@@ -251,7 +310,18 @@ export function createRunService(deps: RunServiceDeps): RunService {
     return { run, events, resumable: !isInFlightRunStatus(run.status) }
   }
 
-  return { ensureBinding, submit, begin, appendEvent, finish, replay }
+  return {
+    ensureBinding,
+    getBinding,
+    submit,
+    begin,
+    appendEvent,
+    finish,
+    getRun,
+    cancel,
+    revokeBinding,
+    replay,
+  }
 }
 
 /**
