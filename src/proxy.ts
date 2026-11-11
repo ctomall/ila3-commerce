@@ -5,6 +5,8 @@ import { NextResponse } from 'next/server'
 // of Node.js-only modules like MikroORM. Bootstrap runs in layouts/route handlers.
 const CHAT_PUBLIC_PATH = '/api/ai_assistant/chat'
 const CHAT_DSH_PATH = '/api/internal/ai-assistant-dsh-chat'
+const HEALTH_PUBLIC_PATH = '/api/ai_assistant/health'
+const HEALTH_DSH_PATH = '/api/internal/dsh-health'
 
 /**
  * `OM_AI_ENGINE=dsh` is the only value that switches the chat engine. Unset (or
@@ -26,6 +28,14 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  // The UI gates the assistant on this health probe. It must answer for the
+  // engine that actually serves chat, not for the OpenCode server we replaced.
+  if (isDshEngineEnabled() && req.method === 'GET' && req.nextUrl.pathname === HEALTH_PUBLIC_PATH) {
+    const url = req.nextUrl.clone()
+    url.pathname = HEALTH_DSH_PATH
+    return NextResponse.rewrite(url)
+  }
+
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-next-url', req.nextUrl.pathname)
   return NextResponse.next({ request: { headers: requestHeaders } })
@@ -43,5 +53,6 @@ export const config = {
   matcher: [
     '/((?!api/|_next/|favicon.ico|.*\\.(?:png|jpg|jpeg|gif|svg|webp|ico|css|js|map|txt|xml|json|woff|woff2|ttf|eot)$).*)',
     '/api/ai_assistant/chat',
+    '/api/ai_assistant/health',
   ],
 }

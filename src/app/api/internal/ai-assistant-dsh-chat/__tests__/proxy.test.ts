@@ -42,6 +42,14 @@ describe('proxy chat engine switch', () => {
     )
   })
 
+  it('rewrites GET /api/ai_assistant/health to the DSH health handler', () => {
+    process.env.OM_AI_ENGINE = 'dsh'
+
+    const response = proxy(request('GET', '/api/ai_assistant/health'))
+
+    expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost/api/internal/dsh-health')
+  })
+
   it('normalises the engine value before switching', () => {
     process.env.OM_AI_ENGINE = '  DSH  '
 
@@ -70,9 +78,10 @@ describe('proxy chat engine switch', () => {
     expect(response.headers.get('x-middleware-next')).toBe('1')
   })
 
-  it('adds exactly the chat path to the matcher instead of opening all of /api', () => {
+  it('adds exactly the chat and health paths to the matcher instead of opening all of /api', () => {
     expect(config.matcher).toContain('/api/ai_assistant/chat')
-    expect(config.matcher).toHaveLength(2)
+    expect(config.matcher).toContain('/api/ai_assistant/health')
+    expect(config.matcher).toHaveLength(3)
     expect(config.matcher).not.toContain('/api/:path*')
     expect(config.matcher).not.toContain('/api/(.*)')
   })
