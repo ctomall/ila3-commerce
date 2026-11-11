@@ -45,9 +45,12 @@ export async function GET(req: NextRequest) {
   try {
     const container = await createRequestContainer()
     const em = container.resolve<EntityManager>('em')
+    // MikroORM's positional placeholders expand array params into a list, which
+    // breaks `any($1)`/`any(?)`; build one placeholder per id instead.
+    const placeholders = ids.map(() => '?').join(',')
     const rows = (await em.getConnection().execute(
-      'select conversation_id, owner_user_id, visibility from ai_chat_conversations where conversation_id = any($1::text[])',
-      [ids],
+      `select conversation_id, owner_user_id, visibility from ai_chat_conversations where conversation_id in (${placeholders})`,
+      ids,
     )) as Array<{ conversation_id: string; owner_user_id: string | null; visibility: string | null }>
     const byId = new Map(rows.map((row) => [row.conversation_id, row]))
     payload.items = items.filter((item) => {
