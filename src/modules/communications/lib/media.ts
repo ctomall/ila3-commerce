@@ -83,14 +83,17 @@ export function describeMedia(media: MediaSummary): string {
 /**
  * Browser URL for an inbound attachment the media worker already persisted.
  *
- * The installed attachments module serves bytes at `/api/attachments/file/{id}`
- * and enforces the tenant/organization scope itself, so the inbox only needs to
- * link to it. `null` when the bytes were never downloaded: a provider URL would
- * expire, and rendering one would pretend the CRM has the file.
+ * Points at the BFF route, not the installed `/api/attachments/file/{id}`: the
+ * installed endpoint enforces tenant/organization scope only, so a same-scope
+ * employee could read another person's personal-mailbox attachment by UUID. The
+ * BFF route reuses the inbox visibility rule (shared channel or caller-owned) and
+ * also handles messages whose channel has no organization. `null` when the bytes
+ * were never downloaded: a provider URL would expire and would pretend the CRM
+ * has the file.
  */
 export function mediaHref(media: MediaSummary): string | null {
   if (!media.downloaded || !media.attachmentId) return null
-  return `/api/attachments/file/${encodeURIComponent(media.attachmentId)}`
+  return `/api/communications/me/attachments/${encodeURIComponent(media.attachmentId)}`
 }
 
 function formatBytes(bytes: number): string {
