@@ -225,3 +225,26 @@ Playwright（admin，生产 3000，agentic UI）：
 截图：`prod-ui-stop.png`。
 
 **边界**：这是 UI agentic 路径（包内 AI SDK loop）的停止/历史行为，不是 DSH SSE 的 `Last-Event-ID` 重连；DSH 的游标重连在 API 层已单独验证（§2）。
+
+## 14. UI agentic → DSH 桥（v26/v27，`dfb0580` → `9251031`）
+
+### 14.1 实现
+- `POST /api/ai_assistant/ai/chat`（UI 实际入口）在 `OM_AI_ENGINE=dsh` + `OM_DSH_AGENTIC=1` 时重写到
+  `src/app/api/internal/dsh-agentic-chat/route.ts`；
+- 桥把 UI 的最近消息拼成提示，转发到既有 DSH 路由（独立 idempotencyKey），
+  再把 DSH `text` 事件用 `createUIMessageStream`/`createUIMessageStreamResponse` 重新封装成 AI SDK UI 流；
+- 转发 `req.signal`：UI 停止会取消 DSH 子进程并落终态。
+
+### 14.2 生产 UI 实测（Playwright，v26/v27，生产 3000）
+| 场景 | 结果 |
+| --- | --- |
+| 发送 `BRIDGE_<ts>_OK` | UI 助手气泡返回 `BRIDGE_<ts>_OK`；`ai/chat` 200；DB 最新 run completed 且 `finalResponse` 同值 |
+| 让助手调用 `crm_find_companies` | UI 返回 `TOOL_UI_OK`，页面可见 `Brightside`；证明 UI→DSH→受控工具→UI 闭环 |
+| 发送 700 词长任务后点击停止 | 停止按钮点击成功；DB 最新 run `cancelled`（`finishReason:"cancelled"`）；`dsh` 子进程数 0 |
+
+截图：`prod-ui-dsh-bridge.png`、`prod-ui-dsh-tool.png`。
+
+### 14.3 明确边界
+- 只映射**文本**事件；工具审批卡/任务计划等 AI SDK 富事件尚未翻译，UI 不展示工具卡片（工具确实执行）。
+- 未把 UI 的 `sessionId` 映射为 DSH 会话；每轮新 run，靠桥拼接的历史消息保持上下文。
+- 默认仍由 `OM_DSH_AGENTIC` 显式开启（当前生产已开）；关闭即回退包内 agentic 路径，无需重新构建。
