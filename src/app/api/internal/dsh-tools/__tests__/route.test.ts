@@ -148,7 +148,7 @@ describe('POST /api/internal/dsh-tools/[tool]', () => {
       error: 'CRM writes are not allowed for this run',
       code: 'write_denied',
     })
-    expect(harness.bindings).not.toHaveBeenCalled()
+    expect(harness.bindings).toHaveBeenCalledWith('binding-1')
   })
 
   it('returns 403 feature_denied when RBAC no longer grants the real feature', async () => {
