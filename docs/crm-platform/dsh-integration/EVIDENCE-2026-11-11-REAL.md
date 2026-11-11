@@ -248,3 +248,19 @@ Playwright（admin，生产 3000，agentic UI）：
 - 只映射**文本**事件；工具审批卡/任务计划等 AI SDK 富事件尚未翻译，UI 不展示工具卡片（工具确实执行）。
 - 未把 UI 的 `sessionId` 映射为 DSH 会话；每轮新 run，靠桥拼接的历史消息保持上下文。
 - 默认仍由 `OM_DSH_AGENTIC` 显式开启（当前生产已开）；关闭即回退包内 agentic 路径，无需重新构建。
+
+## 15. UI 撤权中断（v27 `9251031`）
+
+员工（acceptance）在 UI 发起 700 词长任务后，admin 调
+`POST /api/internal/dsh-bindings/revoke`：
+
+| 项 | 结果 |
+| --- | --- |
+| revoke 响应 | 200，`{revokedRuns:1}` |
+| 最新 run | `cancelled`，`error:"ui-revoke-e2e"`，result `finishReason:"cancelled"` |
+| UI | 流中断并显示失败卡片；停止发生在采样窗口内（≤6 s） |
+| 子进程 | `dsh` 子进程数 0 |
+| 恢复 | binding 已 SQL 恢复 `active`（revision+1），供后续验收 |
+
+截图：`prod-ui-revoked.png`。UI 的失败文案是包内通用 `empty_response`，
+不是撤权原因；服务端行与日志才是权威。
