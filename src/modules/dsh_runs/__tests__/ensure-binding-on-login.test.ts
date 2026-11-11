@@ -1,9 +1,9 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
 
-const findOne = jest.fn()
-const create = jest.fn()
-const persist = jest.fn()
-const flush = jest.fn()
+const findOne = jest.fn<() => Promise<unknown>>()
+const create = jest.fn<(...args: unknown[]) => unknown>()
+const persist = jest.fn<() => void>()
+const flush = jest.fn<() => Promise<void>>()
 const fork = jest.fn(() => ({ findOne, create, persist, flush }))
 const getOrm = jest.fn(async () => ({ em: { fork } }))
 
