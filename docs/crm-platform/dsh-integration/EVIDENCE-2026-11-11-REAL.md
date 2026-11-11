@@ -1,7 +1,7 @@
 # DSH 替换：真实模型 + 真实数据库闭环证据（2026-11-11）
 
 > 性质：**隔离实例**（:3901；链路自 v14 起，独立 QA 复验于 release `fb8f6fc`/v19）+ **真实 DeepSeek 模型** + **生产库已应用迁移** 的闭环证据。
-> 生产 `mercato.ila3.top` 仍运行 OpenCode；本轮未切换生产引擎。
+> 生产 `mercato.ila3.top` 已于 2026-11-11 12:57Z 切到 DSH（见 §10）；本文档 §1–§9 为切换前隔离证据。
 
 ## 0. 前置（已批准执行）
 
@@ -239,7 +239,7 @@ Playwright（admin，生产 3000，agentic UI）：
 | 场景 | 结果 |
 | --- | --- |
 | 发送 `BRIDGE_<ts>_OK` | UI 助手气泡返回 `BRIDGE_<ts>_OK`；`ai/chat` 200；DB 最新 run completed 且 `finalResponse` 同值 |
-| 让助手调用 `crm_find_companies` | UI 返回 `TOOL_UI_OK`，页面可见 `Brightside`；证明 UI→DSH→受控工具→UI 闭环 |
+| 让助手调用 `crm_find_companies` | UI 返回 `TOOL_UI_OK`，文本中可见 `Brightside`；工具卡片未渲染（仅文本级闭环，见 §14.3） |
 | 发送 700 词长任务后点击停止 | 停止按钮点击成功；DB 最新 run `cancelled`（`finishReason:"cancelled"`）；`dsh` 子进程数 0 |
 
 截图：`prod-ui-dsh-bridge.png`、`prod-ui-dsh-tool.png`。
@@ -264,3 +264,21 @@ Playwright（admin，生产 3000，agentic UI）：
 
 截图：`prod-ui-revoked.png`。UI 的失败文案是包内通用 `empty_response`，
 不是撤权原因；服务端行与日志才是权威。
+
+## 16. 默认 UI 入口修复（`ca17165`/`845b802`，部署 `5113ec9`）
+
+**缺陷**：UI 自动打开会话列表第一条；admin 会落到员工的 private 会话（isOwner=false），composer 禁用。
+
+**修复**：proxy 将 `GET /api/ai_assistant/ai/conversations` 重写到 `dsh-conversations`，
+按 `ai_chat_conversations.owner_user_id` 过滤 private 会话（保留 shared），鉴权仍由包内 handler 负责。
+
+**实测（生产，admin）**：
+| 项 | 结果 |
+| --- | --- |
+| 会话列表 | 仅 `ad0a60a5…`、`f78d9dfd…`（admin 自有）；员工 `357a19ce…` 不再出现 |
+| 默认入口 | 打开助手 → 选 agent → composer 可见（`消息输入框`），无需 deep link |
+| 发送 | 唯一标记 `DEFAULTUI2_<ts>_OK` 由助手气泡原样返回；DB 最新 run completed 且 finalResponse 同值 |
+
+截图：`prod-ui-default-entry.png`。
+
+> 注：MikroORM 的 `execute` 会把数组参数展开，`any(?)` 语法报错并静默回退；改用逐 id 占位符（`845b802`）。
