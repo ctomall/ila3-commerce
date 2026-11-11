@@ -16,6 +16,7 @@
  *
  * Tests replace this module with `jest.mock('@/lib/dsh/tool-bridge/deps', ...)`.
  */
+import type { AwilixContainer } from 'awilix'
 import type { EntityManager } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
@@ -26,6 +27,8 @@ import { canWriteToCrm as decideWrite } from '@/lib/dsh/run'
 
 export type ToolBridgeDeps = {
   em: EntityManager
+  /** Request container: the write tool resolves the command bus through it. */
+  container: AwilixContainer
   bindings: BindingLookup
   checkFeatures: FeatureCheck
   resolveCustomerScope: CustomerScopeResolver
@@ -84,6 +87,7 @@ export async function buildToolBridgeDeps(): Promise<ToolBridgeDeps> {
 
   return {
     em,
+    container,
     bindings,
     checkFeatures,
     resolveCustomerScope: resolveConfiguredCustomerScope,

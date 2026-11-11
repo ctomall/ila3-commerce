@@ -26,14 +26,12 @@
  */
 import readline from 'node:readline'
 
-const TOOL_NAME = 'crm_find_companies'
-const BRIDGE_TOOL_ID = 'crm.find_companies'
 const SERVER_NAME = 'crm-dsh-mcp'
 const SERVER_VERSION = '0.1.0'
 const PROTOCOL_VERSIONS = ['2026-07-28', '2025-11-25', '2025-06-18', '2025-03-26', '2024-11-05']
 const DEFAULT_HTTP_TIMEOUT_MS = 30_000
 
-const TOOL_INPUT_SCHEMA = {
+const FIND_COMPANIES_SCHEMA = {
   type: 'object',
   properties: {
     query: {
@@ -51,15 +49,60 @@ const TOOL_INPUT_SCHEMA = {
   additionalProperties: false,
 }
 
-const TOOLS = [
+const UPDATE_COMPANY_SCHEMA = {
+  type: 'object',
+  properties: {
+    id: { type: 'string', format: 'uuid', description: 'Company (customer entity) id.' },
+    fields: {
+      type: 'object',
+      description:
+        'Fields to change. Only these are accepted; ownership, activation and custom fields are refused.',
+      properties: {
+        displayName: { type: 'string', maxLength: 200 },
+        industry: { type: 'string', maxLength: 120 },
+        websiteUrl: { type: 'string', maxLength: 300 },
+        domain: { type: 'string', maxLength: 200 },
+        status: { type: 'string', maxLength: 60 },
+        lifecycleStage: { type: 'string', maxLength: 60 },
+      },
+      additionalProperties: false,
+      minProperties: 1,
+    },
+  },
+  required: ['id', 'fields'],
+  additionalProperties: false,
+}
+
+/** Bridge tool id -> MCP tool declaration. Write tools are gated by env. */
+const TOOL_CATALOG = [
   {
-    name: TOOL_NAME,
+    name: 'crm_find_companies',
+    bridgeId: 'crm.find_companies',
+    writes: false,
     description:
       'Find CRM companies visible to the authenticated employee (read-only). ' +
       'Results are already scoped to the caller tenant/organization; do not ask for tenant or owner filters.',
-    inputSchema: TOOL_INPUT_SCHEMA,
+    inputSchema: FIND_COMPANIES_SCHEMA,
+  },
+  {
+    name: 'crm_update_company',
+    bridgeId: 'crm.update_company',
+    writes: true,
+    description:
+      'Propose an update to one CRM company. This tool NEVER writes directly: the call is recorded as a ' +
+      'write request and the employee must approve it in the CRM write-approval page. A successful approval ' +
+      'returns approval_required/approval_consumed style codes; tell the employee to review and approve, then ' +
+      'retry the identical call. Only displayName/industry/websiteUrl/domain/status/lifecycleStage are editable.',
+    inputSchema: UPDATE_COMPANY_SCHEMA,
   },
 ]
+
+const writesEnabled = (process.env.OM_DSH_WRITES ?? '').trim() === '1'
+const TOOLS = TOOL_CATALOG.filter((tool) => !tool.writes || writesEnabled).map((tool) => ({
+  name: tool.name,
+  description: tool.description,
+  inputSchema: tool.inputSchema,
+}))
 
 class RpcError extends Error {
   constructor(code, message) {
@@ -92,14 +135,18 @@ if (missing.length > 0) {
   failStartup(`missing required environment: ${missing.join(', ')} — refusing to serve tools`)
 }
 
-let bridgeEndpoint
+let bridgeBase
 try {
   const parsed = new URL(bridgeBaseUrl)
   if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') throw new Error('unsupported protocol')
   // Keep any configured path prefix; only trim trailing slashes.
-  bridgeEndpoint = `${parsed.toString().replace(/\/+$/, '')}/${BRIDGE_TOOL_ID}`
+  bridgeBase = parsed.toString().replace(/\/+$/, '')
 } catch {
   failStartup('OM_DSH_BRIDGE_URL is not a valid http(s) URL')
+}
+
+function bridgeEndpoint(bridgeId) {
+  return `${bridgeBase}/${bridgeId}`
 }
 
 const httpTimeoutRaw = Number.parseInt(process.env.OM_DSH_MCP_HTTP_TIMEOUT_MS ?? '', 10)
@@ -118,12 +165,12 @@ function toolError(code, error, status) {
   }
 }
 
-async function callBridge(args) {
+async function callBridge(bridgeId, args) {
   const controller = new AbortController()
   const timer = setTimeout(() => controller.abort(), httpTimeoutMs)
   let response
   try {
-    response = await fetch(bridgeEndpoint, {
+    response = await fetch(bridgeEndpoint(bridgeId), {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -186,12 +233,15 @@ async function dispatch(method, params) {
       return { tools: TOOLS }
     case 'tools/call': {
       const name = isRecord(params) ? params.name : undefined
-      if (name !== TOOL_NAME) {
+      const tool = TOOLS.find((entry) => entry.name === name)
+      if (!tool) {
         throw new RpcError(-32602, `Unknown tool: ${typeof name === 'string' ? name : '<missing>'}`)
       }
+      const catalogEntry = TOOL_CATALOG.find((entry) => entry.name === name)
+      if (!catalogEntry) throw new RpcError(-32602, `Unknown tool: ${name}`)
       const args = isRecord(params) && params.arguments !== undefined ? params.arguments : {}
       if (!isRecord(args)) throw new RpcError(-32602, 'tools/call arguments must be an object')
-      return callBridge(args)
+      return callBridge(catalogEntry.bridgeId, args)
     }
     default:
       throw new RpcError(-32601, `Method not found: ${method}`)

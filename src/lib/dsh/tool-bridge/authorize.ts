@@ -179,7 +179,9 @@ export async function authorizeToolCall(input: {
 
   // Write decisions come after identity/feature checks and are re-evaluated at
   // the moment of the call: the run must still be running and the binding still
-  // active. Until a write handler ships, an allowed write still fails closed.
+  // active. The bridge route adds the second gate (the human approval and the
+  // production `OM_DSH_WRITES` switch); this function only answers "may this
+  // run write at all".
   if (descriptor.readOnly !== true) {
     let allowed = false
     if (deps.canWriteToCrm) {
@@ -189,9 +191,7 @@ export async function authorizeToolCall(input: {
         allowed = false
       }
     }
-    return allowed
-      ? reject(403, 'write_not_enabled', 'Write tool handler is not implemented')
-      : reject(403, 'write_denied', 'CRM writes are not allowed for this run')
+    if (!allowed) return reject(403, 'write_denied', 'CRM writes are not allowed for this run')
   }
 
   let scope: CustomerScope | null

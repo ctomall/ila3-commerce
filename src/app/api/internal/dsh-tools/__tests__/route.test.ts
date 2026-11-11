@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { afterAll, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterAll, afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { NextRequest } from 'next/server'
 import type { EntityManager } from '@mikro-orm/postgresql'
 import type { Mock } from 'jest-mock'
@@ -8,18 +8,27 @@ import type { BindingState } from '@/lib/dsh/run'
 
 jest.mock('@/bootstrap-api', () => ({ bootstrap: jest.fn() }))
 jest.mock('@/lib/dsh/tool-bridge/deps', () => ({ buildToolBridgeDeps: jest.fn() }))
+jest.mock('@/lib/dsh/tool-bridge/approval-gate', () => ({ runWriteGate: jest.fn() }))
+jest.mock('@/modules/dsh_approvals/services/orm-repository', () => ({
+  createRequestApprovalStore: jest.fn(async () => ({})),
+  ApprovalUnavailableError: class ApprovalUnavailableError extends Error {},
+}))
 jest.mock('@open-mercato/shared/lib/logger', () => {
   const logger = { debug: jest.fn(), info: jest.fn(), warn: jest.fn(), error: jest.fn() }
   return { createLogger: () => logger }
 })
 
 import { buildToolBridgeDeps } from '@/lib/dsh/tool-bridge/deps'
+import { runWriteGate } from '@/lib/dsh/tool-bridge/approval-gate'
+import { createRequestApprovalStore } from '@/modules/dsh_approvals/services/orm-repository'
 import { createLogger } from '@open-mercato/shared/lib/logger'
 import { signRunToken, type RunTokenClaims } from '@/lib/dsh/tool-bridge/run-token'
 import { POST } from '../[tool]/route'
 
 const SECRET = 'route-test-secret-not-real'
 const mockBuildDeps = buildToolBridgeDeps as unknown as Mock<typeof buildToolBridgeDeps>
+const mockRunWriteGate = runWriteGate as unknown as Mock<typeof runWriteGate>
+const mockCreateStore = createRequestApprovalStore as unknown as Mock<typeof createRequestApprovalStore>
 const mockLogger = createLogger('test') as unknown as {
   info: Mock
   error: Mock
@@ -45,6 +54,8 @@ const activeBinding = {
   state: 'active' as BindingState,
 }
 
+const COMPANY_ID = '11111111-1111-4111-8111-111111111111'
+
 const companyRow = {
   id: 'c-1',
   legalName: 'Acme GmbH',
@@ -63,13 +74,25 @@ function makeHarness() {
     mode: 'organization' as const,
     ownerUserIds: [] as string[],
   }))
+  const emFindOne = jest.fn(async (..._args: unknown[]) => ({
+    id: COMPANY_ID,
+    ownerUserId: 'user-1',
+    displayName: 'Acme GmbH',
+  }))
+  const commandExecute = jest.fn(async (..._args: unknown[]) => ({ entityId: COMPANY_ID }))
+  const container = {
+    resolve: jest.fn(() => ({ execute: commandExecute })),
+  }
+  const canWriteToCrm = jest.fn(async (..._args: unknown[]) => false)
   const deps = {
-    em: { find: emFind } as unknown as EntityManager,
+    em: { find: emFind, findOne: emFindOne, fork: () => ({ findOne: emFindOne }) } as unknown as EntityManager,
+    container,
+    canWriteToCrm,
     bindings,
     checkFeatures,
     resolveCustomerScope,
   }
-  return { deps, emFind, bindings, checkFeatures, resolveCustomerScope }
+  return { deps, emFind, emFindOne, commandExecute, canWriteToCrm, bindings, checkFeatures, resolveCustomerScope }
 }
 
 let harness = makeHarness()
@@ -98,11 +121,12 @@ beforeEach(() => {
   jest.clearAllMocks()
   process.env.OM_DSH_RUN_TOKEN_SECRET = SECRET
   harness = makeHarness()
-  mockBuildDeps.mockResolvedValue(harness.deps)
+  mockBuildDeps.mockResolvedValue(harness.deps as never)
 })
 
 afterAll(() => {
   delete process.env.OM_DSH_RUN_TOKEN_SECRET
+  delete process.env.OM_DSH_WRITES
 })
 
 describe('POST /api/internal/dsh-tools/[tool]', () => {
@@ -250,5 +274,89 @@ describe('POST /api/internal/dsh-tools/[tool]', () => {
     expect(text).toContain('tool_unavailable')
     expect(text).not.toContain('customer_companies')
     expect(auditCalls()[0][1]).toMatchObject({ decision: 'tool_error' })
+  })
+})
+
+describe('POST /api/internal/dsh-tools/[tool] — write approval gate', () => {
+  const writeToken = () => tokenFor({ tools: ['crm.update_company'] })
+  const writeBody = { id: COMPANY_ID, fields: { industry: 'Software' } }
+
+  afterEach(() => {
+    delete process.env.OM_DSH_WRITES
+  })
+
+  it('stays read-only while OM_DSH_WRITES is off, even when the run may write', async () => {
+    harness.canWriteToCrm.mockResolvedValue(true)
+    const response = await POST(post('crm.update_company', writeBody, writeToken()), context('crm.update_company'))
+    expect(response.status).toBe(403)
+    await expect(response.json()).resolves.toEqual({
+      error: 'CRM writes are disabled on this instance',
+      code: 'write_not_enabled',
+    })
+    expect(mockCreateStore).not.toHaveBeenCalled()
+    expect(harness.commandExecute).not.toHaveBeenCalled()
+  })
+
+  it('returns approval_required with the pending approval id', async () => {
+    process.env.OM_DSH_WRITES = '1'
+    harness.canWriteToCrm.mockResolvedValue(true)
+    mockRunWriteGate.mockResolvedValue({
+      action: 'approval_required',
+      approvalId: 'a-1',
+      expiresAt: '2026-11-12T00:10:00.000Z',
+      summary: { companyId: COMPANY_ID, companyName: 'Acme GmbH' },
+    })
+    const response = await POST(post('crm.update_company', writeBody, writeToken()), context('crm.update_company'))
+    expect(response.status).toBe(403)
+    const payload = (await response.json()) as Record<string, unknown>
+    expect(payload).toMatchObject({ code: 'approval_required', approvalId: 'a-1' })
+    expect(harness.commandExecute).not.toHaveBeenCalled()
+  })
+
+  it('executes the command once an approved request is consumed', async () => {
+    process.env.OM_DSH_WRITES = '1'
+    harness.canWriteToCrm.mockResolvedValue(true)
+    mockRunWriteGate.mockResolvedValue({
+      action: 'execute',
+      approval: {
+        id: 'a-1',
+        tenantId: 'tenant-1',
+        organizationId: 'org-1',
+        userId: 'user-1',
+        bindingId: 'binding-1',
+        runId: 'run-1',
+        tool: 'crm.update_company',
+        argsHash: 'h',
+        argsPreview: {},
+        status: 'approved',
+        requestedAt: '2026-11-12T00:00:00.000Z',
+        expiresAt: '2026-11-12T00:10:00.000Z',
+        decidedAt: '2026-11-12T00:01:00.000Z',
+        decidedBy: 'user-1',
+        consumedAt: null,
+      },
+    })
+    const response = await POST(post('crm.update_company', writeBody, writeToken()), context('crm.update_company'))
+    expect(response.status).toBe(200)
+    await expect(response.json()).resolves.toMatchObject({
+      ok: true,
+      tool: 'crm.update_company',
+      result: { ok: true, companyId: COMPANY_ID, updatedFields: ['industry'] },
+    })
+    expect(harness.commandExecute).toHaveBeenCalledTimes(1)
+    expect(harness.commandExecute.mock.calls[0][0]).toBe('customers.companies.update')
+  })
+
+  it('fails closed with 503 when the approval gate is unavailable', async () => {
+    process.env.OM_DSH_WRITES = '1'
+    harness.canWriteToCrm.mockResolvedValue(true)
+    mockRunWriteGate.mockRejectedValue(new Error('store down'))
+    const response = await POST(post('crm.update_company', writeBody, writeToken()), context('crm.update_company'))
+    expect(response.status).toBe(503)
+    await expect(response.json()).resolves.toEqual({
+      error: 'Write approval is unavailable',
+      code: 'approval_unavailable',
+    })
+    expect(harness.commandExecute).not.toHaveBeenCalled()
   })
 })

@@ -74,6 +74,17 @@ const DEFAULT_DSH_ROOT = path.join(os.tmpdir(), 'om-dsh')
 
 /** Must match `FIND_COMPANIES_TOOL` in `src/lib/dsh/tool-bridge/crm-find-companies.ts`. */
 const DSH_BRIDGE_TOOL = 'crm.find_companies'
+/** Must match `UPDATE_COMPANY_TOOL` in `src/lib/dsh/tool-bridge/crm-update-company.ts`. */
+const DSH_WRITE_TOOL = 'crm.update_company'
+
+/** Write tools are advertised only when the instance switch is on. */
+function writesEnabled(): boolean {
+  return (process.env.OM_DSH_WRITES ?? '').trim() === '1'
+}
+
+function bridgeTools(): string[] {
+  return writesEnabled() ? [DSH_BRIDGE_TOOL, DSH_WRITE_TOOL] : [DSH_BRIDGE_TOOL]
+}
 /**
  * Legacy (OM_DSH_PERSIST off) runs have no persisted binding, but the run-token
  * payload requires a non-empty binding id. This placeholder deliberately can
@@ -329,7 +340,7 @@ function signBridgeToken(
         tenantId,
         organizationId,
         exp: Math.floor(Date.now() / 1000) + Math.ceil(timeoutMs / 1000) + RUN_TOKEN_GRACE_SECONDS,
-        tools: [DSH_BRIDGE_TOOL],
+        tools: bridgeTools(),
       },
       secret,
     )
@@ -379,6 +390,9 @@ function resolveToolBridgeWiring(
       OM_DSH_BRIDGE_URL: resolveBridgeBaseUrl(),
       OM_DSH_MCP_SCRIPT: script,
       OM_DSH_TOOL_TOKEN: token,
+      // The MCP server advertises the write tool only when this is '1'; the
+      // bridge route enforces the same switch again per call.
+      OM_DSH_WRITES: writesEnabled() ? '1' : '0',
     },
   }
 }

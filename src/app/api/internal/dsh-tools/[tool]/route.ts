@@ -23,8 +23,15 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createLogger } from '@open-mercato/shared/lib/logger'
 import { bootstrap } from '@/bootstrap-api'
+import {
+  ApprovalUnavailableError,
+  createRequestApprovalStore,
+  type ApprovalStore,
+} from '@/modules/dsh_approvals/services/orm-repository'
+import { runWriteGate } from '@/lib/dsh/tool-bridge/approval-gate'
 import { authorizeToolCall } from '@/lib/dsh/tool-bridge/authorize'
 import { buildToolBridgeDeps } from '@/lib/dsh/tool-bridge/deps'
+import { isToolExecutionError } from '@/lib/dsh/tool-bridge/errors'
 import { getToolDescriptor } from '@/lib/dsh/tool-bridge/registry'
 import { resolveRunTokenSecret, verifyRunToken, type RunTokenClaims } from '@/lib/dsh/tool-bridge/run-token'
 
@@ -39,6 +46,21 @@ const logger = createLogger('dsh.tools')
 export const runtime = 'nodejs'
 /** Every call is a live authorization decision; never cache or prerender it. */
 export const dynamic = 'force-dynamic'
+
+/** Production switch for write tools; unset keeps the bridge read-only. */
+function writesEnabled(): boolean {
+  return (process.env.OM_DSH_WRITES ?? '').trim() === '1'
+}
+
+function approvalMessage(code: string): string {
+  if (code === 'approval_required') {
+    return 'This write needs employee approval. The request is visible in the CRM write-approval page.'
+  }
+  if (code === 'approval_rejected') return 'The employee rejected this exact write.'
+  if (code === 'approval_expired') return 'The approval expired; ask again for a fresh request.'
+  if (code === 'approval_consumed') return 'This approval was already used; it cannot write twice.'
+  return 'This write is not approved.'
+}
 
 type RouteContext = { params: Promise<{ tool: string }> }
 
@@ -125,6 +147,7 @@ export async function POST(req: NextRequest, context: RouteContext): Promise<Nex
       bindings: deps.bindings,
       checkFeatures: deps.checkFeatures,
       resolveCustomerScope: deps.resolveCustomerScope,
+      canWriteToCrm: deps.canWriteToCrm,
     },
   })
   if (!authorization.ok) {
@@ -149,15 +172,81 @@ export async function POST(req: NextRequest, context: RouteContext): Promise<Nex
     })
   }
 
+  const executionContext = {
+    em: deps.em,
+    claims,
+    scope: authorization.scope,
+    container: deps.container,
+  }
+
+  // Write tools have a second, human gate. The switch is the production
+  // rollback: with `OM_DSH_WRITES` unset the bridge behaves exactly as before.
+  if (descriptor.readOnly !== true) {
+    if (!writesEnabled()) {
+      audit('write_not_enabled')
+      return errorResponse(403, 'write_not_enabled', 'CRM writes are disabled on this instance')
+    }
+    let store: ApprovalStore
+    try {
+      store = await createRequestApprovalStore()
+    } catch {
+      audit('approval_unavailable')
+      return errorResponse(503, 'approval_unavailable', 'Write approval is unavailable')
+    }
+    try {
+      const preview = descriptor.describeForApproval
+        ? await descriptor.describeForApproval(parsed.data, executionContext)
+        : {}
+      const gate = await runWriteGate({
+        store,
+        tenantId: claims.tenantId,
+        organizationId: claims.organizationId,
+        userId: claims.userId,
+        bindingId: claims.bindingId,
+        runId: claims.runId,
+        tool,
+        args: parsed.data,
+        preview,
+        now: new Date().toISOString(),
+      })
+      if (gate.action !== 'execute') {
+        const code = gate.action
+        audit(code)
+        const status = code === 'approval_consumed' ? 409 : 403
+        return errorResponse(status, code, approvalMessage(code), {
+          ...(gate.action === 'approval_required'
+            ? {
+                approvalId: gate.approvalId,
+                expiresAt: gate.expiresAt,
+                summary: gate.summary,
+              }
+            : { approvalId: gate.approvalId }),
+        })
+      }
+    } catch (error) {
+      if (error instanceof ApprovalUnavailableError) {
+        audit('approval_unavailable')
+        return errorResponse(503, 'approval_unavailable', 'Write approval is unavailable')
+      }
+      logger.error('dsh.tool_call approval gate failed', {
+        runId: claims.runId,
+        tool,
+        err: error instanceof Error ? error.name : 'unknown',
+      })
+      audit('approval_unavailable')
+      return errorResponse(503, 'approval_unavailable', 'Write approval is unavailable')
+    }
+  }
+
   try {
-    const result = await descriptor.execute(parsed.data, {
-      em: deps.em,
-      claims,
-      scope: authorization.scope,
-    })
+    const result = await descriptor.execute(parsed.data, executionContext)
     audit('allowed')
     return NextResponse.json({ ok: true, tool, result })
   } catch (error) {
+    if (isToolExecutionError(error)) {
+      audit(error.code)
+      return errorResponse(error.status, error.code, error.message)
+    }
     // Not part of the audit record: the error detail can contain driver text.
     logger.error('dsh.tool_call failed', {
       runId: claims.runId,

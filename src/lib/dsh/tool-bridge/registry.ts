@@ -10,10 +10,16 @@
  * name now makes a write attempt fail with `write-not-enabled` instead of a
  * misleading `unknown-tool`, which is what the model needs to stop retrying.
  */
-import { z } from 'zod'
+import type { AwilixContainer } from 'awilix'
 import { COMPANY_LOOKUP_FEATURE, findCompaniesInputSchema } from '@/modules/crm_tools/lib/companyLookup'
 import type { CustomerScope, ToolDescriptor } from './authorize'
 import { FIND_COMPANIES_TOOL, findCompanies, type FindCompaniesContext } from './crm-find-companies'
+import {
+  UPDATE_COMPANY_TOOL,
+  describeUpdateForApproval,
+  updateCompany,
+  updateCompanyInputSchema,
+} from './crm-update-company'
 import type { RunTokenClaims } from './run-token'
 
 /** The part of a zod schema the route needs; keeps the registry decoupled from zod's types. */
@@ -27,14 +33,21 @@ export type ToolExecutionContext = {
   em: FindCompaniesContext['em']
   claims: RunTokenClaims
   scope: CustomerScope
+  /** Request container: write tools resolve the command bus/ACL from it. */
+  container: AwilixContainer
 }
 
 export type DshTool = ToolDescriptor & {
   inputSchema: ToolInputSchema
   execute: (input: unknown, context: ToolExecutionContext) => Promise<unknown>
+  /** Write tools: the human-readable summary stored on the approval row. */
+  describeForApproval?: (
+    input: unknown,
+    context: ToolExecutionContext,
+  ) => Promise<Record<string, unknown>>
 }
 
-export const COMPANY_UPDATE_TOOL = 'crm.update_company'
+export const COMPANY_UPDATE_TOOL = UPDATE_COMPANY_TOOL
 
 export const TOOL_REGISTRY: Readonly<Record<string, DshTool>> = {
   [FIND_COMPANIES_TOOL]: {
@@ -49,11 +62,9 @@ export const TOOL_REGISTRY: Readonly<Record<string, DshTool>> = {
     readOnly: false,
     // Real ACL id from the customers module (companies POST/PUT/DELETE metadata).
     requiredFeatures: ['customers.companies.manage'],
-    inputSchema: z.object({}).strict(),
-    // Unreachable: authorizeToolCall() refuses every non-read-only tool first.
-    execute: async () => {
-      throw new Error('write tools are not enabled')
-    },
+    inputSchema: updateCompanyInputSchema,
+    execute: (input, context) => updateCompany(input, context),
+    describeForApproval: (input, context) => describeUpdateForApproval(input, context),
   },
 }
 

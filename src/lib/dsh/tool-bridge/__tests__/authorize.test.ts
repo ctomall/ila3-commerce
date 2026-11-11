@@ -103,7 +103,7 @@ describe('authorizeToolCall', () => {
     expect(d.checkFeatures).toHaveBeenCalled()
   })
 
-  it('still fails closed when the write gate allows but no handler exists', async () => {
+  it('allows a write tool when the run is still running and the binding still active', async () => {
     const writeTool: ToolDescriptor = {
       name: 'crm.update_company',
       readOnly: false,
@@ -117,7 +117,7 @@ describe('authorizeToolCall', () => {
         claims: { ...claims, tools: ['crm.update_company'] },
         deps: d,
       }),
-    ).resolves.toMatchObject({ ok: false, status: 403, code: 'write_not_enabled' })
+    ).resolves.toMatchObject({ ok: true, descriptor: writeTool })
   })
 
   it('refuses a tool that is not in the run token tools[]', async () => {
