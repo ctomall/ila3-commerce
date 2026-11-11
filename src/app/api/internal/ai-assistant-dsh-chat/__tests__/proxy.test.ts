@@ -71,6 +71,16 @@ describe('proxy chat engine switch', () => {
     delete process.env.OM_DSH_AGENTIC
   })
 
+  it('rewrites the conversation list to the owner-filtered handler', () => {
+    process.env.OM_AI_ENGINE = 'dsh'
+
+    const response = proxy(request('GET', '/api/ai_assistant/ai/conversations?limit=5'))
+
+    expect(response.headers.get('x-middleware-rewrite')).toBe(
+      'http://localhost/api/internal/dsh-conversations?limit=5',
+    )
+  })
+
   it('normalises the engine value before switching', () => {
     process.env.OM_AI_ENGINE = '  DSH  '
 
@@ -104,7 +114,8 @@ describe('proxy chat engine switch', () => {
     expect(config.matcher).toContain('/api/ai_assistant/health')
     expect(config.matcher).toContain('/api/ai_assistant/ai/agents')
     expect(config.matcher).toContain('/api/ai_assistant/ai/chat')
-    expect(config.matcher).toHaveLength(5)
+    expect(config.matcher).toContain('/api/ai_assistant/ai/conversations')
+    expect(config.matcher).toHaveLength(6)
     expect(config.matcher).not.toContain('/api/:path*')
     expect(config.matcher).not.toContain('/api/(.*)')
   })

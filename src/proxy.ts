@@ -11,6 +11,8 @@ const AGENTS_PUBLIC_PATH = '/api/ai_assistant/ai/agents'
 const AGENTS_DSH_PATH = '/api/internal/dsh-agents'
 const AGENTIC_PUBLIC_PATH = '/api/ai_assistant/ai/chat'
 const AGENTIC_DSH_PATH = '/api/internal/dsh-agentic-chat'
+const CONVERSATIONS_PUBLIC_PATH = '/api/ai_assistant/ai/conversations'
+const CONVERSATIONS_DSH_PATH = '/api/internal/dsh-conversations'
 
 /**
  * `OM_AI_ENGINE=dsh` is the only value that switches the chat engine. Unset (or
@@ -61,6 +63,14 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  // The UI auto-opens the first listed conversation; without an owner filter an
+  // admin lands in another employee's private thread and cannot type.
+  if (isDshEngineEnabled() && req.method === 'GET' && req.nextUrl.pathname === CONVERSATIONS_PUBLIC_PATH) {
+    const url = req.nextUrl.clone()
+    url.pathname = CONVERSATIONS_DSH_PATH
+    return NextResponse.rewrite(url)
+  }
+
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-next-url', req.nextUrl.pathname)
   return NextResponse.next({ request: { headers: requestHeaders } })
@@ -81,5 +91,6 @@ export const config = {
     '/api/ai_assistant/health',
     '/api/ai_assistant/ai/agents',
     '/api/ai_assistant/ai/chat',
+    '/api/ai_assistant/ai/conversations',
   ],
 }
