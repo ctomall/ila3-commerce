@@ -1,14 +1,20 @@
 /** @jest-environment node */
 
+import { afterAll, beforeEach, describe, expect, it, jest, test } from '@jest/globals'
+
 import { NextRequest } from 'next/server'
 
-const mockStartDshRun = jest.fn()
+import type { DshRunHandle, DshRunInput } from '@/lib/dsh/runtime/types'
+
+const mockStartDshRun = jest.fn<(input: DshRunInput) => Promise<DshRunHandle>>()
 
 jest.mock('@/lib/dsh/runtime', () => ({ startDshRun: mockStartDshRun }))
 
 jest.mock('@/bootstrap-api', () => ({ bootstrap: jest.fn() }))
 
-const mockGetAuthFromRequest = jest.fn()
+const mockGetAuthFromRequest = jest.fn<
+  () => Promise<{ sub: string; tenantId: string; orgId: string } | null>
+>()
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({
   getAuthFromRequest: mockGetAuthFromRequest,
@@ -24,7 +30,7 @@ jest.mock('@open-mercato/shared/lib/logger', () => ({
 }))
 
 import { POST } from '../route'
-import type { DshEvent, DshRunHandle, DshRunResult } from '@/lib/dsh/runtime/types'
+import type { DshEvent, DshRunResult } from '@/lib/dsh/runtime/types'
 
 type SseEvent = { type: string; [key: string]: unknown }
 

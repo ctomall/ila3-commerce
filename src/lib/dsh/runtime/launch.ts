@@ -117,7 +117,9 @@ export function buildDshEnv(
   input: Pick<DshRunInput, 'dshHome' | 'env'>,
   parentEnv: NodeJS.ProcessEnv = process.env,
 ): NodeJS.ProcessEnv {
-  const env: NodeJS.ProcessEnv = {}
+  // This repository's ProcessEnv augmentation makes NODE_ENV required, so the
+  // child env starts from the parent's mode and only allow-listed keys are added.
+  const env: NodeJS.ProcessEnv = { NODE_ENV: parentEnv.NODE_ENV ?? 'production' }
   for (const [key, value] of Object.entries(parentEnv)) {
     if (typeof value !== 'string') continue
     if (PASSTHROUGH_ENV_EXACT.has(key) || key.startsWith(PASSTHROUGH_ENV_PREFIX)) {

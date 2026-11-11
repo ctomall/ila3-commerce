@@ -1,5 +1,7 @@
 /** @jest-environment node */
 
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
+
 import { NextRequest } from 'next/server'
 import { config, proxy } from '@/proxy'
 
