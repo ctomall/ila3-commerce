@@ -211,3 +211,17 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 UI 的 agentic 路径现在**可用**，但执行的是包内 AI SDK agent loop，**不是 DSH**；DSH 仍只覆盖 `/api/ai_assistant/chat`。把 UI agentic 协议接到 DSH 是下一阶段工作，不能把“UI 可用”当成“DSH 已接管 UI”。
 
 默认可见性仍为隐藏（包内 `DEFAULT_VISIBILITY.enabled=false`），本轮测试通过 localStorage 打开；是否默认展示是产品决策。
+
+## 13. UI 停止与重载连续性（v25 `271b95c`）
+
+Playwright（admin，生产 3000，agentic UI）：
+
+| 步骤 | 结果 |
+| --- | --- |
+| 发送 600 词长任务 | 流式开始 |
+| 点击方形停止按钮 | 按钮可见 → 点击后消失；停止后文本仅增加 192 字符（在途块），随后静止 |
+| 刷新页面 → 重开助手 → 同一 agent | 历史里仍能检索到本轮用户消息标记（对话持久化） |
+
+截图：`prod-ui-stop.png`。
+
+**边界**：这是 UI agentic 路径（包内 AI SDK loop）的停止/历史行为，不是 DSH SSE 的 `Last-Event-ID` 重连；DSH 的游标重连在 API 层已单独验证（§2）。
