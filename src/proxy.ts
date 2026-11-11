@@ -9,6 +9,8 @@ const HEALTH_PUBLIC_PATH = '/api/ai_assistant/health'
 const HEALTH_DSH_PATH = '/api/internal/dsh-health'
 const AGENTS_PUBLIC_PATH = '/api/ai_assistant/ai/agents'
 const AGENTS_DSH_PATH = '/api/internal/dsh-agents'
+const AGENTIC_PUBLIC_PATH = '/api/ai_assistant/ai/chat'
+const AGENTIC_DSH_PATH = '/api/internal/dsh-agentic-chat'
 
 /**
  * `OM_AI_ENGINE=dsh` is the only value that switches the chat engine. Unset (or
@@ -46,6 +48,19 @@ export function proxy(req: NextRequest) {
     return NextResponse.rewrite(url)
   }
 
+  // Opt-in bridge for the UI's agentic text stream. Kept behind its own flag so
+  // a protocol mismatch can be rolled back without touching chat.
+  if (
+    isDshEngineEnabled() &&
+    (process.env.OM_DSH_AGENTIC ?? '').trim() === '1' &&
+    req.method === 'POST' &&
+    req.nextUrl.pathname === AGENTIC_PUBLIC_PATH
+  ) {
+    const url = req.nextUrl.clone()
+    url.pathname = AGENTIC_DSH_PATH
+    return NextResponse.rewrite(url)
+  }
+
   const requestHeaders = new Headers(req.headers)
   requestHeaders.set('x-next-url', req.nextUrl.pathname)
   return NextResponse.next({ request: { headers: requestHeaders } })
@@ -65,5 +80,6 @@ export const config = {
     '/api/ai_assistant/chat',
     '/api/ai_assistant/health',
     '/api/ai_assistant/ai/agents',
+    '/api/ai_assistant/ai/chat',
   ],
 }

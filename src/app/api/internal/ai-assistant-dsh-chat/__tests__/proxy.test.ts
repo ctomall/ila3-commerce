@@ -58,6 +58,19 @@ describe('proxy chat engine switch', () => {
     expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost/api/internal/dsh-agents')
   })
 
+  it('rewrites the UI agentic chat only when OM_DSH_AGENTIC=1', () => {
+    process.env.OM_AI_ENGINE = 'dsh'
+    delete process.env.OM_DSH_AGENTIC
+    expect(proxy(request('POST', '/api/ai_assistant/ai/chat?agent=a.b')).headers.get('x-middleware-rewrite')).toBeNull()
+
+    process.env.OM_DSH_AGENTIC = '1'
+    const response = proxy(request('POST', '/api/ai_assistant/ai/chat?agent=a.b'))
+    expect(response.headers.get('x-middleware-rewrite')).toBe(
+      'http://localhost/api/internal/dsh-agentic-chat?agent=a.b',
+    )
+    delete process.env.OM_DSH_AGENTIC
+  })
+
   it('normalises the engine value before switching', () => {
     process.env.OM_AI_ENGINE = '  DSH  '
 
@@ -90,7 +103,8 @@ describe('proxy chat engine switch', () => {
     expect(config.matcher).toContain('/api/ai_assistant/chat')
     expect(config.matcher).toContain('/api/ai_assistant/health')
     expect(config.matcher).toContain('/api/ai_assistant/ai/agents')
-    expect(config.matcher).toHaveLength(4)
+    expect(config.matcher).toContain('/api/ai_assistant/ai/chat')
+    expect(config.matcher).toHaveLength(5)
     expect(config.matcher).not.toContain('/api/:path*')
     expect(config.matcher).not.toContain('/api/(.*)')
   })
