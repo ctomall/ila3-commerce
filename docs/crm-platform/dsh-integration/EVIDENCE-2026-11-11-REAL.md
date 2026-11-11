@@ -405,3 +405,14 @@ admin 与 acceptance 员工同时发起任务：
 
 **边界**：这是对**已存在**员工的补齐；员工创建/启用时的自动绑定仍未接线
 （包内 `auth.user.created` 未发射），新增员工仍需首次聊天或再次运行该工具。
+
+## 25. 工作区保留清理（v32 `6a6ae69`）
+
+每次聊天在 `<OM_DSH_ROOT>/workspaces/<identity>/<runId>` 留下目录。恢复 sweep 现在按
+`OM_DSH_WORKSPACE_TTL_MS`（默认 7 天）删除超期 run 目录，不跟随符号链接，只扫两层。
+
+**生产实测**：
+- 造一个 2020 年 mtime 的假 run 目录 `zz-fake/old-run`；
+- 触发一次正常聊天（`PRUNE2_OK`，200）；
+- 假目录被删除（`fake_exists=no`），实际工作区目录数 35 → 35（只删了假目录）；
+- 单测覆盖：老目录删除、新目录保留、符号链接不跟随、根不存在 no-op。
