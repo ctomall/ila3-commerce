@@ -261,58 +261,69 @@ export function createRunService(deps: RunServiceDeps): RunService {
  * `ensureBinding` can re-read the winner on the same EntityManager.
  */
 export class OrmRunServiceRepository implements RunServiceRepository {
-  private readonly runs: OrmDshRunRepository
+  constructor(private readonly em: EntityManager) {}
 
-  constructor(private readonly em: EntityManager) {
-    this.runs = new OrmDshRunRepository(em)
+  /**
+   * A long SSE stream keeps this service for minutes. A fresh, cleared fork per
+   * operation prevents the identity map from serving a stale run cursor to the
+   * next appendEvent call; the store's own transaction fork remains the writer
+   * of record.
+   */
+  private fork(): EntityManager {
+    return this.em.fork({ clear: true })
+  }
+
+  private runs(): OrmDshRunRepository {
+    return new OrmDshRunRepository(this.fork())
   }
 
   getBinding(bindingId: string): Promise<BindingRecord | null> {
-    return this.runs.getBinding(bindingId)
+    return this.runs().getBinding(bindingId)
   }
 
   saveBinding(binding: BindingRecord): Promise<BindingRecord> {
-    return this.runs.saveBinding(binding)
+    return this.runs().saveBinding(binding)
   }
 
   getRun(runId: string): Promise<RunRecord | null> {
-    return this.runs.getRun(runId)
+    return this.runs().getRun(runId)
   }
 
   getRunByIdempotencyKey(bindingId: string, idempotencyKey: string): Promise<RunRecord | null> {
-    return this.runs.getRunByIdempotencyKey(bindingId, idempotencyKey)
+    return this.runs().getRunByIdempotencyKey(bindingId, idempotencyKey)
   }
 
   listRunsByBinding(bindingId: string): Promise<RunRecord[]> {
-    return this.runs.listRunsByBinding(bindingId)
+    return this.runs().listRunsByBinding(bindingId)
   }
 
   listRunsByStatuses(statuses: Parameters<DshRunRepository['listRunsByStatuses']>[0]): Promise<RunRecord[]> {
-    return this.runs.listRunsByStatuses(statuses)
+    return this.runs().listRunsByStatuses(statuses)
   }
 
   insertRun(run: RunRecord): Promise<RunRecord> {
-    return this.runs.insertRun(run)
+    return this.runs().insertRun(run)
   }
 
   updateRun(run: RunRecord): Promise<RunRecord> {
-    return this.runs.updateRun(run)
+    return this.runs().updateRun(run)
   }
 
   insertEvent(event: RunEventRecord): Promise<RunEventRecord> {
-    return this.runs.insertEvent(event)
+    return this.runs().insertEvent(event)
   }
 
   getEvent(runId: string, seq: number): Promise<RunEventRecord | null> {
-    return this.runs.getEvent(runId, seq)
+    return this.runs().getEvent(runId, seq)
   }
 
   listEventsAfter(runId: string, cursor: number): Promise<RunEventRecord[]> {
-    return this.runs.listEventsAfter(runId, cursor)
+    return this.runs().listEventsAfter(runId, cursor)
   }
 
   async findBindingByScope(scope: RunIdentity): Promise<BindingRecord | null> {
-    const entity = await this.em.findOne(DshAssistantBinding, {
+    const em = this.fork()
+    const entity = await em.findOne(DshAssistantBinding, {
       tenantId: scope.tenantId,
       organizationId: scope.organizationId,
       userId: scope.userId,
@@ -321,7 +332,7 @@ export class OrmRunServiceRepository implements RunServiceRepository {
   }
 
   async insertBinding(binding: BindingRecord): Promise<BindingRecord> {
-    return this.em.transactional(async (tx) => {
+    return this.fork().transactional(async (tx) => {
       const entity = tx.create(DshAssistantBinding, {
         id: binding.id,
         tenantId: binding.tenantId,
