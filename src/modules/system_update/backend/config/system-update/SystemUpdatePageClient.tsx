@@ -136,15 +136,23 @@ export default function SystemUpdatePageClient() {
   const [submittedAt, setSubmittedAt] = React.useState<string | null>(null)
 
   const load = React.useCallback(async () => {
-    const result = await apiCall<StatusPayload>('/api/system_update/status', { method: 'GET' })
-    if (!result.ok || !result.result) {
+    try {
+      const result = await apiCall<StatusPayload>('/api/system_update/status', { method: 'GET' })
+      if (!result.ok || !result.result) {
+        setOffline(true)
+        setError(t('system_update.error.load', 'Failed to load update status'))
+        return
+      }
+      setOffline(false)
+      setError(null)
+      setPayload(result.result)
+    } catch {
+      // A fetch rejection (network down, API aborted) used to escape this
+      // callback, leaving the skeleton spinning forever with no retry. Surface
+      // it as the same retryable error state the !ok branch uses.
       setOffline(true)
-      setError(t('system_update.error.load', 'Failed to load update status'))
-      return
+      setError(t('system_update.error.network', '网络请求失败，请检查连接后重试。'))
     }
-    setOffline(false)
-    setError(null)
-    setPayload(result.result)
   }, [t])
 
   React.useEffect(() => {
