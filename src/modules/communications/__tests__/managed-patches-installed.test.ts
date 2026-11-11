@@ -36,6 +36,13 @@ describe('managed patches in the installed module', () => {
     expect(source).toContain('/* [patched:outbound-inactive-channel-failed] */')
 
     // Behavior those markers stand for: symbols a half-applied transform loses.
+    // The claim patch is asserted by its own statement shape, not just a marker:
+    // the atomic UPDATE ... RETURNING and its empty-result short-circuit.
+    expect(source).toContain('claimRows')
+    expect(source).toContain("jsonb_set(coalesce(channel_metadata, '{}'::jsonb), '{attempting}'")
+    expect(source).toContain('returning id`')
+    expect(source).toMatch(/claimRows\.length === 0[\s\S]{0,120}?already_delivered/)
+    // Attempt-unknown and inactive-channel transforms.
     expect(source).toContain('isUnknownSendOutcome')
     expect(source).toContain('markOutboundAttemptUnknown')
     expect(source).toContain('local_commit_failed')
@@ -46,9 +53,11 @@ describe('managed patches in the installed module', () => {
     const source = fs.readFileSync(WORKER, 'utf8')
 
     expect(source).toContain('/* [patched:outbound-attempt-unknown] */')
-    expect(source).toContain('delivery outcome unknown; leaving the link for reconciliation')
-    // The unknown branch must return before the retry branches; a branch that
-    // falls through to `failed` would re-enqueue an already-uncertain send.
-    expect(source).toMatch(/case "unknown":[\s\S]{0,600}?return;/)
+    // Tight match on the branch body: warn, then return, then straight into
+    // `case "failed"`. A loose "some return within N chars" would also pass if
+    // the branch fell through to the re-enqueueing failure path.
+    expect(source).toMatch(
+      /case "unknown":\s*logger\.warn\("delivery outcome unknown; leaving the link for reconciliation",\s*\{[\s\S]*?\}\);\s*return;\s*case "failed":/,
+    )
   })
 })
