@@ -249,8 +249,17 @@ async function resolveDshModelEnv(): Promise<ModelEnv> {
       loadConfig: () => providerConfig.loadProviderConfig(service),
       decrypt: (ciphertext) => credentials.decryptSecret(ciphertext),
     })
-    modelEnvCache = { at: now, value }
-    return value
+    // Deployment escape hatches for protocol-compatible endpoints/model ids;
+    // the credential still comes from the provider config, never from here.
+    const baseOverride = process.env.OM_DSH_MODEL_BASE_URL?.trim()
+    const modelOverride = process.env.OM_DSH_MODEL?.trim()
+    const merged = {
+      ...value,
+      env: { ...value.env, ...(baseOverride ? { DEEPSEEK_BASE_URL: baseOverride } : {}) },
+      ...(modelOverride ? { model: modelOverride } : {}),
+    }
+    modelEnvCache = { at: now, value: merged }
+    return merged
   } catch (error) {
     logger.warn('DSH model env unavailable', { err: errorMessage(error) })
     return { env: {} }
