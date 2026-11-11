@@ -866,6 +866,43 @@ function replayErrorResponse(error: unknown): NextResponse {
   return persistenceUnavailable()
 }
 
+/**
+ * A process that just started cannot own an in-flight run it did not spawn.
+ * Rows older than the run timeout plus a grace window are therefore settled as
+ * failed `server_restart`, which makes them terminal and retryable instead of
+ * looking alive forever. Runs younger than that may belong to a concurrent
+ * worker, so they are left alone.
+ */
+let lastRecoverySweepAt = 0
+
+async function sweepStaleRuns(service: RunService): Promise<void> {
+  const now = Date.now()
+  const rawInterval = Number(process.env.OM_DSH_RECOVERY_SWEEP_MS)
+  const interval = Number.isFinite(rawInterval) && rawInterval >= 0 ? rawInterval : 60_000
+  if (now - lastRecoverySweepAt < interval) return
+  lastRecoverySweepAt = now
+  try {
+    const staleBefore = now - runTimeoutMs() - 60_000
+    const rows = await service.recoverInFlight()
+    let settled = 0
+    for (const row of rows) {
+      const created = Date.parse(row.createdAt)
+      if (!Number.isFinite(created) || created > staleBefore) continue
+      try {
+        await service.finish(row.runId, { status: 'failed', error: 'server_restart' })
+        settled += 1
+      } catch (error) {
+        if (errorCode(error) !== 'run-terminal') {
+          logger.warn('Stale DSH run could not be settled', { runId: row.runId, err: errorMessage(error) })
+        }
+      }
+    }
+    if (settled > 0) logger.info('Settled stale DSH runs after restart', { settled })
+  } catch (error) {
+    logger.warn('DSH restart recovery sweep failed', { err: errorMessage(error) })
+  }
+}
+
 function submitErrorResponse(error: unknown): NextResponse {
   const code = errorCode(error)
   if (code === 'idempotency-conflict') return idempotencyConflictResponse()
@@ -1189,9 +1226,16 @@ async function startPersistedRun(
         await write({ type: 'done', sessionId: handle.sessionId })
       } catch (error) {
         if (error instanceof PersistenceFailure) {
-          logger.error('Persisted DSH event could not be stored', { err: errorMessage(error.failure) })
-          await write({ type: 'error', error: 'persistence_unavailable' })
-          await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
+          if (errorCode(error.failure) === 'run-terminal') {
+            // A cancel/revoke won the race; the row is already terminal and the
+            // user should see that, not a misleading persistence outage.
+            logger.info('Persisted DSH run became terminal mid-stream', { runId: run.id })
+            await write({ type: 'error', error: 'run_cancelled' })
+          } else {
+            logger.error('Persisted DSH event could not be stored', { err: errorMessage(error.failure) })
+            await write({ type: 'error', error: 'persistence_unavailable' })
+            await finishQuietly(service, run.id, 'failed', 'persistence_unavailable')
+          }
         } else {
           logger.error('Persisted DSH stream failed', { err: errorMessage(error) })
           await write({ type: 'error', error: errorMessage(error) })
@@ -1241,6 +1285,8 @@ async function persistedChat(
     logger.error('DSH run persistence is unavailable', { err: errorMessage(error) })
     return persistenceUnavailable()
   }
+
+  await sweepStaleRuns(service)
 
   // Reconnect/resume by durable run id: terminal runs replay from the cursor,
   // in-flight runs are rejected so a second process cannot attach.

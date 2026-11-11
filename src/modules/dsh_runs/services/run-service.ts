@@ -30,6 +30,7 @@ import {
   type BindingRecord,
   type DshRunRepository,
   type DshRunStore,
+  type InFlightRun,
   type RevokeBindingOptions,
   type RevokeBindingResult,
   type RunEventRecord,
@@ -101,6 +102,8 @@ export type RunService = {
   finish(runId: string, input: FinishRunInput): Promise<RunRecord>
   /** Terminal read; used by the persisted pump's revocation poll. */
   getRun(runId: string): Promise<RunRecord | null>
+  /** In-flight rows a restarted process may need to settle. */
+  recoverInFlight(): Promise<InFlightRun[]>
   /**
    * Cancel an in-flight run. A terminal run is returned unchanged, so the
    * cancel endpoint is idempotent even when a revoke won the race.
@@ -318,6 +321,7 @@ export function createRunService(deps: RunServiceDeps): RunService {
     appendEvent,
     finish,
     getRun,
+    recoverInFlight: () => store.recoverInFlight(),
     cancel,
     revokeBinding,
     replay,

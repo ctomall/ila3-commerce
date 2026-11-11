@@ -205,6 +205,7 @@ function fakeRunService(): FakeRunService {
     // Default: still running. The poll is stopped before terminal finish on the
     // normal path, so tests do not have to advance timers.
     getRun: jest.fn(async (runId: string) => persistedRun({ id: runId, status: 'running' })),
+    recoverInFlight: jest.fn(async () => []),
     replay: jest.fn(async () => ({
       run: persistedRun({ status: 'completed' }),
       events: [] as RunEventRecord[],
@@ -593,6 +594,34 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
   })
 
   describe('OM_DSH_PERSIST=orm', () => {
+    it('settles a stale in-flight run from a previous process as server_restart', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      process.env.OM_DSH_RECOVERY_SWEEP_MS = '0'
+      const service = fakeRunService()
+      service.recoverInFlight.mockResolvedValueOnce([
+        {
+          runId: 'stale-1',
+          bindingId: 'binding-1',
+          userId: 'user-1',
+          tenantId: 'tenant-1',
+          organizationId: 'org-1',
+          sessionId: null,
+          status: 'running',
+          cursor: 3,
+          createdAt: new Date(Date.now() - 3_600_000).toISOString(),
+        } as never,
+      ])
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      service.submit.mockResolvedValueOnce({ run: persistedRun({ id: 'run-2', status: 'queued' }), replay: false })
+      service.begin.mockResolvedValueOnce(persistedRun({ id: 'run-2', status: 'running', sessionId: 's' }))
+      mockStartDshRun.mockResolvedValueOnce(makeHandle({}))
+
+      await POST(chatRequest({ messages: userMessages }))
+
+      expect(service.finish).toHaveBeenCalledWith('stale-1', { status: 'failed', error: 'server_restart' })
+      delete process.env.OM_DSH_RECOVERY_SWEEP_MS
+    })
+
     it('persists a new run event-by-event, finishes it, then emits done', async () => {
       process.env.OM_DSH_PERSIST = 'orm'
       const service = fakeRunService()
