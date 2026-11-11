@@ -95,7 +95,11 @@ export async function GET(
             a.file_name, a.mime_type, a.file_size,
             c.user_id as channel_user_id, c.organization_id as channel_organization_id
        from attachments a
-       join external_messages m on m.id = a.record_id and m.tenant_id = a.tenant_id
+       join external_messages m
+         on a.entity_id = 'communication_channels.external_message'
+        and a.record_id ~ '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$'
+        and m.id = a.record_id::uuid
+        and m.tenant_id = a.tenant_id
        join communication_channels c on c.id = m.channel_id and c.tenant_id = a.tenant_id
       where a.id = ? and a.tenant_id = ?
       limit 1`,

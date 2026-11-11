@@ -128,6 +128,11 @@ describe('GET /api/communications/me/attachments/[id]', () => {
     const {executed, resolveForPartition} = wire({rows: [sharedRow({organization_id: 'tenant-fallback'})]})
     await call()
     expect(executed[0].params).toEqual([ID, 't1'])
+    // `attachments.record_id` is TEXT while external_messages.id is UUID; the join
+    // must guard and cast, or Postgres raises `operator does not exist: uuid = text`.
+    expect(executed[0].query).toContain("a.entity_id = 'communication_channels.external_message'")
+    expect(executed[0].query).toContain("m.id = a.record_id::uuid")
+    expect(executed[0].query).toContain("a.record_id ~ '^[0-9a-fA-F]{8}-")
     expect(resolveForPartition).toHaveBeenCalledWith('privateAttachments', {
       tenantId: 't1',
       organizationId: 'tenant-fallback',
