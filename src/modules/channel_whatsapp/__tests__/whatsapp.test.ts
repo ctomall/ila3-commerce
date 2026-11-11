@@ -2,7 +2,7 @@ import { describe, expect, it } from '@jest/globals'
 import crypto from 'node:crypto'
 import {verifyMetaSignature} from '../lib/meta-signature'
 import {buildTemplatePayload, buildTextPayload, describeInbound, normalizeOutboundMedia, normalizeTemplate, parseMetaEvents, parseSingleMessage} from '../lib/meta-payload'
-import {MetaGraphError, sendWhatsAppMessage} from '../lib/graph-client'
+import {GRAPH_SEND_TIMEOUT_MS, GRAPH_UPLOAD_TIMEOUT_MS, MetaGraphError, sendWhatsAppMessage, uploadWhatsAppMedia} from '../lib/graph-client'
 import {createWhatsAppAdapter} from '../lib/adapter'
 
 const SECRET = 'app-secret'
@@ -351,5 +351,72 @@ describe('normalizeOutboundMedia', () => {
     expect(() => normalizeOutboundMedia({kind: 'image', link: 'http://10.0.0.2/a'})).toThrow(/public host|https/)
     expect(() => normalizeOutboundMedia({kind: 'image', id: 'abc'})).toThrow(/numeric provider media id/)
     expect(() => normalizeOutboundMedia({kind: 'audio', id: '1', caption: 'hi'})).toThrow(/caption/)
+  })
+})
+
+
+describe('bounded Graph calls', () => {
+  function jsonResponse(body: unknown): Response {
+    return {
+      ok: true,
+      status: 200,
+      headers: new Headers({'content-type': 'application/json'}),
+      text: async () => JSON.stringify(body),
+    } as unknown as Response
+  }
+
+  const upload = (fetchImpl: typeof fetch) =>
+    uploadWhatsAppMedia({
+      phoneNumberId: 'pn-1',
+      accessToken: 't',
+      buffer: Buffer.from('png-bytes'),
+      mimeType: 'image/png',
+      fileName: 'photo.png',
+      fetchImpl,
+    })
+
+  it('bounds the media upload and reports a timeout as a retryable 504', async () => {
+    const timeout = Object.assign(new Error('The operation was aborted due to timeout'), {name: 'TimeoutError'})
+    const fetchImpl = (async () => {
+      throw timeout
+    }) as unknown as typeof fetch
+    await expect(upload(fetchImpl)).rejects.toMatchObject({
+      code: 'GRAPH_UPLOAD_TIMEOUT',
+      status: 504,
+      transient: true,
+    })
+    expect(GRAPH_UPLOAD_TIMEOUT_MS).toBe(60_000)
+  })
+
+  it('passes an abort signal on both upload and send', async () => {
+    const signals: Array<AbortSignal | undefined> = []
+    const capture = (body: unknown) =>
+      (async (_url: unknown, init?: RequestInit) => {
+        signals.push(init?.signal ?? undefined)
+        return jsonResponse(body)
+      }) as unknown as typeof fetch
+
+    await expect(upload(capture({id: 'media-1'}))).resolves.toEqual({mediaId: 'media-1'})
+    await expect(
+      sendWhatsAppMessage({
+        phoneNumberId: 'pn-1',
+        accessToken: 't',
+        body: {text: 'hi'},
+        fetchImpl: capture({messages: [{id: 'wamid.bounded'}]}),
+      }),
+    ).resolves.toEqual({externalMessageId: 'wamid.bounded'})
+    expect(signals).toHaveLength(2)
+    for (const signal of signals) expect(signal).toBeInstanceOf(AbortSignal)
+    expect(GRAPH_SEND_TIMEOUT_MS).toBe(30_000)
+  })
+
+  it('leaves a send timeout as a raw abort so the hub can classify it unknown', async () => {
+    const timeout = Object.assign(new Error('The operation was aborted due to timeout'), {name: 'TimeoutError'})
+    const fetchImpl = (async () => {
+      throw timeout
+    }) as unknown as typeof fetch
+    await expect(
+      sendWhatsAppMessage({phoneNumberId: 'pn-1', accessToken: 't', body: {}, fetchImpl}),
+    ).rejects.toBe(timeout)
   })
 })

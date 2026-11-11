@@ -47,6 +47,18 @@ export type GraphMediaUploadInput = {
 export const GRAPH_MEDIA_MAX_BYTES = 16 * 1024 * 1024
 
 /**
+ * Bounded Graph calls.
+ *
+ * A hung upload blocks the staff member's send request (the BFF uploads the
+ * attachment before it accepts), and a hung message send pins a worker job until
+ * the queue lock expires. Uploads are bounded and surfaced as a transient error
+ * the caller can retry; a send timeout must stay a RAW abort so the hub's
+ * unknown-outcome classifier sees a transport failure and never blind-retries.
+ */
+export const GRAPH_UPLOAD_TIMEOUT_MS = 60_000
+export const GRAPH_SEND_TIMEOUT_MS = 30_000
+
+/**
  * Upload bytes to the WhatsApp Cloud API media store and return the media id.
  *
  * This is the bridge between a CRM attachment (bytes in our storage) and the
@@ -72,11 +84,21 @@ export async function uploadWhatsAppMedia(input: GraphMediaUploadInput): Promise
   form.append('messaging_product', 'whatsapp')
   form.append('type', input.mimeType)
   form.append('file', new Blob([new Uint8Array(input.buffer)], {type: input.mimeType}), input.fileName)
-  const response = await doFetch(`${base}/${encodeURIComponent(input.phoneNumberId)}/media`, {
-    method: 'POST',
-    headers: {authorization: `Bearer ${input.accessToken}`},
-    body: form,
-  })
+  let response: Response
+  try {
+    response = await doFetch(`${base}/${encodeURIComponent(input.phoneNumberId)}/media`, {
+      method: 'POST',
+      headers: {authorization: `Bearer ${input.accessToken}`},
+      body: form,
+      signal: AbortSignal.timeout(GRAPH_UPLOAD_TIMEOUT_MS),
+    })
+  } catch (error) {
+    const name = error instanceof Error ? error.name : ''
+    if (name === 'TimeoutError' || name === 'AbortError') {
+      throw new MetaGraphError(504, 'GRAPH_UPLOAD_TIMEOUT', `media upload timed out after ${GRAPH_UPLOAD_TIMEOUT_MS}ms`, true)
+    }
+    throw error
+  }
   const text = await response.text()
   let parsed: Record<string, unknown> = {}
   try {
@@ -117,6 +139,10 @@ export async function sendWhatsAppMessage(input: SendGraphInput): Promise<GraphS
   const base = (input.baseUrl || defaultBase()).replace(/\/$/, '')
   const url = `${base}/${encodeURIComponent(input.phoneNumberId)}/messages`
   const doFetch = input.fetchImpl ?? fetch
+  // No catch here on purpose: an aborted send is a transport failure whose
+  // outcome is unknown, and the hub classifies it from the raw error. Wrapping it
+  // in MetaGraphError (which carries a status) would mark it definitive `failed`
+  // and a retry could double-send.
   const response = await doFetch(url, {
     method: 'POST',
     headers: {
@@ -124,6 +150,7 @@ export async function sendWhatsAppMessage(input: SendGraphInput): Promise<GraphS
       'content-type': 'application/json',
     },
     body: JSON.stringify(input.body),
+    signal: AbortSignal.timeout(GRAPH_SEND_TIMEOUT_MS),
   })
   const text = await response.text()
   let parsed: Record<string, unknown> = {}
