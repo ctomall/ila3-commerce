@@ -13,8 +13,18 @@ const claims: RunTokenClaims = {
   tools: [FIND_COMPANIES_TOOL],
 }
 
-const organizationScope = { mode: 'organization' as const, ownerUserIds: [] as string[] }
-const ownScope = { mode: 'own' as const, ownerUserIds: ['user-1', 'user-2'] }
+const organizationScope = {
+  mode: 'organization' as const,
+  ownerUserIds: [] as string[],
+  grantedEntityIds: [] as string[],
+  editableEntityIds: [] as string[],
+}
+const ownScope = {
+  mode: 'own' as const,
+  ownerUserIds: ['user-1', 'user-2'],
+  grantedEntityIds: [] as string[],
+  editableEntityIds: [] as string[],
+}
 
 function company(index: number, overrides: Record<string, unknown> = {}) {
   return {
@@ -31,10 +41,25 @@ function company(index: number, overrides: Record<string, unknown> = {}) {
   }
 }
 
-function setup(scope: { mode: 'organization' | 'own'; ownerUserIds: string[] }, rows = [company(1)]) {
+function setup(
+  scope: {
+    mode: 'organization' | 'own'
+    ownerUserIds: string[]
+    grantedEntityIds?: string[]
+    editableEntityIds?: string[]
+  },
+  rows = [company(1)],
+) {
   const find = jest.fn(async (..._args: unknown[]) => rows)
   const em = { find } as unknown as EntityManager
-  return { find, context: { em, claims, scope } }
+  return {
+    find,
+    context: {
+      em,
+      claims,
+      scope: { grantedEntityIds: [], editableEntityIds: [], ...scope },
+    },
+  }
 }
 
 type FindCall = [unknown, Record<string, any>, { fields?: readonly string[]; limit?: number }]

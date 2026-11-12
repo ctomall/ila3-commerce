@@ -1,27 +1,27 @@
 /**
- * Customer data-scope resolution for the DSH tool bridge (C1).
+ * Customer data-scope resolution for the DSH tool bridge (C1/C).
  *
- * `customer_access` does not exist in this schema yet. Until it ships, the only
- * truthful scope the bridge can enforce is the organization: every employee in
- * the caller's organization sees the same organization-wide company set that
- * the CRM list endpoints show them.
+ * Three explicit modes, selected by `OM_DSH_CUSTOMER_SCOPE` (never by the
+ * model's prompt):
  *
- * This is a real boundary (tenant + organization + soft-delete are all applied)
- * but it is NOT an employee-level customer boundary:
+ *   organization  every company in the caller's organization (the CRM list
+ *                 default; it is a tenant/organization boundary, NOT an
+ *                 employee customer boundary).
+ *   own           only rows whose `owner_user_id` is the caller.
+ *   assigned      own rows plus live `customer_access` grants (`view` widens
+ *                 reads, `edit` also widens writes).
  *
- *   组织隔离 ≠ 员工客户隔离
- *
- * When `customer_access` lands, `resolveCustomerScope` must return
- * `{ mode: 'own', ownerUserIds }` for employees whose access is owner-scoped,
- * and this default must not be used for them. Until then the mode is explicit
- * (`'organization'`) rather than an empty owner list that could be mistaken for
- * "own, with nothing visible".
+ * The mode is returned explicitly; an empty owner list is never used as a
+ * stand-in for "assigned", so the query builder can tell "nothing visible"
+ * apart from "not scoped".
  */
 import type { CustomerScope, CustomerScopeResolver } from './authorize'
 
 export const ORGANIZATION_CUSTOMER_SCOPE: CustomerScope = {
   mode: 'organization',
   ownerUserIds: [],
+  grantedEntityIds: [],
+  editableEntityIds: [],
 }
 
 /**
@@ -42,6 +42,42 @@ export const resolveOrganizationCustomerScope: CustomerScopeResolver = async () 
  */
 export const resolveConfiguredCustomerScope: CustomerScopeResolver = async ({ userId }) => {
   const mode = (process.env.OM_DSH_CUSTOMER_SCOPE ?? 'organization').trim().toLowerCase()
-  if (mode === 'own') return { mode: 'own', ownerUserIds: [userId] }
+  if (mode === 'own') {
+    return { mode: 'own', ownerUserIds: [userId], grantedEntityIds: [], editableEntityIds: [] }
+  }
   return ORGANIZATION_CUSTOMER_SCOPE
+}
+
+/**
+ * The database-backed resolver actually wired into the bridge.
+ *
+ * `assigned` reads the live grants on every call: a revocation therefore takes
+ * effect on the next tool call, with no cache to invalidate. A repository
+ * failure throws, and `authorizeToolCall` turns that into `scope_unavailable`
+ * (fail closed) instead of narrowing to the organization.
+ */
+export const resolveLayeredCustomerScope: CustomerScopeResolver = async ({
+  userId,
+  tenantId,
+  organizationId,
+}) => {
+  const mode = (process.env.OM_DSH_CUSTOMER_SCOPE ?? 'organization').trim().toLowerCase()
+  if (mode === 'own') {
+    return { mode: 'own', ownerUserIds: [userId], grantedEntityIds: [], editableEntityIds: [] }
+  }
+  if (mode !== 'assigned') return ORGANIZATION_CUSTOMER_SCOPE
+
+  const { createRequestCustomerAccessRepository } = await import(
+    '@/modules/customer_access/services/orm-repository'
+  )
+  const { toScopeLists } = await import('@/modules/customer_access/services/grants')
+  const repository = await createRequestCustomerAccessRepository()
+  const grants = await repository.listLive({ tenantId, organizationId, userId })
+  const lists = toScopeLists(grants)
+  return {
+    mode: 'own',
+    ownerUserIds: [userId],
+    grantedEntityIds: lists.grantedEntityIds,
+    editableEntityIds: lists.editableEntityIds,
+  }
 }

@@ -70,7 +70,23 @@ export function withCustomerScope(
     deletedAt: null,
     ...((where.entity as Record<string, unknown> | undefined) ?? {}),
   }
-  if (scope.mode === 'own') entity.ownerUserId = { $in: [...scope.ownerUserIds] }
+  if (scope.mode === 'own') {
+    const owners = [...scope.ownerUserIds]
+    const grants = [...(scope.grantedEntityIds ?? [])]
+    if (owners.length > 0 && grants.length > 0) {
+      // Ownership OR an explicit grant; never an OR that could match another
+      // employee's row (both branches stay inside tenant/organization filters).
+      entity.$or = [{ ownerUserId: { $in: owners } }, { id: { $in: grants } }]
+    } else if (owners.length > 0) {
+      entity.ownerUserId = { $in: owners }
+    } else if (grants.length > 0) {
+      entity.id = { $in: grants }
+    } else {
+      // Own scope with neither ownership nor grants: match nothing, do not
+      // silently widen to the organization.
+      entity.id = { $in: [] }
+    }
+  }
   return { ...where, entity }
 }
 
@@ -95,9 +111,13 @@ export async function findCompanies(
       ? '只读查询；结果限定为调用者本人负责的客户'
       : '只读查询；结果限定为调用者所在组织（组织隔离≠员工客户隔离）'
 
-  // `own` with no owner ids means "this employee may see no customers"; do not
-  // run a query with an empty $in and do not fall back to the organization.
-  if (context.scope.mode === 'own' && context.scope.ownerUserIds.length === 0) {
+  // `own` with no ownership and no grants means "this employee may see no
+  // customers"; do not fall back to the organization.
+  if (
+    context.scope.mode === 'own' &&
+    context.scope.ownerUserIds.length === 0 &&
+    (context.scope.grantedEntityIds ?? []).length === 0
+  ) {
     return { companies: [], scanned: 0, scope: resultScope, note }
   }
 

@@ -22,7 +22,7 @@ import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import type { RbacService } from '@open-mercato/core/modules/auth/services/rbacService'
 import { DshAssistantBinding, DshRun } from '@/modules/dsh_runs/data/entities'
 import type { BindingLookup, CustomerScopeResolver, FeatureCheck } from './authorize'
-import { resolveConfiguredCustomerScope } from './scope'
+import { resolveLayeredCustomerScope } from './scope'
 import { canWriteToCrm as decideWrite } from '@/lib/dsh/run'
 
 export type ToolBridgeDeps = {
@@ -90,7 +90,7 @@ export async function buildToolBridgeDeps(): Promise<ToolBridgeDeps> {
     container,
     bindings,
     checkFeatures,
-    resolveCustomerScope: resolveConfiguredCustomerScope,
+    resolveCustomerScope: resolveLayeredCustomerScope,
     canWriteToCrm,
   }
 }

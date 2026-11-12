@@ -354,6 +354,8 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'dsh_runs', from: '@app' },
   // Human approval ledger for DSH CRM writes (write tool + approval page).
   { id: 'dsh_approvals', from: '@app' },
+  // Per-employee customer grants (`customer_access`) used by the assistant scope.
+  { id: 'customer_access', from: '@app' },
   // Read-only directory of enabled modules for the settings UI.
   { id: 'module_directory', from: '@app' },
   // Searchable settings landing page replacing the stock placeholder.

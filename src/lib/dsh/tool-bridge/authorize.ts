@@ -59,6 +59,13 @@ export type FeatureCheck = (input: FeatureCheckInput) => Promise<boolean>
 export type CustomerScope = {
   mode: 'organization' | 'own'
   ownerUserIds: readonly string[]
+  /**
+   * Active `customer_access` grants for this employee. Empty in organization
+   * mode. `editableEntityIds` is the subset whose grant level is `edit`; a
+   * view-only grant widens reads, never writes.
+   */
+  grantedEntityIds: readonly string[]
+  editableEntityIds: readonly string[]
 }
 
 export type CustomerScopeResolver = (input: {
@@ -114,9 +121,24 @@ function normalizeScope(value: unknown): CustomerScope | null {
     if (typeof owner !== 'string' || owner.trim() === '') return null
     ownerUserIds.push(owner.trim())
   }
-  // An organization-wide scope has no owner list; normalizing keeps the scope
-  // shape predictable for the query builder.
-  return record.mode === 'organization' ? { mode: 'organization', ownerUserIds: [] } : { mode: 'own', ownerUserIds }
+  const readIds = (value: unknown): string[] | null => {
+    if (value === undefined || value === null) return []
+    if (!Array.isArray(value)) return null
+    const out: string[] = []
+    for (const id of value) {
+      if (typeof id !== 'string' || id.trim() === '') return null
+      out.push(id.trim())
+    }
+    return out
+  }
+  const grantedEntityIds = readIds(record.grantedEntityIds)
+  const editableEntityIds = readIds(record.editableEntityIds)
+  if (grantedEntityIds === null || editableEntityIds === null) return null
+  // An organization-wide scope has no owner/grant lists; normalizing keeps the
+  // scope shape predictable for the query builder.
+  return record.mode === 'organization'
+    ? { mode: 'organization', ownerUserIds: [], grantedEntityIds: [], editableEntityIds: [] }
+    : { mode: 'own', ownerUserIds, grantedEntityIds, editableEntityIds }
 }
 
 export async function authorizeToolCall(input: {

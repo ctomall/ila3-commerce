@@ -20,6 +20,7 @@ import { z } from 'zod'
 import type { AwilixContainer } from 'awilix'
 import type { EntityManager } from '@mikro-orm/postgresql'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
+import { canWriteCustomer } from '@/modules/customer_access/services/grants'
 import type { CustomerScope } from './authorize'
 import { ToolExecutionError } from './errors'
 import type { RunTokenClaims } from './run-token'
@@ -130,7 +131,14 @@ export async function describeUpdateForApproval(
   const owner = entity?.ownerUserId ?? null
   const inScope =
     entity !== null &&
-    (context.scope.mode !== 'own' || (owner !== null && context.scope.ownerUserIds.includes(owner)))
+    (context.scope.mode !== 'own' ||
+      canWriteCustomer({
+        ownerUserIds: context.scope.ownerUserIds,
+        callerUserId: context.claims.userId,
+        customerOwnerUserId: owner,
+        editableEntityIds: context.scope.editableEntityIds ?? [],
+        customerEntityId: entity.id,
+      }))
   return describeUpdate(parsed, inScope ? (entity?.displayName ?? null) : null)
 }
 
@@ -148,7 +156,16 @@ export async function updateCompany(
   })
   if (!entity) throw new ToolExecutionError('not_found', 404, 'Company not found')
   const owner = entity.ownerUserId ?? null
-  if (context.scope.mode === 'own' && (owner === null || !context.scope.ownerUserIds.includes(owner))) {
+  if (
+    context.scope.mode === 'own' &&
+    !canWriteCustomer({
+      ownerUserIds: context.scope.ownerUserIds,
+      callerUserId: context.claims.userId,
+      customerOwnerUserId: owner,
+      editableEntityIds: context.scope.editableEntityIds ?? [],
+      customerEntityId: entity.id,
+    })
+  ) {
     // 404 on purpose: an out-of-scope id and a nonexistent id must look alike.
     throw new ToolExecutionError('not_found', 404, 'Company not found')
   }

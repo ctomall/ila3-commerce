@@ -26,6 +26,8 @@ function harness(options: {
   commandError?: unknown
   mode?: 'organization' | 'own'
   ownerUserIds?: string[]
+  grantedEntityIds?: string[]
+  editableEntityIds?: string[]
 }) {
   const execute = jest.fn(async () => ({ entityId: 'c-1' }))
   const findOne = jest.fn(async () => options.entity ?? null)
@@ -36,7 +38,12 @@ function harness(options: {
   const context: UpdateCompanyContext = {
     em: { fork } as unknown as EntityManager,
     claims,
-    scope: { mode: options.mode ?? 'organization', ownerUserIds: options.ownerUserIds ?? [] },
+    scope: {
+      mode: options.mode ?? 'organization',
+      ownerUserIds: options.ownerUserIds ?? [],
+      grantedEntityIds: options.grantedEntityIds ?? [],
+      editableEntityIds: options.editableEntityIds ?? [],
+    },
     container,
   }
   return { context, execute, findOne }

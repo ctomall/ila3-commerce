@@ -35,7 +35,12 @@ function deps(overrides: Partial<AuthorizeDeps> = {}): AuthorizeDeps {
   return {
     bindings: jest.fn(async () => activeBinding),
     checkFeatures: jest.fn(async () => true),
-    resolveCustomerScope: jest.fn(async () => ({ mode: 'organization' as const, ownerUserIds: [] as string[] })),
+    resolveCustomerScope: jest.fn(async () => ({
+      mode: 'organization' as const,
+      ownerUserIds: [] as string[],
+      grantedEntityIds: [] as string[],
+      editableEntityIds: [] as string[],
+    })),
     ...overrides,
   }
 }
@@ -59,7 +64,12 @@ describe('authorizeToolCall', () => {
     await expect(call({ deps: d })).resolves.toEqual({
       ok: true,
       descriptor: readTool,
-      scope: { mode: 'organization', ownerUserIds: [] },
+      scope: {
+        mode: 'organization',
+        ownerUserIds: [],
+        grantedEntityIds: [],
+        editableEntityIds: [],
+      },
     })
     expect(d.checkFeatures).toHaveBeenCalledWith({
       userId: 'user-1',
@@ -186,11 +196,21 @@ describe('authorizeToolCall', () => {
 
   it('passes an owner-scoped resolution through unchanged', async () => {
     const d = deps({
-      resolveCustomerScope: jest.fn(async () => ({ mode: 'own' as const, ownerUserIds: ['user-1'] })),
+      resolveCustomerScope: jest.fn(async () => ({
+        mode: 'own' as const,
+        ownerUserIds: ['user-1'],
+        grantedEntityIds: [] as string[],
+        editableEntityIds: [] as string[],
+      })),
     })
     await expect(call({ deps: d })).resolves.toMatchObject({
       ok: true,
-      scope: { mode: 'own', ownerUserIds: ['user-1'] },
+      scope: {
+        mode: 'own',
+        ownerUserIds: ['user-1'],
+        grantedEntityIds: [],
+        editableEntityIds: [],
+      },
     })
   })
 
@@ -199,11 +219,18 @@ describe('authorizeToolCall', () => {
       resolveCustomerScope: jest.fn(async () => ({
         mode: 'organization' as const,
         ownerUserIds: ['should-not-matter'],
+        grantedEntityIds: ['stray-grant'],
+        editableEntityIds: ['stray-edit'],
       })),
     })
     await expect(call({ deps: d })).resolves.toMatchObject({
       ok: true,
-      scope: { mode: 'organization', ownerUserIds: [] },
+      scope: {
+        mode: 'organization',
+        ownerUserIds: [],
+        grantedEntityIds: [],
+        editableEntityIds: [],
+      },
     })
   })
 
@@ -220,7 +247,14 @@ describe('authorizeToolCall', () => {
     })
 
     const malformed = deps({
-      resolveCustomerScope: jest.fn(async () => ({ mode: 'all' }) as unknown as { mode: 'organization'; ownerUserIds: string[] }),
+      resolveCustomerScope: jest.fn(
+        async () => ({ mode: 'all' }) as unknown as {
+          mode: 'organization'
+          ownerUserIds: string[]
+          grantedEntityIds: string[]
+          editableEntityIds: string[]
+        },
+      ),
     })
     await expect(call({ deps: malformed })).resolves.toMatchObject({
       ok: false,
