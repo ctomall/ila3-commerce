@@ -860,6 +860,38 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       expect(mockStartDshRun).not.toHaveBeenCalled()
     })
 
+    it('tells the client a replayed run failed instead of a bare done', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      const failed = persistedRun({ id: 'run-1', status: 'failed', cursor: 0, error: 'initialize timed out after 10000ms' })
+      service.replay.mockResolvedValueOnce({ run: failed, events: [], resumable: true })
+
+      const frames = await readSseFrames(await POST(chatRequest({ runId: 'run-1' })))
+
+      expect(frames.map((frame) => frame.event.type)).toEqual(['error', 'done'])
+      expect(frames[0].event).toEqual({ type: 'error', error: 'initialize timed out after 10000ms' })
+    })
+
+    it('passes the configured initialize bound to the runtime and omits it by default', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      mockStartDshRun.mockResolvedValueOnce(makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } }))
+      delete process.env.OM_DSH_INIT_TIMEOUT_MS
+
+      await POST(chatRequest({ messages: userMessages }))
+      expect(mockStartDshRun.mock.calls[0][0]).not.toHaveProperty('initializeTimeoutMs')
+
+      process.env.OM_DSH_INIT_TIMEOUT_MS = '25000'
+      const second = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(second)
+      mockStartDshRun.mockResolvedValueOnce(makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } }))
+      await POST(chatRequest({ messages: userMessages }))
+      expect(mockStartDshRun.mock.calls[1][0]).toMatchObject({ initializeTimeoutMs: 25_000 })
+      delete process.env.OM_DSH_INIT_TIMEOUT_MS
+    })
+
     it('fails closed with 503 persistence_unavailable when the table/repository is unavailable', async () => {
       process.env.OM_DSH_PERSIST = 'orm'
       const service = fakeRunService()

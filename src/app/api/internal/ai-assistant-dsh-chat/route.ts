@@ -290,6 +290,21 @@ function runTimeoutMs(): number {
 }
 
 /**
+ * The DSH `initialize` handshake is bounded at 10 s by the runtime. On a loaded host
+ * that bound is reachable: a real run once failed with `initialize timed out after
+ * 10000ms` and the browser received 502. Production can widen it through the env
+ * without a code change; unset keeps the runtime default so behaviour is unchanged.
+ */
+const MAX_INITIALIZE_TIMEOUT_MS = 120_000
+function initializeTimeoutMs(): number | undefined {
+  const raw = process.env.OM_DSH_INIT_TIMEOUT_MS
+  if (!raw) return undefined
+  const parsed = Number.parseInt(raw, 10)
+  if (!Number.isFinite(parsed) || parsed <= 0) return undefined
+  return Math.min(parsed, MAX_INITIALIZE_TIMEOUT_MS)
+}
+
+/**
  * Bridge endpoint the MCP child calls. `OM_DSH_BRIDGE_URL` wins (release
  * wiring); otherwise derive the loopback app address from `PORT`.
  */
@@ -412,6 +427,7 @@ function buildRunInput(
   modelEnv: ModelEnv = { env: {} },
 ): DshRunInput {
   const timeoutMs = runTimeoutMs()
+  const initTimeoutMs = initializeTimeoutMs()
   const root = process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT
   const employee = identityKey([auth.tenantId, auth.orgId, auth.sub])
   const wiring = resolveToolBridgeWiring(auth, runId, bindingId, timeoutMs)
@@ -430,6 +446,7 @@ function buildRunInput(
     ...(request.sessionId ? { sessionId: request.sessionId } : {}),
     prompt: request.prompt,
     timeoutMs,
+    ...(initTimeoutMs ? { initializeTimeoutMs: initTimeoutMs } : {}),
     workspace: path.join(root, 'workspaces', employee, runId),
     dshHome: path.join(root, 'homes', employee),
     // Explicit launch: the base profile plus the CRM MCP overlay when enabled.
@@ -1134,6 +1151,11 @@ function replayResponse(run: RunRecord, events: RunEventRecord[]): Response {
   return createPersistedSseResponse(async (write) => {
     for (const event of events) {
       await write(persistedEventToSse(event), event.seq)
+    }
+    // A failed run has no useful stored events, so without this frame the replay is a
+    // bare `done` and the browser reports a silent success for a failed run.
+    if (run.status === 'failed') {
+      await write({ type: 'error', error: run.error ?? 'DSH run failed' })
     }
     await write({
       type: 'done',
