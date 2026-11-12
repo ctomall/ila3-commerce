@@ -1,4 +1,13 @@
 import type { ModuleInfo } from '@open-mercato/shared/modules/registry'
+import { features } from './acl'
+import {
+  LeadgenCandidate,
+  LeadgenCandidateDecision,
+  LeadgenCandidateEvidence,
+  LeadgenCompanyClaim,
+  LeadgenResearchRun,
+  LeadgenVerification,
+} from './data/entities'
 
 /**
  * Lead generation: candidate pipeline for the CRM.
@@ -8,6 +17,7 @@ import type { ModuleInfo } from '@open-mercato/shared/modules/registry'
  * migration once this one is reviewed and applied.
  *
  * Nothing here writes to core tables; cross-module references are scalar ids.
+ * M5 adds the decision ledger and the API in `services/` + `src/app/api/leadgen`.
  */
 export const metadata: ModuleInfo = {
   name: 'leadgen',
@@ -18,4 +28,14 @@ export const metadata: ModuleInfo = {
   license: 'MIT',
 }
 
+export const entities = [
+  LeadgenResearchRun,
+  LeadgenCandidate,
+  LeadgenCandidateEvidence,
+  LeadgenVerification,
+  LeadgenCompanyClaim,
+  LeadgenCandidateDecision,
+] as const
+
+export { features }
 export default metadata

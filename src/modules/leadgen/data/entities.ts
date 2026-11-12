@@ -1,3 +1,4 @@
+import { OptionalProps } from '@mikro-orm/core'
 import { Entity, Index, PrimaryKey, Property, Unique } from '@mikro-orm/decorators/legacy'
 
 /**
@@ -712,4 +713,54 @@ export class LeadgenBotBinding {
 
   @Property({ name: 'revoked_at', type: Date, nullable: true })
   revokedAt?: Date | null
+}
+
+/**
+ * Immutable audit + idempotency record for a manual review decision.
+ *
+ * The candidate row carries the current `status`; this ledger is what makes
+ * `decisionKey` idempotent and lets an auditor see who approved or rejected a
+ * candidate, when, and against which merge target. The schema slices did not
+ * model it, so M5 adds it before any decision endpoint can satisfy its own
+ * contract.
+ */
+@Entity({ tableName: 'leadgen_candidate_decisions' })
+@Unique({
+  name: 'leadgen_candidate_decisions_tenant_org_key_uq',
+  properties: ['tenantId', 'organizationId', 'decisionKey'],
+})
+@Index({ name: 'leadgen_candidate_decisions_candidate_idx', properties: ['candidateId', 'createdAt'] })
+export class LeadgenCandidateDecision {
+  [OptionalProps]?: 'reasonCode' | 'mergeTargetClaimId' | 'createdAt'
+
+  @PrimaryKey({ type: 'uuid', defaultRaw: 'gen_random_uuid()' })
+  id!: string
+
+  @Property({ name: 'tenant_id', type: 'uuid' })
+  tenantId!: string
+
+  @Property({ name: 'organization_id', type: 'uuid' })
+  organizationId!: string
+
+  @Property({ name: 'candidate_id', type: 'uuid' })
+  candidateId!: string
+
+  @Property({ type: 'text' })
+  decision!: 'approve' | 'reject' | 'merge'
+
+  /** Client-supplied key; the unique tuple makes a retry a replay, not a second decision. */
+  @Property({ name: 'decision_key', type: 'text' })
+  decisionKey!: string
+
+  @Property({ name: 'actor_user_id', type: 'uuid' })
+  actorUserId!: string
+
+  @Property({ name: 'reason_code', type: 'text', nullable: true })
+  reasonCode?: string | null
+
+  @Property({ name: 'merge_target_claim_id', type: 'uuid', nullable: true })
+  mergeTargetClaimId?: string | null
+
+  @Property({ name: 'created_at', type: Date, onCreate: () => new Date() })
+  createdAt: Date = new Date()
 }
