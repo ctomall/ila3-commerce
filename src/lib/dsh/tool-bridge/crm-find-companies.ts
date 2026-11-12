@@ -106,9 +106,12 @@ export async function findCompanies(
     tenantId: scope.tenantId,
     organizationId: scope.organizationId,
   }
+  const grantedCount = context.scope.mode === 'own' ? (context.scope.grantedEntityIds ?? []).length : 0
   const note =
     context.scope.mode === 'own'
-      ? '只读查询；结果限定为调用者本人负责的客户'
+      ? grantedCount > 0
+        ? '只读查询；结果限定为调用者本人负责或经 customer_access 显式授权的客户'
+        : '只读查询；结果限定为调用者本人负责的客户'
       : '只读查询；结果限定为调用者所在组织（组织隔离≠员工客户隔离）'
 
   // `own` with no ownership and no grants means "this employee may see no

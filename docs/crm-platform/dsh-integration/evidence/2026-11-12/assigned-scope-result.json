@@ -1,0 +1,61 @@
+{
+ "startedAt": "2026-11-12T01:47:21.890Z",
+ "logins": {
+  "employee": 200,
+  "admin": 200
+ },
+ "restartOwn": true,
+ "ownFind": {
+  "status": 200,
+  "text": "调用完成。结果如下：\n\n- **返回公司数量：0 家**（`companies` 为空数组，`scanned: 0`）\n- 本次查询的权限范围：`own`（仅限调用者本人负责的客户）\n- tenantId：`f27fa168-796c-4532-b9a4-1491a2e8c65e`\n- organizationId：`328bc848-d4cd-41ae-bcc3-0bcb4b215e55`\n\n也就是说，在你本人负责的客户范围内，没有匹配到任何公司（query 为空，limit 5）。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[],\\\"scanned\\\":0,\\\"scope\\\":{\\\"mode\\\":\\\"own\\\",\\\"tenantId\\\":\\\"f27fa168-796c-4532-b9a4-1491a2e8c65e\\\",\\\"organizationId\\\":\\\"328bc848-d4cd-41ae-bcc3-0bcb4b215e55\\\"},\\\"note\\\":\\\"只读查询；结果限定为调用者本人负责的客户\\\"}\"}]"
+  ]
+ },
+ "grant": {
+  "status": 200,
+  "id": "4342b393-d07f-4613-b01c-8f50ee053c7e",
+  "code": null
+ },
+ "restartAssigned": true,
+ "assignedFind": {
+  "status": 200,
+  "text": "调用完成（`query` 留空，`limit: 5`），返回 1 家公司：\n\n1. **Copperleaf Design**（域名：copperleaf.design，行业：Interior Design，规模：11-50）\n\n补充说明：本次结果范围为 `own`（仅限你本人负责的客户），共扫描 1 条记录。这是 assigned 范围验证 014722。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[{\\\"id\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"name\\\":\\\"Copperleaf Design\\\",\\\"domain\\\":\\\"copperleaf.design\\\",\\\"websiteUrl\\\":\\\"https://copperleaf.design\\\",\\\"industry\\\":\\\"Interior Design\\\",\\\"sizeBuc"
+  ]
+ },
+ "assignedWrite": {
+  "status": 200,
+  "text": "已按要求以完全一致的参数调用了 `crm_update_company`，工具返回如下：\n\n```json\n{\n  \"error\": \"This write needs employee approval. The request is visible in the CRM write-approval page.\",\n  \"code\": \"approval_required\",\n  \"status\": 403\n}\n```\n\n说明：\n- 该调用**没有直接写入**，而是被登记为一笔待审批的写请求。\n- 需要你（员工）前往 CRM 的 **write-approval（写审批）页面**查看并批准该请求。\n- 批准后，请重试**完全相同**的调用，审批才会被消费并生效。\n\n如需我再次重试该调用，请告知。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"Error: {\\\"error\\\":\\\"This write needs employee approval. The request is visible in the CRM write-approval page.\\\",\\\"code\\\":\\\"approval_required\\\",\\\"status\\\":403}\"}]"
+  ]
+ },
+ "pendingRow": "bfe44fa5-b8f4-4445-bf04-02f31409242f|pending",
+ "approve": 200,
+ "assignedRetry": {
+  "status": 200,
+  "text": "调用成功。\n\n**结果**\n- `ok`: true\n- `companyId`: f67258f2-cde8-4d55-97b0-7e2477519724\n- `updatedFields`: [\"industry\"]\n- 备注：写入已执行；目标公司属于调用者本人\n\n`industry` 字段已更新为 `QA-GRANT-014722`。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"ok\\\":true,\\\"companyId\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"updatedFields\\\":[\\\"industry\\\"],\\\"note\\\":\\\"写入已执行；目标公司属于调用者本人\\\"}\"}]"
+  ]
+ },
+ "companyIndustryAfterGrantWrite": "QA-GRANT-014722",
+ "revoke": 200,
+ "findAfterRevoke": {
+  "status": 200,
+  "text": "已调用 `crm_find_companies`（query 为空，limit 5），结果如下：\n\n- **返回公司数量：0 家**（`companies` 为空数组，`scanned: 0`）\n- 查询范围：只读，且仅限调用者本人负责的客户（mode: own）\n\n关于“撤销后验证 014722”：本次调用是纯只读查询，没有产生任何待撤销的写操作；同时我可用的 CRM 工具中也没有“撤销”或“验证码 014722”相关的接口。因此我无法执行这一步，也不会臆造结果。如果你指的是其他系统里的某个撤销动作或验证码校验，请说明具体的系统与操作方式，我再帮你确认。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[],\\\"scanned\\\":0,\\\"scope\\\":{\\\"mode\\\":\\\"own\\\",\\\"tenantId\\\":\\\"f27fa168-796c-4532-b9a4-1491a2e8c65e\\\",\\\"organizationId\\\":\\\"328bc848-d4cd-41ae-bcc3-0bcb4b215e55\\\"},\\\"note\\\":\\\"只读查询；结果限定为调用者本人负责的客户\\\"}\"}]"
+  ]
+ },
+ "restartOrganization": true,
+ "organizationFind": {
+  "status": 200,
+  "text": "调用已完成（query 留空，limit 3）。\n\n**返回了 3 家公司：**\n\n| # | 名称 | 域名 | 行业 | 规模 |\n|---|---|---|---|---|\n| 1 | Harborview Analytics | harborviewanalytics.com | Software | 201-500 |\n| 2 | Copperleaf Design | copperleaf.design | Interior Design | 11-50 |\n| 3 | Brightside Solar | brightsidesolar.com | Renewable Energy | 51-200 |\n\n关于「恢复组织范围验证 014722」，我没有执行任何相关操作，原因如下：这个工具本身是只读查询，结果已经由服务端强制限定在调用者所在的组织范围内，因此不存在需要「恢复」的",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[{\\\"id\\\":\\\"bc7f08f6-927f-4279-8de0-fab72afa4b6e\\\",\\\"name\\\":\\\"Harborview Analytics\\\",\\\"domain\\\":\\\"harborviewanalytics.com\\\",\\\"websiteUrl\\\":\\\"https://harborviewanalytics.com\\\",\\\"industry\\\":\\\"Software\\\",\\"
+  ]
+ }
+}

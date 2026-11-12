@@ -1,0 +1,67 @@
+{
+ "startedAt": "2026-11-12T01:12:34.480Z",
+ "industry": "QA-WRITES-011234",
+ "login": 200,
+ "turnA": {
+  "status": 200,
+  "ms": 10921,
+  "errors": [],
+  "text": "已按你的要求真实调用了工具：\n\n1. `crm_find_companies(query=\"\", limit=2)` 返回的第一个公司是 **Copperleaf Design**（id: `f67258f2-cde8-4d55-97b0-7e2477519724`）。\n2. 已对该公司调用 `crm_update_company`，提交 `fields.industry = \"QA-WRITES-011234\"`。\n\n该写入被 CRM 的审批机制拦截，返回：\n\n```json\n{\n  \"error\": \"This write needs employee approval. The request is visible in the CRM write-approval page.\",\n  \"code\": \"approval_required\",\n  \"status\": 403\n}\n```\n\n这是系统强制的人员工审批流程，我无法绕过。请在 CRM 的 **write-approval 页面**审阅并批准该请求，然后告诉我，我会用完全相同的参数重试以完成写入。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[{\\\"id\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"name\\\":\\\"Copperleaf Design\\\",\\\"domain\\\":\\\"copperleaf.design\\\",\\\"websiteUrl\\\":\\\"https://copperleaf.design\\\",\\\"industry\\\":\\\"Interior Design\\\",\\\"sizeBucket\\\":\\\"11-50\\\"},{\\\"id\\\":\\\"bc7f08f6-927f-4279-8de0-fab72afa4b6e\\\",\\\"name\\\":\\\"Harborview Analytics\\\",\\\"domain\\\":\\\"harborviewanalytics.com\\\",\\\"websiteUrl\\\":\\\"http",
+   "[{\"type\":\"text\",\"text\":\"Error: {\\\"error\\\":\\\"This write needs employee approval. The request is visible in the CRM write-approval page.\\\",\\\"code\\\":\\\"approval_required\\\",\\\"status\\\":403}\"}]"
+  ]
+ },
+ "approvalAfterA": "4b9af7e4-256b-4d06-82a1-134a87a84a62|pending|{\"fields\": {\"industry\": \"QA-WRITES-011234\"}, \"companyId\": \"f67258f2-cde8-4d55-97b0-7e2477519724\", \"companyName\": \"Copperleaf Design Co.\"}",
+ "preview": {
+  "fields": {
+   "industry": "QA-WRITES-011234"
+  },
+  "companyId": "f67258f2-cde8-4d55-97b0-7e2477519724",
+  "companyName": "Copperleaf Design Co."
+ },
+ "approve": {
+  "status": 200,
+  "body": {
+   "approval": {
+    "id": "4b9af7e4-256b-4d06-82a1-134a87a84a62",
+    "tool": "crm.update_company",
+    "summary": {
+     "fields": {
+      "industry": "QA-WRITES-011234"
+     },
+     "companyId": "f67258f2-cde8-4d55-97b0-7e2477519724",
+     "companyName": "Copperleaf Design Co."
+    },
+    "status": "approved",
+    "decidedAt": "2026-11-12T01:12:45.497Z",
+    "expiresAt": "2026-11-12T01:22:45.497Z"
+   }
+  }
+ },
+ "turnB": {
+  "status": 200,
+  "ms": 4782,
+  "errors": [],
+  "text": "调用完成，结果如下：\n\n- **状态**：成功（`ok: true`）\n- **公司 ID**：`f67258f2-cde8-4d55-97b0-7e2477519724`\n- **已更新字段**：`industry`\n- **提示**：写入已执行；目标公司在你的组织内（组织隔离不等于员工客户隔离）\n\n参数按你的要求原样传入，未做任何修改。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"ok\\\":true,\\\"companyId\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"updatedFields\\\":[\\\"industry\\\"],\\\"note\\\":\\\"写入已执行；目标公司在调用者组织内（组织隔离≠员工客户隔离）\\\"}\"}]"
+  ]
+ },
+ "approvalAfterB": "consumed|t",
+ "companyApi": {
+  "status": 200,
+  "industry": "QA-WRITES-011234"
+ },
+ "turnC": {
+  "status": 200,
+  "ms": 4647,
+  "errors": [],
+  "text": "我已按要求原样调用该工具，`crm_update_company` 的返回结果如下：\n\n```json\n{\n  \"error\": \"This approval was already used; it cannot write twice.\",\n  \"code\": \"approval_consumed\",\n  \"status\": 409\n}\n```\n\n**结果说明：** 这次写入未产生任何修改。该次写入的审批已经在之前被消费过，同一个审批不能重复写两次，因此服务端返回了 409（approval_consumed）。\n\n如果需要再次写入该字段，需要在 CRM 写入审批页面重新发起并批准一次新的审批请求，然后重试相同的调用。请告知我你是否要继续。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"Error: {\\\"error\\\":\\\"This approval was already used; it cannot write twice.\\\",\\\"code\\\":\\\"approval_consumed\\\",\\\"status\\\":409}\"}]"
+  ]
+ },
+ "approvalAfterC": "consumed",
+ "pendingAfterC": "1"
+}

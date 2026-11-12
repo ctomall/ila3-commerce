@@ -1,0 +1,57 @@
+{
+ "startedAt": "2026-11-12T00:48:49.428Z",
+ "email": "qa-third-20261112004849@example.test",
+ "org": "328bc848-d4cd-41ae-bcc3-0bcb4b215e55",
+ "adminLogin": {
+  "status": 200,
+  "ok": true
+ },
+ "create": {
+  "status": 201,
+  "keys": [
+   "id"
+  ],
+  "error": null
+ },
+ "newUserId": "9cb3cf6c-7bdd-42c1-aa93-ce192f576187",
+ "newLogin": {
+  "status": 200,
+  "ok": true,
+  "sameSub": true
+ },
+ "binding": "d6b7035b-e208-401c-9bef-c2c7b3859ae4|active",
+ "homes": {
+  "newEmployee": {
+   "pathHash": "2d06482edb5301c4dd43a3c928cc8dc5",
+   "mode": null,
+   "exists": false
+  },
+  "acceptance": {
+   "pathHash": "81d38f0720e44bfdc7959c8173b8f8aa",
+   "mode": null,
+   "exists": false
+  },
+  "distinct": true
+ },
+ "approvals": {
+  "status": 200,
+  "count": 0
+ },
+ "chat": {
+  "status": 200,
+  "ms": 3866,
+  "text": "Copperleaf Design"
+ },
+ "runs": "1",
+ "otherEmployeeApprovalsForNewUser": "0",
+ "revoke": {
+  "status": 200,
+  "body": "{\"bindingId\":\"d6b7035b-e208-401c-9bef-c2c7b3859ae4\",\"revokedRuns\":0}"
+ },
+ "deactivate": {
+  "status": 200
+ },
+ "loginAfterDelete": 401,
+ "bindingAfter": "revoked",
+ "userAfter": ""
+}

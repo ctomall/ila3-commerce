@@ -199,7 +199,9 @@ export async function updateCompany(
     updatedFields: Object.keys(parsed.fields),
     note:
       context.scope.mode === 'own'
-        ? '写入已执行；目标公司属于调用者本人'
+        ? owner === context.claims.userId
+          ? '写入已执行；目标公司属于调用者本人'
+          : '写入已执行；目标公司经 customer_access 显式授权给调用者'
         : '写入已执行；目标公司在调用者组织内（组织隔离≠员工客户隔离）',
   }
 }
