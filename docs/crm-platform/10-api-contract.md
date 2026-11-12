@@ -27,7 +27,7 @@
 | 配额 | `GET /leadgen/quota/buckets`、`POST /leadgen/quota/reservations` | 四层余量；预留失败 429 |
 | 草稿 | `POST /leadgen/drafts` | 幂等：`candidate_id + body_hash` |
 | 审批 | `POST /leadgen/drafts/{id}/approvals` | 绑定 `draft_hash`；正文变动 409 |
-| 发送 | `POST /leadgen/sends` | 一把 send_key 贯穿 approve→enqueue→provider；抑制命中 409 |
+| 发送 | `POST /leadgen/drafts/{id}/sends` | 需 `approvalId`；send_key 由服务端派生（`send:<draft>:<body_hash>:<approval>`），一个审批最多一次投递；过期/撤销/改正文/跨草稿复用 409 |
 | 抑制 | `GET|POST /leadgen/suppressions` | 邮箱以 hash 呈现；upsert 幂等 |
 | 回调 | `POST /leadgen/webhooks/providers/{provider}` | 验签（`x-auth: signature`）；`provider_event_id` 去重 |
 | 绑定 | `GET|PUT /leadgen/bindings/employees` | 按 `version` 乐观锁 |
@@ -46,6 +46,10 @@
 - 额度层级粒度（D4）：schema 里 `quotaKind` 有值，但四层归属由服务端派生。
 - 审批门槛与 TTL（D5）：`expiresInMinutes` 只是范围 5–1440，默认值待定。
 - 渠道（D8）：`/sends` 不带 provider 字段，由服务端按绑定解析。
+- 发送幂等键（实现偏离草案，2026-11-12）：草案里由客户端传 `send_key`，实现改为**服务端派生**
+  并由草稿 CAS（`approved -> sent`）保证一次性；否则客户端可换 key 制造第二次投递。
+  真实 provider 投递、`send` 额度原子扣减、抑制名单前置检查仍未实现（M6 另批，见
+  `leadgen/EVIDENCE-2026-11-12-M6-DISPATCH.md`）。
 
 ## 5. 复跑
 
