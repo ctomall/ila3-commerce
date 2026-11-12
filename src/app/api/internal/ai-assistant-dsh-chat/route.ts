@@ -890,6 +890,22 @@ function bindingInactiveResponse(): NextResponse {
   )
 }
 
+/**
+ * A run left `running` keeps its employee blocked: the per-binding one-in-flight rule
+ * then answers 409 to every new prompt, and the row only clears on a restart sweep.
+ * That is what a client that disconnects right after `begin` leaves behind, so before
+ * refusing a new prompt we settle a run that has outlived its own timeout.
+ */
+const STALE_RUN_GRACE_MS = 30_000
+async function settleStaleRun(service: RunService, run: RunRecord): Promise<boolean> {
+  if (!isInFlightStatus(run.status)) return false
+  const started = Date.parse(run.startedAt ?? run.createdAt)
+  if (!Number.isFinite(started)) return false
+  if (Date.now() - started < runTimeoutMs() + STALE_RUN_GRACE_MS) return false
+  await finishQuietly(service, run.id, 'failed', 'run_timeout')
+  return true
+}
+
 function runInProgressResponse(run: RunRecord): NextResponse {
   return NextResponse.json(
     {
@@ -1332,6 +1348,17 @@ async function startPersistedRun(
         await write({ type: 'done', sessionId: handle.sessionId })
       } finally {
         stopPolling?.()
+        // Last line of defence: if this handler ends for any reason (client gone,
+        // pump hung, write exploded) the run must not stay in flight and lock the
+        // employee out of their next prompt.
+        try {
+          const latest = await service.getRun(run.id)
+          if (latest && isInFlightStatus(latest.status)) {
+            await finishQuietly(service, run.id, 'cancelled', 'client_disconnected')
+          }
+        } catch {
+          // Best effort: the submit-time stale recovery covers what this cannot.
+        }
       }
     },
     async () => {
@@ -1414,7 +1441,30 @@ async function persistedChat(
   }
 
   if (submitted.replay) {
-    if (isInFlightStatus(submitted.run.status)) return runInProgressResponse(submitted.run)
+    if (isInFlightStatus(submitted.run.status)) {
+      // Only a genuinely fresh run may hold the slot; a zombie is settled and the
+      // submit is retried once so the employee is not locked out until a restart.
+      const settled = await settleStaleRun(service, submitted.run)
+      if (!settled) return runInProgressResponse(submitted.run)
+      try {
+        submitted = await service.submit({
+          identity,
+          ...(parsed.idempotencyKey ? { idempotencyKey: parsed.idempotencyKey } : {}),
+          requestHash: hashPrompt(parsed.prompt),
+          prompt: parsed.prompt,
+          bindingId: binding.id,
+          ...(parsed.sessionId ? { sessionId: parsed.sessionId } : {}),
+        })
+      } catch (error) {
+        return submitErrorResponse(error)
+      }
+      if (submitted.replay && isInFlightStatus(submitted.run.status)) {
+        return runInProgressResponse(submitted.run)
+      }
+      // The stale row is terminal now: the retried submit created a fresh run, so
+      // start it instead of replaying the zombie.
+      if (!submitted.replay) return startPersistedRun(req, auth, parsed, service, submitted.run)
+    }
     try {
       const replay = await service.replay(identity.userId, submitted.run.id, cursor)
       return replayResponse(replay.run, replay.events)

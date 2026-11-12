@@ -806,7 +806,13 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       const service = fakeRunService()
       mockCreateRequestRunService.mockResolvedValueOnce(service)
       service.submit.mockResolvedValueOnce({
-        run: persistedRun({ id: 'run-live', status: 'running', cursor: 4 }),
+        run: persistedRun({
+          id: 'run-live',
+          status: 'running',
+          cursor: 4,
+          createdAt: new Date().toISOString(),
+          startedAt: new Date().toISOString(),
+        }),
         replay: true,
       })
 
@@ -822,6 +828,44 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       })
       expect(service.replay).not.toHaveBeenCalled()
       expect(mockStartDshRun).not.toHaveBeenCalled()
+    })
+
+    it('keeps refusing a fresh in-flight run (the one-in-flight rule)', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      service.submit.mockResolvedValueOnce({
+        run: persistedRun({ id: 'run-live', status: 'running', startedAt: new Date().toISOString() }),
+        replay: true,
+      })
+
+      const response = await POST(chatRequest({ messages: userMessages, idempotencyKey: 'same-key' }))
+
+      expect(response.status).toBe(409)
+      expect(service.finish).not.toHaveBeenCalled()
+      expect(mockStartDshRun).not.toHaveBeenCalled()
+    })
+
+    it('settles a run that outlived its timeout and retries the submit', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      const stale = persistedRun({
+        id: 'run-zombie',
+        status: 'running',
+        startedAt: new Date(Date.now() - 10 * 60_000).toISOString(),
+      })
+      service.submit.mockResolvedValueOnce({ run: stale, replay: true })
+      service.submit.mockResolvedValueOnce({ run: persistedRun({ id: 'run-new', status: 'queued' }), replay: false })
+      mockStartDshRun.mockResolvedValueOnce(makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } }))
+
+      const response = await POST(chatRequest({ messages: userMessages }))
+
+      expect(service.finish).toHaveBeenCalledWith('run-zombie', { status: 'failed', error: 'run_timeout' })
+      expect(service.submit).toHaveBeenCalledTimes(2)
+      expect(response.status).toBe(200)
+      expect(mockStartDshRun).toHaveBeenCalledTimes(1)
+      expect(mockStartDshRun.mock.calls[0][0].runId).toBe('run-new')
     })
 
     it('replays a terminal run from Last-Event-ID and appends done', async () => {
