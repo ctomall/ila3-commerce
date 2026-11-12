@@ -25,6 +25,13 @@ import { spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
 import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
+import {
+  assertIsolationIdentity,
+  buildIsolatedSpawn,
+  provisionEmployee,
+  resolveOsIsolation,
+  writeRunEnvFile,
+} from './os-isolation'
 import { createTransport, type DshTransport } from './transport'
 import type { DshEvent, DshRunHandle, DshRunInput, DshRunResult } from './types'
 
@@ -283,9 +290,41 @@ export async function startDshRun(
   const dshHome = resolve(input.dshHome)
   // The route derives per-run paths but must not touch the filesystem; the
   // launcher owns materialising them. 0700 keeps other Unix users out (it does
-  // NOT isolate two employees running as the same user — see DESIGN.md).
-  fs.mkdirSync(workspace, { recursive: true, mode: 0o700 })
-  fs.mkdirSync(dshHome, { recursive: true, mode: 0o700 })
+  // NOT isolate two employees running as the same user — see os-isolation.ts).
+  const isolation = resolveOsIsolation()
+  let effectiveWorkspace = workspace
+  let effectiveHome = dshHome
+  let spawnCommand = command
+  let spawnArgs = args
+  let spawnCwd = workspace
+  let childEnv: NodeJS.ProcessEnv = buildDshEnv({ dshHome, env: input.env })
+  if (isolation) {
+    // Fail closed: a run with no identity must not fall back to the app user.
+    const identity = assertIsolationIdentity(input.identity)
+    const provisioned = provisionEmployee(isolation, identity, input.runId)
+    effectiveWorkspace = provisioned.workspace
+    effectiveHome = provisioned.home
+    childEnv = { ...buildDshEnv({ dshHome: effectiveHome, env: input.env }), TMPDIR: provisioned.tmp }
+    childEnv.DSH_RUN_CWD = effectiveWorkspace
+    const stringEnv: Record<string, string> = {}
+    for (const [key, value] of Object.entries(childEnv)) {
+      if (typeof value === 'string') stringEnv[key] = value
+    }
+    const envFile = writeRunEnvFile(isolation, input.runId, stringEnv)
+    const isolated = buildIsolatedSpawn({
+      config: isolation,
+      provisioned,
+      envFile,
+      command,
+      args,
+    })
+    spawnCommand = isolated.command
+    spawnArgs = isolated.args
+    spawnCwd = isolated.cwd
+  } else {
+    fs.mkdirSync(workspace, { recursive: true, mode: 0o700 })
+    fs.mkdirSync(dshHome, { recursive: true, mode: 0o700 })
+  }
   const initializeTimeoutMs = positive(input.initializeTimeoutMs, DEFAULT_INITIALIZE_TIMEOUT_MS)
   const requestTimeoutMs = positive(input.requestTimeoutMs, DEFAULT_REQUEST_TIMEOUT_MS)
   const shutdownTimeoutMs = positive(input.shutdownTimeoutMs, DEFAULT_SHUTDOWN_TIMEOUT_MS)
@@ -297,9 +336,9 @@ export async function startDshRun(
   const spawnImpl: DshSpawn = options.spawn ?? ((cmd, spawnArgs, spawnOptions) =>
     spawn(cmd, spawnArgs, spawnOptions))
 
-  const child = spawnImpl(command, args, {
-    cwd: workspace,
-    env: buildDshEnv({ dshHome, env: input.env }),
+  const child = spawnImpl(spawnCommand, spawnArgs, {
+    cwd: spawnCwd,
+    env: childEnv,
     stdio: ['pipe', 'pipe', 'pipe'],
     detached: process.platform !== 'win32',
   })
@@ -327,7 +366,7 @@ export async function startDshRun(
 
   try {
     const initResult = await transport.request('initialize', {
-      cwd: workspace,
+      cwd: effectiveWorkspace,
       provider: input.provider ?? 'deepseek-official',
       model: input.model ?? 'deepseek-v4-flash',
       // Enable the two opt-in server→client requests so launch/transport can

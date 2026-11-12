@@ -26,6 +26,12 @@ export type DshRunInput = {
   workspace: string
   /** Per-employee DSH_HOME; never share between employees. */
   dshHome: string
+  /**
+   * Server-side identity used when `OM_DSH_OS_ISOLATION=1`: the launcher derives
+   * the dedicated Unix user and the `/srv/dsh` home/workspace from it. Required
+   * in that mode (fail closed), ignored otherwise.
+   */
+  identity?: { tenantId: string; organizationId: string; userId: string }
   /** Explicit allow-listed environment; the runtime must not inherit the server env. */
   env?: Record<string, string>
   signal?: AbortSignal

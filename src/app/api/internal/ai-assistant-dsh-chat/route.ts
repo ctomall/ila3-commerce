@@ -416,8 +416,17 @@ function buildRunInput(
   const employee = identityKey([auth.tenantId, auth.orgId, auth.sub])
   const wiring = resolveToolBridgeWiring(auth, runId, bindingId, timeoutMs)
 
+  const tenantId = auth.tenantId?.trim()
+  const organizationId = auth.orgId?.trim()
+
   return {
     runId,
+    // Identity is what OS isolation derives the dedicated Unix user from. Omit
+    // it only when the session really has no scope; the launcher then fails
+    // closed instead of silently running as the application user.
+    ...(tenantId && organizationId && auth.sub
+      ? { identity: { tenantId, organizationId, userId: auth.sub } }
+      : {}),
     ...(request.sessionId ? { sessionId: request.sessionId } : {}),
     prompt: request.prompt,
     timeoutMs,

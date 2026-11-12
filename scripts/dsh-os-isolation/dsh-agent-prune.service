@@ -1,0 +1,7 @@
+[Unit]
+Description=Prune expired DSH employee run workspaces
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/dsh-agent-provision prune 7
