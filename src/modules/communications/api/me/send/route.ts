@@ -198,6 +198,10 @@ export async function POST(req: Request): Promise<Response> {
     }
     templateMetadata = legacy.data
   }
+  // Sanitized caller metadata is forwarded to the hub, so it belongs in the
+  // idempotency digest: a replay with the same key but different provider
+  // options must be refused, not answered with the first message id.
+  const callerChannelMetadata = sanitizeCallerChannelMetadata(body.channelMetadata)
   const payloadHash = computeSendPayloadHash({
     channelId: body.channelId,
     to: body.to,
@@ -211,6 +215,7 @@ export async function POST(req: Request): Promise<Response> {
     media: body.media ?? null,
     parentMessageId: body.parentMessageId ?? null,
     ...(body.threadId ? { threadId: body.threadId } : {}),
+    ...(Object.keys(callerChannelMetadata).length ? { channelMetadata: callerChannelMetadata } : {}),
   })
 
   const container = await createRequestContainer()
@@ -502,7 +507,7 @@ export async function POST(req: Request): Promise<Response> {
   const channelMetadata = {
     // Routing fields are validated server-side; strip anything a caller could use
     // to redirect the recipient or forge threading headers (defence in depth).
-    ...sanitizeCallerChannelMetadata(body.channelMetadata),
+    ...callerChannelMetadata,
     ...(templateMetadata ? { template: templateMetadata } : {}),
     ...(resolvedMedia ? { media: resolvedMedia } : {}),
     ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),

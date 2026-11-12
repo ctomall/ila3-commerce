@@ -51,6 +51,13 @@ export type SendPayloadHashInput = {
   parentMessageId?: string | null
   /** Inbox conversation the reply was composed in; only sent by newer clients. */
   threadId?: string | null
+  /**
+   * Caller pass-through metadata (already stripped of routing keys). It is
+   * forwarded to the hub, where a provider adapter may read provider-specific
+   * options from it, so it can change what leaves the CRM. Omitted when empty so
+   * hashes recorded for metadata-free requests keep their old value.
+   */
+  channelMetadata?: Record<string, unknown> | null
 }
 
 /**
@@ -107,6 +114,9 @@ export function computeSendPayloadHash(input: SendPayloadHashInput): string {
         }
       : null,
     parentMessageId: input.parentMessageId ?? null,
+    ...(input.channelMetadata && Object.keys(input.channelMetadata).length
+      ? { channelMetadata: canonicalize(input.channelMetadata) }
+      : {}),
     // Omitted entirely when absent so hashes recorded by older clients keep
     // matching on retry.
     ...(input.threadId ? { threadId: input.threadId } : {}),

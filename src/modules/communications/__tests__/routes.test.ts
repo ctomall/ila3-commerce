@@ -408,6 +408,92 @@ describe('POST /api/communications/me/send', () => {
     expect(send).not.toHaveBeenCalled()
   })
 
+  it('refuses the same clientRequestId when the caller metadata changed', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({ ok: true as const }))
+    const em = createFakeEm({
+      sendRequests: [
+        {
+          id: 'sr-meta',
+          clientRequestId: 'req-12345678',
+          channelId: 'ch1',
+          messageId: 'm-first',
+          messageThreadId: 'th-first',
+          createdAt: new Date(),
+          payloadHash: computeSendPayloadHash({
+            channelId: '11111111-1111-4111-8111-111111111111',
+            to: ['customer@example.test'],
+            subject: 'Re: demo',
+            body: { plain: 'hello' },
+            channelMetadata: { providerOption: 'a' },
+          }),
+        },
+      ],
+    })
+    useContainer((name) => send, em)
+    const { POST } = await load()
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-12345678',
+          channelMetadata: { providerOption: 'b' },
+        }),
+      }),
+    )
+    expect(res.status).toBe(409)
+    await expect(res.json()).resolves.toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('replays when the caller metadata is identical', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({ ok: true as const }))
+    const metadata = { providerOption: 'a', templateVars: ['Ada'] }
+    const em = createFakeEm({
+      sendRequests: [
+        {
+          id: 'sr-meta-same',
+          clientRequestId: 'req-12345678',
+          channelId: 'ch1',
+          messageId: 'm-first',
+          messageThreadId: 'th-first',
+          createdAt: new Date(),
+          payloadHash: computeSendPayloadHash({
+            channelId: '11111111-1111-4111-8111-111111111111',
+            to: ['customer@example.test'],
+            subject: 'Re: demo',
+            body: { plain: 'hello' },
+            channelMetadata: metadata,
+          }),
+        },
+      ],
+    })
+    useContainer((name) => send, em)
+    const { POST } = await load()
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-12345678',
+          // Different key order must not create a false conflict.
+          channelMetadata: { templateVars: ['Ada'], providerOption: 'a' },
+        }),
+      }),
+    )
+    expect(res.status).toBe(200)
+    await expect(res.json()).resolves.toMatchObject({ replayed: true, messageId: 'm-first' })
+    expect(send).not.toHaveBeenCalled()
+  })
+
   it('answers 409 while the first attempt is still in flight', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = jest.fn(async () => ({ ok: true as const }))
