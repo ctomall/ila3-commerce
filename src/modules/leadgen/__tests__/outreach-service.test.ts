@@ -81,6 +81,27 @@ describe('outreach draft/approval', () => {
     expect(good.ok).toBe(true)
   })
 
+  it('refuses even the replay of an approval after the draft was dispatched', async () => {
+    const { service, state } = makeRepo()
+    const created = await service.createDraft(baseDraft)
+    if (!created.ok) throw new Error('draft failed')
+    const input = {
+      tenantId: 't', organizationId: 'o', draftId: created.value.draft.id, draftHash: created.value.draft.bodyHash,
+      approverUserId: 'u1', idempotencyKey: 'approve:consumed', decision: 'approved' as const,
+    }
+    const first = await service.approveDraft(input)
+    expect(first.ok).toBe(true)
+    const draft = state.drafts.find((row) => row.id === created.value.draft.id)
+    if (!draft) throw new Error('draft vanished')
+    draft.status = 'sent'
+    await expect(service.approveDraft(input)).resolves.toMatchObject({ ok: false, code: 'already_sent' })
+    // A different approver is refused for the same reason, not given a fresh token.
+    await expect(
+      service.approveDraft({ ...input, approverUserId: 'u2', idempotencyKey: 'approve:consumed:u2' }),
+    ).resolves.toMatchObject({ ok: false, code: 'already_sent' })
+    expect(state.approvals).toHaveLength(1)
+  })
+
   it('replays the same approval key instead of approving twice', async () => {
     const { service, state } = makeRepo()
     const created = await service.createDraft(baseDraft)

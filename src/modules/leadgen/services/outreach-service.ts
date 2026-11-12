@@ -148,18 +148,18 @@ export function createOutreachService(deps: {
     decision: 'approved' | 'rejected'
   }): Promise<OutreachResult<{ approval: ApprovalRow; replayed: boolean }>> {
     if (!input.idempotencyKey || input.idempotencyKey.length < 8) return { ok: false, code: 'invalid_input' }
-    const replay = await repo.findApprovalByKey(input)
-    if (replay) return { ok: true, value: { approval: replay, replayed: true } }
     const draft = await repo.getDraft({ tenantId: input.tenantId, organizationId: input.organizationId, id: input.draftId })
     if (!draft) return { ok: false, code: 'draft_not_found' }
+    // A dispatched draft has spent its approval: even the replay of that approval is
+    // refused, so a client can never read an old 200 as "I still hold a fresh token".
+    if (draft.status === 'sent') return { ok: false, code: 'already_sent' }
+    const replay = await repo.findApprovalByKey(input)
+    if (replay) return { ok: true, value: { approval: replay, replayed: true } }
     // The approval is bound to one body: a stale hash cannot ride an old approval.
     if (draft.bodyHash !== input.draftHash) return { ok: false, code: 'body_hash_mismatch' }
     if (input.decision === 'approved' && draft.status === 'approved') {
       return { ok: false, code: 'already_decided' }
     }
-    // A dispatched draft cannot be re-approved: that would mint a second token for
-    // a body the single-use approval already consumed.
-    if (draft.status === 'sent') return { ok: false, code: 'already_sent' }
     const at = now()
     const approval = await repo.insertApproval({
       id: newId(),

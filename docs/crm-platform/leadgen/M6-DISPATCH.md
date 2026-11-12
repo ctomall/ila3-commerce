@@ -28,7 +28,7 @@
 | 幂等键不可由客户端指定 | 服务端派生 `send:<draftId>:<draftHash>:<approvalId>` | — |
 | 并发不重复投递 | CAS 失败 → 复核已有行 → 重放或 409 | 409 `send_in_progress` |
 | 传输失败不烧令牌 | 行置 `failed` 并把草稿 `sent -> approved` | 502 `transport_failed` |
-| 已投递草稿不得再审批 | `status === 'sent'` 时拒绝新审批 | 409 `already_sent` |
+| 已投递草稿不得再审批 | `status === 'sent'` 时拒绝，**包括同一审批的重放**（先判状态再查重放） | 409 `already_sent` |
 
 幂等键由服务端派生，所以客户端重复提交同一意图只会重放同一行，
 换一个审批/草稿就会落到另一个 key，无法用“改 key”制造第二次投递。
