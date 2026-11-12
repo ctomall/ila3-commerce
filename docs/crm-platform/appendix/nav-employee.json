@@ -579,6 +579,15 @@
           "order": 20
         },
         {
+          "id": "/backend/leadgen/suppressions",
+          "href": "/backend/leadgen/suppressions",
+          "title": "Suppression list",
+          "defaultTitle": "Suppression list",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 21
+        },
+        {
           "id": "/backend/config/wms",
           "href": "/backend/config/wms",
           "title": "仓储配置",
@@ -879,6 +888,12 @@
           "order": 20
         },
         {
+          "id": "backend-leadgen-suppressions",
+          "label": "Suppression list",
+          "href": "/backend/leadgen/suppressions",
+          "order": 21
+        },
+        {
           "id": "backend-config-wms",
           "label": "仓储配置",
           "labelKey": "wms.backend.config.nav.title",
@@ -972,6 +987,7 @@
     "/backend/config/sales",
     "/backend/leadgen",
     "/backend/leadgen/candidates",
+    "/backend/leadgen/suppressions",
     "/backend/config/wms",
     "/backend/config/customers",
     "/backend/config/customers/deals",

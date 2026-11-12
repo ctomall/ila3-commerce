@@ -1,0 +1,22 @@
+{
+ "probedAt": "2026-11-12T19:38:53.641Z",
+ "release": "6b389f7ee2d97f3b5f75c18152b99b7d9503a292",
+ "base": "http://127.0.0.1:3000",
+ "role": "superadmin",
+ "path": "/backend/leadgen/suppressions",
+ "screenshots": {
+  "before": "docs/crm-platform/leadgen/evidence/suppressions-before.png",
+  "after": "docs/crm-platform/leadgen/evidence/suppressions-after.png"
+ },
+ "result": {
+  "loggedIn": true,
+  "heading": true,
+  "tableReady": true,
+  "recorded": true,
+  "released": true,
+  "releaseNoticed": true,
+  "gone": false,
+  "ok": false,
+  "testEmail": "ui-suppression-1794512327209@example.invalid"
+ }
+}

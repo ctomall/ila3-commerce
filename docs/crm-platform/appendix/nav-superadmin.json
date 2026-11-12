@@ -797,6 +797,15 @@
           "order": 20
         },
         {
+          "id": "/backend/leadgen/suppressions",
+          "href": "/backend/leadgen/suppressions",
+          "title": "Suppression list",
+          "defaultTitle": "Suppression list",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 21
+        },
+        {
           "id": "/backend/config/currency-fetching",
           "href": "/backend/config/currency-fetching",
           "title": "汇率抓取",
@@ -1639,6 +1648,12 @@
           "iconName": "refresh-cw"
         },
         {
+          "id": "backend-leadgen-suppressions",
+          "label": "Suppression list",
+          "href": "/backend/leadgen/suppressions",
+          "order": 21
+        },
+        {
           "id": "backend-config-currency-fetching",
           "label": "汇率抓取",
           "labelKey": "currencies.fetch.title",
@@ -2024,6 +2039,7 @@
     "/backend/leadgen",
     "/backend/leadgen/candidates",
     "/backend/exchange-rates",
+    "/backend/leadgen/suppressions",
     "/backend/config/currency-fetching",
     "/backend/config/wms",
     "/backend/inbox-ops/settings",

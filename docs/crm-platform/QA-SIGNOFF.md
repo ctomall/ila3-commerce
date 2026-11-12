@@ -44,6 +44,7 @@
 | --- | --- | --- | --- | --- | --- |
 | M4 对抗（11 pass · 1 weak · 0 fail） | ✅ harness | ✅ | ✅ | ✅ | `poc/2026-11-12-m4/matrix.json`；#4 已由“能力面不存在 spawn/browser 工具”转为 full pass；#7 二十六项全过（含抑制写入/解除、预留消费、预留绑定草稿） |
 | M5 审核/去重/幂等入库/额度/UI | ✅ | ✅ 34 例 + 全量 unit | ✅ 4 片迁移已应用 | ✅ 真实员工闭环 + UI 点击 | `leadgen/EVIDENCE-2026-11-12-M5.md` |
+| 抑制名单运维页（M6 前置） | ✅ `/backend/leadgen/suppressions` + GET 列表 | ✅ 单测 5/5 + 点击验证 | ✅ release `6b389f7` | ✅ 真实登录：表单加入→行出现→解除→行消失（截图前后） | `leadgen/evidence/suppressions-ui-2026-11-12T19-39-09-960Z.json` |
 | M8 试用验收 | — | ✅ 25/25 | ✅ | ✅ | `verify/verify-2026-11-12T11-58-03.md` |
 
 ## 原复验 T 项

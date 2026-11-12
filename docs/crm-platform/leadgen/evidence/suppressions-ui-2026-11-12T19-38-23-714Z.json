@@ -1,0 +1,15 @@
+{
+ "probedAt": "2026-11-12T19:38:23.714Z",
+ "release": "6b389f7ee2d97f3b5f75c18152b99b7d9503a292",
+ "base": "http://127.0.0.1:3000",
+ "role": "superadmin",
+ "path": "/backend/leadgen/suppressions",
+ "screenshots": {
+  "before": "docs/crm-platform/leadgen/evidence/suppressions-before.png",
+  "after": "docs/crm-platform/leadgen/evidence/suppressions-after.png"
+ },
+ "result": {
+  "ok": false,
+  "error": "Command failed: node /home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs nodejs\nReferenceError: testEmail is not defined\n    at eval (eval at execute (fi"
+ }
+}

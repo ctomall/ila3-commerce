@@ -3,9 +3,9 @@
     "role": "superadmin",
     "file": "docs/crm-platform/appendix/nav-superadmin.json",
     "groups": 24,
-    "mainItems": 135,
+    "mainItems": 136,
     "settingsSections": 10,
-    "settingsItems": 69,
+    "settingsItems": 70,
     "grantedFeatures": 333
   },
   {
@@ -21,9 +21,9 @@
     "role": "employee",
     "file": "docs/crm-platform/appendix/nav-employee.json",
     "groups": 22,
-    "mainItems": 69,
+    "mainItems": 70,
     "settingsSections": 8,
-    "settingsItems": 16,
+    "settingsItems": 17,
     "grantedFeatures": 126
   }
 ]
