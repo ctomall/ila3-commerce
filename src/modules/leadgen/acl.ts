@@ -12,6 +12,13 @@ export const features = [
     module: 'leadgen',
     dependsOn: ['leadgen.candidates.view'],
   },
+  { id: 'leadgen.sends.draft', title: 'Draft outreach for approved candidates', module: 'leadgen' },
+  {
+    id: 'leadgen.sends.approve',
+    title: 'Approve or reject an outreach draft',
+    module: 'leadgen',
+    dependsOn: ['leadgen.sends.draft'],
+  },
   { id: 'leadgen.quota.view', title: 'View lead quotas', module: 'leadgen' },
   {
     id: 'leadgen.quota.manage',
