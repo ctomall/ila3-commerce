@@ -455,3 +455,31 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
 - 另注入一条“进程启动前 10 分钟”的 running 孤儿（用另一个 active binding，避开单绑定在飞唯一索引）→ 启动后首个请求触发 sweep，落为 `failed/server_restart`；
 - 重启后新 Run 正常完成；`customer_entities` 9→9，无 CRM 写入。
 证据：`evidence/restart-drill-2026-11-12T12-29-22-652Z.json`。
+
+
+## 公开入口实测（2026-11-12 16:29，release `5a18456`）
+
+脚本：`node scripts/crm-public-chat-dsh-probe.mjs`（真实登录 + 真实模型调用一次，可复跑）。
+证据：`evidence/public-chat-path-2026-11-12T16-29-26-827Z.json`。
+
+| 检查 | 实测 |
+| --- | --- |
+| `POST /api/ai_assistant/chat` | 200，`text/event-stream` |
+| `dsh.event` 帧 | 11 条（`session.event` 等） |
+| `text` 帧 + `done` | 都有 |
+| `dsh_runs` 落库 | `53107a7c…`，`status=completed`，与 SSE `sessionId` 同源 |
+
+这证明**正式入口**（UI 用的那条路径，不是内部路由）真正执行 DSH：同样的请求打到
+`/api/internal/ai-assistant-dsh-chat` 得到同一套帧，而旧 OpenCode 的词表里没有 `dsh.event`。
+
+### 两个实测到的边界（保留，不修）
+
+1. **`initialize` 超时 = 10s，重负载下会打穿**。16:19 在高负载（load 12–17）时返回
+   `502 {"error":"DSH runtime failed to start"}`，应用日志
+   `dsh initialize failed: initialize timed out after 10000ms`。
+   运行时的 `initializeTimeoutMs` 已可配置（默认 10s），但**路由没有传值**；
+   若要提高成功率，应把它接到环境变量并在高负载窗口放宽，这属于生产配置变更，未擅自改。
+2. **同一 prompt 会重放同一 Run**（幂等设计，正确）；但**失败 Run 的重放只回 `done`**，
+   没有 `error` 帧。浏览器会把这种重放读成“成功但没输出”。
+   证据：`evidence/public-chat-path-2026-11-12T16-24-13-894Z.json`（23 字节，仅 `done`）。
+   建议在客户端或路由把“重放到的 Run 状态”透出，这件事属于 A/B 的收口项，尚未做。

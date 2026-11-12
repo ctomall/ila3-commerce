@@ -1,0 +1,27 @@
+{
+ "probedAt": "2026-11-12T16:19:28.777Z",
+ "base": "http://127.0.0.1:3000",
+ "role": "employee",
+ "path": "/api/ai_assistant/chat",
+ "release": "5a18456bcb95928c78679a8334f22f9b9e2369ee",
+ "status": 502,
+ "contentType": "application/json",
+ "bytes": 39,
+ "dshFrames": 0,
+ "textFrames": 0,
+ "sessionId": null,
+ "dshRunId": "",
+ "dshRunStatus": null,
+ "checks": {
+  "status-200": false,
+  "sse-content-type": false,
+  "dsh-frames": false,
+  "text-frame-present": false,
+  "done-frame": false,
+  "run-persisted": false,
+  "run-completed": false
+ },
+ "ok": false,
+ "firstBytes": "{\"error\":\"DSH runtime failed to start\"}",
+ "lastBytes": "{\"error\":\"DSH runtime failed to start\"}"
+}

@@ -1,6 +1,6 @@
 # ILA3 Commerce × DSH 链路 · 验收对照与 QA 签收表
 
-生成：2026-11-12 · 运行 release：`d534714`（main 运行时同源）· 基准报告：`verify/verify-2026-11-12T11-58-03.md`（PASS 25/25，0 skip，干净工作树）
+生成：2026-11-12 · 运行 release：`5a18456`（本轮发布级复验同源）· 基准报告：`verify/verify-2026-11-12T16-17-36.md`（PASS 25/25，0 skip，干净工作树）
 
 状态口径：**代码已写** → **测试通过** → **已部署** → **业务验收**。任一列不是 ✅ 就不能当已签收。
 本表只汇总已有证据，不产生新结论；证据链接均在仓库内。
@@ -9,7 +9,7 @@
 
 | 验收点 | 代码 | 测试 | 部署 | 业务验收 | 证据 |
 | --- | --- | --- | --- | --- | --- |
-| 正式聊天入口走 DSH 而非 OpenCode | ✅ `src/app/api/internal/ai-assistant-dsh-chat/**`、proxy 重写 | ✅ 单测 + 代理测试 | ✅ `OM_AI_ENGINE=dsh`（实测见下） | ✅ 真实模型 Run（`dsh_runs` + SSE） | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` |
+| 正式聊天入口走 DSH 而非 OpenCode | ✅ `src/app/api/internal/ai-assistant-dsh-chat/**`、proxy 重写 | ✅ 单测 + 代理测试 | ✅ `OM_AI_ENGINE=dsh`（实测见下） | ✅ 公开入口实测：`POST /api/ai_assistant/chat` → 11 个 `dsh.event` 帧 + `dsh_runs` completed | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` §公开入口；脚本 `scripts/crm-public-chat-dsh-probe.mjs` |
 | 受控切换与回退 | ✅ `OM_AI_ENGINE` 开关 | ✅ 代理测试覆盖两分支 | ✅ | ✅ 切换记录 | 同上 + `DESIGN.md` |
 
 ## B. 一人一助手绑定与 Run 持久化
