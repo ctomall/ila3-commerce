@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-11-12T03:26:43.236Z",
+  "generatedAt": "2026-11-12T03:34:15.999Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
     "employee-B": true,
     "second-organization": false,
-    "dsh-profile-per-employee": false,
+    "dsh-profile-per-employee": true,
     "probe-tool": true,
     "tool-execute": true,
     "existing-quote": true
@@ -18,10 +18,10 @@
   },
   "summary": {
     "total": 12,
-    "pass": 5,
+    "pass": 6,
     "passWeak": 2,
     "fail": 0,
-    "blocked": 4,
+    "blocked": 3,
     "invalid": 1
   },
   "results": [
@@ -106,10 +106,8 @@
         "dsh-profile-per-employee"
       ],
       "status": "blocked",
-      "missing": [
-        "dsh-profile-per-employee"
-      ],
-      "detail": "缺少 fixture：dsh-profile-per-employee"
+      "missing": [],
+      "detail": "用例未实现"
     },
     {
       "id": 5,
@@ -121,25 +119,19 @@
       ],
       "status": "blocked",
       "missing": [
-        "leadgen-api",
-        "dsh-profile-per-employee"
+        "leadgen-api"
       ],
-      "detail": "缺少 fixture：leadgen-api、dsh-profile-per-employee"
+      "detail": "缺少 fixture：leadgen-api"
     },
     {
       "id": 6,
       "attack": "跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态）",
       "expected": "互不可读，跨读返回空 + 审计",
       "requires": [
-        "dsh-profile-per-employee",
-        "second-organization"
+        "dsh-profile-per-employee"
       ],
-      "status": "blocked",
-      "missing": [
-        "dsh-profile-per-employee",
-        "second-organization"
-      ],
-      "detail": "缺少 fixture：dsh-profile-per-employee、second-organization"
+      "status": "pass",
+      "detail": "200 [{\"name\":\"two-employees-with-homes\",\"ok\":true},{\"name\":\"homes-0700\",\"ok\":true},{\"name\":\"distinct-unix-owners\",\"ok\":true},{\"name\":\"cross-employee-read-denied\",\"ok\":true},{\"name\":\"app-user-read-denied\",\"ok\":true},{\"name\":\"credentials-denied-to-employee\",\"ok\":true},{\"name\":\"distinct-workspace-roots\",\"ok\":true},{\"name\":\"distinct-bindings\",\"ok\":true}]"
     },
     {
       "id": 7,

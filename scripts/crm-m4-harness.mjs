@@ -13,8 +13,9 @@
  */
 import fs from 'node:fs'
 import path from 'node:path'
+import { createHash } from 'node:crypto'
 import { fileURLToPath } from 'node:url'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawnSync } from 'node:child_process'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { credentials, loginWithRetry } from './lib/session.mjs'
@@ -25,6 +26,29 @@ const OUT = path.resolve(
   outFlag === -1 ? `docs/crm-platform/poc/${new Date().toISOString().slice(0, 10)}-m4` : process.argv[outFlag + 1],
 )
 const ZERO = '00000000-0000-0000-0000-000000000000'
+
+/** One scalar from the app database, using the same env resolution as psqlCount. */
+function psqlValue(sql) {
+  try {
+    const out = execFileSync(
+      'bash',
+      ['-lc', `cd ${JSON.stringify(path.resolve(__dirname, '..'))} && export $(grep -E "^DATABASE_URL" .env | xargs) && psql "$DATABASE_URL" -At -c ${JSON.stringify(sql)}`],
+      { encoding: 'utf8' },
+    )
+    return out.trim()
+  } catch {
+    return null
+  }
+}
+
+/** Where per-employee DSH homes live: an explicit root, else the production layout. */
+function resolveDshProfileRoot() {
+  const configured = (process.env.DSH_PROFILE_ROOT ?? '').trim()
+  if (configured) return fs.existsSync(configured) ? configured : null
+  const production = '/srv/dsh/homes'
+  return fs.existsSync(production) ? production : null
+}
+const dshProfileRoot = resolveDshProfileRoot()
 
 function psqlCount(table) {
   try {
@@ -64,7 +88,10 @@ const fixtures = {
   'second-organization': (psqlCount('organizations') ?? 0) > 1,
   // A per-employee DSH runtime exists when the app is configured with a profile root that
   // is actually on disk. Nothing else would make "runtime isolation" testable.
-  'dsh-profile-per-employee': Boolean(process.env.DSH_PROFILE_ROOT) && fs.existsSync(process.env.DSH_PROFILE_ROOT),
+  // A per-employee runtime exists when the homes root is on disk and holds at least
+  // one employee directory. DSH_PROFILE_ROOT overrides; the production layout is
+  // /srv/dsh/homes (OS-isolated per-employee Unix users).
+  'dsh-profile-per-employee': Boolean(dshProfileRoot) && fs.readdirSync(dshProfileRoot).length > 0,
   // A tool that reports the actor the runtime actually resolved. `context_whoami` exists
   // in the ai-assistant package, so this is discoverable rather than assumed.
   'probe-tool': toolNames.includes('context_whoami'),
@@ -284,9 +311,87 @@ const cases = [
     id: 6,
     attack: '跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态）',
     expected: '互不可读，跨读返回空 + 审计',
-    requires: ['dsh-profile-per-employee', 'second-organization'],
-    run: null,
-    judge: null,
+    // The attack is employee-level. Two employees in one organization are the right
+    // subjects; a second organization would test tenant isolation, which is a
+    // different boundary (recorded separately, still a fixture gap).
+    requires: ['dsh-profile-per-employee'],
+    run: async () => {
+      const checks = []
+      try {
+        const root = dshProfileRoot
+        // Two *active bindings whose home already exists* are the real subjects:
+        // picking the employee/admin logins instead would depend on whether those
+        // sessions had ever started a run (a home is created on first run).
+        const rows = psqlValue(
+          "select user_id, tenant_id, organization_id from dsh_assistant_bindings where status = 'active'",
+        )
+        const candidates = (rows ?? '')
+          .split('\n')
+          .filter(Boolean)
+          .map((line) => {
+            const [userId, tenantId, organizationId] = line.split('|')
+            const hash = createHash('sha256')
+              .update([tenantId, organizationId, userId].join('\u0000'))
+              .digest('hex')
+              .slice(0, 32)
+            return { userId, hash, home: path.join(root, hash) }
+          })
+          .filter((entry) => fs.existsSync(entry.home))
+        const [a, b] = candidates
+        checks.push({ name: 'two-employees-with-homes', ok: Boolean(a && b && a.userId !== b.userId) })
+        if (a && b) {
+          const statA = fs.statSync(a.home)
+          const statB = fs.statSync(b.home)
+          const userA = `dsh-${a.hash.slice(0, 16)}`
+          const userB = `dsh-${b.hash.slice(0, 16)}`
+          const owner = (target) => spawnSync('stat', ['-c', '%U', target], { encoding: 'utf8' }).stdout?.trim()
+          checks.push({ name: 'homes-0700', ok: (statA.mode & 0o777) === 0o700 && (statB.mode & 0o777) === 0o700 })
+          checks.push({
+            name: 'distinct-unix-owners',
+            ok: owner(a.home) === userA && owner(b.home) === userB && userA !== userB,
+          })
+          const canRead = (who, target) => spawnSync('sudo', ['-n', '-u', who, 'test', '-r', target], { encoding: 'utf8' }).status === 0
+          checks.push({
+            name: 'cross-employee-read-denied',
+            ok: !canRead(userA, b.home) && !canRead(userB, a.home),
+          })
+          checks.push({
+            name: 'app-user-read-denied',
+            ok: spawnSync('test', ['-r', a.home], { encoding: 'utf8' }).status !== 0,
+          })
+          checks.push({
+            name: 'credentials-denied-to-employee',
+            ok: !canRead(userA, '/home/pro/.ila3-admin-credentials'),
+          })
+          const workspacesRoot = path.join(path.dirname(root), 'workspaces')
+          checks.push({
+            name: 'distinct-workspace-roots',
+            ok:
+              !fs.existsSync(workspacesRoot) ||
+              path.join(workspacesRoot, a.hash) !== path.join(workspacesRoot, b.hash),
+          })
+          checks.push({
+            name: 'distinct-bindings',
+            ok:
+              psqlValue(
+                `select count(distinct id) from dsh_assistant_bindings where user_id in ('${a.userId}','${b.userId}')`,
+              ) === '2',
+          })
+        }
+      } catch (error) {
+        checks.push({ name: 'probe-error', ok: false, detail: String(error?.message ?? error).slice(0, 160) })
+      }
+      const ok = checks.length > 0 && checks.every((check) => check.ok)
+      return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
+    },
+    judge: (r) => {
+      try {
+        const checks = JSON.parse(r.text)
+        return Array.isArray(checks) && checks.length > 0 && checks.every((check) => check.ok)
+      } catch {
+        return false
+      }
+    },
   },
   {
     id: 7,
