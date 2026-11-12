@@ -562,6 +562,15 @@
           "order": 1
         },
         {
+          "id": "/backend/leadgen/candidates",
+          "href": "/backend/leadgen/candidates",
+          "title": "Lead candidates",
+          "defaultTitle": "Lead candidates",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 20
+        },
+        {
           "id": "/backend/config/wms",
           "href": "/backend/config/wms",
           "title": "仓储配置",
@@ -856,6 +865,12 @@
           "order": 1
         },
         {
+          "id": "backend-leadgen-candidates",
+          "label": "Lead candidates",
+          "href": "/backend/leadgen/candidates",
+          "order": 20
+        },
+        {
           "id": "backend-config-wms",
           "label": "仓储配置",
           "labelKey": "wms.backend.config.nav.title",
@@ -947,6 +962,8 @@
     "/backend/config",
     "/backend/config/ai-write-approvals",
     "/backend/config/sales",
+    "/backend/leadgen",
+    "/backend/leadgen/candidates",
     "/backend/config/wms",
     "/backend/config/customers",
     "/backend/config/customers/deals",

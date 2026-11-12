@@ -762,6 +762,15 @@
           "order": 10
         },
         {
+          "id": "/backend/leadgen/candidates",
+          "href": "/backend/leadgen/candidates",
+          "title": "Lead candidates",
+          "defaultTitle": "Lead candidates",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 20
+        },
+        {
           "id": "/backend/exchange-rates",
           "href": "/backend/exchange-rates",
           "title": "汇率",
@@ -1600,6 +1609,12 @@
           "iconName": "coins"
         },
         {
+          "id": "backend-leadgen-candidates",
+          "label": "Lead candidates",
+          "href": "/backend/leadgen/candidates",
+          "order": 20
+        },
+        {
           "id": "backend-exchange-rates",
           "label": "汇率",
           "labelKey": "exchangeRates.page.title",
@@ -1990,6 +2005,8 @@
     "/backend/config/customers/deals",
     "/backend/config/dictionaries",
     "/backend/currencies",
+    "/backend/leadgen",
+    "/backend/leadgen/candidates",
     "/backend/exchange-rates",
     "/backend/config/currency-fetching",
     "/backend/config/wms",
