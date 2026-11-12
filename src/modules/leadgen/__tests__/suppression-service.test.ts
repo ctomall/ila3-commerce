@@ -37,6 +37,10 @@ function makeRepo(seed: SuppressionRow[] = []) {
       state.rows.push(row)
       return row
     }),
+    list: jest.fn(async (input: { tenantId: string; limit: number }) =>
+      state.rows
+        .filter((row) => row.tenantId === input.tenantId && !row.releasedAt)
+        .slice(0, input.limit)),
     release: jest.fn(async (input: { tenantId: string; emailHash: string; now: string }) => {
       let changed = 0
       for (const row of state.rows) {
@@ -122,5 +126,20 @@ describe('suppression service', () => {
         reason: 'because' as SuppressionReason,
       }),
     ).resolves.toEqual({ ok: false, code: 'invalid_input' })
+  })
+
+  it('lists only the active suppressions of this tenant', async () => {
+    const { repo } = makeRepo()
+    const service = serviceFor(repo)
+    await service.add({ tenantId: TENANT, organizationId: ORG, email: 'a@example.com', reason: 'unsubscribe' })
+    await service.add({ tenantId: TENANT, organizationId: ORG, email: 'b@example.com', reason: 'bounce' })
+    await service.add({ tenantId: 'tenant-2', organizationId: ORG, email: 'c@example.com', reason: 'complaint' })
+    await service.release({ tenantId: TENANT, organizationId: ORG, email: 'b@example.com' })
+
+    const listed = await service.list({ tenantId: TENANT })
+    expect(listed.ok).toBe(true)
+    if (listed.ok) {
+      expect(listed.value.items.map((row) => row.email)).toEqual(['a@example.com'])
+    }
   })
 })

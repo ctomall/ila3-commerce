@@ -28,10 +28,21 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const ctx = await leadgenContext(req, 'leadgen.sends.draft')
   if (!ctx.ok) return ctx.response
   const email = emailParam(req)
-  if (!email.includes('@')) return refusal(400, 'invalid_input', 'email is required')
   try {
     const repo = await createRequestSuppressionRepository()
     const service = createSuppressionService({ repo, now: () => new Date().toISOString(), newId: () => crypto.randomUUID() })
+    // Without `email` the caller is browsing the list (the review UI); with it the
+    // caller asks one question about one address.
+    if (!email) {
+      const limitRaw = Number(req.nextUrl.searchParams.get('limit'))
+      const result = await service.list({
+        tenantId: ctx.value.auth.tenantId,
+        limit: Number.isFinite(limitRaw) && limitRaw > 0 ? limitRaw : undefined,
+      })
+      if (!result.ok) return refusal(400, result.code, result.code)
+      return NextResponse.json(result.value)
+    }
+    if (!email.includes('@')) return refusal(400, 'invalid_input', 'email must be an address')
     const result = await service.check({ tenantId: ctx.value.auth.tenantId, email })
     if (!result.ok) return refusal(400, result.code, result.code)
     return NextResponse.json(result.value)

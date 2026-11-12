@@ -48,6 +48,15 @@ export function createOrmSuppressionRepository(em: EntityManager): SuppressionRe
       return suppressionRow(row)
     },
 
+    async list(input) {
+      const rows = await em.fork().find(
+        LeadgenSuppression,
+        { tenantId: input.tenantId, releasedAt: null },
+        { orderBy: { createdAt: 'desc' }, limit: input.limit },
+      )
+      return rows.map(suppressionRow)
+    },
+
     async release(input) {
       // The partial unique index covers active rows only, so releasing is a plain
       // update; a second release of the same address simply writes zero rows.

@@ -37,6 +37,7 @@ export type SuppressionRepository = {
     now: string
   }): Promise<SuppressionRow>
   release(input: { tenantId: string; organizationId: string; emailHash: string; now: string }): Promise<number>
+  list(input: { tenantId: string; limit: number }): Promise<SuppressionRow[]>
 }
 
 export type SuppressionResult<T> =
@@ -107,7 +108,16 @@ export function createSuppressionService(deps: {
     return { ok: true, value: { suppressed: Boolean(row), reason: row?.reason ?? null } }
   }
 
-  return { add, release, check }
+  async function list(input: {
+    tenantId: string
+    limit?: number
+  }): Promise<SuppressionResult<{ items: SuppressionRow[] }>> {
+    const limit = Math.min(Math.max(Math.trunc(input.limit ?? 50), 1), 200)
+    const items = await repo.list({ tenantId: input.tenantId, limit })
+    return { ok: true, value: { items } }
+  }
+
+  return { add, release, check, list }
 }
 
 export type SuppressionService = ReturnType<typeof createSuppressionService>
