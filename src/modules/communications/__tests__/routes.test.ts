@@ -939,6 +939,40 @@ describe('customer-service window policy', () => {
     expect((input.channelMetadata as Record<string, unknown>).template).toEqual(template)
   })
 
+  it('rejects an invalid legacy channelMetadata.template instead of skipping the window', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 30 * 60 * 60 * 1000))))
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, channelMetadata: {template: {name: 42}}}),
+      }),
+    )
+    expect(res.status).toBe(422)
+    await expect(res.json()).resolves.toMatchObject({code: 'TEMPLATE_INVALID'})
+    // A malformed template must never be the reason the 24h window check is skipped.
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('accepts a legacy channelMetadata.template only after validating it', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = sendOk()
+    useContainer(() => send, createFakeEm(waRows(new Date(Date.now() - 30 * 60 * 60 * 1000))))
+    const { POST } = await import('../api/me/send/route')
+    const legacy = {name: 'legacy_template', language: 'zh_CN'}
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({...base, channelMetadata: {template: legacy}}),
+      }),
+    )
+    expect(res.status).toBe(202)
+    const call = (send.mock.calls as unknown as Array<[unknown, unknown, Record<string, unknown>]>)[0]
+    expect((call[2].channelMetadata as Record<string, unknown>).template).toEqual(legacy)
+  })
+
   it('sends a media message with no text and stores a label body', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = sendOk()

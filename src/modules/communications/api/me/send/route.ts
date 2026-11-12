@@ -21,6 +21,19 @@ function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
 }
 
+/**
+ * One schema for a provider template, used by both the top-level `template`
+ * field and the legacy `channelMetadata.template` fallback. The fallback exists
+ * for older clients, but it must never skip validation: a template is what
+ * waives the 24h customer-service window, so an unchecked value would be a
+ * policy bypass.
+ */
+const templateSchema = z.object({
+  name: z.string().min(1).max(512),
+  language: z.string().min(1).max(32),
+  components: z.array(z.unknown()).max(20).optional(),
+})
+
 const bodySchema = z.object({
   /** `CommunicationChannel.id` the caller owns; ownership is re-checked by the hub facade. */
   channelId: z.string().uuid(),
@@ -58,13 +71,7 @@ const bodySchema = z.object({
    * Approved provider template (WhatsApp/Messenger). Template sends are allowed
    * outside the 24h customer-service window; free-form text is not.
    */
-  template: z
-    .object({
-      name: z.string().min(1).max(512),
-      language: z.string().min(1).max(32),
-      components: z.array(z.unknown()).max(20).optional(),
-    })
-    .optional(),
+  template: templateSchema.optional(),
   /**
    * Outbound media (G3): an already-uploaded provider media id or a public https
    * link Meta fetches itself. Exactly one, because both at once is ambiguous.
@@ -175,8 +182,22 @@ export async function POST(req: Request): Promise<Response> {
   // on every retry. The hash covers everything that changes what leaves the CRM;
   // a replay with any other channel/recipient/subject/body/template/media shape
   // is refused instead of being answered with the first message id.
-  const templateMetadata =
-    body.template ?? (body.channelMetadata?.template as Record<string, unknown> | undefined)
+  let templateMetadata = body.template
+  if (!templateMetadata && body.channelMetadata && body.channelMetadata.template !== undefined) {
+    const legacy = templateSchema.safeParse(body.channelMetadata.template)
+    if (!legacy.success) {
+      return NextResponse.json(
+        {
+          error:
+            'channelMetadata.template is invalid; send the template in the top-level "template" field',
+          code: 'TEMPLATE_INVALID',
+          fieldErrors: { template: 'invalid template shape' },
+        },
+        { status: 422 },
+      )
+    }
+    templateMetadata = legacy.data
+  }
   const payloadHash = computeSendPayloadHash({
     channelId: body.channelId,
     to: body.to,
@@ -238,7 +259,7 @@ export async function POST(req: Request): Promise<Response> {
     )
   }
 
-  const hasTemplate = Boolean(body.template) || Boolean(body.channelMetadata && body.channelMetadata.template)
+  const hasTemplate = Boolean(templateMetadata)
 
   let requestEm: EntityManager | null = null
   const forkEm = (): EntityManager | null => {
