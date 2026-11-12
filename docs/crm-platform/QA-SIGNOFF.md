@@ -18,7 +18,7 @@
 | --- | --- | --- | --- | --- | --- |
 | 员工创建/启用即绑定 | ✅ `dsh_assistant_bindings` + 生命周期 | ✅ | ✅ | ✅ 第 3 名员工创建→运行→撤权→停用 | `EVIDENCE-2026-11-12-THIRD-EMPLOYEE.md` |
 | Run/幂等/游标/结果落库 | ✅ ORM 仓储（非内存 Map） | ✅ 单测 + 并发/重放 | ✅ | ✅ 重放 409/同一 run | `EVIDENCE-2026-11-11-REAL.md` |
-| 重启恢复 / 超时 / 取消 / 断线重连 | ✅ stale-run sweep + 取消 | ✅ 单测 | ✅ | ✅ 在飞任务撤权 10s 内终止（M4 #5） | `poc/2026-11-12-m4/matrix.json` |
+| 重启恢复 / 超时 / 取消 / 断线重连 | ✅ stale-run sweep + 取消 | ✅ 单测 + restart drill | ✅ | ✅ 真实重启：孤儿行 `failed/server_restart`、在飞流终止、新 Run 正常、零 CRM 写入 | `dsh-integration/evidence/restart-drill-2026-11-12T12-29-22-652Z.json` |
 
 ## C. profile / 工具策略 / 撤权 / 隔离
 

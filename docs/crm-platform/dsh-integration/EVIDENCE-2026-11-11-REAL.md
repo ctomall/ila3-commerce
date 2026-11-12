@@ -446,3 +446,12 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
 | 两次响应 | 均含 `BRIDGE_IDEM_OK` |
 
 证据：`bridge-retry-first.sse`、`bridge-retry-second.sse`。
+
+
+## 重启恢复（2026-11-12 复测，当前 release）
+
+`node scripts/crm-dsh-restart-drill.mjs`：真实员工 Run 在飞 → `systemctl restart` 应用 → ~13s 恢复 200；
+- 在飞 Run 由流处理器落为 `failed`（进程退出），SSE 结束，不悬挂；
+- 另注入一条“进程启动前 10 分钟”的 running 孤儿（用另一个 active binding，避开单绑定在飞唯一索引）→ 启动后首个请求触发 sweep，落为 `failed/server_restart`；
+- 重启后新 Run 正常完成；`customer_entities` 9→9，无 CRM 写入。
+证据：`evidence/restart-drill-2026-11-12T12-29-22-652Z.json`。
