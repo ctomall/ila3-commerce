@@ -400,6 +400,10 @@ export const enabledModules: ModuleEntry[] = [
   // migrations — only a module-root ai-tools.ts that the generator folds into the
   // ai-assistant tool registry.
   { id: 'crm_tools', from: '@app' },
+  // Lead generation storage (M5): candidates, evidence, verification, claims and the
+  // M6/M7 quota/approval/send tables. Migrations are rehearsed by the migration drill
+  // and stay unapplied until the schema review is approved.
+  { id: 'leadgen', from: '@app' },
   // Table-style directory of registered AI agents.
   { id: 'agent_directory', from: '@app' },
   // agent_orchestrator moved to the enterprise catalog — enabled below behind
