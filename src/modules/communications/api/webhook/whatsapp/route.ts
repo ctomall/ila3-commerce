@@ -162,7 +162,13 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const statuses = parsed.statuses.length
-    ? await applyStatusEvents(em, {tenantId: matched.tenantId, channelId: matched.id, statuses: parsed.statuses})
+    ? await applyStatusEvents(em, {
+        tenantId: matched.tenantId,
+        organizationId: matched.organizationId ?? null,
+        channelId: matched.id,
+        providerKey: matched.providerKey,
+        statuses: parsed.statuses,
+      })
     : {updated: [], skipped: []}
 
   return NextResponse.json(

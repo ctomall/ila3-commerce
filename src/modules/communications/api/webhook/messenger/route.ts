@@ -159,7 +159,9 @@ export async function POST(req: Request): Promise<Response> {
     if (typeof read.watermark !== 'number') continue
     const applied = await applyMessengerReads(em, {
       tenantId: matched.tenantId,
+      organizationId: matched.organizationId ?? null,
       channelId: matched.id,
+      providerKey: matched.providerKey,
       psid: read.psid,
       watermark: read.watermark,
     })

@@ -4,6 +4,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import type { MetaStatusEvent } from './meta-payload'
+import { recordUnmatchedReceipt } from '../../communications/lib/unmatched-receipt'
 
 /**
  * Delivery-receipt persistence for providers that push status events.
@@ -34,7 +35,13 @@ export type ApplyStatusResult = {
 
 export async function applyStatusEvents(
   em: EntityManager,
-  input: { tenantId: string; channelId: string; statuses: MetaStatusEvent[] },
+  input: {
+    tenantId: string
+    channelId: string
+    organizationId?: string | null
+    providerKey?: string
+    statuses: MetaStatusEvent[]
+  },
 ): Promise<ApplyStatusResult> {
   const result: ApplyStatusResult = {updated: [], skipped: []}
   for (const event of input.statuses) {
@@ -55,6 +62,26 @@ export async function applyStatusEvents(
     )
     if (!external) {
       result.skipped.push({externalMessageId: event.externalMessageId, reason: 'not-found'})
+      // A receipt we cannot match is lost evidence: the provider sends it once.
+      // Keep it in the hub dead-letter table so an operator can replay it once
+      // the link exists, instead of the inbox claiming "sent" forever.
+      await recordUnmatchedReceipt({
+        em,
+        tenantId: input.tenantId,
+        organizationId: input.organizationId ?? null,
+        channelId: input.channelId,
+        providerKey: input.providerKey ?? 'whatsapp-business',
+        errorClass: 'receipt_unmatched',
+        errorMessage: `no external message for provider id ${event.externalMessageId}`,
+        externalMessageId: event.externalMessageId,
+        raw: {
+          status: event.status,
+          recipientId: event.recipientId,
+          timestamp: event.timestamp instanceof Date ? event.timestamp.toISOString() : event.timestamp,
+          errors: event.errors ?? null,
+          raw: event.raw ?? null,
+        },
+      })
       continue
     }
     // MessageChannelLink has no channelId column: the channel is proven by the
@@ -69,6 +96,17 @@ export async function applyStatusEvents(
     )
     if (!link) {
       result.skipped.push({externalMessageId: event.externalMessageId, reason: 'not-found'})
+      await recordUnmatchedReceipt({
+        em,
+        tenantId: input.tenantId,
+        organizationId: input.organizationId ?? null,
+        channelId: input.channelId,
+        providerKey: input.providerKey ?? 'whatsapp-business',
+        errorClass: 'receipt_unmatched_link',
+        errorMessage: `external message ${external.id} has no channel link yet`,
+        externalMessageId: event.externalMessageId,
+        raw: { status: event.status, timestamp: event.timestamp instanceof Date ? event.timestamp.toISOString() : event.timestamp },
+      })
       continue
     }
     if (!shouldApplyStatus(link.deliveryStatus, event.status)) {

@@ -5,6 +5,7 @@ import {
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { shouldApplyStatus } from '../../channel_whatsapp/lib/status-store'
+import { recordUnmatchedReceipt } from '../../communications/lib/unmatched-receipt'
 
 /**
  * Messenger reports reads as a per-conversation watermark (the timestamp up to
@@ -20,7 +21,14 @@ export type ApplyReadResult = {
 
 export async function applyMessengerReads(
   em: EntityManager,
-  input: { tenantId: string; channelId: string; psid: string; watermark: number },
+  input: {
+    tenantId: string
+    channelId: string
+    organizationId?: string | null
+    providerKey?: string
+    psid: string
+    watermark: number
+  },
 ): Promise<ApplyReadResult> {
   const result: ApplyReadResult = {updated: 0, skipped: 0, conversationFound: false}
   if (!input.psid || !Number.isFinite(input.watermark)) return result
@@ -29,7 +37,22 @@ export async function applyMessengerReads(
     channelId: input.channelId,
     externalConversationId: input.psid,
   } as FilterQuery<ExternalConversation>)
-  if (!conversation) return result
+  if (!conversation) {
+    // The read watermark is the only read signal Messenger sends; a watermark
+    // for a conversation we do not have cannot be recovered by waiting.
+    await recordUnmatchedReceipt({
+      em,
+      tenantId: input.tenantId,
+      organizationId: input.organizationId ?? null,
+      channelId: input.channelId,
+      providerKey: input.providerKey ?? 'messenger',
+      errorClass: 'read_unmatched_conversation',
+      errorMessage: `no conversation for PSID ${input.psid}`,
+      externalUid: input.psid,
+      raw: { psid: input.psid, watermark: input.watermark },
+    })
+    return result
+  }
   result.conversationFound = true
 
   const readAt = new Date(input.watermark)
