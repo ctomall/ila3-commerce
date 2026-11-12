@@ -178,7 +178,10 @@ const cases = [
       const inserted = psqlValue(
         `insert into leadgen_candidates (tenant_id, organization_id, run_id, submitted_fingerprint, company_dedupe_key, company_name, status, created_at, updated_at) values ('${tenantId}', '${foreignOrg}', '${foreignOrg}', '${fingerprint}', 'n:${marker}', '${marker}', 'submitted', now(), now()) returning id`,
       )
-      const foreignId = (inserted ?? '').trim().split('\n').pop()
+      const foreignId = (inserted ?? '')
+        .split('\n')
+        .map((line) => line.trim())
+        .find((line) => /^[0-9a-f-]{36}$/i.test(line)) ?? null
       checks.push({ name: 'fixture-inserted', ok: Boolean(foreignId), detail: String(inserted).slice(0, 160) })
       try {
         const detail = await http({ role: 'employee', url: `/api/leadgen/candidates/${foreignId}`, limit: 400 })
@@ -229,6 +232,7 @@ const cases = [
     requires: [],
     weakReason:
       '列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor',
+    weakJudge: (r) => r.items.length === 0,
     run: async () => {
       const response = await http({ role: 'employee', url: '/api/ai_assistant/ai/conversations', limit: 200000 })
       let items = null
@@ -317,9 +321,15 @@ const cases = [
       }
       const baseline = await call({})
       const injected = await call(forged)
+      // The weak reason said the audit row needed a leadgen write path; that path now
+      // exists, so the actor recorded by the review decision is checked against the
+      // actor the runtime resolved (the forged ids must not appear there).
+      const auditActor = psqlValue(
+        'select actor_user_id from leadgen_candidate_decisions order by created_at desc limit 1',
+      )
       return {
         status: injected.status,
-        text: JSON.stringify({ resolvedUserId: injected.userId, baselineUserId: baseline.userId, responseBytes: injected.bytes }),
+        text: JSON.stringify({ resolvedUserId: injected.userId, baselineUserId: baseline.userId, auditActor, responseBytes: injected.bytes }),
         baseline: { status: baseline.status, userId: baseline.userId },
         forgedValues: Object.values(forged),
       }
@@ -333,10 +343,16 @@ const cases = [
         actual = null
       }
       const baseline = r.baseline.userId
-      // Same actor with and without the forged fields, and it is not one of the forgeries.
-      return Boolean(actual) && actual === baseline && !r.forgedValues.includes(actual)
+      let auditActor = null
+      try {
+        auditActor = JSON.parse(r.text)?.auditActor ?? null
+      } catch {
+        auditActor = null
+      }
+      // Same actor with and without the forged fields, it is not one of the forgeries,
+      // and the leadgen decision ledger recorded that same actor.
+      return Boolean(actual) && actual === baseline && !r.forgedValues.includes(actual) && auditActor === actual
     },
-    weakReason: '证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核',
   },
   {
     id: 4,
@@ -709,12 +725,13 @@ for (const item of cases) {
   }
   const response = await item.run()
   const pass = Boolean(item.judge?.(response))
+  const weak = typeof item.weakJudge === 'function' ? Boolean(item.weakJudge(response)) : Boolean(item.weakReason)
   results.push({
     id: item.id,
     attack: item.attack,
     expected: item.expected,
     requires: item.requires,
-    status: pass ? (item.weakReason ? 'pass-weak' : 'pass') : 'fail',
+    status: pass ? (weak ? 'pass-weak' : 'pass') : 'fail',
     weakReason: item.weakReason,
     detail: `${response.status} ${response.text}`,
   })

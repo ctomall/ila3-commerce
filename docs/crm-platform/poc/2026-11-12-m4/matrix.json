@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T11:36:49.919Z",
+  "generatedAt": "2026-11-12T11:45:34.047Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": true,
@@ -18,8 +18,8 @@
   },
   "summary": {
     "total": 12,
-    "pass": 8,
-    "passWeak": 4,
+    "pass": 9,
+    "passWeak": 3,
     "fail": 0,
     "blocked": 0,
     "invalid": 0
@@ -41,7 +41,7 @@
         "leadgen-api"
       ],
       "status": "pass",
-      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"e627800f-18b7-48d7-a3de-0d73ec0227b9\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
+      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"8f283379-8b89-45f8-9239-15b81687ffb3\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
     },
     {
       "id": 1.2,
@@ -92,9 +92,8 @@
         "probe-tool",
         "tool-execute"
       ],
-      "status": "pass-weak",
-      "weakReason": "证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核",
-      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3226}"
+      "status": "pass",
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3226}"
     },
     {
       "id": 4,
@@ -113,7 +112,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"136ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"260ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,
@@ -134,7 +133,7 @@
       ],
       "status": "pass-weak",
       "weakReason": "额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验",
-      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"fa372575-9395-480a-853f-4b3b5738c054\\\",\\\"leaseToken\\\":\\\"9bfda7d3-1f2d-4cf3-af4f-593f22f9ea3c\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
+      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"0add9a65-ea25-4b6e-a938-bafe2abdc3f7\\\",\\\"leaseToken\\\":\\\"6379b3be-47c1-42c3-81c5-eb9cd12e7742\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
     }
   ]
 }
