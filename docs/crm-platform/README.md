@@ -18,7 +18,8 @@
 | M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
 | M8 验收 | **发布级 PASS（2026-11-12, commit 6c96938）** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
-**最后一份发布级运行**：`verify/verify-2026-11-12T05-12-19.md` — **PASS 25 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（运行中的 release `ead60236`，M4 pass 7 · weak 3 · blocked 1 · invalid 1）。
+**最后一份发布级运行**：`verify/verify-2026-11-12T05-59-22.md` — **PASS 25 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（运行中的 release `958af4d`，M4 pass 7 · weak 3 · blocked 1 · invalid 1）。
+host 有外部负载时用 `JEST_TIMEOUT=90000 JEST_MAX_WORKERS=2` 跑同一套门禁（默认值不变；原因见 `jest.config.cjs` 注释）。
 `verify-2026-11-12T04-07-16.md` 是更早的干净 PASS（`6c96938`），保留作对照。
 `dea1e2e`（M4 用例 4/5 实现）同样 25/25 全通过，但运行期间并行协作者修改了 2 个 communications 文件，脚本按设计拒绝把它算作提交级证据（`verify-2026-11-12T04-29-54.md`）。M4 在该提交上另跑为 pass 7 · pass-weak 3 · blocked 1 · invalid 1。
 浏览器门（contrast / ui-regression）需要共享 agent 浏览器有活动标签页：先 `node /home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs --open`，否则两道门会以 “no active tab to attach session” 失败（环境前置，不是 UI 回归）。
