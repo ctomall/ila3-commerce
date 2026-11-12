@@ -50,7 +50,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const ctx = await leadgenContext(req, 'leadgen.candidates.review')
+  const ctx = await leadgenContext(req, 'leadgen.candidates.manage')
   if (!ctx.ok) return ctx.response
   let body: unknown
   try {

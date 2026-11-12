@@ -5,13 +5,19 @@
     "version": "0.1.0-draft",
     "description": "DRAFT contract for the lead-generation module (M5/M6/M7). Not mounted: the paths below do not exist yet. Rules enforced by scripts/crm-contract-check.mjs: every operation declares x-required-features, no request body may carry tenantId/organizationId, mutating operations declare an idempotency key, quota-limited operations declare 429, and state transitions declare 409. A planned rule that this linter does NOT verify: cross-tenant reads must answer 404 rather than 403 (D16) — it stays a written rule until the routes exist and can be exercised."
   },
-  "servers": [{ "url": "https://mercato.ila3.top/api" }],
+  "servers": [
+    {
+      "url": "https://mercato.ila3.top/api"
+    }
+  ],
   "paths": {
     "/leadgen/runs": {
       "post": {
         "summary": "创建调研任务（幂等）",
         "description": "同一 run_key 重复提交返回同一任务行，不重复排队。额度不足返回 429。",
-        "x-required-features": ["leadgen.candidates.manage"],
+        "x-required-features": [
+          "leadgen.candidates.manage"
+        ],
         "x-idempotency": "sha256('run:' + run_key)",
         "requestBody": {
           "required": true,
@@ -20,77 +26,75 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["runKey", "source"],
+                "required": [
+                  "runKey",
+                  "source"
+                ],
                 "properties": {
-                  "runKey": { "type": "string", "minLength": 8 },
-                  "source": { "type": "string", "enum": ["dsh", "manual"] },
-                  "agentKey": { "type": "string" },
-                  "productMarket": { "type": "string" }
+                  "runKey": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "source": {
+                    "type": "string",
+                    "enum": [
+                      "dsh",
+                      "manual"
+                    ]
+                  },
+                  "agentKey": {
+                    "type": "string"
+                  },
+                  "productMarket": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "任务已创建" },
-          "200": { "description": "幂等命中，返回原任务" },
-          "429": { "description": "额度不足" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "任务已创建"
+          },
+          "200": {
+            "description": "幂等命中，返回原任务"
+          },
+          "429": {
+            "description": "额度不足"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
     "/leadgen/candidates": {
       "get": {
         "summary": "候选列表（按本人/组织范围）",
-        "x-required-features": ["leadgen.candidates.view"],
+        "x-required-features": [
+          "leadgen.candidates.view"
+        ],
         "x-idempotency": "none",
         "responses": {
-          "200": { "description": "候选列表，包含验证结论与去重状态" },
-          "401": { "description": "未登录" },
-          "403": { "description": "缺少功能点" }
-        }
-      }
-    },
-    "/leadgen/candidates/{id}": {
-      "get": {
-        "summary": "候选详情（含证据与验证）",
-        "description": "跨组织访问返回 404，不返回 403，避免泄露存在性。",
-        "x-required-features": ["leadgen.candidates.view"],
-        "x-idempotency": "none",
-        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
-        "responses": {
-          "200": { "description": "候选详情" },
-          "404": { "description": "不存在或不属于当前组织" }
-        }
-      }
-    },
-    "/leadgen/candidates/{id}/verify": {
-      "post": {
-        "summary": "执行确定性验证（同输入不重算）",
-        "x-required-features": ["leadgen.candidates.manage"],
-        "x-idempotency": "sha256(verifier_version + input_digest)",
-        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": { "type": "object", "additionalProperties": false, "properties": { "mxChecked": { "type": "boolean" } } }
-            }
+          "200": {
+            "description": "候选列表，包含验证结论与去重状态"
+          },
+          "401": {
+            "description": "未登录"
+          },
+          "403": {
+            "description": "缺少功能点"
           }
-        },
-        "responses": {
-          "200": { "description": "验证结论 pass|needs_review|fail" },
-          "409": { "description": "候选状态不允许验证" },
-          "422": { "description": "参数校验失败" }
         }
-      }
-    },
-    "/leadgen/candidates/{id}/decisions": {
+      },
       "post": {
-        "summary": "人工审核结论（通过/拒绝/合并）",
-        "x-required-features": ["leadgen.candidates.review"],
-        "x-idempotency": "sha256('decide:' + decision_key)",
-        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "summary": "提交调研候选（幂等）",
+        "description": "合同 14 条路径之外的增量入口：调研 run 产出的候选带证据入库。同一 run 内同一公司指纹重复提交返回同一行；run 必须属于调用者组织。",
+        "x-required-features": [
+          "leadgen.candidates.manage"
+        ],
+        "x-idempotency": "sha256(company_name + domain + contact_email + source_url) within run_id",
         "requestBody": {
           "required": true,
           "content": {
@@ -98,21 +102,231 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["decision", "decisionKey"],
+                "required": [
+                  "runId",
+                  "companyName"
+                ],
                 "properties": {
-                  "decision": { "type": "string", "enum": ["approve", "reject", "merge"] },
-                  "decisionKey": { "type": "string", "minLength": 8 },
-                  "mergeTargetClaimId": { "type": "string", "format": "uuid" },
-                  "reasonCode": { "type": "string" }
+                  "runId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "companyName": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "domain": {
+                    "type": "string"
+                  },
+                  "country": {
+                    "type": "string"
+                  },
+                  "contactName": {
+                    "type": "string"
+                  },
+                  "contactTitle": {
+                    "type": "string"
+                  },
+                  "contactEmail": {
+                    "type": "string"
+                  },
+                  "sourceUrl": {
+                    "type": "string"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "url",
+                        "contentHash"
+                      ],
+                      "properties": {
+                        "url": {
+                          "type": "string"
+                        },
+                        "fetchedAt": {
+                          "type": "string"
+                        },
+                        "contentHash": {
+                          "type": "string"
+                        },
+                        "fields": {
+                          "type": "object"
+                        },
+                        "excerpt": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "结论已记录" },
-          "409": { "description": "并发冲突（版本不匹配）或状态已变" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "候选已入库"
+          },
+          "200": {
+            "description": "同指纹已存在，返回原行"
+          },
+          "400": {
+            "description": "入参不合法"
+          },
+          "401": {
+            "description": "未登录"
+          },
+          "403": {
+            "description": "缺少功能点"
+          },
+          "404": {
+            "description": "run 不存在或不属于本组织"
+          }
+        }
+      }
+    },
+    "/leadgen/candidates/{id}": {
+      "get": {
+        "summary": "候选详情（含证据与验证）",
+        "description": "跨组织访问返回 404，不返回 403，避免泄露存在性。",
+        "x-required-features": [
+          "leadgen.candidates.view"
+        ],
+        "x-idempotency": "none",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "候选详情"
+          },
+          "404": {
+            "description": "不存在或不属于当前组织"
+          }
+        }
+      }
+    },
+    "/leadgen/candidates/{id}/verify": {
+      "post": {
+        "summary": "执行确定性验证（同输入不重算）",
+        "x-required-features": [
+          "leadgen.candidates.manage"
+        ],
+        "x-idempotency": "sha256(verifier_version + input_digest)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "mxChecked": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "验证结论 pass|needs_review|fail"
+          },
+          "409": {
+            "description": "候选状态不允许验证"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
+        }
+      }
+    },
+    "/leadgen/candidates/{id}/decisions": {
+      "post": {
+        "summary": "人工审核结论（通过/拒绝/合并）",
+        "x-required-features": [
+          "leadgen.candidates.review"
+        ],
+        "x-idempotency": "sha256('decide:' + decision_key)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "decision",
+                  "decisionKey"
+                ],
+                "properties": {
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "approve",
+                      "reject",
+                      "merge"
+                    ]
+                  },
+                  "decisionKey": {
+                    "type": "string",
+                    "minLength": 8
+                  },
+                  "mergeTargetClaimId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "reasonCode": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "结论已记录"
+          },
+          "409": {
+            "description": "并发冲突（版本不匹配）或状态已变"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
@@ -120,31 +334,57 @@
       "post": {
         "summary": "幂等写入 CRM（公司级去重）",
         "description": "同一候选只落一次；命中已存在公司时返回 409 并只告知归属，不披露对方资料。",
-        "x-required-features": ["leadgen.candidates.manage"],
+        "x-required-features": [
+          "leadgen.candidates.manage"
+        ],
         "x-idempotency": "sha256('crm:' + candidate_id + ':' + request_digest)",
-        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
-          "201": { "description": "已写入，返回 crm_entity_id" },
-          "200": { "description": "幂等命中，返回原 crm_entity_id" },
-          "409": { "description": "归属冲突（公司已属于他人）" },
-          "422": { "description": "候选缺少组织上下文或必填字段" }
+          "201": {
+            "description": "已写入，返回 crm_entity_id"
+          },
+          "200": {
+            "description": "幂等命中，返回原 crm_entity_id"
+          },
+          "409": {
+            "description": "归属冲突（公司已属于他人）"
+          },
+          "422": {
+            "description": "候选缺少组织上下文或必填字段"
+          }
         }
       }
     },
     "/leadgen/quota/buckets": {
       "get": {
         "summary": "额度桶与余量（四层）",
-        "x-required-features": ["leadgen.quota.view"],
+        "x-required-features": [
+          "leadgen.quota.view"
+        ],
         "x-idempotency": "none",
         "responses": {
-          "200": { "description": "按 tenant/department/employee/task 列出余量" }
+          "200": {
+            "description": "按 tenant/department/employee/task 列出余量"
+          }
         }
       }
     },
     "/leadgen/quota/reservations": {
       "post": {
         "summary": "预留额度（lease 到期自动回收）",
-        "x-required-features": ["leadgen.quota.manage"],
+        "x-required-features": [
+          "leadgen.quota.manage"
+        ],
         "x-idempotency": "Idempotency-Key header",
         "requestBody": {
           "required": true,
@@ -153,27 +393,51 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["quotaKind", "units"],
+                "required": [
+                  "quotaKind",
+                  "units"
+                ],
                 "properties": {
-                  "quotaKind": { "type": "string", "enum": ["lead", "crm_write", "send"] },
-                  "units": { "type": "integer", "minimum": 1 },
-                  "taskId": { "type": "string", "format": "uuid" }
+                  "quotaKind": {
+                    "type": "string",
+                    "enum": [
+                      "lead",
+                      "crm_write",
+                      "send"
+                    ]
+                  },
+                  "units": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "taskId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "已预留，返回 lease_token" },
-          "429": { "description": "额度不足（拒绝而非排队）" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "已预留，返回 lease_token"
+          },
+          "429": {
+            "description": "额度不足（拒绝而非排队）"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
     "/leadgen/drafts": {
       "post": {
         "summary": "创建邮件草稿",
-        "x-required-features": ["leadgen.sends.draft"],
+        "x-required-features": [
+          "leadgen.sends.draft"
+        ],
         "x-idempotency": "sha256(candidate_id + ':' + body_hash)",
         "requestBody": {
           "required": true,
@@ -182,21 +446,43 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["candidateId", "recipientEmail", "subject", "bodyMarkdown"],
+                "required": [
+                  "candidateId",
+                  "recipientEmail",
+                  "subject",
+                  "bodyMarkdown"
+                ],
                 "properties": {
-                  "candidateId": { "type": "string", "format": "uuid" },
-                  "recipientEmail": { "type": "string", "format": "email" },
-                  "subject": { "type": "string", "maxLength": 200 },
-                  "bodyMarkdown": { "type": "string" }
+                  "candidateId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "recipientEmail": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "subject": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "bodyMarkdown": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "草稿已创建，返回 body_hash" },
-          "409": { "description": "同收件人已有未结束的草稿" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "草稿已创建，返回 body_hash"
+          },
+          "409": {
+            "description": "同收件人已有未结束的草稿"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
@@ -204,9 +490,21 @@
       "post": {
         "summary": "审批草稿（绑定正文哈希）",
         "description": "批准绑定 draft_hash；正文/收件人变化后审批自动失效。",
-        "x-required-features": ["leadgen.sends.approve"],
+        "x-required-features": [
+          "leadgen.sends.approve"
+        ],
         "x-idempotency": "sha256('approve:' + draft_id + ':' + draft_hash + ':' + approver_user_id)",
-        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -214,20 +512,41 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["decision", "draftHash"],
+                "required": [
+                  "decision",
+                  "draftHash"
+                ],
                 "properties": {
-                  "decision": { "type": "string", "enum": ["approved", "rejected"] },
-                  "draftHash": { "type": "string" },
-                  "expiresInMinutes": { "type": "integer", "minimum": 5, "maximum": 1440 }
+                  "decision": {
+                    "type": "string",
+                    "enum": [
+                      "approved",
+                      "rejected"
+                    ]
+                  },
+                  "draftHash": {
+                    "type": "string"
+                  },
+                  "expiresInMinutes": {
+                    "type": "integer",
+                    "minimum": 5,
+                    "maximum": 1440
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "审批已签发" },
-          "409": { "description": "正文已变化，审批失效，需重批" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "审批已签发"
+          },
+          "409": {
+            "description": "正文已变化，审批失效，需重批"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
@@ -235,7 +554,9 @@
       "post": {
         "summary": "发送已批准草稿（幂等）",
         "description": "同一 send_key 只发一次；状态未知时先查询，不重试。",
-        "x-required-features": ["leadgen.sends.send"],
+        "x-required-features": [
+          "leadgen.sends.send"
+        ],
         "x-idempotency": "sha256('send:' + draft_id + ':' + draft_hash + ':' + approval_id + ':' + recipient_hash + ':' + channel)",
         "requestBody": {
           "required": true,
@@ -244,33 +565,58 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["draftId", "approvalId"],
+                "required": [
+                  "draftId",
+                  "approvalId"
+                ],
                 "properties": {
-                  "draftId": { "type": "string", "format": "uuid" },
-                  "approvalId": { "type": "string", "format": "uuid" }
+                  "draftId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "approvalId": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "202": { "description": "已入队，返回 send_id" },
-          "200": { "description": "幂等命中，返回原 send_id" },
-          "409": { "description": "审批过期/撤销/哈希不匹配，或收件人被抑制" },
-          "429": { "description": "发送额度不足" }
+          "202": {
+            "description": "已入队，返回 send_id"
+          },
+          "200": {
+            "description": "幂等命中，返回原 send_id"
+          },
+          "409": {
+            "description": "审批过期/撤销/哈希不匹配，或收件人被抑制"
+          },
+          "429": {
+            "description": "发送额度不足"
+          }
         }
       }
     },
     "/leadgen/suppressions": {
       "get": {
         "summary": "抑制名单",
-        "x-required-features": ["leadgen.sends.view"],
+        "x-required-features": [
+          "leadgen.sends.view"
+        ],
         "x-idempotency": "none",
-        "responses": { "200": { "description": "抑制条目（邮箱以 hash 呈现）" } }
+        "responses": {
+          "200": {
+            "description": "抑制条目（邮箱以 hash 呈现）"
+          }
+        }
       },
       "post": {
         "summary": "加入抑制名单（退订/投诉/退信）",
-        "x-required-features": ["leadgen.sends.manage"],
+        "x-required-features": [
+          "leadgen.sends.manage"
+        ],
         "x-idempotency": "sha256(normalized_email)",
         "requestBody": {
           "required": true,
@@ -279,19 +625,38 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["email", "reason"],
+                "required": [
+                  "email",
+                  "reason"
+                ],
                 "properties": {
-                  "email": { "type": "string", "format": "email" },
-                  "reason": { "type": "string", "enum": ["unsubscribe", "complaint", "bounce"] }
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "unsubscribe",
+                      "complaint",
+                      "bounce"
+                    ]
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "已抑制" },
-          "200": { "description": "已存在，幂等返回" },
-          "422": { "description": "参数校验失败" }
+          "201": {
+            "description": "已抑制"
+          },
+          "200": {
+            "description": "已存在，幂等返回"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     },
@@ -302,24 +667,47 @@
         "x-required-features": [],
         "x-auth": "signature",
         "x-idempotency": "provider_key + ':' + provider_event_id",
-        "parameters": [{ "name": "provider", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
-          "202": { "description": "已接收" },
-          "401": { "description": "验签失败" },
-          "200": { "description": "重复事件，已忽略" }
+          "202": {
+            "description": "已接收"
+          },
+          "401": {
+            "description": "验签失败"
+          },
+          "200": {
+            "description": "重复事件，已忽略"
+          }
         }
       }
     },
     "/leadgen/bindings/employees": {
       "get": {
         "summary": "员工助手绑定列表",
-        "x-required-features": ["leadgen.bindings.view"],
+        "x-required-features": [
+          "leadgen.bindings.view"
+        ],
         "x-idempotency": "none",
-        "responses": { "200": { "description": "绑定列表（含策略版本与状态）" } }
+        "responses": {
+          "200": {
+            "description": "绑定列表（含策略版本与状态）"
+          }
+        }
       },
       "put": {
         "summary": "建立/更新绑定（按版本乐观锁）",
-        "x-required-features": ["leadgen.bindings.manage"],
+        "x-required-features": [
+          "leadgen.bindings.manage"
+        ],
         "x-idempotency": "expected version",
         "requestBody": {
           "required": true,
@@ -328,29 +716,59 @@
               "schema": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["employeeId", "assistantAgentKey", "capabilityPolicyVersion", "version"],
+                "required": [
+                  "employeeId",
+                  "assistantAgentKey",
+                  "capabilityPolicyVersion",
+                  "version"
+                ],
                 "properties": {
-                  "employeeId": { "type": "string", "format": "uuid" },
-                  "assistantAgentKey": { "type": "string" },
-                  "capabilityPolicyVersion": { "type": "integer", "minimum": 1 },
-                  "version": { "type": "integer", "minimum": 1 }
+                  "employeeId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "assistantAgentKey": {
+                    "type": "string"
+                  },
+                  "capabilityPolicyVersion": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  }
                 }
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "已更新，返回新版本" },
-          "409": { "description": "版本冲突" },
-          "422": { "description": "参数校验失败" }
+          "200": {
+            "description": "已更新，返回新版本"
+          },
+          "409": {
+            "description": "版本冲突"
+          },
+          "422": {
+            "description": "参数校验失败"
+          }
         }
       }
     }
   },
   "components": {
     "securitySchemes": {
-      "cookieAuth": { "type": "apiKey", "in": "cookie", "name": "auth_token" }
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "auth_token"
+      }
     }
   },
-  "security": [{ "cookieAuth": [] }]
+  "security": [
+    {
+      "cookieAuth": []
+    }
+  ]
 }

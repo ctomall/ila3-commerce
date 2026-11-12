@@ -20,7 +20,7 @@ export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> },
 ): Promise<NextResponse> {
-  const ctx = await leadgenContext(req, 'leadgen.crm.write')
+  const ctx = await leadgenContext(req, 'leadgen.candidates.manage')
   if (!ctx.ok) return ctx.response
   const { id } = await context.params
   if (!UUID_RE.test(id)) return refusal(404, 'candidate_not_found', 'Candidate not found')

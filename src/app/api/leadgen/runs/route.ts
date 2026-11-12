@@ -13,7 +13,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const ctx = await leadgenContext(req, 'leadgen.runs.create')
+  const ctx = await leadgenContext(req, 'leadgen.candidates.manage')
   if (!ctx.ok) return ctx.response
   let body: unknown
   try {

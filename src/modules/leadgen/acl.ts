@@ -7,12 +7,11 @@ export const features = [
     dependsOn: ['leadgen.candidates.view'],
   },
   {
-    id: 'leadgen.crm.write',
-    title: 'Write approved candidates into the CRM',
+    id: 'leadgen.candidates.manage',
+    title: 'Submit candidates and run verification or CRM intake',
     module: 'leadgen',
     dependsOn: ['leadgen.candidates.view'],
   },
-  { id: 'leadgen.runs.create', title: 'Create lead research runs', module: 'leadgen' },
   { id: 'leadgen.quota.view', title: 'View lead quotas', module: 'leadgen' },
   {
     id: 'leadgen.quota.manage',
