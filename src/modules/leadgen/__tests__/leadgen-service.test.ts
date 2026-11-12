@@ -103,12 +103,17 @@ function makeRepo(overrides: Partial<LeadgenRepository> = {}) {
       state.claims.push(row)
       return row
     }),
-    findVerification: jest.fn(async () => null),
+    findVerification: jest.fn(async (input: { candidateId: string; verifierVersion: string; inputDigest: string }) =>
+      state.verifications.find(
+        (row) => row.candidateId === input.candidateId && row.verifierVersion === input.verifierVersion && row.inputDigest === input.inputDigest,
+      ) ?? null,
+    ),
     insertVerification: jest.fn(async (input: VerificationRow) => {
       state.verifications.push(input)
       return input
     }),
     listEvidence: jest.fn(async () => []),
+    insertEvidence: jest.fn(async () => undefined),
     listVerifications: jest.fn(async () => state.verifications),
     createCrmCompany: jest.fn(async () => 'crm-company-1'),
     ...overrides,
@@ -190,6 +195,22 @@ describe('leadgen service — review and intake', () => {
       service.crmWrite({ tenantId: 'tenant-1', organizationId: 'org-1', candidateId: 'cand-1', actorUserId: 'user-1' }),
     ).resolves.toMatchObject({ ok: false, code: 'crm_write_failed' })
     expect(state.candidates[0].status).toBe('approved')
+  })
+
+  it('reuses a stored verification for the same candidate, version and MX flag', async () => {
+    const { repo, state } = makeRepo()
+    state.candidates.push(candidate())
+    const service = serviceFor(repo)
+    const input = {
+      tenantId: 'tenant-1', organizationId: 'org-1', candidateId: 'cand-1',
+      verifierVersion: 'verifier-v1', rulesetHash: 'rules-1', mxChecked: false,
+      verdict: 'pass', checks: [],
+    }
+    const first = await service.verify(input)
+    const second = await service.verify(input)
+    expect(first.ok && first.value.cached).toBe(false)
+    expect(second.ok && second.value.cached).toBe(true)
+    expect(repo.insertVerification).toHaveBeenCalledTimes(1)
   })
 
   it('dedupes candidate intake by fingerprint inside a run', async () => {

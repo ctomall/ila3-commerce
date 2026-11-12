@@ -12,6 +12,7 @@ import type { AwilixContainer } from 'awilix'
 import {
   LeadgenCandidate,
   LeadgenCandidateDecision,
+  LeadgenCandidateEvidence,
   LeadgenCompanyClaim,
   LeadgenResearchRun,
   LeadgenVerification,
@@ -325,8 +326,45 @@ export function createOrmLeadgenRepository(
       return verificationRow(row)
     },
 
-    async listEvidence() {
-      return []
+    async listEvidence(candidateId) {
+      const rows = await fork().find(LeadgenCandidateEvidence, { candidateId }, { orderBy: { rank: 'asc' } })
+      return rows.map((row) => ({
+        url: row.url,
+        fetchedAt: iso(row.fetchedAt) ?? new Date(0).toISOString(),
+        contentHash: row.contentHash,
+        fields: (row.fields as Record<string, string> | null) ?? null,
+        kind: row.kind,
+        httpStatus: row.httpStatus ?? null,
+        excerpt: row.excerpt ?? null,
+        method: row.method ?? null,
+        adapter: row.adapter ?? null,
+        rank: row.rank,
+      }))
+    },
+
+    async insertEvidence(input) {
+      if (input.evidence.length === 0) return
+      const manager = fork()
+      input.evidence.forEach((item, index) => {
+        manager.persist(
+          manager.create(LeadgenCandidateEvidence, {
+            id: input.newId(),
+            candidateId: input.candidateId,
+            kind: item.kind ?? 'page',
+            url: item.url,
+            fetchedAt: new Date(item.fetchedAt),
+            httpStatus: item.httpStatus ?? null,
+            contentHash: item.contentHash,
+            excerpt: item.excerpt ?? null,
+            fields: item.fields ?? null,
+            method: item.method ?? null,
+            adapter: item.adapter ?? null,
+            rank: item.rank ?? index,
+            createdAt: new Date(input.now),
+          }),
+        )
+      })
+      await manager.flush()
     },
 
     async listVerifications(candidateId) {
