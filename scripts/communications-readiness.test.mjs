@@ -40,3 +40,16 @@ test('stuck sends and a missing verify token are warnings, not blockers', () => 
   assert.match(verdict.warnings.join(' '), /stale outbound link/)
   assert.match(verdict.warnings.join(' '), /META_WEBHOOK_VERIFY_TOKEN/)
 })
+
+test('unknown-outcome sends are a warning, not a blocker', () => {
+  const verdict = evaluate({
+    ledgerTable: true,
+    payloadHashColumn: true,
+    migrationRows: 2,
+    channels: { total: 1, connected: 1 },
+    webhookVerifyToken: true,
+    stuck: { minutes: 30, staleLinks: 0, danglingLedger: 0, completedWithoutLink: 0, unknownLinks: 3 },
+  })
+  assert.equal(verdict.ready, true)
+  assert.ok(verdict.warnings.some((w) => w.includes('3 unknown-outcome')))
+})

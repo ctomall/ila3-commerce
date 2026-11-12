@@ -27,6 +27,7 @@ export function evaluate(facts) {
   if (facts.stuck.staleLinks > 0) warnings.push(`${facts.stuck.staleLinks} stale outbound link(s) older than ${facts.stuck.minutes}m`)
   if (facts.stuck.danglingLedger > 0) warnings.push(`${facts.stuck.danglingLedger} dangling send claim(s)`)
   if (facts.stuck.completedWithoutLink > 0) warnings.push(`${facts.stuck.completedWithoutLink} composed send(s) without a delivery link`)
+  if (facts.stuck.unknownLinks > 0) warnings.push(`${facts.stuck.unknownLinks} unknown-outcome send(s) need reconciliation (see audit-stuck-outbound)`)
   if (!facts.webhookVerifyToken) warnings.push('META_WEBHOOK_VERIFY_TOKEN is not configured (WhatsApp verify endpoint returns 503)')
   return { ready: blockers.length === 0, blockers, warnings }
 }
@@ -79,6 +80,7 @@ async function readFacts(minutes = 30) {
     let links = []
     let ledger = []
     let completed = []
+    let unknown = []
     if (ledgerTable) {
       const l = await client.query(
         `select id, message_id, external_conversation_id, provider_key, delivery_status, created_at
@@ -89,6 +91,16 @@ async function readFacts(minutes = 30) {
         [['queued', 'pending'], minutes],
       )
       links = l.rows
+      // Terminal unknown outcomes are not "stuck" but they are reconciliation
+      // debt the 202 warning points operators at; surface them here too.
+      const u = await client.query(
+        `select id, message_id, external_conversation_id, provider_key, delivery_status, channel_metadata, created_at
+           from message_channel_links
+          where direction='outbound' and delivery_status='unknown'
+          order by created_at desc
+          limit 50`,
+      )
+      unknown = u.rows
       const d = await client.query(
         `select id, client_request_id, message_id, created_at from communications_send_requests
           where message_id is null and created_at < now() - ($1::int * interval '1 minute') limit 200`,
@@ -105,7 +117,7 @@ async function readFacts(minutes = 30) {
       )
       completed = c.rows
     }
-    const stuck = classifyOutbound({ links, ledger, completed, minutes })
+    const stuck = classifyOutbound({ links, unknown, ledger, completed, minutes })
     return {
       ledgerTable,
       payloadHashColumn,
@@ -117,6 +129,7 @@ async function readFacts(minutes = 30) {
         staleLinks: stuck.staleLinks.length,
         danglingLedger: stuck.danglingLedger.length,
         completedWithoutLink: stuck.completedWithoutLink.length,
+        unknownLinks: stuck.unknownLinks.length,
       },
     }
   } finally {
