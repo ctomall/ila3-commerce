@@ -12,13 +12,14 @@
 | M1 入口治理 | **done** | 152/150/74 入口、重名 0、嵌套基线白名单；`nav-baseline --check` 兜底 | — |
 | M2 契约 | **草案完成** | 数据模型、DSH 契约、16 操作/14 路径 OpenAPI、两片迁移草案 | 决策 ②③（`contact_email` 加密、部分唯一索引方案） |
 | M3 原型 | **完成（原型，非生产）** | 中文六页 + 浏览器断言 3 条 | — |
-| M4 双员工 PoC | **判定层完成，运行时 blocked** | profile 派生+落盘（0700、跨 OS 用户读被拒）、Run 状态机与撤权写入闸、工具三类授权 + 第 23 道门 | 每员工 DSH 运行时、第二组织、`leadgen-api` |
+| M4 双员工 PoC | **判定层完成 + OS 隔离实测，leadgen 用例仍 blocked** | profile 派生+落盘（0700、跨 OS 用户读被拒）、Run 状态机与撤权写入闸、工具三类授权 + 第 23 道门 | 每员工 DSH 运行时、第二组织、`leadgen-api` |
 | M5 获客 | **规则层完成** | 验证/配额/判决链，单测覆盖 | 存储要 ①（迁移） |
 | M6 触达 | **规则层完成** | 审批哈希/收件人/渠道绑定、退订抑制、unknown 不重发 | 真实外发要 ① 与 D8 |
 | M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
-| M8 验收 | **governance 完成** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
+| M8 验收 | **发布级 PASS（2026-11-12, commit 6c96938）** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
-**最后一份发布级运行**：`verify/verify-2026-11-09T05-35-37.md` — **PASS 23 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（提交 `80356ee`）。
+**最后一份发布级运行**：`verify/verify-2026-11-12T04-07-16.md` — **PASS 25 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（提交 `6c96938`）。
+浏览器门（contrast / ui-regression）需要共享 agent 浏览器有活动标签页：先 `node /home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs --open`，否则两道门会以 “no active tab to attach session” 失败（环境前置，不是 UI 回归）。
 
 这一份之所以能给出 PASS，是因为两件事被显式解决而不是绕过：
 
