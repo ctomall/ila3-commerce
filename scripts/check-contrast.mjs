@@ -41,7 +41,21 @@ const measure = async (theme) => {
     if (ready) break
     await new Promise((r) => setTimeout(r, 1000))
   }
-  await new Promise((r) => setTimeout(r, 1500))
+  // The rail and the table body can render after the primary action exists. Measuring
+  // at that moment reported "5/6 samples rendered" under load even though the UI was
+  // fine, so wait for the two roles that tend to arrive last.
+  const sampleDeadline = Date.now() + 15000
+  while (Date.now() < sampleDeadline) {
+    const samplesReady = await page.evaluate(() =>
+      Boolean(
+        (document.querySelector('[data-testid="sidebar"] a') || document.querySelector('[data-sidebar-group="true"] button')) &&
+          document.querySelector('table tbody td span'),
+      ),
+    )
+    if (samplesReady) break
+    await new Promise((r) => setTimeout(r, 500))
+  }
+  await new Promise((r) => setTimeout(r, 500))
   return await page.evaluate(() => {
     const cv = document.createElement('canvas'); cv.width = cv.height = 1
     const ctx = cv.getContext('2d', { willReadFrequently: true })

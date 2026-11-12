@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T10:16:05.221Z",
+  "generatedAt": "2026-11-12T10:47:58.036Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": true,
@@ -41,7 +41,7 @@
         "leadgen-api"
       ],
       "status": "pass",
-      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"5aa122a7-bb6b-4583-be24-5cba76e68e37\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
+      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"a8a9cce7-1e77-4935-8266-2024c66580ee\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
     },
     {
       "id": 1.2,
@@ -113,7 +113,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"802ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"798ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,
@@ -134,7 +134,7 @@
       ],
       "status": "pass-weak",
       "weakReason": "额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验",
-      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"55d5ed7e-109b-4228-abee-8a6ede7904c5\\\",\\\"leaseToken\\\":\\\"069b7bea-1025-4f94-88d6-298d008880e4\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
+      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"25b57c57-12a9-4b71-bbf5-94af174f1924\\\",\\\"leaseToken\\\":\\\"4e42167a-e541-4d8d-b67a-c82313500190\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
     }
   ]
 }

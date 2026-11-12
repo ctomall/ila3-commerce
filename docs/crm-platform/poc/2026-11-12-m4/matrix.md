@@ -1,6 +1,6 @@
 # M4 对抗用例执行记录
 
-生成时间：2026-11-12T10:16:05.221Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-12T10:47:58.036Z · 目标：http://127.0.0.1:3000
 
 共 12 例 · 通过 8 · 弱通过 4 · 失败 0 · 无法执行（缺 fixture）0 · **用例无效 0**
 
@@ -9,7 +9,7 @@
 | # | 攻击 | 期望 | 结果 | 实测/阻塞原因 |
 |---|---|---|---|---|
 | 1 | 猜 ID：随机 uuid 取记录（现有模块） | 404（不泄露存在性） | 通过 | 404 {"error":"未找到"} |
-| 1.1 | 猜 ID：跨员工取 candidate/run（leadgen API） | 404 | 通过 | 404 [{"name":"fixture-inserted","ok":true,"detail":"5aa122a7-bb6b-4583-be24-5cba76e68e37\nINSERT 0 1"},{"name":"foreign- |
+| 1.1 | 猜 ID：跨员工取 candidate/run（leadgen API） | 404 | 通过 | 404 [{"name":"fixture-inserted","ok":true,"detail":"a8a9cce7-1e77-4935-8266-2024c66580ee\nINSERT 0 1"},{"name":"foreign- |
 | 1.2 | 猜 ID：AI 会话（他人/不存在） | 404 conversation_not_found | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
 | 1.3 | 猜 ID：AI 会话参与者列表 | 404（不泄露会话是否存在） | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
 | 1.4 | 会话列表越权（是否只回本人） | 200 且 items 为空或全部属于本人 | 弱通过 | 200 {"items":[],"nextCursor":null} |
