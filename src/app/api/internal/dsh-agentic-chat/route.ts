@@ -12,6 +12,7 @@ import { createUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 import { createHash, randomUUID } from 'node:crypto'
+import { rejectUnknownAgent } from './agent-guard'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 
 type ChatBody = {
@@ -33,6 +34,9 @@ function promptFrom(body: ChatBody): string {
 export async function POST(req: NextRequest) {
   const auth = await getAuthFromRequest(req)
   if (!auth?.sub) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const unknownAgent = await rejectUnknownAgent(req)
+  if (unknownAgent) return unknownAgent
 
   let body: ChatBody
   try {
