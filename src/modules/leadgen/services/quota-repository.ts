@@ -36,6 +36,8 @@ function reservationRow(row: LeadgenQuotaReservation): ReservationRow {
     state: row.state,
     expiresAt: (row.expiresAt instanceof Date ? row.expiresAt : new Date(row.expiresAt)).toISOString(),
     idempotencyKey: row.idempotencyKey,
+    subjectKind: (row.subjectKind as 'task' | 'draft' | null) ?? null,
+    subjectId: row.subjectId ?? null,
   }
 }
 
@@ -87,8 +89,8 @@ export function createOrmQuotaRepository(em: EntityManager): QuotaRepository {
         idempotencyKey: input.idempotencyKey,
         units: input.units,
         state: 'reserved',
-        subjectKind: input.taskId ? 'task' : null,
-        subjectId: input.taskId,
+        subjectKind: input.subjectKind,
+        subjectId: input.subjectId,
         expiresAt: new Date(input.expiresAt),
         createdAt: new Date(input.now),
       })

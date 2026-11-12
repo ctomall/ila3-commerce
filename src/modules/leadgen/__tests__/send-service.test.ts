@@ -367,6 +367,21 @@ describe('leadgen dispatch boundary (simulated transport)', () => {
     expect(state.drafts[0].status).toBe('approved')
   })
 
+  it('refuses a lease minted for a different draft', async () => {
+    const { repo, state } = makeRepo()
+    const guard = guards({
+      consumeLease: jest.fn(async () => ({ ok: false as const, code: 'lease_scope_mismatch' as const })),
+    })
+    const { send } = service(repo, transport(), guard)
+
+    await expect(send.dispatch(target)).resolves.toEqual({
+      ok: false,
+      code: 'quota_lease_scope_mismatch',
+    })
+    expect(state.sends).toHaveLength(0)
+    expect(state.drafts[0].status).toBe('approved')
+  })
+
   it('consumes the lease exactly once, never on replay', async () => {
     const { repo } = makeRepo()
     const { send, guards: guard } = service(repo)

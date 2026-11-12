@@ -63,6 +63,7 @@ export type DispatchErrorCode =
   | 'suppressed'
   | 'quota_lease_required'
   | 'quota_lease_invalid'
+  | 'quota_lease_scope_mismatch'
   | 'transport_failed'
 
 /**
@@ -105,9 +106,18 @@ export type SendGuards = {
     organizationId: string
     emailHash: string
   }): Promise<boolean>
-  consumeLease(input: { tenantId: string; organizationId: string; leaseToken: string }): Promise<
+  consumeLease(input: {
+    tenantId: string
+    organizationId: string
+    leaseToken: string
+    /** The lease must name exactly this draft. */
+    draftId: string
+  }): Promise<
     | { ok: true; reservationId: string; units: number }
-    | { ok: false; code: 'lease_not_found' | 'lease_not_send' | 'lease_expired' | 'lease_already_used' }
+    | {
+        ok: false
+        code: 'lease_not_found' | 'lease_not_send' | 'lease_expired' | 'lease_already_used' | 'lease_scope_mismatch'
+      }
   >
   refundLease(input: { tenantId: string; organizationId: string; leaseToken: string }): Promise<void>
 }
@@ -282,6 +292,7 @@ export function createSendService(deps: {
       tenantId: input.tenantId,
       organizationId: input.organizationId,
       leaseToken: input.leaseToken,
+      draftId: draft.id,
     })
     if (!consumed.ok) {
       await repo.releaseDraftClaim({
@@ -290,7 +301,11 @@ export function createSendService(deps: {
         id: draft.id,
         now: at,
       })
-      return { ok: false, code: 'quota_lease_invalid' }
+      // A lease minted for another draft is a different failure than an expired one.
+      return {
+        ok: false,
+        code: consumed.code === 'lease_scope_mismatch' ? 'quota_lease_scope_mismatch' : 'quota_lease_invalid',
+      }
     }
 
     const leaseExpiresAt = new Date(Date.parse(at) + SEND_LEASE_MS).toISOString()

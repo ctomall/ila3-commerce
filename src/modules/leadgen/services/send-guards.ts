@@ -19,15 +19,17 @@ export function createOrmSendGuards(em: EntityManager): SendGuards {
     },
 
     async consumeLease(input) {
-      let outcome: { ok: true; reservationId: string; units: number } | { ok: false; code: 'lease_not_found' | 'lease_not_send' | 'lease_expired' | 'lease_already_used' } = {
+      let outcome:
+        | { ok: true; reservationId: string; units: number }
+        | { ok: false; code: 'lease_not_found' | 'lease_not_send' | 'lease_expired' | 'lease_already_used' | 'lease_scope_mismatch' } = {
         ok: false,
         code: 'lease_not_found',
       }
       try {
         await em.transactional(async (tx) => {
           const claimed = (await tx.getConnection().execute(
-            'update "leadgen_quota_reservations" r set "state" = \'consumed\', "consumed_at" = now() where r."lease_token" = ? and r."tenant_id" = ? and r."organization_id" = ? and r."state" = \'reserved\' and r."expires_at" > now() and exists (select 1 from "leadgen_quota_buckets" b where b."id" = r."bucket_id" and b."quota_kind" = \'send\') returning r."id", r."bucket_id", r."units"',
-            [input.leaseToken, input.tenantId, input.organizationId],
+            'update "leadgen_quota_reservations" r set "state" = \'consumed\', "consumed_at" = now() where r."lease_token" = ? and r."tenant_id" = ? and r."organization_id" = ? and r."state" = \'reserved\' and r."expires_at" > now() and r."subject_kind" = \'draft\' and r."subject_id" = ? and exists (select 1 from "leadgen_quota_buckets" b where b."id" = r."bucket_id" and b."quota_kind" = \'send\') returning r."id", r."bucket_id", r."units"',
+            [input.leaseToken, input.tenantId, input.organizationId, input.draftId],
           )) as unknown as Array<{ id: string; bucket_id: string; units: number }> | undefined
           if (!Array.isArray(claimed) || claimed.length !== 1) throw new Error('lease-not-consumed')
           const row = claimed[0]
@@ -41,12 +43,16 @@ export function createOrmSendGuards(em: EntityManager): SendGuards {
       } catch {
         // The transaction rolled back: nothing moved. Explain why by reading the row.
         const rows = (await em.getConnection().execute(
-          'select r."state", r."expires_at" <= now() as expired, b."quota_kind" from "leadgen_quota_reservations" r join "leadgen_quota_buckets" b on b."id" = r."bucket_id" where r."lease_token" = ? and r."tenant_id" = ? and r."organization_id" = ? limit 1',
+          'select r."state", r."subject_kind", r."subject_id", r."expires_at" <= now() as expired, b."quota_kind" from "leadgen_quota_reservations" r join "leadgen_quota_buckets" b on b."id" = r."bucket_id" where r."lease_token" = ? and r."tenant_id" = ? and r."organization_id" = ? limit 1',
           [input.leaseToken, input.tenantId, input.organizationId],
-        )) as unknown as Array<{ state: string; expired: boolean; quota_kind: string }> | undefined
+        )) as unknown as Array<{ state: string; subject_kind: string | null; subject_id: string | null; expired: boolean; quota_kind: string }> | undefined
         if (!Array.isArray(rows) || rows.length !== 1) return { ok: false, code: 'lease_not_found' }
         const row = rows[0]
         if (row.quota_kind !== 'send') return { ok: false, code: 'lease_not_send' }
+        // A lease that names a different draft must not fund this one.
+        if (row.subject_kind !== 'draft' || row.subject_id !== input.draftId) {
+          return { ok: false, code: 'lease_scope_mismatch' }
+        }
         if (row.state !== 'reserved') return { ok: false, code: 'lease_already_used' }
         if (row.expired) return { ok: false, code: 'lease_expired' }
         return { ok: false, code: 'lease_not_found' }

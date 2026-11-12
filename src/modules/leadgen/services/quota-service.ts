@@ -29,6 +29,9 @@ export type ReservationRow = {
   state: 'reserved' | 'consumed' | 'refunded' | 'expired'
   expiresAt: string
   idempotencyKey: string
+  /** What this lease is for: a run/task, or (for sends) the exact draft. */
+  subjectKind: 'task' | 'draft' | null
+  subjectId: string | null
 }
 
 export type QuotaRepository = {
@@ -57,14 +60,19 @@ export type QuotaRepository = {
     idempotencyKey: string
     units: number
     expiresAt: string
-    taskId: string | null
+    subjectKind: 'task' | 'draft' | null
+    subjectId: string | null
     now: string
   }): Promise<ReservationRow>
 }
 
 export type QuotaResult<T> =
   | { ok: true; value: T }
-  | { ok: false; code: 'quota_not_configured' | 'quota_exceeded' | 'invalid_input'; extra?: Record<string, unknown> }
+  | {
+      ok: false
+      code: 'quota_not_configured' | 'quota_exceeded' | 'invalid_input' | 'draft_required'
+      extra?: Record<string, unknown>
+    }
 
 /** Monthly period; the caller-visible buckets are all for the current key. */
 export function currentPeriodKey(nowIso: string): string {
@@ -119,9 +127,15 @@ export function createQuotaService(deps: {
     units: number
     idempotencyKey: string
     taskId?: string | null
+    /** A `send` reservation must name the draft it may fund. */
+    draftId?: string | null
   }): Promise<QuotaResult<{ reservation: ReservationRow; replayed: boolean; remaining: number }>> {
     if (!Number.isInteger(input.units) || input.units < 1) return { ok: false, code: 'invalid_input' }
     if (!input.idempotencyKey || input.idempotencyKey.length < 8) return { ok: false, code: 'invalid_input' }
+    // A generic `send` lease could fund any draft; the dispatch boundary needs the
+    // lease to name the body it pays for, so the binding is required at reservation.
+    if (input.quotaKind === 'send' && !input.draftId) return { ok: false, code: 'draft_required' }
+    if (input.quotaKind !== 'send' && input.draftId) return { ok: false, code: 'invalid_input' }
     const replay = await repo.findReservation({
       tenantId: input.tenantId,
       organizationId: input.organizationId,
@@ -163,7 +177,8 @@ export function createQuotaService(deps: {
       idempotencyKey: input.idempotencyKey,
       units: input.units,
       expiresAt,
-      taskId: input.taskId ?? null,
+      subjectKind: input.quotaKind === 'send' ? 'draft' : input.taskId ? 'task' : null,
+      subjectId: input.quotaKind === 'send' ? (input.draftId ?? null) : (input.taskId ?? null),
       now: at,
     })
     return { ok: true, value: { reservation, replayed: false, remaining: decision.remainingAfter } }

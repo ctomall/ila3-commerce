@@ -16,6 +16,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 const KINDS: readonly QuotaKind[] = ['lead', 'crm_write', 'send']
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const ctx = await leadgenContext(req, 'leadgen.quota.manage')
@@ -37,6 +38,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return refusal(400, 'invalid_input', 'quotaKind and a positive integer units are required')
   }
   const taskId = typeof record.taskId === 'string' ? record.taskId : null
+  const draftId = typeof record.draftId === 'string' ? record.draftId : null
+  if (draftId && !UUID_RE.test(draftId)) return refusal(400, 'invalid_input', 'draftId must be a uuid')
   try {
     const repo = await createRequestQuotaRepository()
     const service = createQuotaService({ repo, now: () => new Date().toISOString(), newId: () => crypto.randomUUID(), leaseMs: 300_000 })
@@ -47,6 +50,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       units: units as number,
       idempotencyKey,
       taskId,
+      draftId,
     })
     if (!result.ok) {
       const status = result.code === 'quota_exceeded' ? 429 : result.code === 'quota_not_configured' ? 409 : 400

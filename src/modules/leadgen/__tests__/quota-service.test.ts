@@ -29,10 +29,12 @@ function makeRepo(rows: QuotaBucketRow[] = [bucket()]) {
       if (state.failReserve) throw new Error('lost')
       for (const row of state.buckets) row.reservedUnits += input.units
     }),
-    insertReservation: jest.fn(async (input: { id: string; leaseToken: string; bucketId: string; units: number; expiresAt: string; idempotencyKey: string }) => {
+    insertReservation: jest.fn(async (input: { id: string; leaseToken: string; bucketId: string; units: number; expiresAt: string; idempotencyKey: string; subjectKind?: 'task' | 'draft' | null; subjectId?: string | null }) => {
       const row: ReservationRow = {
         id: input.id, leaseToken: input.leaseToken, bucketId: input.bucketId, units: input.units,
-        state: 'reserved', expiresAt: input.expiresAt, idempotencyKey: input.idempotencyKey,
+        state: 'reserved',
+        subjectKind: input.subjectKind ?? null,
+        subjectId: input.subjectId ?? null, expiresAt: input.expiresAt, idempotencyKey: input.idempotencyKey,
       }
       state.reservations.push(row)
       return row
@@ -97,5 +99,32 @@ describe('quota service', () => {
       tenantId: 't', organizationId: 'o', quotaKind: 'lead', units: 1, idempotencyKey: 'idem-key-5',
     })
     expect(result).toMatchObject({ ok: false, code: 'quota_exceeded' })
+  })
+
+  it('refuses a send reservation that does not name its draft', async () => {
+    const { repo } = makeRepo([bucket({ quotaKind: 'send' })])
+    const result = await serviceFor(repo).reserveUnits({
+      tenantId: 't', organizationId: 'o', quotaKind: 'send', units: 1, idempotencyKey: 'send-key-1',
+    })
+    expect(result).toMatchObject({ ok: false, code: 'draft_required' })
+  })
+
+  it('binds a send reservation to the exact draft', async () => {
+    const { repo, state } = makeRepo([bucket({ quotaKind: 'send' })])
+    const result = await serviceFor(repo).reserveUnits({
+      tenantId: 't', organizationId: 'o', quotaKind: 'send', units: 1,
+      idempotencyKey: 'send-key-2', draftId: 'draft-9',
+    })
+    expect(result.ok).toBe(true)
+    expect(state.reservations[0]).toMatchObject({ subjectKind: 'draft', subjectId: 'draft-9' })
+  })
+
+  it('refuses a draft on a non-send reservation', async () => {
+    const { repo } = makeRepo()
+    const result = await serviceFor(repo).reserveUnits({
+      tenantId: 't', organizationId: 'o', quotaKind: 'lead', units: 1,
+      idempotencyKey: 'lead-key-1', draftId: 'draft-9',
+    })
+    expect(result).toMatchObject({ ok: false, code: 'invalid_input' })
   })
 })
