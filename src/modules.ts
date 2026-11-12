@@ -352,6 +352,8 @@ export const enabledModules: ModuleEntry[] = [
   // Superadmin one-click upgrade from the configured git remote.
   { id: 'system_update', from: '@app' },
   { id: 'dsh_runs', from: '@app' },
+  // Human approval ledger for DSH CRM writes (write tool + approval page).
+  { id: 'dsh_approvals', from: '@app' },
   // Read-only directory of enabled modules for the settings UI.
   { id: 'module_directory', from: '@app' },
   // Searchable settings landing page replacing the stock placeholder.
