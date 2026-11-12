@@ -22,6 +22,9 @@ jest.mock('@/modules/leadgen/services/orm-repository', () => ({
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { POST as decisions } from '../candidates/[id]/decisions/route'
 import { POST as submit } from '../candidates/route'
+import { POST as verify } from '../candidates/[id]/verify/route'
+import { GET as quotaBuckets } from '../quota/buckets/route'
+import { POST as quotaReserve } from '../quota/reservations/route'
 import { POST as crmWrite } from '../candidates/[id]/crm-write/route'
 
 const mockAuth = getAuthFromRequest as unknown as Mock<typeof getAuthFromRequest>
@@ -81,6 +84,23 @@ describe('leadgen candidate submission', () => {
       body: JSON.stringify({ runId: 'nope', companyName: '' }),
     })
     expect((await submit(req)).status).toBe(400)
+  })
+})
+
+describe('leadgen verify and quota route guards', () => {
+  it('requires a session on all of them', async () => {
+    mockAuth.mockResolvedValue(null)
+    expect((await verify(request(), params)).status).toBe(401)
+    expect((await quotaBuckets(request())).status).toBe(401)
+    expect((await quotaReserve(request())).status).toBe(401)
+  })
+
+  it('requires an Idempotency-Key before reserving', async () => {
+    expect((await quotaReserve(request({ quotaKind: 'lead', units: 1 }))).status).toBe(400)
+  })
+
+  it('404s a non-uuid candidate id on verify', async () => {
+    expect((await verify(request(), { params: Promise.resolve({ id: 'nope' }) })).status).toBe(404)
   })
 })
 
