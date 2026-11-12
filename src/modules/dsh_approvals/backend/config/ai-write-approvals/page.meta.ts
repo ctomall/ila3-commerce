@@ -21,6 +21,7 @@ export const metadata = {
   requireFeatures: ['dsh_approvals.review'],
   pageTitle: 'Write approvals',
   pageGroup: 'AI management',
+  pageGroupKey: 'crmNav.manage.category.ai',
   pageOrder: 10,
   icon: approvalsIcon,
   pageContext: 'settings' as const,
