@@ -41,6 +41,10 @@ const SUITES = [
     test: 'src/modules/communications/__tests__/internal-notes-realdb.test.ts',
   },
   {
+    name: 'internal-notes-write',
+    test: 'src/modules/communications/__tests__/internal-notes-write-realdb.test.ts',
+  },
+  {
     name: 'send-ledger',
     test: 'src/modules/communications/__tests__/send-ledger-realdb.test.ts',
   },
