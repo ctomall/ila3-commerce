@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T06:09:09.723Z",
+  "generatedAt": "2026-11-12T07:47:48.848Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -95,7 +95,7 @@
       ],
       "status": "pass-weak",
       "weakReason": "证明的是运行时忽略注入字段；审计行里记录的 actor 仍需在有 leadgen 写入路径后复核",
-      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3054}"
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3180}"
     },
     {
       "id": 4,
@@ -114,7 +114,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"75ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"812ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,

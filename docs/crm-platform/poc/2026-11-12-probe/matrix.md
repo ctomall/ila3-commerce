@@ -1,6 +1,6 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-12T06:09:00.452Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-12T07:47:39.056Z · 目标：http://127.0.0.1:3000
 
 用例 14 · 符合预期 14 · 需要复核 0
 
@@ -39,11 +39,11 @@
   ```
 - `GET /api/audit_logs/audit-logs/actions?canViewTenant=true&scope=tenant` (employee) → 200
   ```
-  {"items":[{"id":"64cf613a-8c75-4d96-8901-385dfa2d4326","commandId":"messages.messages.delete_for_actor","actionLabel":"Delete message for actor","executionState":"done","actorUserId":"7a176d46-6474-47
+  {"items":[{"id":"6bb8945a-7633-44a9-b8a9-45474b205798","commandId":"customers.companies.create","actionLabel":"创建公司","executionState":"done","actorUserId":"7a176d46-6474-47c1-be56-d11b2d9452f1","actor
   ```
 - `GET /api/audit_logs/audit-logs/actions` (admin) → 200
   ```
-  {"items":[{"id":"d76c9c60-216c-4eb2-8cd1-509f6d6c099f","commandId":"customers.companies.update","actionLabel":"更新公司","executionState":"done","actorUserId":"77f676ed-7ab0-4245-a67a-d3b3e2d5170b","actor
+  {"items":[{"id":"5b25f578-976a-4f99-93a5-4e7b96b837d1","commandId":"customers.companies.delete","actionLabel":"删除公司","executionState":"done","actorUserId":"77f676ed-7ab0-4245-a67a-d3b3e2d5170b","actor
   ```
 - `GET /api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000` (employee) → 403
   ```

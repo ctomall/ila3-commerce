@@ -34,8 +34,6 @@ const dryRun = process.argv.includes('--dry-run')
 const allowProduction = process.argv.includes('--allow-production')
 
 // .env is the app's resolved configuration; the deploy service reads the same file.
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const dotenv = await import('dotenv').catch(() => null)
 if (!process.env.DATABASE_URL) {
   const envPath = path.join(ROOT, '.env')
   if (fs.existsSync(envPath)) {

@@ -6,7 +6,7 @@
     "mainItems": 132,
     "settingsSections": 10,
     "settingsItems": 68,
-    "grantedFeatures": 326
+    "grantedFeatures": 331
   },
   {
     "role": "admin",
@@ -24,6 +24,6 @@
     "mainItems": 67,
     "settingsSections": 8,
     "settingsItems": 15,
-    "grantedFeatures": 119
+    "grantedFeatures": 124
   }
 ]

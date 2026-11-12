@@ -555,6 +555,28 @@ async function main() {
     const book = sudoPsqlFile(dbName, dataDump)
     if (book.status !== 0) throw new DrillError(`bookkeeping restore failed: ${(book.stderr || '').trim().slice(0, 300)}`)
 
+    // The clone carries whatever production has. After the leadgen slices were
+    // applied for real, that includes the 17 leadgen tables, so a drill that
+    // re-applies them would fail with "already exists" while proving nothing.
+    // Remove only leadgen objects from this throwaway clone so the drill still
+    // rehearses "apply to the schema production had before the slices".
+    const resetSql = `do $$
+      declare t text;
+      begin
+        for t in select tablename from pg_tables
+          where schemaname='public' and tablename like 'leadgen%'
+        loop
+          execute format('drop table if exists %I cascade', t);
+        end loop;
+      end $$;
+      delete from mikro_orm_migrations_leadgen;`
+    try {
+      sudoPsql(dbName, resetSql)
+    } catch (error) {
+      throw new DrillError(`pre-apply reset failed: ${error instanceof Error ? error.message : String(error)}`)
+    }
+    record('pre-apply.reset', true, 'removed any applied leadgen objects from the clone (throwaway database only)')
+
     const baseline = Number(sudoPsql(dbName, `select count(*) from information_schema.tables where table_schema='public'`))
     record('clone', true, `${baseline} tables cloned from ${prodDb} (schema + migration bookkeeping)`)
 
