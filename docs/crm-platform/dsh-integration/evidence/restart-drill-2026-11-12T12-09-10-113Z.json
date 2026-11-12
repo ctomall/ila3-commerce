@@ -1,0 +1,34 @@
+{
+  "generatedAt": "2026-11-12T12:09:10.113Z",
+  "base": "http://127.0.0.1:3000",
+  "service": "ila3-auto-deploy-app.service",
+  "actor": "employee",
+  "runId": "6e28220d-2a60-46d9-96e2-d328b7e24ae4",
+  "statusBeforeRestart": "running",
+  "restart": {
+    "exitCode": 0,
+    "recoveredMs": 12624,
+    "healthz": 200
+  },
+  "settledStatus": "failed|dsh exited before the run completed (code 0, signal null); stderr tail:\n[llm-deepseek-api-key] model listing from https://api.deepseek.com/models loaded 2 model(s), skipped 0 row(s)",
+  "orphanSweep": {
+    "orphanId": null,
+    "settled": null
+  },
+  "inflightStream": {
+    "outcome": "stream-ended",
+    "bytes": 7316,
+    "cancelled": false
+  },
+  "freshRun": {
+    "status": 200,
+    "outcome": "stream-ended",
+    "bytes": 7934
+  },
+  "customerEntities": {
+    "before": "9",
+    "after": "9",
+    "unchanged": true
+  },
+  "verdict": "FAIL"
+}
