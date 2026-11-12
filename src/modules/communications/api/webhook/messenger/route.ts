@@ -2,6 +2,10 @@ import { NextResponse } from 'next/server'
 import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import { createLogger } from '@open-mercato/shared/lib/logger'
+import {
+  WebhookBodyTooLargeError,
+  readBoundedWebhookBody,
+} from '../../../lib/bounded-body'
 import { CommunicationChannel } from '@open-mercato/core/modules/communication_channels/data/entities'
 import {
   COMMUNICATION_CHANNELS_QUEUES,
@@ -18,7 +22,6 @@ export const metadata = {
   POST: { requireAuth: false },
 }
 
-const MAX_BODY_BYTES = 1024 * 1024
 
 type Channel = InstanceType<typeof CommunicationChannel>
 type CredentialsServiceLike = {
@@ -35,8 +38,18 @@ type CredentialsServiceLike = {
  * inbound queue; reads update the existing outbound links.
  */
 export async function POST(req: Request): Promise<Response> {
-  const raw = await req.text()
-  if (raw.length > MAX_BODY_BYTES) return NextResponse.json({error: 'payload_too_large'}, {status: 413})
+  let raw: string
+  try {
+    // Bounded before it is materialised: an unauthenticated caller must not be
+    // able to make this process hold an arbitrarily large body. The limit is in
+    // bytes, and an oversized request is refused before its body is read.
+    raw = await readBoundedWebhookBody(req)
+  } catch (error) {
+    if (error instanceof WebhookBodyTooLargeError) {
+      return NextResponse.json({error: 'payload_too_large'}, {status: 413})
+    }
+    throw error
+  }
   if (!raw) return NextResponse.json({error: 'empty_body'}, {status: 400})
 
   // Parsed once for account pinning, reused by the event splitter after a
