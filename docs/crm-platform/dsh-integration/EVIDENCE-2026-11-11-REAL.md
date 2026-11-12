@@ -497,3 +497,28 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
    没有 `error` 帧。浏览器会把这种重放读成“成功但没输出”。
    证据：`evidence/public-chat-path-2026-11-12T16-24-13-894Z.json`（23 字节，仅 `done`）。
    建议在客户端或路由把“重放到的 Run 状态”透出，这件事属于 A/B 的收口项，尚未做。
+
+
+## 断线/重连实测（2026-11-12 17:31，release `a92b78e`）
+
+脚本：`node scripts/crm-dsh-reconnect-drill.mjs`（真实登录、真实模型一次、断流后按 `runId` 重连）。
+证据：`evidence/reconnect-drill-2026-11-12T17-31-22-904Z.json`。
+
+| 检查 | 实测 |
+| --- | --- |
+| 首流开始 + 中途 abort | 200，streaming 中断 |
+| 断线后的 Run 状态 | `cancelled`，`finished_at` 已写 |
+| 重连（`runId` + `last-event-id: 0`） | 200，帧序 `thinking → dsh.event → text → debug → error → done` |
+| 终止帧 | `error: "DSH run cancelled"` + `done` |
+
+### 本轮抓到的真缺陷（已修，`a92b78e`）
+
+第一次演练（修复前）留下一条 `running` 的僵尸 Run：子进程已退出、`finished_at` 为空，
+而“每员工同时只允许一个 Run”的规则会把该员工后续所有请求都挡成 409 `run_in_progress`，
+直到服务重启触发扫描。修复两道防线：
+
+1. **SSE 处理器退出时兜底结算**：若行仍在飞，写 `cancelled / client_disconnected`——断线不再留下僵尸；
+2. **提交时自愈**：发现“在飞且已超过 Run 超时 + 30s 宽限”的行，按 `failed / run_timeout` 结算并重试一次提交，
+   被强杀的处理进程留下的行也不会永久锁住员工。
+
+修复后同一演练全绿；`451f99f0…` 那条历史僵尸行由启动扫描落成 `failed / server_restart`，可作为对照。

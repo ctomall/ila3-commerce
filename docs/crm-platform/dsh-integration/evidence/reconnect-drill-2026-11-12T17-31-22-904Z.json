@@ -1,0 +1,34 @@
+{
+ "probedAt": "2026-11-12T17:31:22.904Z",
+ "release": "a92b78eb6fd7a19f963a3623427f70d846fb2b2f",
+ "firstStatus": 200,
+ "framesBeforeAbort": 4,
+ "sessionId": "session-4fd18871a74945668fad6fe9c9ad507f",
+ "runId": "9c3619f9-f1be-4dd8-834e-d85777921388",
+ "runStatus": "cancelled",
+ "finishedAt": "2026-11-12 17:31:29.464+00",
+ "reconnectStatus": 200,
+ "replayTypes": [
+  "thinking",
+  "dsh.event",
+  "text",
+  "debug",
+  "error",
+  "done"
+ ],
+ "replayError": "DSH run cancelled",
+ "checks": {
+  "first-stream-started": true,
+  "aborted-mid-stream": true,
+  "session-id-seen": true,
+  "run-row-found": true,
+  "run-terminal-after-disconnect": true,
+  "run-has-finished-at": true,
+  "reconnect-200": true,
+  "reconnect-frames-present": true,
+  "reconnect-ends-with-done": true
+ },
+ "ok": true,
+ "firstStreamHead": "id: 1\ndata: {\"type\":\"thinking\"}\n\nid: 2\ndata: {\"type\":\"dsh.event\",\"dshType\":\"session.event\",\"seq\":1,\"payload\":{\"sessionId\":\"session-4fd18871a74945668fad6fe9c9ad507f\",\"event\":{\"type\":\"agent/inbox/splice",
+ "replayHead": "id: 1\ndata: {\"type\":\"thinking\"}\n\nid: 2\ndata: {\"seq\":1,\"type\":\"dsh.event\",\"dshType\":\"session.event\",\"payload\":{\"event\":{\"seq\":0,\"data\":{\"start\":0,\"target\":\"next-turn\",\"inserted\":[{\"id\":\"14d133c1-7680-421a-b50d-e428ebbc5d59\",\"role\":\"user\",\"source\":{\"kind\":\"user\"},\"content\":[{\"text\":\"用五十个字介绍客户关系管理的价值（断"
+}
