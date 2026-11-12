@@ -19,6 +19,7 @@
 | M8 验收 | **发布级 PASS（2026-11-12, commit 6c96938）** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
 **最后一份发布级运行**：`verify/verify-2026-11-12T04-07-16.md` — **PASS 25 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（提交 `6c96938`）。
+`dea1e2e`（M4 用例 4/5 实现）同样 25/25 全通过，但运行期间并行协作者修改了 2 个 communications 文件，脚本按设计拒绝把它算作提交级证据（`verify-2026-11-12T04-29-54.md`）。M4 在该提交上另跑为 pass 7 · pass-weak 3 · blocked 1 · invalid 1。
 浏览器门（contrast / ui-regression）需要共享 agent 浏览器有活动标签页：先 `node /home/pro/.dsh-src/profiles/web/node_modules/dsh-ego-browser/runtime/ego-linux/bin/ego-browser.mjs --open`，否则两道门会以 “no active tab to attach session” 失败（环境前置，不是 UI 回归）。
 
 这一份之所以能给出 PASS，是因为两件事被显式解决而不是绕过：
