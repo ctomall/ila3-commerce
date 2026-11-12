@@ -917,6 +917,36 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
       expect(frames[0].event).toEqual({ type: 'error', error: 'initialize timed out after 10000ms' })
     })
 
+    it('retries once when initialize times out, and succeeds', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      mockStartDshRun
+        .mockRejectedValueOnce(new Error('dsh initialize failed: initialize timed out after 10000ms'))
+        .mockResolvedValueOnce(makeHandle({ result: { finalResponse: 'ok', finishReason: 'completed' } }))
+
+      const response = await POST(chatRequest({ messages: userMessages }))
+
+      expect(response.status).toBe(200)
+      expect(mockStartDshRun).toHaveBeenCalledTimes(2)
+    })
+
+    it('does not retry a start failure that is not an initialize timeout', async () => {
+      process.env.OM_DSH_PERSIST = 'orm'
+      const service = fakeRunService()
+      mockCreateRequestRunService.mockResolvedValueOnce(service)
+      mockStartDshRun.mockRejectedValueOnce(new Error('spawn EACCES'))
+
+      const response = await POST(chatRequest({ messages: userMessages }))
+
+      expect(response.status).toBe(502)
+      expect(mockStartDshRun).toHaveBeenCalledTimes(1)
+      expect(service.finish).toHaveBeenCalledWith('run-1', {
+        status: 'failed',
+        error: 'spawn EACCES',
+      })
+    })
+
     it('passes the configured initialize bound to the runtime and omits it by default', async () => {
       process.env.OM_DSH_PERSIST = 'orm'
       const service = fakeRunService()

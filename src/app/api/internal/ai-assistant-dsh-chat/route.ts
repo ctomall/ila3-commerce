@@ -1222,6 +1222,27 @@ async function finishQuietly(
   }
 }
 
+/**
+ * A cold DSH start can exceed the runtime's 10 s `initialize` bound on a loaded host:
+ * a real run failed with `initialize timed out after 10000ms` and the browser got a
+ * 502. One retry absorbs that, because the second spawn finds the runtime warm; any
+ * other start failure is reported immediately instead of costing a second spawn.
+ */
+const INITIALIZE_TIMEOUT_RE = /initialize timed out/i
+
+async function startWithInitializeRetry(
+  runtime: DshRuntime,
+  input: Parameters<DshRuntime['start']>[0],
+): Promise<DshRunHandle> {
+  try {
+    return await runtime.start(input)
+  } catch (error) {
+    if (!INITIALIZE_TIMEOUT_RE.test(errorMessage(error))) throw error
+    logger.warn('DSH initialize timed out; retrying the start once', { err: errorMessage(error) })
+    return await runtime.start(input)
+  }
+}
+
 async function startPersistedRun(
   req: NextRequest,
   auth: AuthContext,
@@ -1241,7 +1262,8 @@ async function startPersistedRun(
 
   let handle: DshRunHandle
   try {
-    handle = await runtime.start(
+    handle = await startWithInitializeRetry(
+      runtime,
       buildRunInput(auth, parsed, req.signal, run.id, run.bindingId, modelEnv),
     )
   } catch (error) {
@@ -1545,7 +1567,10 @@ export async function POST(req: NextRequest) {
 
   let handle: DshRunHandle
   try {
-    handle = await runtime.start(buildRunInput(auth, parsed, req.signal, randomUUID(), undefined, modelEnv))
+    handle = await startWithInitializeRetry(
+      runtime,
+      buildRunInput(auth, parsed, req.signal, randomUUID(), undefined, modelEnv),
+    )
   } catch (error) {
     // Fail before opening the SSE stream so the browser gets a real HTTP error
     // instead of an empty event stream.
