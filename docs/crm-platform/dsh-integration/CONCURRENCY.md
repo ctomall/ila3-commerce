@@ -6,12 +6,26 @@
 
 | 指标 | 定义 | 怎么测 | 现状 |
 | --- | --- | --- | --- |
-| 在线人数 | 一个时间窗内有有效 CRM 会话的用户数 | 会话/心跳计数（本次**未测**） | 没有产品目标，也没有采集口径 |
+| 在线人数 | 一个时间窗内**有过审计动作**的独立用户数（活动代理；不是“盯着屏幕的人数”） | `access_logs` 去重 actor（15 分钟/24 小时） | 已测基线（下节）；目标未定 |
 | 并行 AI Run | 同一组织内**同时执行** DSH 的助手 Run 数 | 同时发起 N 个真实 Run，读流与 `dsh_runs` 行 | 已实测基线（下节） |
 
 “在线”不代表在跑模型；“并行 Run”也不等于在线人数 × 1。两者必须分开定目标、分开压测。
 
+为什么用活动日志而不是会话表：员工登录是签名 cookie，服务端没有会话行（`sessions` 表是商城顾客的，`last_used_at` 全空）；`access_logs` 是唯一能给出“谁做过事”的服务端事实。
+
 ## 2. 实测基线（不是目标，不判通过/失败）
+
+### 在线人数（access_logs 去重）
+
+命令：`node scripts/crm-concurrency-baseline.mjs --online-only`
+证据：`evidence/online-users-baseline-2026-11-12T12-02-21-175Z.json`
+
+| 窗口 | 独立用户 | 审计事件 |
+| --- | --- | --- |
+| 15 分钟 | 3 | 460 |
+| 24 小时 | 3 | 5046 |
+
+### 并行 AI Run
 
 命令：`node scripts/crm-concurrency-baseline.mjs --n 2`
 证据：`evidence/concurrency-baseline-2026-11-12T06-32-00-441Z.json`
@@ -39,7 +53,8 @@
 ## 4. 复测方式
 
 ```
-node scripts/crm-concurrency-baseline.mjs --n 2        # 写 evidence/concurrency-baseline-*.json
+node scripts/crm-concurrency-baseline.mjs --online-only   # 只测在线活动，不发模型调用
+node scripts/crm-concurrency-baseline.mjs --n 2           # 并发 Run 基线（短提示词）
 ```
 
 脚本只做短提示词（一次几十 token），不写 CRM 业务数据；`--n` 上限 4，避免把生产压出真实故障。

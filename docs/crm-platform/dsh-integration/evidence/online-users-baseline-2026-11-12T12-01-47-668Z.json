@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-11-12T12:01:47.668Z",
+  "base": "http://127.0.0.1:3000",
+  "kind": "online-users-baseline",
+  "note": "Session-based proxy; a baseline is not a target.",
+  "definitions": {
+    "onlineUsers": "unexpired sessions with activity in the window (proxy, not people at a screen)"
+  },
+  "online": {
+    "last15m": {
+      "windowMinutes": 15,
+      "sessions": 0,
+      "users": 0
+    },
+    "last24h": {
+      "windowMinutes": 1440,
+      "sessions": 0,
+      "users": 0
+    }
+  }
+}

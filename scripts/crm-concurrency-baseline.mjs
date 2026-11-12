@@ -29,6 +29,7 @@ const OUT = path.resolve(
 )
 const nFlag = process.argv.indexOf('--n')
 const N = Math.max(1, Math.min(Number(process.argv[nFlag + 1] ?? 2), 4))
+const onlineOnly = process.argv.includes('--online-only')
 
 function psqlValue(sql) {
   try {
@@ -41,6 +42,40 @@ function psqlValue(sql) {
   } catch {
     return null
   }
+}
+
+/**
+ * Online users, measured from the access log: distinct actors that performed an
+ * audited action inside the window. Staff auth is a signed cookie with no
+ * server-side session row (the `sessions` table is storefront-only), so activity is
+ * the only honest server-side signal. It still measures "users who did something",
+ * not "people staring at a screen", and it is reported separately from AI runs.
+ */
+function onlineUsers(windowMinutes) {
+  const row = psqlValue(
+    `select count(distinct actor_user_id) || '|' || count(*) from access_logs where deleted_at is null and actor_user_id is not null and created_at > now() - interval '${windowMinutes} minutes'`,
+  ) ?? ''
+  const [users, events] = row.split('|')
+  return { windowMinutes, users: Number(users || 0), events: Number(events || 0) }
+}
+
+const online = { last15m: onlineUsers(15), last24h: onlineUsers(1440) }
+if (onlineOnly) {
+  const payload = {
+    generatedAt: new Date().toISOString(),
+    base: BASE,
+    kind: 'online-users-baseline',
+    note: 'Activity-based proxy; a baseline is not a target.',
+    definitions: {
+      onlineUsers: 'distinct actors with an audited action in the window (proxy, not people at a screen)',
+    },
+    online,
+  }
+  fs.mkdirSync(OUT, { recursive: true })
+  const file = path.join(OUT, `online-users-baseline-${payload.generatedAt.replace(/[:.]/g, '-')}.json`)
+  fs.writeFileSync(file, `${JSON.stringify(payload, null, 2)}\n`)
+  console.log(JSON.stringify({ ...payload, file }, null, 2))
+  process.exit(0)
 }
 
 const creds = credentials()
@@ -123,6 +158,7 @@ const payload = {
   parallel,
   parallelWallMs,
   wallOverheadMs: parallelWallMs - Math.max(...parallel.map((run) => run.totalMs)),
+  online,
   runsByStatus: latestRuns,
   activeRuns,
   customerEntities: { before, after, unchanged: before !== null && before === after },

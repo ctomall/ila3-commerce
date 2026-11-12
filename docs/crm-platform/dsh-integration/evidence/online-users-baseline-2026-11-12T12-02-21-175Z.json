@@ -1,0 +1,21 @@
+{
+  "generatedAt": "2026-11-12T12:02:21.175Z",
+  "base": "http://127.0.0.1:3000",
+  "kind": "online-users-baseline",
+  "note": "Session-based proxy; a baseline is not a target.",
+  "definitions": {
+    "onlineUsers": "distinct actors with an audited action in the window (proxy, not people at a screen)"
+  },
+  "online": {
+    "last15m": {
+      "windowMinutes": 15,
+      "users": 3,
+      "events": 460
+    },
+    "last24h": {
+      "windowMinutes": 1440,
+      "users": 3,
+      "events": 5046
+    }
+  }
+}
