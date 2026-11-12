@@ -1,12 +1,66 @@
 {
-  "generatedAt": "2026-11-10T06:20:49.172Z",
-  "roots": 99,
+  "generatedAt": "2026-11-12T02:41:43.902Z",
+  "roots": 109,
   "suspicious": [
     {
-      "href": "/backend/config/customers/deals",
-      "title": "商机设置",
-      "group": "客户",
-      "parent": "/backend/config/customers"
+      "href": "/backend/staff/time-tracking/projects",
+      "title": "项目",
+      "group": "人员与项目",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/staff/time-tracking/board",
+      "title": "任务",
+      "group": "人员与项目",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/staff/time-tracking/entries",
+      "title": "工时记录",
+      "group": "排班与工时",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/staff/time-tracking/timesheet",
+      "title": "工时表",
+      "group": "排班与工时",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/staff/time-tracking/reports",
+      "title": "工时报表",
+      "group": "排班与工时",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/warranty_claims/settings",
+      "title": "保修工单设置",
+      "group": "业务设置",
+      "parent": "/backend/warranty_claims"
+    },
+    {
+      "href": "/backend/staff/time-tracking/settings",
+      "title": "工时设置",
+      "group": "业务设置",
+      "parent": "/backend/staff/time-tracking"
+    },
+    {
+      "href": "/backend/inbox-ops/settings",
+      "title": "收件箱设置",
+      "group": "业务设置",
+      "parent": "/backend/inbox-ops"
+    },
+    {
+      "href": "/backend/instances/failure-queue",
+      "title": "失败队列",
+      "group": "诊断",
+      "parent": "/backend/instances"
+    },
+    {
+      "href": "/backend/inbox-ops/log",
+      "title": "处理日志",
+      "group": "诊断",
+      "parent": "/backend/inbox-ops"
     }
   ]
 }

@@ -23,7 +23,9 @@ export async function rejectUnknownAgent(req: NextRequest): Promise<NextResponse
     }
     await registry.loadAgentRegistry()
     if (registry.getAgent(requested)) return null
-    return NextResponse.json({ error: 'Assistant not found', code: 'agent_not_found' }, { status: 404 })
+    // Same stable code the packaged route uses for AgentPolicyDenyCode.agent_unknown;
+    // the security probe and the M4 harness assert on it.
+    return NextResponse.json({ error: 'Assistant not found', code: 'agent_unknown' }, { status: 404 })
   } catch {
     return NextResponse.json(
       { error: 'Assistant catalogue is unavailable', code: 'agent_catalog_unavailable' },

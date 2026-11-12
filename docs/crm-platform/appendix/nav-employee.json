@@ -13,6 +13,33 @@
           "enabled": true,
           "pageContext": "main",
           "order": 5
+        },
+        {
+          "id": "/backend/calendar",
+          "href": "/backend/calendar",
+          "title": "日历",
+          "defaultTitle": "日历",
+          "enabled": true,
+          "iconName": "calendar",
+          "order": 10
+        },
+        {
+          "id": "/backend/staff/time-tracking",
+          "href": "/backend/staff/time-tracking",
+          "title": "我的工作",
+          "defaultTitle": "我的工作",
+          "enabled": true,
+          "iconName": "clock",
+          "order": 20
+        },
+        {
+          "id": "/backend/work-inbox",
+          "href": "/backend/work-inbox",
+          "title": "工作收件箱",
+          "defaultTitle": "工作收件箱",
+          "enabled": true,
+          "iconName": "inbox",
+          "order": 30
         }
       ]
     },
@@ -67,15 +94,6 @@
           "order": 10
         },
         {
-          "id": "/backend/calendar",
-          "href": "/backend/calendar",
-          "title": "日历",
-          "defaultTitle": "日历",
-          "enabled": true,
-          "iconName": "calendar",
-          "order": 10
-        },
-        {
           "id": "/backend/customers/people",
           "href": "/backend/customers/people",
           "title": "联系人",
@@ -83,14 +101,6 @@
           "enabled": true,
           "iconName": "users",
           "order": 10
-        },
-        {
-          "id": "/backend/config/customers/deals",
-          "href": "/backend/config/customers/deals",
-          "title": "商机设置",
-          "defaultTitle": "商机设置",
-          "enabled": true,
-          "order": 50
         }
       ]
     },
@@ -140,8 +150,8 @@
     },
     {
       "id": "catalog",
-      "name": "商品与库存",
-      "defaultName": "商品与库存",
+      "name": "商品目录",
+      "defaultName": "商品目录",
       "items": [
         {
           "id": "/backend/catalog/products",
@@ -169,7 +179,14 @@
           "enabled": true,
           "iconName": "folder-tree",
           "order": 30
-        },
+        }
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "仓储运营",
+      "defaultName": "仓储运营",
+      "items": [
         {
           "id": "/backend/wms",
           "href": "/backend/wms",
@@ -243,7 +260,109 @@
               "order": 150
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "aftercare",
+      "name": "售后",
+      "defaultName": "售后",
+      "items": [
+        {
+          "id": "/backend/warranty_claims",
+          "href": "/backend/warranty_claims",
+          "title": "保修工单",
+          "defaultTitle": "保修工单",
+          "enabled": true,
+          "iconName": "shield-check",
+          "order": 40,
+          "children": [
+            {
+              "id": "/backend/warranty_claims/registrations",
+              "href": "/backend/warranty_claims/registrations",
+              "title": "保修登记",
+              "defaultTitle": "保修登记",
+              "enabled": true,
+              "iconName": "badge-check",
+              "order": 40
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "people",
+      "name": "人员与项目",
+      "defaultName": "人员与项目",
+      "items": [
+        {
+          "id": "/backend/staff/time-tracking/projects",
+          "href": "/backend/staff/time-tracking/projects",
+          "title": "项目",
+          "defaultTitle": "项目",
+          "enabled": true,
+          "iconName": "folder-tree",
+          "order": 20
         },
+        {
+          "id": "/backend/staff/time-tracking/board",
+          "href": "/backend/staff/time-tracking/board",
+          "title": "任务",
+          "defaultTitle": "任务",
+          "enabled": true,
+          "iconName": "layers",
+          "order": 30
+        }
+      ]
+    },
+    {
+      "id": "scheduling",
+      "name": "排班与工时",
+      "defaultName": "排班与工时",
+      "items": [
+        {
+          "id": "/backend/staff/my-availability",
+          "href": "/backend/staff/my-availability",
+          "title": "我的可用性",
+          "defaultTitle": "我的可用性",
+          "enabled": true,
+          "iconName": "clock",
+          "order": 10
+        },
+        {
+          "id": "/backend/staff/my-leave-requests",
+          "href": "/backend/staff/my-leave-requests",
+          "title": "我的请假",
+          "defaultTitle": "我的请假",
+          "enabled": true,
+          "iconName": "calendar-check",
+          "order": 20
+        },
+        {
+          "id": "/backend/staff/time-tracking/entries",
+          "href": "/backend/staff/time-tracking/entries",
+          "title": "工时记录",
+          "defaultTitle": "工时记录",
+          "enabled": true,
+          "iconName": "list",
+          "order": 40
+        },
+        {
+          "id": "/backend/staff/time-tracking/timesheet",
+          "href": "/backend/staff/time-tracking/timesheet",
+          "title": "工时表",
+          "defaultTitle": "工时表",
+          "enabled": true,
+          "iconName": "calendar",
+          "order": 50
+        }
+      ]
+    },
+    {
+      "id": "payments",
+      "name": "支付",
+      "defaultName": "支付",
+      "items": [
         {
           "id": "/backend/checkout/pay-links",
           "href": "/backend/checkout/pay-links",
@@ -270,34 +389,106 @@
           "enabled": true,
           "iconName": "receipt-text",
           "order": 82
+        },
+        {
+          "id": "/backend/payment-gateways",
+          "href": "/backend/payment-gateways",
+          "title": "支付交易",
+          "defaultTitle": "支付交易",
+          "enabled": true,
+          "pageContext": "main",
+          "order": 52
         }
       ]
     },
     {
-      "id": "fulfillment",
-      "name": "履约与售后",
-      "defaultName": "履约与售后",
+      "id": "documents",
+      "name": "文档",
+      "defaultName": "文档",
       "items": [
         {
-          "id": "/backend/warranty_claims",
-          "href": "/backend/warranty_claims",
-          "title": "保修工单",
-          "defaultTitle": "保修工单",
+          "id": "/backend/documents",
+          "href": "/backend/documents",
+          "title": "文档",
+          "defaultTitle": "文档",
           "enabled": true,
-          "iconName": "shield-check",
-          "order": 40,
-          "children": [
-            {
-              "id": "/backend/warranty_claims/registrations",
-              "href": "/backend/warranty_claims/registrations",
-              "title": "保修登记",
-              "defaultTitle": "保修登记",
-              "enabled": true,
-              "iconName": "badge-check",
-              "order": 40
-            }
-          ]
+          "order": 40
         },
+        {
+          "id": "/backend/storage/attachments",
+          "href": "/backend/storage/attachments",
+          "title": "附件",
+          "defaultTitle": "附件",
+          "enabled": true,
+          "iconName": "archive",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": "messages",
+      "name": "消息",
+      "defaultName": "消息",
+      "items": [
+        {
+          "id": "/backend/messages",
+          "href": "/backend/messages",
+          "title": "消息",
+          "defaultTitle": "消息",
+          "enabled": true,
+          "iconName": "mail",
+          "order": 460
+        },
+        {
+          "id": "/backend/communications/inbox",
+          "href": "/backend/communications/inbox",
+          "title": "全渠道收件箱",
+          "defaultTitle": "全渠道收件箱",
+          "enabled": true,
+          "iconName": "inbox",
+          "order": 470
+        },
+        {
+          "id": "/backend/inbox-ops",
+          "href": "/backend/inbox-ops",
+          "title": "收件箱建议",
+          "defaultTitle": "收件箱建议",
+          "enabled": true,
+          "iconName": "inbox",
+          "order": 45
+        },
+        {
+          "id": "/backend/phone_calls",
+          "href": "/backend/phone_calls",
+          "title": "通话记录",
+          "defaultTitle": "通话记录",
+          "enabled": true,
+          "iconName": "phone-call",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "automation",
+      "name": "自动化",
+      "defaultName": "自动化",
+      "items": [
+        {
+          "id": "/backend/instances",
+          "href": "/backend/instances",
+          "title": "工作流实例",
+          "defaultTitle": "工作流实例",
+          "enabled": true,
+          "iconName": "wrench",
+          "order": 20
+        }
+      ]
+    },
+    {
+      "id": "compliance",
+      "name": "业务合规（欧盟零毁林专项）",
+      "defaultName": "业务合规（欧盟零毁林专项）",
+      "items": [
         {
           "id": "/backend/eudr",
           "href": "/backend/eudr",
@@ -357,196 +548,44 @@
       ]
     },
     {
-      "id": "people",
-      "name": "人员与排程",
-      "defaultName": "人员与排程",
+      "id": "crmNav.manage.category.business",
+      "name": "业务设置",
+      "defaultName": "业务设置",
       "items": [
         {
-          "id": "/backend/staff/my-leave-requests",
-          "href": "/backend/staff/my-leave-requests",
-          "title": "我的请假",
-          "defaultTitle": "我的请假",
+          "id": "/backend/config/sales",
+          "href": "/backend/config/sales",
+          "title": "销售",
+          "defaultTitle": "销售",
           "enabled": true,
-          "iconName": "calendar-check",
-          "order": 91
+          "pageContext": "settings",
+          "order": 1
         },
         {
-          "id": "/backend/staff/my-availability",
-          "href": "/backend/staff/my-availability",
-          "title": "我的可用性",
-          "defaultTitle": "我的可用性",
+          "id": "/backend/config/wms",
+          "href": "/backend/config/wms",
+          "title": "仓储配置",
+          "defaultTitle": "仓储配置",
           "enabled": true,
-          "iconName": "clock",
-          "order": 92
+          "pageContext": "settings",
+          "iconName": "settings",
+          "order": 35
         },
         {
-          "id": "/backend/staff/time-tracking",
-          "href": "/backend/staff/time-tracking",
-          "title": "我的工作",
-          "defaultTitle": "我的工作",
+          "id": "/backend/config/customers/deals",
+          "href": "/backend/config/customers/deals",
+          "title": "商机设置",
+          "defaultTitle": "商机设置",
           "enabled": true,
-          "iconName": "clock",
-          "order": 10,
-          "children": [
-            {
-              "id": "/backend/staff/time-tracking/projects",
-              "href": "/backend/staff/time-tracking/projects",
-              "title": "项目",
-              "defaultTitle": "项目",
-              "enabled": true,
-              "iconName": "folder-tree",
-              "order": 20
-            },
-            {
-              "id": "/backend/staff/time-tracking/board",
-              "href": "/backend/staff/time-tracking/board",
-              "title": "任务",
-              "defaultTitle": "任务",
-              "enabled": true,
-              "iconName": "layers",
-              "order": 30
-            },
-            {
-              "id": "/backend/staff/time-tracking/entries",
-              "href": "/backend/staff/time-tracking/entries",
-              "title": "工时记录",
-              "defaultTitle": "工时记录",
-              "enabled": true,
-              "iconName": "list",
-              "order": 40
-            },
-            {
-              "id": "/backend/staff/time-tracking/timesheet",
-              "href": "/backend/staff/time-tracking/timesheet",
-              "title": "工时表",
-              "defaultTitle": "工时表",
-              "enabled": true,
-              "iconName": "calendar",
-              "order": 50
-            }
-          ]
+          "pageContext": "settings",
+          "order": 50
         }
       ]
     },
     {
-      "id": "content",
-      "name": "沟通与资料",
-      "defaultName": "沟通与资料",
-      "items": [
-        {
-          "id": "/backend/documents",
-          "href": "/backend/documents",
-          "title": "文档",
-          "defaultTitle": "文档",
-          "enabled": true,
-          "order": 40
-        },
-        {
-          "id": "/backend/storage/attachments",
-          "href": "/backend/storage/attachments",
-          "title": "附件",
-          "defaultTitle": "附件",
-          "enabled": true,
-          "iconName": "archive",
-          "order": 20
-        },
-        {
-          "id": "/backend/messages",
-          "href": "/backend/messages",
-          "title": "消息",
-          "defaultTitle": "消息",
-          "enabled": true,
-          "iconName": "mail",
-          "order": 460
-        },
-        {
-          "id": "/backend/communications/inbox",
-          "href": "/backend/communications/inbox",
-          "title": "全渠道收件箱",
-          "defaultTitle": "全渠道收件箱",
-          "enabled": true,
-          "iconName": "inbox",
-          "order": 470
-        },
-        {
-          "id": "/backend/inbox-ops",
-          "href": "/backend/inbox-ops",
-          "title": "收件箱建议",
-          "defaultTitle": "收件箱建议",
-          "enabled": true,
-          "iconName": "inbox",
-          "order": 45
-        },
-        {
-          "id": "/backend/communication_channels/channels",
-          "href": "/backend/communication_channels/channels",
-          "title": "通信渠道",
-          "defaultTitle": "通信渠道",
-          "enabled": true,
-          "pageContext": "main",
-          "iconName": "mail",
-          "order": 90
-        },
-        {
-          "id": "/backend/phone_calls",
-          "href": "/backend/phone_calls",
-          "title": "通话记录",
-          "defaultTitle": "通话记录",
-          "enabled": true,
-          "iconName": "phone-call",
-          "order": 10
-        }
-      ]
-    },
-    {
-      "id": "automation",
-      "name": "自动化与规则",
-      "defaultName": "自动化与规则",
-      "items": [
-        {
-          "id": "/backend/definitions",
-          "href": "/backend/definitions",
-          "title": "工作流定义",
-          "defaultTitle": "工作流定义",
-          "enabled": true,
-          "iconName": "workflow",
-          "order": 10
-        },
-        {
-          "id": "/backend/instances",
-          "href": "/backend/instances",
-          "title": "工作流实例",
-          "defaultTitle": "工作流实例",
-          "enabled": true,
-          "iconName": "wrench",
-          "order": 20,
-          "children": [
-            {
-              "id": "/backend/instances/failure-queue",
-              "href": "/backend/instances/failure-queue",
-              "title": "失败队列",
-              "defaultTitle": "失败队列",
-              "enabled": true,
-              "iconName": "triangle-alert",
-              "order": 20
-            }
-          ]
-        },
-        {
-          "id": "/backend/work-inbox",
-          "href": "/backend/work-inbox",
-          "title": "工作收件箱",
-          "defaultTitle": "工作收件箱",
-          "enabled": true,
-          "iconName": "inbox",
-          "order": 30
-        }
-      ]
-    },
-    {
-      "id": "backend.nav.externalSystems",
-      "name": "外部系统",
-      "defaultName": "外部系统",
+      "id": "crmNav.manage.category.channels",
+      "name": "渠道集成",
+      "defaultName": "渠道集成",
       "items": [
         {
           "id": "/backend/webhooks",
@@ -556,6 +595,15 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 1
+        },
+        {
+          "id": "/backend/config/scheduled-jobs",
+          "href": "/backend/config/scheduled-jobs",
+          "title": "定时任务",
+          "defaultTitle": "定时任务",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 30
         },
         {
           "id": "/backend/integrations",
@@ -576,64 +624,21 @@
           "order": 51
         },
         {
-          "id": "/backend/payment-gateways",
-          "href": "/backend/payment-gateways",
-          "title": "支付交易",
-          "defaultTitle": "支付交易",
+          "id": "/backend/communication_channels/channels",
+          "href": "/backend/communication_channels/channels",
+          "title": "通信渠道",
+          "defaultTitle": "通信渠道",
           "enabled": true,
           "pageContext": "settings",
-          "order": 52
+          "iconName": "mail",
+          "order": 90
         }
       ]
     },
     {
-      "id": "settings.sections.moduleConfigs",
-      "name": "模块配置",
-      "defaultName": "模块配置",
-      "items": [
-        {
-          "id": "/backend/config/sales",
-          "href": "/backend/config/sales",
-          "title": "销售",
-          "defaultTitle": "销售",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 1
-        },
-        {
-          "id": "/backend/config/translations",
-          "href": "/backend/config/translations",
-          "title": "翻译管理",
-          "defaultTitle": "翻译管理",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 7
-        },
-        {
-          "id": "/backend/config/scheduled-jobs",
-          "href": "/backend/config/scheduled-jobs",
-          "title": "定时任务",
-          "defaultTitle": "定时任务",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 30
-        },
-        {
-          "id": "/backend/config/wms",
-          "href": "/backend/config/wms",
-          "title": "仓储配置",
-          "defaultTitle": "仓储配置",
-          "enabled": true,
-          "pageContext": "settings",
-          "iconName": "settings",
-          "order": 35
-        }
-      ]
-    },
-    {
-      "id": "settings.sections.auth",
-      "name": "身份认证",
-      "defaultName": "身份认证",
+      "id": "crmNav.manage.category.users",
+      "name": "用户组织",
+      "defaultName": "用户组织",
       "items": [
         {
           "id": "/backend/users",
@@ -643,6 +648,81 @@
           "enabled": true,
           "pageContext": "settings",
           "order": 1
+        }
+      ]
+    },
+    {
+      "id": "crmNav.manage.category.system",
+      "name": "系统维护",
+      "defaultName": "系统维护",
+      "items": [
+        {
+          "id": "/backend/config/translations",
+          "href": "/backend/config/translations",
+          "title": "翻译管理",
+          "defaultTitle": "翻译管理",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 7
+        }
+      ]
+    },
+    {
+      "id": "crmNav.manage.category.ai",
+      "name": "AI管理",
+      "defaultName": "AI管理",
+      "items": [
+        {
+          "id": "/backend/config/ai-write-approvals",
+          "href": "/backend/config/ai-write-approvals",
+          "title": "Write approvals",
+          "defaultTitle": "Write approvals",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "crmNav.manage.category.rules",
+      "name": "规则流程",
+      "defaultName": "规则流程",
+      "items": [
+        {
+          "id": "/backend/definitions",
+          "href": "/backend/definitions",
+          "title": "工作流定义",
+          "defaultTitle": "工作流定义",
+          "enabled": true,
+          "pageContext": "settings",
+          "iconName": "workflow",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "crmNav.manage.category.diagnostics",
+      "name": "诊断",
+      "defaultName": "诊断",
+      "items": [
+        {
+          "id": "/backend/instances/failure-queue",
+          "href": "/backend/instances/failure-queue",
+          "title": "失败队列",
+          "defaultTitle": "失败队列",
+          "enabled": true,
+          "pageContext": "settings",
+          "iconName": "triangle-alert",
+          "order": 20
+        },
+        {
+          "id": "/backend/audit-logs",
+          "href": "/backend/audit-logs",
+          "title": "审计日志",
+          "defaultTitle": "审计日志",
+          "enabled": true,
+          "pageContext": "settings",
+          "order": 160
         }
       ]
     },
@@ -672,25 +752,9 @@
       ]
     },
     {
-      "id": "backend.nav.security",
-      "name": "安全",
-      "defaultName": "安全",
-      "items": [
-        {
-          "id": "/backend/audit-logs",
-          "href": "/backend/audit-logs",
-          "title": "审计日志",
-          "defaultTitle": "审计日志",
-          "enabled": true,
-          "pageContext": "settings",
-          "order": 160
-        }
-      ]
-    },
-    {
-      "id": "backend.nav.developers",
-      "name": "开发者",
-      "defaultName": "开发者",
+      "id": "crmNav.manage.category.advanced",
+      "name": "高级",
+      "defaultName": "高级",
       "items": [
         {
           "id": "/backend/docs",
@@ -706,10 +770,10 @@
   ],
   "settingsSections": [
     {
-      "id": "settings.sections.access",
-      "label": "身份与权限",
-      "labelKey": "settings.sections.access",
-      "order": 2,
+      "id": "users",
+      "label": "用户组织",
+      "labelKey": "crmNav.manage.category.users",
+      "order": 10,
       "items": [
         {
           "id": "backend-users",
@@ -721,10 +785,10 @@
       ]
     },
     {
-      "id": "settings.sections.data",
-      "label": "数据与集成",
-      "labelKey": "settings.sections.data",
-      "order": 4,
+      "id": "channels",
+      "label": "渠道集成",
+      "labelKey": "crmNav.manage.category.channels",
+      "order": 20,
       "items": [
         {
           "id": "backend-webhooks",
@@ -732,6 +796,13 @@
           "labelKey": "webhooks.nav.title",
           "href": "/backend/webhooks",
           "order": 1
+        },
+        {
+          "id": "backend-config-scheduled-jobs",
+          "label": "定时任务",
+          "labelKey": "scheduler.title",
+          "href": "/backend/config/scheduled-jobs",
+          "order": 30
         },
         {
           "id": "backend-integrations",
@@ -748,19 +819,34 @@
           "order": 51
         },
         {
-          "id": "backend-payment-gateways",
-          "label": "支付交易",
-          "labelKey": "payment_gateways.nav.transactions",
-          "href": "/backend/payment-gateways",
-          "order": 52
+          "id": "backend-communication_channels-channels",
+          "label": "通信渠道",
+          "labelKey": "communication_channels.nav.title",
+          "href": "/backend/communication_channels/channels",
+          "order": 90,
+          "iconName": "mail"
         }
       ]
     },
     {
-      "id": "settings.sections.moduleConfigs",
-      "label": "模块配置",
-      "labelKey": "settings.sections.moduleConfigs",
-      "order": 5,
+      "id": "ai",
+      "label": "AI管理",
+      "labelKey": "crmNav.manage.category.ai",
+      "order": 30,
+      "items": [
+        {
+          "id": "backend-config-ai-write-approvals",
+          "label": "Write approvals",
+          "href": "/backend/config/ai-write-approvals",
+          "order": 10
+        }
+      ]
+    },
+    {
+      "id": "business",
+      "label": "业务设置",
+      "labelKey": "crmNav.manage.category.business",
+      "order": 40,
       "items": [
         {
           "id": "backend-config-sales",
@@ -770,34 +856,81 @@
           "order": 1
         },
         {
-          "id": "backend-config-translations",
-          "label": "翻译管理",
-          "labelKey": "translations.config.nav.title",
-          "href": "/backend/config/translations",
-          "order": 7
-        },
-        {
-          "id": "backend-config-scheduled-jobs",
-          "label": "定时任务",
-          "labelKey": "scheduler.title",
-          "href": "/backend/config/scheduled-jobs",
-          "order": 30
-        },
-        {
           "id": "backend-config-wms",
           "label": "仓储配置",
           "labelKey": "wms.backend.config.nav.title",
           "href": "/backend/config/wms",
           "order": 35,
           "iconName": "settings"
+        },
+        {
+          "id": "backend-config-customers-deals",
+          "label": "商机设置",
+          "labelKey": "customers.deals.settings.pageTitle",
+          "href": "/backend/config/customers/deals",
+          "order": 350
         }
       ]
     },
     {
-      "id": "settings.sections.dev",
-      "label": "开发者与定制",
-      "labelKey": "settings.sections.dev",
-      "order": 8,
+      "id": "rules",
+      "label": "规则流程",
+      "labelKey": "crmNav.manage.category.rules",
+      "order": 50,
+      "items": [
+        {
+          "id": "backend-definitions",
+          "label": "工作流定义",
+          "labelKey": "workflows.definitions.title",
+          "href": "/backend/definitions",
+          "order": 100,
+          "iconName": "workflow"
+        }
+      ]
+    },
+    {
+      "id": "system",
+      "label": "系统维护",
+      "labelKey": "crmNav.manage.category.system",
+      "order": 80,
+      "items": [
+        {
+          "id": "backend-config-translations",
+          "label": "翻译管理",
+          "labelKey": "translations.config.nav.title",
+          "href": "/backend/config/translations",
+          "order": 7
+        }
+      ]
+    },
+    {
+      "id": "diagnostics",
+      "label": "诊断",
+      "labelKey": "crmNav.manage.category.diagnostics",
+      "order": 90,
+      "items": [
+        {
+          "id": "backend-instances-failure-queue",
+          "label": "失败队列",
+          "labelKey": "workflows.failureQueue.title",
+          "href": "/backend/instances/failure-queue",
+          "order": 115,
+          "iconName": "triangle-alert"
+        },
+        {
+          "id": "backend-audit-logs",
+          "label": "审计日志",
+          "labelKey": "audit_logs.nav.title",
+          "href": "/backend/audit-logs",
+          "order": 160
+        }
+      ]
+    },
+    {
+      "id": "advanced",
+      "label": "高级",
+      "labelKey": "crmNav.manage.category.advanced",
+      "order": 100,
       "items": [
         {
           "id": "backend-docs",
@@ -807,36 +940,28 @@
           "order": 1000
         }
       ]
-    },
-    {
-      "id": "settings.sections.security",
-      "label": "安全",
-      "labelKey": "settings.sections.security",
-      "order": 9,
-      "items": [
-        {
-          "id": "backend-audit-logs",
-          "label": "审计日志",
-          "labelKey": "audit_logs.nav.title",
-          "href": "/backend/audit-logs",
-          "order": 160
-        }
-      ]
     }
   ],
   "settingsPathPrefixes": [
-    "/backend/users",
-    "/backend/config",
-    "/backend/config/sales",
-    "/backend/config/translations",
-    "/backend/config/scheduled-jobs",
-    "/backend/config/wms",
     "/backend/docs",
+    "/backend/config",
+    "/backend/config/ai-write-approvals",
+    "/backend/config/sales",
+    "/backend/config/wms",
+    "/backend/config/customers",
+    "/backend/config/customers/deals",
     "/backend/webhooks",
+    "/backend/config/scheduled-jobs",
     "/backend/integrations",
     "/backend/data-sync",
-    "/backend/payment-gateways",
-    "/backend/audit-logs"
+    "/backend/communication_channels",
+    "/backend/communication_channels/channels",
+    "/backend/instances",
+    "/backend/instances/failure-queue",
+    "/backend/audit-logs",
+    "/backend/definitions",
+    "/backend/config/translations",
+    "/backend/users"
   ],
   "profileSections": [
     {
@@ -894,6 +1019,7 @@
     "customers.widgets.new-customers",
     "customers.widgets.new-deals",
     "customers.interactions.view",
+    "customers.interactions.manage",
     "customers.roles.view",
     "customers.roles.manage",
     "customers.email.compose",
@@ -974,6 +1100,7 @@
     "phone_calls.view",
     "ai_assistant.view",
     "ai_assistant.conversations.share",
+    "dsh_approvals.review",
     "translations.view",
     "translations.manage",
     "scheduler.jobs.view",

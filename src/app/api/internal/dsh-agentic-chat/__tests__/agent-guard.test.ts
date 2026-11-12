@@ -30,7 +30,7 @@ describe('DSH agentic bridge agent guard', () => {
       request('http://localhost/api/ai_assistant/ai/chat?agent=probe.does_not_exist'),
     )
     expect(response?.status).toBe(404)
-    await expect(response?.json()).resolves.toMatchObject({ code: 'agent_not_found' })
+    await expect(response?.json()).resolves.toMatchObject({ code: 'agent_unknown' })
   })
 
   it('fails closed when the registry cannot be loaded', async () => {
