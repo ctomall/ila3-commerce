@@ -1,0 +1,67 @@
+{
+ "startedAt": "2026-11-12T00:40:31.881Z",
+ "industry": "QA-WRITES-004031",
+ "login": 200,
+ "turnA": {
+  "status": 200,
+  "ms": 8143,
+  "errors": [],
+  "text": "我会先查找公司，然后尝试对找到的第一家公司提交行业变更。已找到第一家公司 **Harborview Analytics**（id `bc7f08f6-927f-4279-8de0-fab72afa4b6e`，当前行业为 Software）。现在为它提交行业更新。两个工具均已完成调用，结果如下：\n\n1. **crm_find_companies**（query 为空，limit 2）返回 2 家公司：\n   - Harborview Analytics — `bc7f08f6-927f-4279-8de0-fab72afa4b6e`，行业 Software\n   - Copperleaf Design — `f67258f2-cde8-4d55-97b0-7e2477519724`，行业 Interior Design\n\n2. **crm_update_company** 已针对第一家公司 Harborview Analytics 调用，拟将 `fields.industry` 改为 `QA-WRITES-004031`。\n\n写入未直接生效，服务端返回：\n\n```\n403 approval_required\n\"This write needs employee approval. The request is visible in the CRM write-approval page.\"\n```\n\n这是 CRM 的写入审批强制机制，我无法代为批准。请求已进入 CRM 的写审批页面；请在该页面审阅并批准后告诉我，我会用完全相同的参数重试这次更新。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[{\\\"id\\\":\\\"bc7f08f6-927f-4279-8de0-fab72afa4b6e\\\",\\\"name\\\":\\\"Harborview Analytics\\\",\\\"domain\\\":\\\"harborviewanalytics.com\\\",\\\"websiteUrl\\\":\\\"https://harborviewanalytics.com\\\",\\\"industry\\\":\\\"Software\\\",\\\"sizeBucket\\\":\\\"201-500\\\"},{\\\"id\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"name\\\":\\\"Copperleaf Design\\\",\\\"domain\\\":\\\"copperleaf.design\\\",\\\"websiteUrl\\\":\\\"htt",
+   "[{\"type\":\"text\",\"text\":\"Error: {\\\"error\\\":\\\"This write needs employee approval. The request is visible in the CRM write-approval page.\\\",\\\"code\\\":\\\"approval_required\\\",\\\"status\\\":403}\"}]"
+  ]
+ },
+ "approvalAfterA": "f3fc712b-a732-46f8-8eeb-511c384025f7|pending|{\"fields\": {\"industry\": \"QA-WRITES-004031\"}, \"companyId\": \"bc7f08f6-927f-4279-8de0-fab72afa4b6e\", \"companyName\": \"Harborview Analytics\"}",
+ "preview": {
+  "fields": {
+   "industry": "QA-WRITES-004031"
+  },
+  "companyId": "bc7f08f6-927f-4279-8de0-fab72afa4b6e",
+  "companyName": "Harborview Analytics"
+ },
+ "approve": {
+  "status": 200,
+  "body": {
+   "approval": {
+    "id": "f3fc712b-a732-46f8-8eeb-511c384025f7",
+    "tool": "crm.update_company",
+    "summary": {
+     "fields": {
+      "industry": "QA-WRITES-004031"
+     },
+     "companyId": "bc7f08f6-927f-4279-8de0-fab72afa4b6e",
+     "companyName": "Harborview Analytics"
+    },
+    "status": "approved",
+    "decidedAt": "2026-11-12T00:40:40.123Z",
+    "expiresAt": "2026-11-12T00:50:40.123Z"
+   }
+  }
+ },
+ "turnB": {
+  "status": 200,
+  "ms": 5429,
+  "errors": [],
+  "text": "调用完成，已按要求原样传入参数。\n\n**结果：**\n- `ok`: true\n- `companyId`: bc7f08f6-927f-4279-8de0-fab72afa4b6e\n- `updatedFields`: [\"industry\"]\n- 备注：写入已执行；目标公司在调用者组织内（组织隔离 ≠ 员工客户隔离）\n\n即该公司的 `industry` 字段已成功更新为 `QA-WRITES-004031`。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"{\\\"ok\\\":true,\\\"companyId\\\":\\\"bc7f08f6-927f-4279-8de0-fab72afa4b6e\\\",\\\"updatedFields\\\":[\\\"industry\\\"],\\\"note\\\":\\\"写入已执行；目标公司在调用者组织内（组织隔离≠员工客户隔离）\\\"}\"}]"
+  ]
+ },
+ "approvalAfterB": "consumed|t",
+ "companyApi": {
+  "status": 200,
+  "industry": "QA-WRITES-004031"
+ },
+ "turnC": {
+  "status": 200,
+  "ms": 6042,
+  "errors": [],
+  "text": "已按你指定的参数调用了 `crm_update_company`，工具返回如下：\n\n```json\n{\n  \"error\": \"This approval was already used; it cannot write twice.\",\n  \"code\": \"approval_consumed\",\n  \"status\": 409\n}\n```\n\n即：该写入审批**已被使用过**，同一审批不能重复写两次，因此本次未产生任何变更。若仍需将 `industry` 改为 `QA-WRITES-004031`，需要在 CRM 写入审批页面重新发起/获取一次新的审批，然后再重试相同调用。",
+  "toolResults": [
+   "[{\"type\":\"text\",\"text\":\"Error: {\\\"error\\\":\\\"This approval was already used; it cannot write twice.\\\",\\\"code\\\":\\\"approval_consumed\\\",\\\"status\\\":409}\"}]"
+  ]
+ },
+ "approvalAfterC": "consumed",
+ "pendingAfterC": "0"
+}
