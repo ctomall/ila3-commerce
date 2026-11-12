@@ -23,6 +23,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pg from 'pg'
 import { isMainEntry } from './lib/is-main-entry.mjs'
+import { isReconciled } from './reconcile-unknown.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const ACTIVE_LINK_STATES = ['queued', 'pending']
@@ -49,7 +50,18 @@ export function classify({ links = [], unknown = [], ledger = [], completed = []
   // Unknown is already a terminal state; age does not make it more urgent, so
   // every such link is listed for reconciliation regardless of the window.
   const unknownLinks = unknown.filter((row) => row.delivery_status === 'unknown')
-  return { staleLinks, danglingLedger, completedWithoutLink, unknownLinks, minutes }
+  // An operator can close the debt with scripts/reconcile-unknown.mjs, which only
+  // appends to `channel_metadata.reconciliation` and never changes the status. A
+  // reconciled link stays listed for the record but is no longer open debt.
+  const unresolvedUnknownLinks = unknownLinks.filter((row) => !isReconciled(row))
+  return {
+    staleLinks,
+    danglingLedger,
+    completedWithoutLink,
+    unknownLinks,
+    unresolvedUnknownLinks,
+    minutes,
+  }
 }
 
 function readDatabaseUrl() {
@@ -153,6 +165,7 @@ export async function main(argv = process.argv.slice(2)) {
     danglingLedger: result.danglingLedger.length,
     completedWithoutLink: result.completedWithoutLink.length,
     unknownLinks: result.unknownLinks.length,
+    unresolvedUnknownLinks: result.unresolvedUnknownLinks.length,
     rows: {
       links: result.staleLinks,
       ledger: result.danglingLedger,
@@ -173,7 +186,8 @@ export async function main(argv = process.argv.slice(2)) {
       `audit-stuck-outbound: ${summary.staleLinks} stale outbound link(s), ` +
         `${summary.danglingLedger} dangling ledger row(s), ` +
         `${summary.completedWithoutLink} composed send(s) without a link older than ${minutes}m, ` +
-        `${summary.unknownLinks} unknown-outcome send(s) to reconcile` +
+        `${summary.unknownLinks} unknown-outcome send(s) to reconcile ` +
+        `(${summary.unresolvedUnknownLinks} unresolved)` +
         (summary.ledgerAvailable ? '' : ' (ledger table not migrated)'),
     )
     for (const row of result.staleLinks) {
@@ -194,7 +208,7 @@ export async function main(argv = process.argv.slice(2)) {
     summary.staleLinks > 0 ||
     summary.danglingLedger > 0 ||
     summary.completedWithoutLink > 0 ||
-    (strictUnknown && summary.unknownLinks > 0)
+    (strictUnknown && summary.unresolvedUnknownLinks > 0)
   return findings ? (allowStuck ? 0 : 1) : 0
 }
 

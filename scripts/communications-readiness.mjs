@@ -28,7 +28,8 @@ export function evaluate(facts) {
   if (facts.stuck.staleLinks > 0) warnings.push(`${facts.stuck.staleLinks} stale outbound link(s) older than ${facts.stuck.minutes}m`)
   if (facts.stuck.danglingLedger > 0) warnings.push(`${facts.stuck.danglingLedger} dangling send claim(s)`)
   if (facts.stuck.completedWithoutLink > 0) warnings.push(`${facts.stuck.completedWithoutLink} composed send(s) without a delivery link`)
-  if (facts.stuck.unknownLinks > 0) warnings.push(`${facts.stuck.unknownLinks} unknown-outcome send(s) need reconciliation (see audit-stuck-outbound)`)
+  const unresolvedUnknown = facts.stuck.unresolvedUnknownLinks ?? facts.stuck.unknownLinks ?? 0
+  if (unresolvedUnknown > 0) warnings.push(`${unresolvedUnknown} unknown-outcome send(s) need reconciliation (see audit-stuck-outbound)`)
   if (!facts.webhookVerifyToken) warnings.push('META_WEBHOOK_VERIFY_TOKEN is not configured (WhatsApp verify endpoint returns 503)')
   return { ready: blockers.length === 0, blockers, warnings }
 }
@@ -131,6 +132,7 @@ async function readFacts(minutes = 30) {
         danglingLedger: stuck.danglingLedger.length,
         completedWithoutLink: stuck.completedWithoutLink.length,
         unknownLinks: stuck.unknownLinks.length,
+        unresolvedUnknownLinks: stuck.unresolvedUnknownLinks.length,
       },
     }
   } finally {

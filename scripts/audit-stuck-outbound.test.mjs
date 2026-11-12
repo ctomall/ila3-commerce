@@ -53,6 +53,26 @@ test('a clean board reports nothing', () => {
   assert.equal(completedWithoutLink.length, 0)
 })
 
+test('a reconciled unknown link is still listed but is no longer open debt', () => {
+  const { unknownLinks, unresolvedUnknownLinks } = classify({
+    now: NOW,
+    unknown: [
+      { id: 'u1', delivery_status: 'unknown', channel_metadata: { unknownReason: 'local_commit_failed' }, created_at: old(5) },
+      {
+        id: 'u2',
+        delivery_status: 'unknown',
+        channel_metadata: {
+          unknownReason: 'attempt_lease_expired',
+          reconciliation: [{ outcome: 'confirmed-not-sent', note: 'provider shows no message', at: old(1) }],
+        },
+        created_at: old(500),
+      },
+    ],
+  })
+  assert.deepEqual(unknownLinks.map((r) => r.id), ['u1', 'u2'])
+  assert.deepEqual(unresolvedUnknownLinks.map((r) => r.id), ['u1'])
+})
+
 test('reports unknown-outcome links for reconciliation without counting them as stale', () => {
   const { staleLinks, unknownLinks } = classify({
     now: NOW,
