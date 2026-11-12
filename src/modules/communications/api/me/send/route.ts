@@ -15,6 +15,7 @@ import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
 import { CommunicationChannel, ExternalConversation, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { canActorReply } from '../../../lib/reply-permission-server'
+import { sanitizeCallerChannelMetadata } from '../../../lib/channel-metadata'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -478,7 +479,9 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   const channelMetadata = {
-    ...(body.channelMetadata ?? {}),
+    // Routing fields are validated server-side; strip anything a caller could use
+    // to redirect the recipient or forge threading headers (defence in depth).
+    ...sanitizeCallerChannelMetadata(body.channelMetadata),
     ...(templateMetadata ? { template: templateMetadata } : {}),
     ...(resolvedMedia ? { media: resolvedMedia } : {}),
     ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),

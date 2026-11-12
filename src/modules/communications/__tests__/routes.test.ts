@@ -200,7 +200,18 @@ describe('POST /api/communications/me/send', () => {
           subject: 'Re: demo',
           body: { plain: 'hello' },
           clientRequestId: 'req-12345678',
-          channelMetadata: { personId: 'p1' },
+          // Routing keys are smuggled here on purpose: the BFF must strip them
+          // before the hub ever sees the metadata (defence in depth).
+          channelMetadata: {
+            personId: 'p1',
+            to: ['attacker@example.test'],
+            cc: ['cc@example.test'],
+            bcc: ['bcc@example.test'],
+            subject: 'spoofed',
+            inReplyTo: '<spoofed@example.test>',
+            references: ['<spoofed@example.test>'],
+            replyToExternalId: 'wamid.spoofed',
+          },
         }),
       }),
     )
@@ -220,6 +231,11 @@ describe('POST /api/communications/me/send', () => {
       subject: 'Re: demo',
       channelMetadata: { personId: 'p1', clientRequestId: 'req-12345678' },
     })
+    // The smuggled routing fields are gone; the legitimate pass-through survives.
+    const forwarded = (input as { channelMetadata: Record<string, unknown> }).channelMetadata
+    for (const key of ['to', 'cc', 'bcc', 'subject', 'inReplyTo', 'references', 'replyToExternalId']) {
+      expect(forwarded[key]).toBeUndefined()
+    }
   })
 
   it('passes a facade refusal through with its status and field errors', async () => {
