@@ -449,6 +449,14 @@
           "order": 470
         },
         {
+          "id": "/backend/communications/channels",
+          "href": "/backend/communications/channels",
+          "title": "渠道账号",
+          "defaultTitle": "渠道账号",
+          "enabled": true,
+          "order": 480
+        },
+        {
           "id": "/backend/inbox-ops",
           "href": "/backend/inbox-ops",
           "title": "收件箱建议",

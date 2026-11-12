@@ -639,6 +639,10 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
       if (!tenantId || !organizationId) return { status: 0, text: 'fixture-error: no scope' }
       const period = new Date().toISOString().slice(0, 7)
       const bucketId = `00000000-0000-4000-8000-${String(Date.now()).slice(-12)}`
+      // Declared outside the try: the finally has to delete it, and a `const` inside
+      // the try block is not visible there (that is how a spent `send` bucket leaked
+      // and then poisoned the next run's reservation with "tenant 剩余 0").
+      let sendBucketId = null
       const keyBase = `m4-quota-${Date.now()}`
       try {
         psqlValue(
@@ -674,7 +678,7 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         checks.push({ name: 'no-negative-headroom', ok: Number(psqlValue(`select reserved_units + consumed_units from leadgen_quota_buckets where id = '${bucketId}'`)) === 1 })
 
         // A dispatch must be funded: reserve one `send` unit and keep its lease.
-        const sendBucketId = `00000000-0000-4000-8000-${String(Date.now() + 1).slice(-12)}`
+        sendBucketId = `00000000-0000-4000-8000-${String(Date.now() + 1).slice(-12)}`
         psqlValue(
           `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${sendBucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'send', '${period}', 1, 0, 0, 1, now(), now())`,
         )
@@ -685,7 +689,11 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         })
         const sendReserveBody = await sendReserve.json().catch(() => ({}))
         const leaseToken = sendReserveBody?.reservation?.leaseToken
-        checks.push({ name: 'send-lease-reserved', ok: sendReserve.status === 201 && Boolean(leaseToken) })
+        checks.push({
+          name: 'send-lease-reserved',
+          ok: sendReserve.status === 201 && Boolean(leaseToken),
+          detail: `${sendReserve.status} ${JSON.stringify(sendReserveBody?.error ?? null)}`,
+        })
 
         // Approval-token abuse: an approval is bound to the reviewed body, and the
         // dispatch boundary accepts exactly one dispatch per approval. The transport
@@ -797,7 +805,15 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         }
       } finally {
         psqlValue(`delete from leadgen_quota_reservations where idempotency_key like '${keyBase}%'`)
-        psqlValue(`delete from leadgen_quota_buckets where id = '${bucketId}' or id = '${typeof sendBucketId !== 'undefined' ? sendBucketId : '00000000-0000-0000-0000-000000000000'}'`)
+        // Only ever build the id list from real ids: `id = 'undefined'` or
+        // `id = coalesce('null', …)` makes the whole DELETE fail on `uuid = text`,
+        // which is how spent fixture buckets leaked and poisoned the next run.
+        const cleanupIds = [bucketId, sendBucketId].filter(Boolean).map((id) => `'${id}'`).join(', ')
+        psqlValue(`delete from leadgen_quota_buckets where id in (${cleanupIds})`)
+        const leftover = Number(psqlValue(`select count(*) from leadgen_quota_buckets where id in (${cleanupIds})`))
+        if (leftover !== 0) {
+          checks.push({ name: 'fixture-cleanup', ok: false, detail: `bucket rows left: ${leftover}` })
+        }
       }
       const ok = checks.length > 0 && checks.every((check) => check.ok)
       return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
