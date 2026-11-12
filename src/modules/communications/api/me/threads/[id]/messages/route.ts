@@ -15,6 +15,7 @@ import { sanitizeChannelHtml } from '@open-mercato/core/modules/communication_ch
 import { htmlToPlainText } from '@open-mercato/shared/lib/html/htmlToPlainText'
 import { extractMediaSummary } from '../../../../../lib/media'
 import { describeChannelAvailability } from '../../../../../lib/channel-availability'
+import { nullInclusiveOrgWhere } from '../../../../../lib/org-scope'
 import { hasChannelAdapter } from '@open-mercato/core/modules/communication_channels/lib/adapter-registry-singleton'
 
 export const metadata = {
@@ -213,7 +214,7 @@ export async function GET(
         {
           id: { $in: linkedMessageIds },
           tenantId,
-          ...(organizationId ? { organizationId: { $in: [organizationId, null] } } : {}),
+          ...nullInclusiveOrgWhere(organizationId),
           deletedAt: null,
         } as FilterQuery<Message>,
       )

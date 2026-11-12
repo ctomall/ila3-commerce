@@ -1,13 +1,17 @@
 import { NextResponse } from 'next/server'
-import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
+import type { EntityManager } from '@mikro-orm/postgresql'
 import { z } from 'zod'
 import { CommandBus } from '@open-mercato/shared/lib/commands/command-bus'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import { MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
-import { Message } from '@open-mercato/core/modules/messages/data/entities'
 import { canActorReply } from '../../../../../lib/reply-permission-server'
 import { resolveConversationForCaller } from '../../../../../lib/conversation-access'
+import {
+  MAX_NOTE_LENGTH,
+  buildInternalNoteInput,
+  listInternalNotes,
+} from '../../../../../lib/internal-notes'
 
 /**
  * Internal notes for one inbox conversation (design rev2 `F3-06`).
@@ -34,8 +38,6 @@ export const metadata = {
   POST: { requireAuth: true, requireFeatures: ['communication_channels.view'] },
 }
 
-const CONVERSATION_SOURCE = 'communication_channels.conversation'
-const MAX_NOTE_LENGTH = 4000
 
 const noteSchema = z.object({
   body: z.string().trim().min(1).max(MAX_NOTE_LENGTH),
@@ -65,30 +67,12 @@ export async function GET(
   )
   if (!conversation) return notFound()
 
-  const notes = await em.find(
-    Message,
-    {
-      tenantId,
-      visibility: 'internal',
-      sourceEntityType: CONVERSATION_SOURCE,
-      sourceEntityId: conversation.id,
-      deletedAt: null,
-      ...(organizationId ? { organizationId: { $in: [organizationId, null] } } : {}),
-    } as FilterQuery<Message>,
-    { orderBy: { createdAt: 'asc' }, limit: 200 },
-  )
-
-  return NextResponse.json({
-    items: notes.map((note) => ({
-      id: note.id,
-      body: note.body,
-      bodyFormat: note.bodyFormat,
-      subject: note.subject,
-      authorUserId: note.senderUserId,
-      threadId: note.threadId ?? null,
-      createdAt: note.createdAt?.toISOString?.() ?? null,
-    })),
+  const notes = await listInternalNotes(em, {
+    tenantId,
+    organizationId,
+    conversationId: conversation.id,
   })
+  return NextResponse.json({ items: notes })
 }
 
 export async function POST(
@@ -143,25 +127,15 @@ export async function POST(
 
   const commandBus = container.resolve('commandBus') as CommandBus
   const { result } = await commandBus.execute('messages.messages.compose', {
-    input: {
-      visibility: 'internal' as const,
-      // An internal message needs at least one recipient; the note is authored by
-      // and addressed to the same staff member, and access is decided by the
-      // conversation scope above, not by this routing field.
-      recipients: [{ userId: auth.sub as string, type: 'to' as const }],
-      subject: conversation.subject?.trim() || '内部备注',
-      body: parsed.data.body,
-      bodyFormat: 'text' as const,
-      type: 'note',
-      isDraft: false,
-      sendViaEmail: false,
-      sourceEntityType: CONVERSATION_SOURCE,
-      sourceEntityId: conversation.id,
-      ...(parentMessageId ? { parentMessageId } : {}),
+    input: buildInternalNoteInput({
       tenantId,
       organizationId,
       userId: auth.sub as string,
-    },
+      conversationId: conversation.id,
+      subject: conversation.subject,
+      body: parsed.data.body,
+      parentMessageId,
+    }),
     ctx: {
       container,
       auth,

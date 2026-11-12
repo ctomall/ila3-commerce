@@ -6,6 +6,7 @@ import {
   ChannelIngestDeadLetter,
   CommunicationChannel,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
+import { nullInclusiveOrgWhere } from '../../../lib/org-scope'
 
 /**
  * Inbound dead letters (design rev2 `F8-03`).
@@ -39,7 +40,7 @@ export async function GET(req: Request): Promise<Response> {
     ChannelIngestDeadLetter,
     {
       tenantId,
-      ...(organizationId ? { organizationId: { $in: [organizationId, null] } } : {}),
+      ...nullInclusiveOrgWhere(organizationId),
     } as never,
     { orderBy: { createdAt: 'desc' }, limit: MAX_ROWS },
   )

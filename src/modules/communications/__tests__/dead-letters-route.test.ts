@@ -81,7 +81,8 @@ describe('GET /api/communications/me/dead-letters', () => {
     expect(response.status).toBe(200)
     await expect(response.json()).resolves.toEqual({ items: [], total: 0 })
     const where = (find.mock.calls[0] as unknown[])[1] as Row
-    expect(where).toMatchObject({ tenantId: 't1', organizationId: { $in: ['o1', null] } })
+    // NULL-inclusive: SQL `IN ('o1', NULL)` would drop tenant-wide rows.
+    expect(where).toMatchObject({ tenantId: 't1', $or: [{ organizationId: 'o1' }, { organizationId: null }] })
   })
 
   it('rejects anonymous callers without opening a container', async () => {

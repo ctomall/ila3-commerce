@@ -1091,7 +1091,11 @@ describe('GET /api/communications/me/threads/[id]/messages', () => {
     const where = platformRead![1] as { tenantId: string; deletedAt: unknown; organizationId?: unknown }
     expect(where.tenantId).toBe('t1')
     expect(where.deletedAt).toBeNull()
-    expect(JSON.stringify(where.organizationId)).toContain('o1')
+    // NULL-inclusive scope: `$in: ['o1', null]` would silently drop tenant-wide rows.
+    expect((where as { $or?: unknown }).$or).toEqual([
+      { organizationId: 'o1' },
+      { organizationId: null },
+    ])
   })
 
   it('pages from the newest window and exposes an older cursor', async () => {
