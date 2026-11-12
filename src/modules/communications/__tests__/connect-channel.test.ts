@@ -1,5 +1,11 @@
 import { describe, expect, it } from '@jest/globals'
-import { PROVIDERS, buildCredentials, mapConnectError } from '../backend/communications/channels/connect/connect-channel'
+import {
+  EXTERNAL_PROVIDERS,
+  PROVIDERS,
+  buildCredentials,
+  findExternalProvider,
+  mapConnectError,
+} from '../backend/communications/channels/connect/connect-channel'
 
 describe('tenant channel connect helpers', () => {
   const whatsapp = PROVIDERS.find((entry) => entry.key === 'whatsapp-business')!
@@ -32,5 +38,34 @@ describe('tenant channel connect helpers', () => {
     expect(mapConnectError(422, null)).toContain('凭据校验未通过')
     expect(mapConnectError(503, null)).toContain('稍后')
     expect(mapConnectError(418, null)).toContain('418')
+  })
+})
+
+describe('email providers are named, not faked (F1-08 / design rev2)', () => {
+  it('lists Resend as the phase-1 email path with the fields its schema requires', () => {
+    const resend = findExternalProvider('resend')!
+    expect(resend).toBeTruthy()
+    expect(resend.requiredFields.map((field) => field.key)).toEqual(['apiKey', 'fromAddress'])
+    expect(resend.requiredFields.find((field) => field.key === 'apiKey')?.secret).toBe(true)
+    expect(resend.note).toContain('没有入站')
+  })
+
+  it('points every email provider at the installed profile connect surface', () => {
+    for (const provider of EXTERNAL_PROVIDERS) {
+      expect(provider.connectHref).toBe('/backend/profile/communication-channels')
+    }
+  })
+
+  it('keeps email providers out of the app-managed provider list, because the tenant route refuses them', () => {
+    const appKeys = PROVIDERS.map((provider) => provider.key as string)
+    for (const provider of EXTERNAL_PROVIDERS) {
+      expect(appKeys).not.toContain(provider.key)
+    }
+    expect(findExternalProvider('whatsapp-business')).toBeUndefined()
+    expect(findExternalProvider('unknown-provider')).toBeUndefined()
+  })
+
+  it('does not invent credentials for the OAuth-only provider', () => {
+    expect(findExternalProvider('gmail')?.requiredFields).toEqual([])
   })
 })
