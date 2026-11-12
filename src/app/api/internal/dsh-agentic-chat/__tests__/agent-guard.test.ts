@@ -35,7 +35,9 @@ describe('DSH agentic bridge agent guard', () => {
 
   it('fails closed when the registry cannot be loaded', async () => {
     const registry = await import('@open-mercato/ai-assistant/modules/ai_assistant/lib/agent-registry')
-    const load = registry.loadAgentRegistry as unknown as jest.Mock
+    const load = registry.loadAgentRegistry as unknown as {
+      mockRejectedValueOnce: (error: Error) => void
+    }
     load.mockRejectedValueOnce(new Error('registry down'))
     const response = await rejectUnknownAgent(
       request('http://localhost/api/ai_assistant/ai/chat?agent=catalog.known_assistant'),
