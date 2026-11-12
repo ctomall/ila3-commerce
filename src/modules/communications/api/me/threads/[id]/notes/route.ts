@@ -4,14 +4,10 @@ import { z } from 'zod'
 import { CommandBus } from '@open-mercato/shared/lib/commands/command-bus'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
-import {
-  CommunicationChannel,
-  ExternalConversation,
-  MessageChannelLink,
-} from '@open-mercato/core/modules/communication_channels/data/entities'
-import { channelOrgScopeWhere } from '@open-mercato/core/modules/communication_channels/lib/access-control'
+import { MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { Message } from '@open-mercato/core/modules/messages/data/entities'
 import { canActorReply } from '../../../../../lib/reply-permission-server'
+import { resolveConversationForCaller } from '../../../../../lib/conversation-access'
 
 /**
  * Internal notes for one inbox conversation (design rev2 `F3-06`).
@@ -45,45 +41,6 @@ const noteSchema = z.object({
   body: z.string().trim().min(1).max(MAX_NOTE_LENGTH),
 })
 
-type ConversationScope = {
-  em: EntityManager
-  conversation: ExternalConversation
-  organizationId: string | null
-  tenantId: string
-}
-
-/** Resolve the conversation and its channel for the caller, or `null` (masked 404). */
-async function resolveConversation(
-  em: EntityManager,
-  tenantId: string,
-  organizationId: string | null,
-  userId: string,
-  conversationId: string,
-): Promise<ConversationScope | null> {
-  if (!/^[0-9a-f-]{36}$/i.test(conversationId)) return null
-  let conversation: ExternalConversation | null
-  try {
-    conversation = await em.findOne(ExternalConversation, {
-      id: conversationId,
-      tenantId,
-      ...channelOrgScopeWhere(organizationId),
-    } as FilterQuery<ExternalConversation>)
-  } catch (err) {
-    // A malformed uuid must not surface as a 500 from the cast.
-    if ((err as { code?: string }).code === '22P02') return null
-    throw err
-  }
-  if (!conversation) return null
-  const channel = await em.findOne(CommunicationChannel, {
-    id: conversation.channelId,
-    tenantId,
-    deletedAt: null,
-    ...channelOrgScopeWhere(organizationId),
-  } as FilterQuery<CommunicationChannel>)
-  if (!channel || (channel.userId != null && channel.userId !== userId)) return null
-  return { em, conversation, organizationId, tenantId }
-}
-
 function notFound() {
   return NextResponse.json({ error: 'Conversation not found' }, { status: 404 })
 }
@@ -101,8 +58,12 @@ export async function GET(
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
 
-  const scope = await resolveConversation(em, tenantId, organizationId, auth.sub as string, params.id)
-  if (!scope) return notFound()
+  const conversation = await resolveConversationForCaller(
+    em,
+    { tenantId, organizationId, userId: auth.sub as string },
+    params.id,
+  )
+  if (!conversation) return notFound()
 
   const notes = await em.find(
     Message,
@@ -110,7 +71,7 @@ export async function GET(
       tenantId,
       visibility: 'internal',
       sourceEntityType: CONVERSATION_SOURCE,
-      sourceEntityId: scope.conversation.id,
+      sourceEntityId: conversation.id,
       deletedAt: null,
       ...(organizationId ? { organizationId: { $in: [organizationId, null] } } : {}),
     } as FilterQuery<Message>,
@@ -151,8 +112,12 @@ export async function POST(
   const container = await createRequestContainer()
   const em = (container.resolve('em') as EntityManager).fork()
 
-  const scope = await resolveConversation(em, tenantId, organizationId, auth.sub as string, params.id)
-  if (!scope) return notFound()
+  const conversation = await resolveConversationForCaller(
+    em,
+    { tenantId, organizationId, userId: auth.sub as string },
+    params.id,
+  )
+  if (!conversation) return notFound()
 
   const allowed = await canActorReply(
     { sub: auth.sub as string, tenantId, orgId: organizationId },
@@ -171,7 +136,7 @@ export async function POST(
   // still attached through sourceEntityId above.
   const latestLink = await em.findOne(
     MessageChannelLink,
-    { tenantId, externalConversationId: scope.conversation.id } as never,
+    { tenantId, externalConversationId: conversation.id } as never,
     { orderBy: { createdAt: 'desc' } } as never,
   )
   const parentMessageId = (latestLink as { messageId?: string | null } | null)?.messageId ?? undefined
@@ -184,14 +149,14 @@ export async function POST(
       // and addressed to the same staff member, and access is decided by the
       // conversation scope above, not by this routing field.
       recipients: [{ userId: auth.sub as string, type: 'to' as const }],
-      subject: scope.conversation.subject?.trim() || '内部备注',
+      subject: conversation.subject?.trim() || '内部备注',
       body: parsed.data.body,
       bodyFormat: 'text' as const,
       type: 'note',
       isDraft: false,
       sendViaEmail: false,
       sourceEntityType: CONVERSATION_SOURCE,
-      sourceEntityId: scope.conversation.id,
+      sourceEntityId: conversation.id,
       ...(parentMessageId ? { parentMessageId } : {}),
       tenantId,
       organizationId,

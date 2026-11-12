@@ -181,7 +181,7 @@ describe('PUT conversation customer', () => {
 
     const response = await putCustomer({ customerId: null })
     expect(response.status).toBe(200)
-    await expect(response.json()).resolves.toEqual({ linked: null })
+    await expect(response.json()).resolves.toMatchObject({ linked: null, changed: true })
     expect(conversation.contactPersonId).toBeNull()
     expect(calls.flushed).toBe(1)
   })
@@ -192,7 +192,7 @@ describe('PUT conversation customer', () => {
 
     const response = await putCustomer({ customerId: OTHER_CUSTOMER })
     expect(response.status).toBe(404)
-    await expect(response.json()).resolves.toEqual({ error: 'Customer not found' })
+    await expect(response.json()).resolves.toMatchObject({ error: 'Customer not found', code: 'CUSTOMER_NOT_FOUND' })
     expect(conversation.contactPersonId ?? null).toBeNull()
     expect(calls.flushed).toBe(0)
   })
