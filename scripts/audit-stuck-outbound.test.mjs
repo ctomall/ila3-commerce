@@ -52,3 +52,25 @@ test('a clean board reports nothing', () => {
   assert.equal(danglingLedger.length, 0)
   assert.equal(completedWithoutLink.length, 0)
 })
+
+test('reports unknown-outcome links for reconciliation without counting them as stale', () => {
+  const { staleLinks, unknownLinks } = classify({
+    now: NOW,
+    minutes: 30,
+    links: [
+      { id: 'u1', delivery_status: 'unknown', created_at: old(5) },
+      { id: 'u2', delivery_status: 'unknown', created_at: old(500) },
+      { id: 'q1', delivery_status: 'queued', created_at: old(45) },
+      { id: 's1', delivery_status: 'sent', created_at: old(90) },
+    ],
+    unknown: [
+      { id: 'u1', delivery_status: 'unknown', channel_metadata: { unknownReason: 'local_commit_failed' }, created_at: old(5) },
+      { id: 'u2', delivery_status: 'unknown', channel_metadata: { unknownReason: 'attempt_lease_expired' }, created_at: old(500) },
+      { id: 'x1', delivery_status: 'sent' },
+    ],
+  })
+  // Unknown is terminal: it must not show up as a stuck (queued/pending) link.
+  assert.deepEqual(staleLinks.map((r) => r.id), ['q1'])
+  // Both ages are listed: the window does not hide reconciliation debt.
+  assert.deepEqual(unknownLinks.map((r) => r.id), ['u1', 'u2'])
+})

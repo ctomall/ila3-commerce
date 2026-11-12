@@ -11,6 +11,11 @@
  * Usage:
  *   node scripts/audit-stuck-outbound.mjs [--json] [--minutes 30] [--allow-stuck]
  *
+ * Unknown-outcome links (D2 patch: the provider accepted, the local commit did
+ * not land) are terminal and expected under failures, so they are reported as a
+ * reconciliation list but do NOT fail the audit by default; `--strict-unknown`
+ * counts them as findings for a gate that wants zero reconciliation debt.
+ *
  * Exit codes: 0 = clean (or allowed), 1 = stale rows found, 2 = audit failed.
  */
 import fs from 'node:fs'
@@ -21,7 +26,7 @@ import pg from 'pg'
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const ACTIVE_LINK_STATES = ['queued', 'pending']
 
-export function classify({ links = [], ledger = [], completed = [], minutes = 30, now = Date.now() }) {
+export function classify({ links = [], unknown = [], ledger = [], completed = [], minutes = 30, now = Date.now() }) {
   const cutoff = now - minutes * 60_000
   const staleLinks = links.filter((row) => {
     if (!ACTIVE_LINK_STATES.includes(row.delivery_status)) return false
@@ -40,7 +45,10 @@ export function classify({ links = [], ledger = [], completed = [], minutes = 30
     const at = row.created_at ? new Date(row.created_at).getTime() : NaN
     return Number.isFinite(at) && at < cutoff
   })
-  return { staleLinks, danglingLedger, completedWithoutLink, minutes }
+  // Unknown is already a terminal state; age does not make it more urgent, so
+  // every such link is listed for reconciliation regardless of the window.
+  const unknownLinks = unknown.filter((row) => row.delivery_status === 'unknown')
+  return { staleLinks, danglingLedger, completedWithoutLink, unknownLinks, minutes }
 }
 
 function readDatabaseUrl() {
@@ -70,6 +78,15 @@ async function readFacts(minutes) {
         order by created_at
         limit 200`,
       [ACTIVE_LINK_STATES, minutes],
+    )
+    const unknownRows = await client.query(
+      `select id, message_id, external_conversation_id, provider_key, delivery_status,
+              channel_metadata, created_at
+         from message_channel_links
+        where direction = 'outbound'
+          and delivery_status = 'unknown'
+        order by created_at desc
+        limit 50`,
     )
     let ledger = []
     let completed = []
@@ -104,7 +121,7 @@ async function readFacts(minutes) {
       if (error.code === '42P01') ledgerAvailable = false
       else throw error
     }
-    return { links: links.rows, ledger, completed, ledgerAvailable }
+    return { links: links.rows, unknown: unknownRows.rows, ledger, completed, ledgerAvailable }
   } finally {
     await client.end()
   }
@@ -113,6 +130,7 @@ async function readFacts(minutes) {
 export async function main(argv = process.argv.slice(2)) {
   const json = argv.includes('--json')
   const allowStuck = argv.includes('--allow-stuck')
+  const strictUnknown = argv.includes('--strict-unknown')
   const minutesArg = argv.indexOf('--minutes')
   const minutes = minutesArg >= 0 ? Number(argv[minutesArg + 1]) : 30
   if (!Number.isFinite(minutes) || minutes <= 0) {
@@ -126,17 +144,25 @@ export async function main(argv = process.argv.slice(2)) {
     console.error(`audit-stuck-outbound: cannot read database: ${error.message}`)
     return 2
   }
-  const result = classify({ links: facts.links, ledger: facts.ledger, completed: facts.completed, minutes })
+  const result = classify({ links: facts.links, unknown: facts.unknown, ledger: facts.ledger, completed: facts.completed, minutes })
   const summary = {
     minutes,
     ledgerAvailable: facts.ledgerAvailable,
     staleLinks: result.staleLinks.length,
     danglingLedger: result.danglingLedger.length,
     completedWithoutLink: result.completedWithoutLink.length,
+    unknownLinks: result.unknownLinks.length,
     rows: {
       links: result.staleLinks,
       ledger: result.danglingLedger,
       completed: result.completedWithoutLink,
+      unknown: result.unknownLinks.map((row) => ({
+        id: row.id,
+        messageId: row.message_id,
+        providerKey: row.provider_key,
+        reason: row.channel_metadata?.unknownReason ?? row.channel_metadata?.lastError ?? null,
+        createdAt: row.created_at,
+      })),
     },
   }
   if (json) {
@@ -145,7 +171,8 @@ export async function main(argv = process.argv.slice(2)) {
     console.log(
       `audit-stuck-outbound: ${summary.staleLinks} stale outbound link(s), ` +
         `${summary.danglingLedger} dangling ledger row(s), ` +
-        `${summary.completedWithoutLink} composed send(s) without a link older than ${minutes}m` +
+        `${summary.completedWithoutLink} composed send(s) without a link older than ${minutes}m, ` +
+        `${summary.unknownLinks} unknown-outcome send(s) to reconcile` +
         (summary.ledgerAvailable ? '' : ' (ledger table not migrated)'),
     )
     for (const row of result.staleLinks) {
@@ -157,12 +184,17 @@ export async function main(argv = process.argv.slice(2)) {
     for (const row of result.completedWithoutLink) {
       console.log(`  composed ${row.id} clientRequestId=${row.client_request_id} message=${row.message_id}`)
     }
+    for (const row of result.unknownLinks) {
+      const reason = row.channel_metadata?.unknownReason ?? row.channel_metadata?.lastError ?? 'unknown'
+      console.log(`  unknown ${row.id} message=${row.message_id} provider=${row.provider_key} reason=${reason} at=${row.created_at}`)
+    }
   }
-  return summary.staleLinks > 0 || summary.danglingLedger > 0 || summary.completedWithoutLink > 0
-    ? allowStuck
-      ? 0
-      : 1
-    : 0
+  const findings =
+    summary.staleLinks > 0 ||
+    summary.danglingLedger > 0 ||
+    summary.completedWithoutLink > 0 ||
+    (strictUnknown && summary.unknownLinks > 0)
+  return findings ? (allowStuck ? 0 : 1) : 0
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
