@@ -79,6 +79,9 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 ### 部署产物实测（2026-11-12 17:0x，release `f2403fb`）
 
 - 运行 release：`f2403fb`，healthz 200；HEAD `19de35a` 只含文档，`build-freshness` PASS；
+- 进程环境（读自运行中 pid）：`OM_AI_ENGINE=dsh`、`OM_DSH_PERSIST=orm`、`OM_DSH_AGENTIC=1`、
+  `OM_DSH_WRITES=1`、`OM_DSH_OS_ISOLATION=1`；`OM_DSH_INIT_TIMEOUT_MS` 未设置（走运行时默认 10s）；
+- 部署目录 `src/` 中已无 `createOpenCodeClient` / `handleOpenCodeMessageStreaming` 引用；
 - 发布级复验：`verify/verify-2026-11-12T17-04-30.md` — **PASS 25 · FAIL 0 · SKIP 0**，干净工作树；
 - 本 release 含失败重放可见性修复：重放失败 Run 实测 `["error","done"]`；
 - 公开入口真实模型探针 PASS（`dsh.event` 帧 + `dsh_runs` completed）。
