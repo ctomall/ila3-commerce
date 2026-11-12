@@ -77,6 +77,12 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测 `release.json` sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-12 19:45，release `6b389f7`）
+
+- 发布级复验：`verify/verify-2026-11-12T19-45-03.md` — **PASS 25 · FAIL 0 · SKIP 0**，干净工作树；
+- 本 release 含抑制名单后台页（`/backend/leadgen/suppressions`）与新导航入口，真实登录点击验证通过；
+- 导航基线已随新入口重录（superadmin 136/333、admin 131/300、employee 70/126）。
+
 ### 部署产物实测（2026-11-12 17:0x，release `f2403fb`）
 
 - 运行 release：`f2403fb`，healthz 200；HEAD `19de35a` 只含文档，`build-freshness` PASS；

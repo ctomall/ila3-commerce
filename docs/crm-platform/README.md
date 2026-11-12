@@ -18,7 +18,7 @@
 | M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
 | M8 验收 | **发布级 PASS（2026-11-12, commit 6c96938）** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
-**最后一份发布级运行**：`verify/verify-2026-11-12T19-18-06.md` — **PASS 25 · FAIL 0 · SKIP 0**（含抑制名单可运维化、预留绑定草稿、initialize 重试，运行 release `ed9ad8a`，干净工作树）。
+**最后一份发布级运行**：`verify/verify-2026-11-12T19-45-03.md` — **PASS 25 · FAIL 0 · SKIP 0**（含抑制名单后台页与新导航入口，运行 release `6b389f7`，干净工作树）。
 
 上一份：`verify/verify-2026-11-12T17-04-30.md` — **PASS 25 · FAIL 0 · SKIP 0**（含失败重放可见性修复与 M6 发送边界，运行 release `f2403fb`，HEAD `19de35a`）。
 
