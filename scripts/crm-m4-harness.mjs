@@ -661,6 +661,7 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
       // and then poisoned the next run's reservation with "tenant 剩余 0").
       let sendBucketId = null
       let sendBucket2Id = null
+      let outstandingSuppression = null
       const keyBase = `m4-quota-${Date.now()}`
       try {
         psqlValue(
@@ -765,14 +766,31 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
               })
 
               // A suppression hit outranks the approval: the recipient opted out.
+              // This goes through the product API (not a SQL fixture) so the write side
+              // of the control is exercised too.
               const recipientEmail = String(recipient || 'qa@m4.example')
               const recipientHash = createHash('sha256').update(recipientEmail.trim().toLowerCase()).digest('hex')
-              psqlValue(
-                `insert into leadgen_suppressions (id, tenant_id, organization_id, email_hash, email, reason, created_at) values ('00000000-0000-4000-8000-${String(Date.now() + 2).slice(-12)}', '${tenantId}', '${organizationId}', '${recipientHash}', '${recipientEmail.replace(/'/g, '')}', 'unsubscribe', now())`,
-              )
+              outstandingSuppression = recipientHash
+              const suppressRes = await fetch(`${BASE}/api/leadgen/suppressions`, {
+                method: 'POST',
+                headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                body: JSON.stringify({ email: recipientEmail, reason: 'unsubscribe' }),
+              })
+              const suppressBody = await suppressRes.json().catch(() => ({}))
+              checks.push({
+                name: 'suppression-recorded',
+                ok: [200, 201].includes(suppressRes.status) && Boolean(suppressBody?.suppression?.id),
+                detail: `${suppressRes.status}`,
+              })
               const suppressed = await dispatch(draftId, approvalId, leaseToken)
               checks.push({ name: 'suppressed-recipient-refused', ok: suppressed.status === 409 })
-              psqlValue(`delete from leadgen_suppressions where email_hash = '${recipientHash}'`)
+              const releaseRes = await fetch(`${BASE}/api/leadgen/suppressions?email=${encodeURIComponent(recipientEmail)}`, {
+                method: 'DELETE',
+                headers: { cookie: cookies.employee },
+              })
+              const releaseBody = await releaseRes.json().catch(() => ({}))
+              checks.push({ name: 'suppression-released', ok: releaseRes.status === 200 && Number(releaseBody?.released) >= 1 })
+              outstandingSuppression = null
               const noLease = await dispatch(draftId, approvalId)
               checks.push({ name: 'dispatch-without-lease-refused', ok: noLease.status === 400 })
               const sendOnce = await dispatch(draftId, approvalId, leaseToken)
@@ -865,6 +883,9 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
           checks.push({ name: 'draft-created', ok: false, detail: 'no approved candidate to draft against' })
         }
       } finally {
+        if (outstandingSuppression) {
+          psqlValue(`delete from leadgen_suppressions where tenant_id = '${tenantId}' and email_hash = '${outstandingSuppression}'`)
+        }
         psqlValue(`delete from leadgen_quota_reservations where idempotency_key like '${keyBase}%'`)
         // Only ever build the id list from real ids: `id = 'undefined'` or
         // `id = coalesce('null', …)` makes the whole DELETE fail on `uuid = text`,
