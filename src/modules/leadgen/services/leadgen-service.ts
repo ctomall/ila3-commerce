@@ -91,6 +91,7 @@ export type LeadgenRepository = {
     source: string
     runKey: string
   }): Promise<RunRow | null>
+  findRunById(input: { tenantId: string; organizationId: string; id: string }): Promise<RunRow | null>
   createRun(input: {
     tenantId: string
     organizationId: string
@@ -289,11 +290,10 @@ export function createLeadgenService(deps: ServiceDeps) {
       country: input.country,
     })
     if (!dedupeKey) return { ok: false, code: 'invalid_input' }
-    const run = await repo.findRun({
+    const run = await repo.findRunById({
       tenantId: input.tenantId,
       organizationId: input.organizationId,
-      source: 'dsh',
-      runKey: input.runId,
+      id: input.runId,
     })
     if (!run) return { ok: false, code: 'run_not_found' }
     const fingerprint = candidateFingerprint({

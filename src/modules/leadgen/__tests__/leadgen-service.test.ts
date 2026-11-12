@@ -51,6 +51,7 @@ function makeRepo(overrides: Partial<LeadgenRepository> = {}) {
     findRun: jest.fn(async (input: { tenantId: string; organizationId: string; source: string; runKey: string }) =>
       state.runs.find((run) => run.runKey === input.runKey && run.tenantId === input.tenantId) ?? null,
     ),
+    findRunById: jest.fn(async (input: { id: string }) => state.runs.find((run) => run.id === input.id) ?? null),
     createRun: jest.fn(async (input: { id: string; tenantId: string; organizationId: string; source: string; runKey: string; now: string }) => {
       const run: RunRow = { id: input.id, tenantId: input.tenantId, organizationId: input.organizationId, source: input.source, runKey: input.runKey, status: 'open' }
       state.runs.push(run)
@@ -217,7 +218,7 @@ describe('leadgen service — review and intake', () => {
     const { repo, state } = makeRepo()
     state.runs.push({ id: 'run-1', tenantId: 'tenant-1', organizationId: 'org-1', source: 'dsh', runKey: 'run-key-123', status: 'open' })
     const service = serviceFor(repo)
-    const input = { tenantId: 'tenant-1', organizationId: 'org-1', runId: 'run-key-123', companyName: 'Acme', domain: 'acme.example' }
+    const input = { tenantId: 'tenant-1', organizationId: 'org-1', runId: 'run-1', companyName: 'Acme', domain: 'acme.example' }
     const first = await service.submitCandidate(input)
     const second = await service.submitCandidate(input)
     expect(first.ok && first.value.created).toBe(true)

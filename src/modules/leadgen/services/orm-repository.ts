@@ -126,6 +126,15 @@ export function createOrmLeadgenRepository(
       return row ? runRow(row) : null
     },
 
+    async findRunById(input) {
+      const row = await fork().findOne(LeadgenResearchRun, {
+        id: input.id,
+        tenantId: input.tenantId,
+        organizationId: input.organizationId,
+      })
+      return row ? runRow(row) : null
+    },
+
     async createRun(input) {
       const manager = fork()
       const row = manager.create(LeadgenResearchRun, {
