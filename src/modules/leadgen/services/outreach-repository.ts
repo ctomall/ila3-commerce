@@ -36,6 +36,7 @@ function approvalRow(row: LeadgenApproval): ApprovalRow {
     approverUserId: row.approverUserId,
     idempotencyKey: row.idempotencyKey,
     expiresAt: iso(row.expiresAt) ?? new Date(0).toISOString(),
+    revokedAt: iso(row.revokedAt),
     createdAt: iso(row.createdAt) ?? new Date(0).toISOString(),
   }
 }

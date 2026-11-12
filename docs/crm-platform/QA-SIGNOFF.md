@@ -41,7 +41,7 @@
 
 | 项 | 代码 | 测试 | 部署 | 业务验收 | 证据 |
 | --- | --- | --- | --- | --- | --- |
-| M4 对抗（10 pass · 2 weak · 0 fail） | ✅ harness | ✅ | ✅ | ✅ | `poc/2026-11-12-m4/matrix.json` |
+| M4 对抗（10 pass · 2 weak · 0 fail） | ✅ harness | ✅ | ✅ | ✅ | `poc/2026-11-12-m4/matrix.json`；#7 令牌契约见 `leadgen/M6-DISPATCH.md` |
 | M5 审核/去重/幂等入库/额度/UI | ✅ | ✅ 34 例 + 全量 unit | ✅ 4 片迁移已应用 | ✅ 真实员工闭环 + UI 点击 | `leadgen/EVIDENCE-2026-11-12-M5.md` |
 | M8 试用验收 | — | ✅ 25/25 | ✅ | ✅ | `verify/verify-2026-11-12T11-58-03.md` |
 
@@ -62,7 +62,7 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 | 项 | 状态 | 阻塞原因 |
 | --- | --- | --- |
 | M4 #4 子 Agent 提权 | pass-weak | 部署内没有真实子 Agent spawn，只验派生层 |
-| M4 #7 发送侧令牌复用 | pass-weak | 发送入口属 M6，未授权；审批绑定已实测 |
+| M4 #7 真实外发 / send 额度扣减 | pass-weak | 一次性令牌已在模拟传输下实测（`externalEffect: false`）；真实供应商投递与 dispatch 时原子扣减 `send` 额度属 M6 另批 |
 | M6 真实外发 / M7 渠道副作用 | 未做 | 按原授权边界另批 |
 | 在线人数 / 并行 AI Run 目标 | 未定 | 定义与基线已有（`dsh-integration/CONCURRENCY.md`），目标数值待口径 |
 | 数字签收 | 待 QA | 本表供独立 QA 逐项复核，不代表已签收 |

@@ -54,7 +54,9 @@ export async function POST(
       const status =
         result.code === 'draft_not_found'
           ? 404
-          : result.code === 'body_hash_mismatch' || result.code === 'already_decided'
+          : result.code === 'body_hash_mismatch' ||
+              result.code === 'already_decided' ||
+              result.code === 'already_sent'
             ? 409
             : 400
       return refusal(status, result.code, result.code)

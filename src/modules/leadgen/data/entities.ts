@@ -520,6 +520,8 @@ export class LeadgenSend {
   state:
     | 'queued'
     | 'dispatching'
+    /** Recorded by the simulated transport: no provider was contacted. */
+    | 'simulated'
     | 'accepted'
     | 'delivered'
     | 'replied'

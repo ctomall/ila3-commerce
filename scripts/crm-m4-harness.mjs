@@ -626,8 +626,10 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
     expected: '429 / 4xx',
     // Quota bypass is testable now that the reservation API is live: a fixture bucket
     // with one unit must refuse two, and the reservation must not be booked twice.
-    // Approval-token replay belongs to M6 (no approval endpoint is exposed), so the
-    // case reports itself pass-weak instead of claiming the whole attack is covered.
+    // The approval token's single-use contract is now tested at the dispatch boundary
+    // through the simulated transport. Real provider sending, and consuming a `send`
+    // quota unit atomically with dispatch, belong to the separately authorized M6, so
+    // the case still reports pass-weak instead of claiming the whole attack is covered.
     requires: ['leadgen-api'],
     run: async () => {
       const checks = []
@@ -670,8 +672,10 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         checks.push({ name: 'exhausted-429', ok: second.status === 429 })
         checks.push({ name: 'no-negative-headroom', ok: Number(psqlValue(`select reserved_units + consumed_units from leadgen_quota_buckets where id = '${bucketId}'`)) === 1 })
 
-        // Approval-token abuse, first half: an approval is bound to the reviewed body.
-        // Sending does not exist (M6), so reuse at the send boundary cannot be tested.
+        // Approval-token abuse: an approval is bound to the reviewed body, and the
+        // dispatch boundary accepts exactly one dispatch per approval. The transport
+        // is the simulated one (`externalEffect: false`), so this proves the token
+        // contract without any real outbound.
         const candidate = psqlValue(
           `select id || '|' || coalesce(contact_email, 'qa@m4.example') from leadgen_candidates where tenant_id = '${tenantId}' and organization_id = '${organizationId}' and status in ('approved','crm_written') order by updated_at desc limit 1`,
         )
@@ -699,7 +703,59 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
             checks.push({ name: 'approval-bound-to-body', ok: firstApprove.status === 201 })
             checks.push({ name: 'approval-replayed', ok: replayApprove.status === 200 })
             checks.push({ name: 'edited-body-refused', ok: staleApprove.status === 409 })
+            const firstApproval = await firstApprove.json().catch(() => ({}))
+            const approvalId = firstApproval?.approval?.id
+            if (approvalId) {
+              const dispatch = (draft, token) =>
+                fetch(`${BASE}/api/leadgen/drafts/${draft}/sends`, {
+                  method: 'POST',
+                  headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                  body: JSON.stringify({ approvalId: token }),
+                })
+              const sendOnce = await dispatch(draftId, approvalId)
+              const sendOnceBody = await sendOnce.json().catch(() => ({}))
+              checks.push({
+                name: 'one-approval-one-dispatch',
+                ok:
+                  sendOnce.status === 201 &&
+                  sendOnceBody?.send?.state === 'simulated' &&
+                  sendOnceBody?.send?.providerMessageId === null &&
+                  sendOnceBody?.transport?.externalEffect === false,
+                detail: `${sendOnce.status} ${JSON.stringify(sendOnceBody?.send?.state ?? null)}`,
+              })
+              const sendAgain = await dispatch(draftId, approvalId)
+              const sendAgainBody = await sendAgain.json().catch(() => ({}))
+              checks.push({
+                name: 'dispatch-replayed-not-duplicated',
+                ok:
+                  sendAgain.status === 200 &&
+                  Boolean(sendAgainBody?.send?.id) &&
+                  sendAgainBody?.send?.id === sendOnceBody?.send?.id,
+              })
+              checks.push({
+                name: 'single-send-row',
+                ok: psqlValue(`select count(*) from leadgen_sends where approval_id = '${approvalId}'`) === '1',
+              })
+              // The same token must not travel to a different body.
+              const otherDraft = await fetch(`${BASE}/api/leadgen/drafts`, {
+                method: 'POST',
+                headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                body: JSON.stringify({ candidateId, recipientEmail: recipient || 'qa@m4.example', subject: 'M4 approval binding', bodyMarkdown: `other body ${keyBase}` }),
+              })
+              const otherDraftBody = await otherDraft.json().catch(() => ({}))
+              const otherDraftId = otherDraftBody?.draft?.id
+              if (otherDraftId) {
+                const crossed = await dispatch(otherDraftId, approvalId)
+                checks.push({ name: 'approval-not-reusable-on-other-draft', ok: crossed.status === 404 })
+              }
+              // A dispatched draft cannot mint a fresh approval for the same body.
+              const lateApprove = await approve(bodyHash)
+              checks.push({ name: 'approve-after-dispatch-refused', ok: lateApprove.status === 409 })
+            } else {
+              checks.push({ name: 'one-approval-one-dispatch', ok: false, detail: 'no approval id returned' })
+            }
           }
+          psqlValue(`delete from leadgen_sends where draft_id in (select id from leadgen_drafts where candidate_id = '${candidateId}' and subject = 'M4 approval binding')`)
           psqlValue(`delete from leadgen_approvals where draft_id in (select id from leadgen_drafts where candidate_id = '${candidateId}' and subject = 'M4 approval binding')`)
           psqlValue(`delete from leadgen_drafts where candidate_id = '${candidateId}' and subject = 'M4 approval binding'`)
         } else {
@@ -712,7 +768,8 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
       const ok = checks.length > 0 && checks.every((check) => check.ok)
       return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
     },
-    weakReason: '额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验',
+    weakReason:
+      '额度绕过、审批绑定、发送侧一次性令牌均已实测（模拟传输，externalEffect=false）；真实外发与 dispatch 上原子扣减 send 额度属 M6 另批',
     judge: (r) => {
       try {
         const parsed = JSON.parse(r.text)

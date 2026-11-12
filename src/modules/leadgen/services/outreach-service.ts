@@ -36,6 +36,7 @@ export type ApprovalRow = {
   approverUserId: string
   idempotencyKey: string
   expiresAt: string
+  revokedAt: string | null
   createdAt: string
 }
 
@@ -64,7 +65,17 @@ export type OutreachRepository = {
 
 export type OutreachResult<T> =
   | { ok: true; value: T }
-  | { ok: false; code: 'candidate_not_found' | 'draft_not_found' | 'invalid_input' | 'body_hash_mismatch' | 'not_approved_candidate' | 'already_decided' }
+  | {
+      ok: false
+      code:
+        | 'candidate_not_found'
+        | 'draft_not_found'
+        | 'invalid_input'
+        | 'body_hash_mismatch'
+        | 'not_approved_candidate'
+        | 'already_decided'
+        | 'already_sent'
+    }
 
 export function bodyHashOf(subject: string, bodyMarkdown: string): string {
   return createHash('sha256').update(`${subject.trim()}\u0000${bodyMarkdown}`).digest('hex')
@@ -146,6 +157,9 @@ export function createOutreachService(deps: {
     if (input.decision === 'approved' && draft.status === 'approved') {
       return { ok: false, code: 'already_decided' }
     }
+    // A dispatched draft cannot be re-approved: that would mint a second token for
+    // a body the single-use approval already consumed.
+    if (draft.status === 'sent') return { ok: false, code: 'already_sent' }
     const at = now()
     const approval = await repo.insertApproval({
       id: newId(),
@@ -157,6 +171,7 @@ export function createOutreachService(deps: {
       approverUserId: input.approverUserId,
       idempotencyKey: input.idempotencyKey,
       expiresAt: new Date(Date.parse(at) + approvalTtlMs).toISOString(),
+      revokedAt: null,
       now: at,
     })
     if (input.decision === 'approved') {
