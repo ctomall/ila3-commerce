@@ -4,6 +4,18 @@ import { useCallback, useEffect, useState } from 'react'
 
 type Reconciliation = { outcome: string; note: string; operatorUserId: string; at: string }
 
+type DeadLetter = {
+  id: string
+  channelId: string
+  channelDisplayName: string
+  providerKey: string
+  errorClass: string
+  errorMessage: string
+  externalUid: string | null
+  externalMessageId: string | null
+  createdAt: string | null
+}
+
 type Row = {
   linkId: string
   messageId: string
@@ -36,6 +48,8 @@ export function ExceptionsView() {
   const [error, setError] = useState<string | null>(null)
   const [drafts, setDrafts] = useState<Record<string, { outcome: 'confirmed-sent' | 'confirmed-not-sent'; note: string }>>({})
   const [busy, setBusy] = useState<string | null>(null)
+  const [deadLetters, setDeadLetters] = useState<DeadLetter[]>([])
+  const [deadError, setDeadError] = useState<string | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -61,9 +75,27 @@ export function ExceptionsView() {
     }
   }, [])
 
+  const loadDeadLetters = useCallback(async () => {
+    try {
+      const response = await fetch('/api/communications/me/dead-letters', {
+        headers: { accept: 'application/json' },
+      })
+      if (!response.ok) {
+        setDeadError(`死信列表加载失败（HTTP ${response.status}）`)
+        return
+      }
+      const payload = (await response.json().catch(() => ({}))) as { items?: DeadLetter[] }
+      setDeadLetters(Array.isArray(payload.items) ? payload.items : [])
+      setDeadError(null)
+    } catch {
+      setDeadError('死信列表加载失败：网络错误')
+    }
+  }, [])
+
   useEffect(() => {
     void load()
-  }, [load])
+    void loadDeadLetters()
+  }, [load, loadDeadLetters])
 
   async function submit(row: Row) {
     const draft = drafts[row.linkId] ?? { outcome: 'confirmed-sent' as const, note: '' }
@@ -108,6 +140,36 @@ export function ExceptionsView() {
       {!loading && !error && rows.length === 0 ? (
         <p className="text-xs text-muted-foreground">没有待对账的结果。发送结果未知的消息才会出现在这里。</p>
       ) : null}
+
+      <section className="mt-6 space-y-2">
+        <h2 className="text-sm font-semibold">入站死信</h2>
+        <p className="text-xs text-muted-foreground">
+          平台推来的消息/回执没能入库时留在这里。只展示失败信息，不展示抓取的原始报文；需要重放请走运维。
+        </p>
+        <button type="button" onClick={() => void loadDeadLetters()} className="rounded border px-3 py-1 text-xs">
+          刷新死信
+        </button>
+        {deadError ? <p className="text-xs text-red-700 dark:text-red-300">{deadError}</p> : null}
+        {!deadError && deadLetters.length === 0 ? (
+          <p className="text-xs text-muted-foreground">没有死信。</p>
+        ) : null}
+        {deadLetters.length > 0 ? (
+          <ul className="space-y-1 text-xs">
+            {deadLetters.map((letter) => (
+              <li key={letter.id} className="rounded border px-2 py-1">
+                <span className="font-medium">{letter.channelDisplayName || letter.providerKey}</span>
+                {' · '}
+                <span>{letter.errorClass}</span>
+                {' · '}
+                <span className="text-muted-foreground">
+                  {letter.createdAt ? new Date(letter.createdAt).toLocaleString('zh-CN', { hour12: false }) : '时间未知'}
+                </span>
+                <p className="mt-1 break-words text-muted-foreground">{letter.errorMessage}</p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </section>
 
       {rows.map((row) => {
         const draft = drafts[row.linkId] ?? { outcome: 'confirmed-sent' as const, note: '' }
