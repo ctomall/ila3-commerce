@@ -1,6 +1,6 @@
 # 在线人数 与 并行 AI Run：定义、实测基线、待定目标
 
-日期：2026-11-12 · 运行 release：`8d42e12`（生产） · 脚本：`scripts/crm-concurrency-baseline.mjs`
+日期：2026-11-12 · 运行 release：`232d48e`（生产） · 脚本：`scripts/crm-concurrency-baseline.mjs`、`scripts/crm-dsh-concurrency-drill.mjs`
 
 ## 1. 两个数不是一回事
 
@@ -38,6 +38,24 @@
 | 运行后 | `activeRuns=0`；`dsh_runs` 分布 cancelled/completed/failed；`customer_entities` 9→9 无写入 |
 
 **结论（当前架构）**：每名员工同时只允许 **1 个** AI Run；第二个并发请求按设计返回 409，不排队、不静默丢失。
+
+### 跨员工并行（2026-11-12 18:19，release `232d48e`）
+
+命令：`node scripts/crm-dsh-concurrency-drill.mjs`
+证据：`evidence/concurrency-drill-2026-11-12T18-19-23-649Z.json`
+
+| 检查 | 实测 |
+| --- | --- |
+| 两名员工同时发一个真实 Run | 都 200，`dsh_runs` 两行都 `completed` |
+| 两行 Run 归属 | `user_id` 不同（不是一个 Run 被数两次） |
+| 同一员工同时发两个 | `[200, 409]`，仍然只有 1 个在飞 |
+| 跨员工并发墙钟 | 7.7s（同一时刻开始，各自独立完成） |
+
+这把“并行 Run”的口径补全了：**并行度按员工各 1**，跨员工互不阻塞；
+组织级并行数 = 同时活跃员工数（当前上限由员工数决定），不是队列容量。
+
+**目标仍需产品给数**：例如“组织并行 Run = 4”“15 分钟在线 20 人”。给了目标我按同一脚本做压测与门禁，
+不会先编一个数字。
 所以“并行 AI Run”的当前容量是“员工数 × 1”，但组织/租户层面的总并发还受 DSH 子进程、Unix 用户与主机资源约束，本次只测单员工维度。
 
 ## 3. 目标：未定，需要产品口径
