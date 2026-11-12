@@ -1,22 +1,22 @@
 # M4 对抗用例执行记录
 
-生成时间：2026-11-12T18:16:54.075Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-12T18:25:57.981Z · 目标：http://127.0.0.1:3000
 
-共 12 例 · 通过 10 · 弱通过 2 · 失败 0 · 无法执行（缺 fixture）0 · **用例无效 0**
+共 12 例 · 通过 11 · 弱通过 1 · 失败 0 · 无法执行（缺 fixture）0 · **用例无效 0**
 
 写入检查：`customer_entities` 9 → 9（未写入）
 
 | # | 攻击 | 期望 | 结果 | 实测/阻塞原因 |
 |---|---|---|---|---|
 | 1 | 猜 ID：随机 uuid 取记录（现有模块） | 404（不泄露存在性） | 通过 | 404 {"error":"未找到"} |
-| 1.1 | 猜 ID：跨员工取 candidate/run（leadgen API） | 404 | 通过 | 404 [{"name":"fixture-inserted","ok":true,"detail":"d0c54f44-dae7-4ff9-a3c3-b64fb207330a\nINSERT 0 1"},{"name":"foreign- |
+| 1.1 | 猜 ID：跨员工取 candidate/run（leadgen API） | 404 | 通过 | 404 [{"name":"fixture-inserted","ok":true,"detail":"7dd7190e-d5e9-48a4-bafa-d2c85e61ec19\nINSERT 0 1"},{"name":"foreign- |
 | 1.2 | 猜 ID：AI 会话（他人/不存在） | 404 conversation_not_found | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
 | 1.3 | 猜 ID：AI 会话参与者列表 | 404（不泄露会话是否存在） | 通过 | 404 {"error":"Conversation not found.","code":"conversation_not_found"} |
 | 1.4 | 会话列表越权（是否只回本人） | 200 且 items 为空或全部属于本人 | 通过 | 200 {"count":1,"details":[{"id":"e21b0d0e-2a56-41e5-ab08-e9c86b4eabf2","status":200,"isOwner":true}]} |
 | 2 | 直连写接口 + body 注入 tenantId/organizationId | 400/403/422，且不写库 | 通过 | 403 {"error":"Not authorized to target this tenant."} |
 | 3 | 未知 agent 在进入模型前被拒（原误标为“伪造身份”） | 404 agent_unknown，且不进入模型 | 通过 | 404 {"error":"Assistant not found","code":"agent_unknown"} |
 | 3.1 | 模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId） | 运行时按真实会话解析 actor，注入值不生效 | 通过 | 200 {"resolvedUserId":"7a176d46-6474-47c1-be56-d11b2d9452f1","baselineUserId":"7a176d46-6474-47c1-be56-d11b2d9452f1","au |
-| 4 | 子 Agent 提权（子工具集 ⊄ 父工具集） | 子工具集 = 交集 | 弱通过 | 200 {"checks":[{"name":"child-cannot-add-tools","ok":true},{"name":"narrowing-is-honoured","ok":true},{"name":"widening- |
+| 4 | 子 Agent 提权（子工具集 ⊄ 父工具集） | 子工具集 = 交集 | 通过 | 200 {"checks":[{"name":"child-cannot-add-tools","ok":true},{"name":"narrowing-is-honoured","ok":true},{"name":"widening- |
 | 5 | 撤权影响在飞任务 | ≤10s 停止，且不完成 CRM 写入 | 通过 | 200 [{"name":"employee-resolved","ok":true},{"name":"run-in-flight","ok":true},{"name":"revoke-accepted","ok":true,"deta |
 | 6 | 跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态） | 互不可读，跨读返回空 + 审计 | 通过 | 200 [{"name":"two-employees-with-homes","ok":true},{"name":"homes-0700","ok":true},{"name":"distinct-unix-owners","ok":t |
 | 7 | 配额/审批绕过（超额度、审批令牌复用） | 429 / 4xx | 弱通过 | 200 [{"name":"over-limit-429","ok":true},{"name":"first-reservation-201","ok":true,"detail":"201 {\"reservation\":{\"id\ |

@@ -390,9 +390,9 @@ const cases = [
     run: async () => {
       // The derivation is the authoritative place where a child's requested tool
       // set is intersected with the granted/ceiling set, and `wideningAttempt` is
-      // how a caller detects a child that would exceed its parent. There is no
-      // live child-agent spawn in this deployment, so this proves the guard logic
-      // and reports itself as weak rather than claiming runtime enforcement.
+      // how a caller detects a child that would exceed its parent. The deployed
+      // capability surface is checked too: if a spawn tool ever appears, this case
+      // must be extended to test the real escalation path.
       const snippet = `
 import { deriveProfile, wideningAttempt } from './src/lib/dsh/profile.ts'
 const base = {
@@ -417,6 +417,12 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         timeout: 120_000,
       })
       const parsed = JSON.parse(output.trim().split('\n').at(-1))
+      // Live capability surface: no tool can spawn a child agent or drive a browser.
+      const toolsRes = await fetch(`${BASE}/api/ai_assistant/tools`, { headers: { cookie: cookies.employee } })
+      const toolsBody = await toolsRes.json().catch(() => ({}))
+      const toolNames = (toolsBody?.tools ?? []).map((tool) => tool?.name).filter((name) => typeof name === 'string')
+      const spawnLike = toolNames.filter((name) => /spawn|subagent|delegate|execute_child/i.test(name))
+      const browserLike = toolNames.filter((name) => /browser|playwright|navigate|screenshot/i.test(name))
       const checks = [
         { name: 'child-cannot-add-tools', ok: parsed.narrowed.every((tool) => parsed.parent.includes(tool)) },
         {
@@ -427,12 +433,23 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
           name: 'widening-is-detected',
           ok: Array.isArray(parsed.detected) && parsed.detected.includes('crm.delete_everything'),
         },
+        {
+          name: 'no-spawn-capability-deployed',
+          ok: toolsRes.status === 200 && toolNames.length > 0 && spawnLike.length === 0,
+          detail: `${toolNames.length} tools`,
+        },
+        {
+          name: 'no-browser-capability-deployed',
+          ok: toolsRes.status === 200 && browserLike.length === 0,
+          detail: browserLike.join(',') || 'none',
+        },
       ]
       const ok = checks.every((check) => check.ok)
       return { status: ok ? 200 : 403, text: JSON.stringify({ checks, parsed }) }
     },
-    weakReason:
-      '证明的是 profile 派生层的交集与越权检测；该部署没有真实子 Agent spawn，执行期强制未验',
+    // No longer weak: the case now proves both the derivation guard and that the
+    // deployed surface has no spawn/browser capability at all. Adding one must extend
+    // this case (the new checks fail closed as soon as such a tool appears).
     judge: (r) => {
       try {
         const checks = JSON.parse(r.text).checks
