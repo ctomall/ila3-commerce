@@ -946,13 +946,21 @@ async function sweepStaleRuns(service: RunService): Promise<void> {
 
     // Per-run workspaces grow one directory per chat; prune only directories
     // older than the TTL and never follow links. Failures stay non-fatal.
-    const ttlRaw = Number(process.env.OM_DSH_WORKSPACE_TTL_MS)
-    const ttlMs = Number.isFinite(ttlRaw) && ttlRaw > 0 ? ttlRaw : 7 * 24 * 3600 * 1000
-    const pruned = pruneOldWorkspaces({
-      root: process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT,
-      ttlMs,
-    })
-    if (pruned.removed > 0) logger.info('Pruned old DSH workspaces', pruned)
+    //
+    // Under OS isolation the workspaces belong to the employee Unix users, so
+    // this process cannot read or delete them; the root-owned
+    // `dsh-agent-prune.timer` owns that sweep instead.
+    if ((process.env.OM_DSH_OS_ISOLATION ?? '').trim() === '1') {
+      logger.debug('Workspace prune delegated to dsh-agent-prune.timer', {})
+    } else {
+      const ttlRaw = Number(process.env.OM_DSH_WORKSPACE_TTL_MS)
+      const ttlMs = Number.isFinite(ttlRaw) && ttlRaw > 0 ? ttlRaw : 7 * 24 * 3600 * 1000
+      const pruned = pruneOldWorkspaces({
+        root: process.env.OM_DSH_ROOT?.trim() || DEFAULT_DSH_ROOT,
+        ttlMs,
+      })
+      if (pruned.removed > 0) logger.info('Pruned old DSH workspaces', pruned)
+    }
   } catch (error) {
     logger.warn('DSH restart recovery sweep failed', { err: errorMessage(error) })
   }

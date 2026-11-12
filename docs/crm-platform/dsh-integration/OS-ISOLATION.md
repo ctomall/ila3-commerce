@@ -38,7 +38,25 @@
 - 删除某个员工用户/数据属于重要删除，需另行审批；`provision.sh prune` 只删过期
   run workspace。
 
-## 4. 未覆盖
+## 4. 生产验证（release `61435f5`，`OM_DSH_OS_ISOLATION=1`）
+
+| 检查 | 真实结果 |
+| --- | --- |
+| 子进程身份 | 运行中 `ps`：`dsh-91b8e5d004df5dcf 3411861 /usr/bin/node /home/pro/dsh-src/apps/cli/lib/bin.js …`；启动命令 `sudo -n -u dsh-91b8e5d004df5dcf -- /usr/local/lib/dsh-agent/run-with-env /run/dsh-agent/476b8b3a…/env …` |
+| 真实对话 | `POST /api/ai_assistant/chat` 200，4.5 s，工具返回公司并回答 “Copperleaf Design” |
+| 员工 home | `/srv/dsh/homes/91b8…` 为 `dsh-91b8…:dsh-91b8…` 0700；应用用户 `pro` 读取被拒（Permission denied） |
+| 跨员工 | A 读自己 = 成功；A 读 B（`6ec8…`）= Permission denied；B 读 A = Permission denied |
+| workspace | `/srv/dsh/workspaces/91b8…/<runId>` 归 `dsh-91b8…` 0700 |
+| env 一次性 | 运行中轮询未捕获 env 文件（runner 立即 source+删除）；运行后不存在 |
+| 写审批链路 | 隔离模式下重跑 propose→approve→execute→replay：全部通过，审批 `consumed`、公司值更新、重放 409 |
+| 清理 | `dsh-agent-prune.timer` active；应用内 prune 在隔离模式改为跳过（root 定时器负责） |
+| 数据复原 | 测试改动的两家公司 industry 已通过 CRM 正常编辑接口恢复原值（Software / Interior Design，200 并读回一致） |
+
+发现并修复的隔离缺口：`OM_DSH_MCP_SCRIPT` 原指向仓库内 0600 脚本，员工用户无法读取，
+导致 CRM MCP 工具断连；改为指向 release 内 0644 脚本
+（`/home/pro/releases/mercato/current/scripts/dsh-crm-mcp.mjs`）。
+
+## 5. 未覆盖
 
 - DSH 子进程仍可访问 `/tmp`（共享）与网络；需要更强隔离时用容器/网络命名空间。
 - 同一 `dsh-runtime` 组内的员工用户可读 DSH 源码（非员工数据）。
