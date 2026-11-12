@@ -130,6 +130,21 @@ describe('declared navigation ownership', () => {
     }
   })
 
+  it('clears a package title key when a literal label is declared', () => {
+    for (const [href, expected] of [
+      ['/backend/config/settings', '自定义实体设置'],
+      ['/backend/staff/my-leave-requests', '我的请假'],
+      ['/backend/staff/leave-requests', '团队请假'],
+    ] as const) {
+      const entry = byPath.get(href) as EffectiveEntry | undefined
+      expect({ href, title: entry?.title }).toEqual({ href, title: expected })
+      // A surviving key would re-translate over the literal and recreate the
+      // duplicate, so both aliases must be explicitly cleared.
+      expect((entry as unknown as { pageTitleKey?: string })?.pageTitleKey).toBeUndefined()
+      expect(entry?.titleKey).toBeUndefined()
+    }
+  })
+
   it('only declares real differences from the page metadata (no restated no-ops)', () => {
     for (const key of Object.keys(overrides)) {
       const routePath = key.replace(/^backend:/, '')

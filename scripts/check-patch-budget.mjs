@@ -12,7 +12,13 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-const BUDGET = 15
+// 2026-11-12: raised 15 -> 21 in review. The communications outbound reliability
+// work added six distinct concerns (attempt-unknown, inactive-channel-failed,
+// tenant-channel-shared, outbound-thread-reuse-v2, dedupe-external-message-id,
+// send-as-user-team-channel); each carries its own marker and test, and none
+// could be expressed through the app-layer hook surface. Fold candidates remain
+// the three AppShell entries, which this bump deliberately does not touch.
+const BUDGET = 21
 const manifestPath = path.resolve(process.cwd(), 'scripts/patches/manifest.json')
 
 if (!fs.existsSync(manifestPath)) {

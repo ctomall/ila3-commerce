@@ -99,6 +99,12 @@ type DeclaredNavPage = {
   context?: 'main' | 'settings' | 'profile'
   /** `true` hides the entry from the menu; the route, permission and in-page link stay. */
   hidden?: boolean
+  /**
+   * Literal label override. Used when two declared pages translate to the same
+   * zh label (the nav baseline refuses duplicate names); it clears the package
+   * title key so the literal wins instead of being re-translated.
+   */
+  title?: string
 }
 
 const declaredNavPages: Record<string, DeclaredNavPage> = {
@@ -106,8 +112,10 @@ const declaredNavPages: Record<string, DeclaredNavPage> = {
   '/backend/work-inbox': { key: 'crmNav.group.home', order: 30 },
   '/backend/calendar': { key: 'crmNav.group.home', order: 40 },
   '/backend/staff/my-availability': { key: 'crmNav.group.scheduling', order: 10 },
-  '/backend/staff/my-leave-requests': { key: 'crmNav.group.scheduling', order: 20 },
-  '/backend/staff/leave-requests': { key: 'crmNav.group.scheduling', order: 30 },
+  // Both package pages translate to 请假申请; restore the distinct labels the
+  // team/my split is supposed to show (nav-baseline rejects duplicate names).
+  '/backend/staff/my-leave-requests': { key: 'crmNav.group.scheduling', order: 20, title: '我的请假' },
+  '/backend/staff/leave-requests': { key: 'crmNav.group.scheduling', order: 30, title: '团队请假' },
   '/backend/staff/time-tracking/entries': { key: 'crmNav.group.scheduling' },
   '/backend/staff/time-tracking/timesheet': { key: 'crmNav.group.scheduling' },
   '/backend/staff/time-tracking/reports': { key: 'crmNav.group.scheduling' },
@@ -170,7 +178,9 @@ const declaredNavPages: Record<string, DeclaredNavPage> = {
   '/backend/inbox-ops/log': { key: 'crmNav.manage.category.diagnostics', context: 'settings', hidden: false },
   '/backend/entities/system': { key: 'crmNav.manage.category.advanced' },
   '/backend/entities/user': { key: 'crmNav.manage.category.advanced' },
-  '/backend/config/settings': { key: 'crmNav.manage.category.advanced' },
+  // The package zh dictionary renders both this page and /backend/entities/user
+  // as 自定义实体; keep the settings page distinct (nav-baseline rejects duplicates).
+  '/backend/config/settings': { key: 'crmNav.manage.category.advanced', title: '自定义实体设置' },
   '/backend/config/encryption': { key: 'crmNav.manage.category.advanced' },
   '/backend/feature-toggles/global': { key: 'crmNav.manage.category.advanced' },
   '/backend/feature-toggles/overrides': { key: 'crmNav.manage.category.advanced' },
@@ -226,6 +236,9 @@ function pageRouteOverride(decl: DeclaredNavPage): PageRouteOverrideDefinition {
     ...(decl.order === undefined ? {} : { pageOrder: decl.order }),
     ...(decl.context ? { pageContext: decl.context } : {}),
     ...(decl.hidden === undefined ? {} : { navHidden: decl.hidden }),
+    ...(decl.title === undefined
+      ? {}
+      : { title: decl.title, pageTitleKey: undefined, titleKey: undefined }),
   }
   // The `page*` aliases are declared on `PageMetadata` and normalized into the
   // manifest by the override dispatcher before the nav payload reads it; the
