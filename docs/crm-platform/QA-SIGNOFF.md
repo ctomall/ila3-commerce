@@ -9,7 +9,7 @@
 
 | 验收点 | 代码 | 测试 | 部署 | 业务验收 | 证据 |
 | --- | --- | --- | --- | --- | --- |
-| 正式聊天入口走 DSH 而非 OpenCode | ✅ `src/app/api/internal/ai-assistant-dsh-chat/**`、proxy 重写 | ✅ 单测 + 代理测试 | ✅ `OM_AI_ENGINE=dsh` | ✅ 真实模型 Run（`dsh_runs` + SSE） | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` |
+| 正式聊天入口走 DSH 而非 OpenCode | ✅ `src/app/api/internal/ai-assistant-dsh-chat/**`、proxy 重写 | ✅ 单测 + 代理测试 | ✅ `OM_AI_ENGINE=dsh`（实测见下） | ✅ 真实模型 Run（`dsh_runs` + SSE） | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` |
 | 受控切换与回退 | ✅ `OM_AI_ENGINE` 开关 | ✅ 代理测试覆盖两分支 | ✅ | ✅ 切换记录 | 同上 + `DESIGN.md` |
 
 ## B. 一人一助手绑定与 Run 持久化
@@ -48,6 +48,14 @@
 ## 原复验 T 项
 
 T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 全量复验（④）均已在 `dsh-integration/reverify-2026-11-11/REVERIFY.md` §9 记录决策与证据；T2/T8/T9/T16 按原口径未擅改。
+
+### 部署产物实测（2026-11-12，release `ee4a845`）
+
+- running release：`/home/pro/releases/mercato/ee4a845…`，`release.json` sha=`ee4a845`，version 0.2.2；
+- 进程环境：`OM_AI_ENGINE=dsh`、`OM_DSH_PERSIST=orm`、`OM_DSH_AGENTIC=1`（读自服务进程 environ）；
+- `src/proxy.ts`：仅当 `OM_AI_ENGINE=dsh` 时把 `/api/ai_assistant/chat` 重写到 `/api/internal/ai-assistant-dsh-chat`（以及 health/agents/agentic/conversations）；
+- 旧 OpenCode 处理器只存在于 `node_modules/@open-mercato/ai-assistant` 包里，业务 `src/` 不再调用；
+- 真实模型调用证据：`restart-drill-…json` 的 fresh run、`concurrency-baseline-…json` 的顺序/并发 Run（`dsh_runs` 落库 + SSE 结束）。
 
 ## 仍未通过/未覆盖（逐项保留）
 
