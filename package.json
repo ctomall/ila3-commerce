@@ -37,6 +37,7 @@
     "db:generate": "yarn mercato db generate",
     "db:migrate": "yarn mercato db migrate",
     "db:greenfield": "yarn mercato db greenfield",
+    "realdb:check": "node scripts/realdb-suite.mjs",
     "initialize": "yarn mercato init",
     "reinstall": "yarn mercato init --reinstall",
     "preinstall": "node -e \"const v = process.versions.node.split('.').map(Number); if (v[0] < 24) { console.error('Node >= 24 required'); process.exit(1); }\"",

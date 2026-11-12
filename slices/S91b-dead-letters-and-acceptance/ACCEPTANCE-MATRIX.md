@@ -18,7 +18,20 @@
 | S91a | `d455199` | unknown 对账产品化（追加结论、不改状态、不重发） | 10 条 |
 | S91b | 本片 | 入站死信可见（不返回 raw body） | 3 条 |
 
-累计：`src/modules/communications` **52 套件 / 312 测试通过**（3 套件跳过=realdb 需 `P6_REALDB_URL`）。
+累计：`src/modules/communications` **56 套件 / 332 测试通过**（7 套件跳过=realdb 需 `P6_REALDB_URL`）。
+
+## 1b. 真实数据库证据（隔离库；一条命令可复跑）
+
+`yarn realdb:check`（`scripts/realdb-suite.mjs`）会临时 `initdb` 一个一次性集群、每个套件一个独立数据库、跑完自动 `pg_ctl stop` 并删除数据目录；任一失败则退出码非零。
+
+| 套件 | 证明了什么 |
+| --- | --- |
+| `product-reconciliation-realdb` | 对账结论以 jsonb 追加、不改 `delivery_status`、兄弟键不丢；unknown+outbound+本组织或 NULL 组织过滤 |
+| `customer-link-realdb` | 个人渠道掩码、NULL 组织可见、他组织掩码、关联持久化、重复关联 no-op（`updated_at` 不变）、解除、越界客户 404、LIKE 通配符转义 |
+| `internal-notes-realdb` | 备注读取按 tenant/visibility/会话/deletedAt/组织过滤、升序；无组织会话只看租户级 |
+| `send-ledger-realdb` | 唯一键并发只留一个赢家、TTL 回收旧行、完成态 replay/conflict、release 可重用、42P01 降级 |
+
+**仍未覆盖**：hub `messages.messages.compose` / `sendAsUser` 的真实执行、任何真实渠道收发。该 harness 未接入 CI（需环境提供数据库或允许流水线内起 Postgres）。
 
 ## 2. P0 需求覆盖（只写实际状态）
 
