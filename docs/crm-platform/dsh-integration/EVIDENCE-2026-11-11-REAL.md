@@ -481,6 +481,12 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
   （`evidence/replay-failed-run-2026-11-12T16-53-00Z.json`）；
 - **`initialize` 上限可配**：`OM_DSH_INIT_TIMEOUT_MS` 可放宽（上限 120s），未设置时行为不变；
   单测同时断言“未设置则不传字段”和“设置则透传 25000”；
+- **`initialize` 超时自动重试一次**（`28c2c09`）：真实故障是负载 12–17 时
+  `502 DSH runtime failed to start` + 日志 `initialize timed out after 10000ms`；现在命中该错误时
+  重启子进程重试一次（其它启动错误不重试，仍立即 502）。单测 43/43 断言“超时重试一次成功”和
+  “非超时错误不重试”；
+- 该修复在 release `28c2c09` 上复验：公开入口探针 PASS（`dsh.event` 帧 + `dsh_runs` completed），
+  同一提交 `build-freshness` / `contract` / `security-probe` / `m4-harness` 全 PASS；
 - 正常路径仍在：新 nonce 的真实请求 PASS，`dsh.event` 帧 + `dsh_runs` completed
   （`evidence/public-chat-path-2026-11-12T16-53-50-674Z.json`）。
 
