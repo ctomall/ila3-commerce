@@ -38,9 +38,10 @@
 | API | `src/app/api/leadgen/{runs,candidates,candidates/[id],candidates/[id]/decisions,candidates/[id]/crm-write,candidates/[id]/verify}` | 会话身份；`leadgen.*` feature；跨组织 404；body 不能选 tenant/org |
 | 候选提交 | `POST /leadgen/candidates`（合同 14 条路径之外的增量入口） | run 必须属于调用者组织；指纹去重；证据随候选一起入库 |
 | 验证 | `/verify` 用纯 `verifyCandidate` 计算，再按 `(candidate, verifier_version, input_digest)` 复用存储；`deliverability` 固定 `unknown` | 同输入不重算；证据来自 `fields` 列 |
+| 额度 | `GET /leadgen/quota/buckets`、`POST /leadgen/quota/reservations` | 四层桶取最小余量；`Idempotency-Key` 重放；任一桶不足整单失败；超限 429 带缺口 |
 | ACL | `src/modules/leadgen/acl.ts` | view / review / crm.write / runs.create |
 
-测试：`18` 例服务/规则（含验证复用）+ `6` 例路由守卫 = 24 例通过；分支 `tsc --noEmit` 0 错误；
+测试：`23` 例服务/规则（含验证复用、额度重放/超限）+ `6` 例路由守卫 = 29 例通过；分支 `tsc --noEmit` 0 错误；
 4 片迁移的隔离库演练再次 PASS（18 列变更随 snapshot 一致）。
 
 ## 4. 仍需批准/补齐（未做）
@@ -48,7 +49,7 @@
 1. **合并与迁移应用**：把 `feat/leadgen-m5` 合入 main 并在生产执行 3 片迁移（生产迁移属另批）。
 2. **`contact_email` 是否加密**：当前列是明文 + hash；决定加密则要改实体/迁移并回填方案。
 3. **4 条部分唯一索引方案**：保持手写 + 白名单 + 每次复核，还是改为生成器支持。
-4. **补齐**：审核列表 UI；`POST /leadgen/candidates` 是对合同草案的增量入口，需在合并时同步进 OpenAPI 草案（合同门只校验草案自身，不会替它发现这一差异）。
+4. **补齐**：审核列表 UI；`POST /leadgen/candidates` 与额度两路由需在合并时同步进 OpenAPI 草案（合同门只校验草案自身，不会替它发现这一差异）。
 5. **M4 剩余**：#7 配额/审批绕过、#1.1 leadgen 候选越权，需本分支合入后才有路径可测。
 
 ## 5. 应用与回退（批准后）
