@@ -172,11 +172,14 @@ const cases = [
       const [tenantId] = scope
       const foreignOrg = '00000000-0000-4000-8000-0000000000ff'
       if (!tenantId) return { status: 0, text: 'fixture-error: no tenant for employee' }
+      // Fingerprint carries the marker: a constant one collided with a fixture left by
+      // an earlier run and turned "insert failed" into a false security result.
+      const fingerprint = `m4-${marker}`
       const inserted = psqlValue(
-        `insert into leadgen_candidates (tenant_id, organization_id, run_id, submitted_fingerprint, company_dedupe_key, company_name, status, created_at, updated_at) values ('${tenantId}', '${foreignOrg}', '${foreignOrg}', 'm4-fixture', 'n:${marker}', '${marker}', 'submitted', now(), now()) returning id`,
+        `insert into leadgen_candidates (tenant_id, organization_id, run_id, submitted_fingerprint, company_dedupe_key, company_name, status, created_at, updated_at) values ('${tenantId}', '${foreignOrg}', '${foreignOrg}', '${fingerprint}', 'n:${marker}', '${marker}', 'submitted', now(), now()) returning id`,
       )
       const foreignId = (inserted ?? '').trim().split('\n').pop()
-      checks.push({ name: 'fixture-inserted', ok: Boolean(foreignId) })
+      checks.push({ name: 'fixture-inserted', ok: Boolean(foreignId), detail: String(inserted).slice(0, 160) })
       try {
         const detail = await http({ role: 'employee', url: `/api/leadgen/candidates/${foreignId}`, limit: 400 })
         const unknown = await http({ role: 'employee', url: `/api/leadgen/candidates/${ZERO}`, limit: 400 })
