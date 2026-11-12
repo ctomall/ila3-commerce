@@ -1,8 +1,8 @@
 # M4 安全探针 · 基线
 
-生成时间：2026-11-12T03:05:22.870Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-12T03:26:36.978Z · 目标：http://127.0.0.1:3000
 
-用例 14 · 符合预期 13 · 需要复核 1
+用例 14 · 符合预期 14 · 需要复核 0
 
 写入检查：5 张表前后行数一致 → **未写入**
 
@@ -18,7 +18,7 @@
 | employee | POST | `/api/customers/companies` | 400|403|422 | 400 | 符合 |
 | employee | POST | `/api/customers/companies` | 400|403|422 | 403 | 符合 |
 | employee | DELETE | `/api/customers/companies/00000000-0000-0000-0000-000000000000` | 403|404 | 404 | 符合 |
-| employee | POST | `/api/ai_assistant/ai/chat?agent=probe.does_not_exist` | 404 | 404 | **需复核** |
+| employee | POST | `/api/ai_assistant/ai/chat?agent=probe.does_not_exist` | 404 | 404 | 符合 |
 | anon | POST | `/api/ai_assistant/ai/chat?agent=probe.does_not_exist` | 401 | 401 | 符合 |
 | anon | GET | `/api/docs/openapi` | 401 | 401 | 符合 |
 | employee | GET | `/api/docs/openapi` | 200 | 200 | 符合 |
@@ -67,7 +67,7 @@
   ```
 - `POST /api/ai_assistant/ai/chat?agent=probe.does_not_exist` (employee) → 404
   ```
-  {"error":"Assistant not found","code":"agent_not_found"}
+  {"error":"Assistant not found","code":"agent_unknown"}
   ```
 - `POST /api/ai_assistant/ai/chat?agent=probe.does_not_exist` (anon) → 401
   ```

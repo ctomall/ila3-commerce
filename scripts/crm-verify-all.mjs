@@ -157,6 +157,11 @@ function worktreeState() {
 }
 const worktree = worktreeState()
 
+// Failing gates keep their full output outside the repo: the worktree-clean check
+// is part of the evidence, so a diagnostic file must not dirty it. Before this,
+// a flaky failure left only one line and the cause was unrecoverable.
+const FAIL_LOG_DIR = '/tmp/crm-verify-logs'
+const runStamp = new Date().toISOString().replace(/[:.]/g, '-')
 const results = []
 for (const gate of GATES) {
   if (ONLY && !ONLY.has(gate.id)) continue
@@ -181,16 +186,29 @@ for (const gate of GATES) {
   const firstBad = output
     .split('\n')
     .find((line) => /FAIL|错误|error|失败|needs review|not found/i.test(line) && line.trim())
+  let failLog = null
+  if (!ok) {
+    try {
+      fs.mkdirSync(FAIL_LOG_DIR, { recursive: true })
+      failLog = path.join(FAIL_LOG_DIR, `${runStamp}-${gate.id}.log`)
+      fs.writeFileSync(failLog, output)
+    } catch {
+      failLog = null
+    }
+  }
   results.push({
     ...gate,
     status: ok ? 'PASS' : 'FAIL',
     duration,
     code: run.status,
+    ...(failLog ? { failLog } : {}),
     note: ok
       ? evidenceLine(output, gate).slice(0, 160)
-      : terminalFail && run.status === 0
+      : `${terminalFail && run.status === 0
         ? '脚本打印了 RESULT: FAIL 却以 0 退出'
-        : (firstBad || output.trim().split('\n').slice(-2).join(' ')).slice(0, 160),
+        : (firstBad || output.trim().split('\n').slice(-2).join(' ')).slice(0, 160)}${
+        failLog ? `｜完整输出 ${failLog}` : ''
+      }`,
   })
   console.log(`${ok ? 'PASS' : 'FAIL'} ${gate.id.padEnd(16)} ${duration}s`)
 }

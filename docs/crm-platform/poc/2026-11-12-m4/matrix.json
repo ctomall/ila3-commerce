@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T03:05:24.231Z",
+  "generatedAt": "2026-11-12T03:26:43.236Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -18,9 +18,9 @@
   },
   "summary": {
     "total": 12,
-    "pass": 4,
+    "pass": 5,
     "passWeak": 2,
-    "fail": 1,
+    "fail": 0,
     "blocked": 4,
     "invalid": 1
   },
@@ -82,8 +82,8 @@
       "attack": "未知 agent 在进入模型前被拒（原误标为“伪造身份”）",
       "expected": "404 agent_unknown，且不进入模型",
       "requires": [],
-      "status": "fail",
-      "detail": "404 {\"error\":\"Assistant not found\",\"code\":\"agent_not_found\"}"
+      "status": "pass",
+      "detail": "404 {\"error\":\"Assistant not found\",\"code\":\"agent_unknown\"}"
     },
     {
       "id": 3.1,

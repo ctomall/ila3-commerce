@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T03:05:22.870Z",
+  "generatedAt": "2026-11-12T03:26:36.978Z",
   "base": "http://127.0.0.1:3000",
   "rowCount": {
     "tables": [
@@ -31,8 +31,8 @@
   },
   "summary": {
     "cases": 14,
-    "asExpected": 13,
-    "needsReview": 1
+    "asExpected": 14,
+    "needsReview": 0
   },
   "results": [
     {
@@ -133,9 +133,9 @@
       "path": "/api/ai_assistant/ai/chat?agent=probe.does_not_exist",
       "expected": "404",
       "status": 404,
-      "verdict": "needs-review",
-      "semanticCheck": "failed",
-      "body": "{\"error\":\"Assistant not found\",\"code\":\"agent_not_found\"}"
+      "verdict": "as-expected",
+      "semanticCheck": "passed",
+      "body": "{\"error\":\"Assistant not found\",\"code\":\"agent_unknown\"}"
     },
     {
       "role": "anon",
