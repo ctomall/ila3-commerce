@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import Link from 'next/link'
 import { describeMedia, mediaHref } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
+import { InternalNotes } from './InternalNotes'
 import { InboxLiveRefresh } from './InboxLiveRefresh'
 import { newestCursor } from '../../../lib/inbox-live'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
@@ -238,6 +239,7 @@ export async function InboxView({
                       threadId={selectedId}
                     />
                   ) : null}
+                  {canReply && selectedId ? <InternalNotes threadId={selectedId} /> : null}
                   {canReply ? (
                     <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
                       {['whatsapp', 'messenger'].includes((detail.channel.channelType ?? '').toLowerCase())
