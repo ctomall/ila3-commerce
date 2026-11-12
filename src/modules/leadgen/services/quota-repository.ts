@@ -64,12 +64,14 @@ export function createOrmQuotaRepository(em: EntityManager): QuotaRepository {
     async reserveBuckets(input) {
       await em.transactional(async (tx) => {
         for (const bucket of input.buckets) {
-          const result = await tx.getConnection().execute(
-            'update "leadgen_quota_buckets" set "reserved_units" = "reserved_units" + ?, "version" = "version" + 1, "updated_at" = now() where "id" = ? and "reserved_units" + "consumed_units" + ? <= "limit_units"',
+          // Update-with-RETURNING, because MikroORM's `execute` resolves to the rows,
+          // not to a driver result object: reading `affectedRows` from it made every
+          // reservation fail as "concurrent reservation lost".
+          const rows = (await tx.getConnection().execute(
+            'update "leadgen_quota_buckets" set "reserved_units" = "reserved_units" + ?, "version" = "version" + 1, "updated_at" = now() where "id" = ? and "reserved_units" + "consumed_units" + ? <= "limit_units" returning "id"',
             [input.units, bucket.id, input.units],
-          )
-          const affected = Number((result as { affectedRows?: number; rowCount?: number }).affectedRows ?? (result as { rowCount?: number }).rowCount ?? 0)
-          if (affected !== 1) throw new Error('quota level exhausted')
+          )) as unknown as Array<{ id: string }> | undefined
+          if (!Array.isArray(rows) || rows.length !== 1) throw new Error('quota level exhausted')
         }
       })
     },

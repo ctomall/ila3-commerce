@@ -79,8 +79,17 @@ const toolNames = await fetch(`${BASE}/api/ai_assistant/tools`, { headers: { coo
   .then((r) => (r.ok ? r.json() : { tools: [] }))
   .then((d) => (Array.isArray(d.tools) ? d.tools.map((t) => t?.name).filter((n) => typeof n === 'string') : []))
   .catch(() => [])
+// The leadgen routes live under src/app/api and are not described in the generated
+// OpenAPI, so "documented" is the wrong test for them. Liveness is measured with a
+// real request: an authenticated guess of a well-formed id must come back as the
+// route's own JSON 404, not as the router's missing-page response.
+const leadgenProbe = cookies.employee
+  ? await fetch(`${BASE}/api/leadgen/candidates/${ZERO}`, { headers: { cookie: cookies.employee, accept: 'application/json' } }).catch(() => null)
+  : null
+const leadgenProbeBody = leadgenProbe ? await leadgenProbe.text().catch(() => '') : ''
+const leadgenLive = Boolean(leadgenProbe) && [200, 401, 403, 404].includes(leadgenProbe.status) && /candidate_not_found|leadgen/i.test(leadgenProbeBody)
 const fixtures = {
-  'leadgen-api': paths.some((p) => p.includes('/leadgen/')),
+  'leadgen-api': leadgenLive || paths.some((p) => p.includes('/leadgen/')),
   'employee-B': Boolean(cookies.admin && cookies.employee),
   // Two employees in one organization is not cross-employee isolation: the fixture is a
   // second organization. Probed, not assumed (it was a literal `false`, so the matrix
@@ -151,9 +160,44 @@ const cases = [
     attack: '猜 ID：跨员工取 candidate/run（leadgen API）',
     path: '/leadgen/candidates/{id}',
     expected: '404',
-    requires: ['leadgen-api', 'second-organization'],
-    run: () => http({ role: 'employee', url: `/api/leadgen/candidates/${ZERO}` }),
-    judge: (r) => r.status === 404,
+    // The API is live now, so the guess is a real request. A candidate that belongs
+    // to another organization is inserted as a fixture (no second account needed) and
+    // must be invisible: 404 on detail, absent from the list, and the response must
+    // not echo the marker name.
+    requires: ['leadgen-api'],
+    run: async () => {
+      const checks = []
+      const marker = `M4-CROSS-ORG-${Date.now()}`
+      const scope = (psqlValue("select tenant_id || '|' || organization_id from users where id = '" + selfUserId + "'") ?? '').split('|')
+      const [tenantId] = scope
+      const foreignOrg = '00000000-0000-4000-8000-0000000000ff'
+      if (!tenantId) return { status: 0, text: 'fixture-error: no tenant for employee' }
+      const inserted = psqlValue(
+        `insert into leadgen_candidates (tenant_id, organization_id, run_id, submitted_fingerprint, company_dedupe_key, company_name, status, created_at, updated_at) values ('${tenantId}', '${foreignOrg}', '${foreignOrg}', 'm4-fixture', 'n:${marker}', '${marker}', 'submitted', now(), now()) returning id`,
+      )
+      const foreignId = (inserted ?? '').trim().split('\n').pop()
+      checks.push({ name: 'fixture-inserted', ok: Boolean(foreignId) })
+      try {
+        const detail = await http({ role: 'employee', url: `/api/leadgen/candidates/${foreignId}`, limit: 400 })
+        const unknown = await http({ role: 'employee', url: `/api/leadgen/candidates/${ZERO}`, limit: 400 })
+        const list = await http({ role: 'employee', url: '/api/leadgen/candidates?limit=100', limit: 200000 })
+        checks.push({ name: 'foreign-detail-404', ok: detail.status === 404 && !detail.text.includes(marker) })
+        checks.push({ name: 'unknown-detail-404', ok: unknown.status === 404 })
+        checks.push({ name: 'foreign-row-not-listed', ok: list.status === 200 && !list.text.includes(marker) })
+      } finally {
+        if (foreignId) psqlValue(`delete from leadgen_candidates where id = '${foreignId}'`)
+      }
+      const ok = checks.every((check) => check.ok)
+      return { status: ok ? 404 : 500, text: JSON.stringify(checks) }
+    },
+    judge: (r) => {
+      try {
+        const parsed = JSON.parse(r.text)
+        return Array.isArray(parsed) && parsed.every((check) => check.ok)
+      } catch {
+        return false
+      }
+    },
   },
   {
     id: 1.2,
@@ -533,9 +577,67 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
     id: 7,
     attack: '配额/审批绕过（超额度、审批令牌复用）',
     expected: '429 / 4xx',
+    // Quota bypass is testable now that the reservation API is live: a fixture bucket
+    // with one unit must refuse two, and the reservation must not be booked twice.
+    // Approval-token replay belongs to M6 (no approval endpoint is exposed), so the
+    // case reports itself pass-weak instead of claiming the whole attack is covered.
     requires: ['leadgen-api'],
-    run: null,
-    judge: null,
+    run: async () => {
+      const checks = []
+      const scope = (psqlValue("select tenant_id || '|' || organization_id from users where id = '" + selfUserId + "'") ?? '').split('|')
+      const [tenantId, organizationId] = scope
+      if (!tenantId || !organizationId) return { status: 0, text: 'fixture-error: no scope' }
+      const period = new Date().toISOString().slice(0, 7)
+      const bucketId = `00000000-0000-4000-8000-${String(Date.now()).slice(-12)}`
+      const keyBase = `m4-quota-${Date.now()}`
+      try {
+        psqlValue(
+          `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${bucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'lead', '${period}', 1, 0, 0, 1, now(), now())`,
+        )
+        const over = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json', 'idempotency-key': `${keyBase}-over` },
+          body: JSON.stringify({ quotaKind: 'lead', units: 2 }),
+        })
+        const overText = await over.text()
+        checks.push({ name: 'over-limit-429', ok: over.status === 429 || overText.includes('quota_exceeded') })
+        // The route needs the header, not a body field; http() cannot set headers, so
+        // raw requests are used for the reservation steps.
+        const raw = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json', 'idempotency-key': `${keyBase}-1` },
+          body: JSON.stringify({ quotaKind: 'lead', units: 1 }),
+        })
+        checks.push({ name: 'first-reservation-201', ok: raw.status === 201, detail: `${raw.status} ${(await raw.text()).slice(0, 120)}` })
+        const replay = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json', 'idempotency-key': `${keyBase}-1` },
+          body: JSON.stringify({ quotaKind: 'lead', units: 1 }),
+        })
+        checks.push({ name: 'same-key-replayed', ok: replay.status === 200 })
+        const second = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json', 'idempotency-key': `${keyBase}-2` },
+          body: JSON.stringify({ quotaKind: 'lead', units: 1 }),
+        })
+        checks.push({ name: 'exhausted-429', ok: second.status === 429 })
+        checks.push({ name: 'no-negative-headroom', ok: Number(psqlValue(`select reserved_units + consumed_units from leadgen_quota_buckets where id = '${bucketId}'`)) === 1 })
+      } finally {
+        psqlValue(`delete from leadgen_quota_reservations where idempotency_key like '${keyBase}%'`)
+        psqlValue(`delete from leadgen_quota_buckets where id = '${bucketId}'`)
+      }
+      const ok = checks.length > 0 && checks.every((check) => check.ok)
+      return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
+    },
+    weakReason: '额度绕过已实测；审批令牌复用属于 M6，当前没有审批接口可打',
+    judge: (r) => {
+      try {
+        const parsed = JSON.parse(r.text)
+        return Array.isArray(parsed) && parsed.length > 0 && parsed.every((check) => check.ok)
+      } catch {
+        return false
+      }
+    },
   },
 ]
 
@@ -543,7 +645,7 @@ const results = []
 for (const item of cases) {
   // A 404 from a path that does not exist is not a security result. Learned the hard way:
   // /api/ai/chat is really /api/ai_assistant/ai/chat, and the wrong path "passed" twice.
-  if (item.path && !paths.includes(item.path)) {
+  if (item.path && !paths.includes(item.path) && !(item.requires?.includes('leadgen-api') && fixtures['leadgen-api'])) {
     results.push({
       id: item.id,
       attack: item.attack,
