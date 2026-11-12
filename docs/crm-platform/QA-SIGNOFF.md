@@ -41,7 +41,7 @@
 
 | 项 | 代码 | 测试 | 部署 | 业务验收 | 证据 |
 | --- | --- | --- | --- | --- | --- |
-| M4 对抗（10 pass · 2 weak · 0 fail） | ✅ harness | ✅ | ✅ | ✅ | `poc/2026-11-12-m4/matrix.json`；#7 十四项全过，见 `leadgen/EVIDENCE-2026-11-12-M6-DISPATCH.md` |
+| M4 对抗（10 pass · 2 weak · 0 fail） | ✅ harness | ✅ | ✅ | ✅ | `poc/2026-11-12-m4/matrix.json`；#7 十九项全过（含抑制、预留消费），见 `leadgen/EVIDENCE-2026-11-12-M6-DISPATCH.md` |
 | M5 审核/去重/幂等入库/额度/UI | ✅ | ✅ 34 例 + 全量 unit | ✅ 4 片迁移已应用 | ✅ 真实员工闭环 + UI 点击 | `leadgen/EVIDENCE-2026-11-12-M5.md` |
 | M8 试用验收 | — | ✅ 25/25 | ✅ | ✅ | `verify/verify-2026-11-12T11-58-03.md` |
 
@@ -56,6 +56,14 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `src/proxy.ts`：仅当 `OM_AI_ENGINE=dsh` 时把 `/api/ai_assistant/chat` 重写到 `/api/internal/ai-assistant-dsh-chat`（以及 health/agents/agentic/conversations）；
 - 旧 OpenCode 处理器只存在于 `node_modules/@open-mercato/ai-assistant` 包里，业务 `src/` 不再调用；
 - 真实模型调用证据：`restart-drill-…json` 的 fresh run、`concurrency-baseline-…json` 的顺序/并发 Run（`dsh_runs` 落库 + SSE 结束）。
+
+### 部署产物实测（2026-11-12 15:3x，release `d34c51c`）
+
+- 运行 release：`release.json` sha=`d34c51c`，CI run 43246620467，healthz 200；
+- 本 release 在发送边界上多两道强制：抑制名单命中 409、无 `send` 预留 400；预留 CAS 消费后桶为 `0:1`，
+  重放不重复扣；传输仍是模拟实现（`externalEffect: false`），无真实外发；
+- 同一提交门禁：`build-freshness` PASS（部署后无源码提交）、`contract` PASS、`security-probe` PASS、
+  M4 `pass 10 · pass-weak 2 · fail 0`（#7 十九项全过）。
 
 ### 部署产物实测（2026-11-12 15:0x，release `f7a2b26`）
 

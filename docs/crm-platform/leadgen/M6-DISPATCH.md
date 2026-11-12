@@ -27,8 +27,12 @@
 | **一个审批最多产生一次投递** | 草稿 CAS `approved -> sent`，同一 key 命中即重放 | 200 重放 / 409 `already_sent` |
 | 幂等键不可由客户端指定 | 服务端派生 `send:<draftId>:<draftHash>:<approvalId>` | — |
 | 并发不重复投递 | CAS 失败 → 复核已有行 → 重放或 409 | 409 `send_in_progress` |
-| 传输失败不烧令牌 | 行置 `failed` 并把草稿 `sent -> approved` | 502 `transport_failed` |
+| 传输失败不烧令牌 | 行置 `failed`、草稿 `sent -> approved`、预留退还 | 502 `transport_failed` |
 | 已投递草稿不得再审批 | `status === 'sent'` 时拒绝，**包括同一审批的重放**（先判状态再查重放） | 409 `already_sent` |
+| 抑制名单优先于审批 | 先查 `leadgen_suppressions(email_hash)`，命中即拒 | 409 `suppressed` |
+| 投递必须有 `send` 额度预留 | 必须带 `leaseToken`；无则拒并回滚草稿认领 | 400 `quota_lease_required` |
+| 预留只被花一次 | 预留 CAS `reserved -> consumed` + 桶 `reserved-1/consumed+1` 同事务 | 409 `quota_lease_invalid` |
+| 失败/写行失败退还额度 | `refundLease`：`consumed -> refunded` + 桶回滚 | — |
 
 幂等键由服务端派生，所以客户端重复提交同一意图只会重放同一行，
 换一个审批/草稿就会落到另一个 key，无法用“改 key”制造第二次投递。
@@ -39,6 +43,7 @@
 | --- | --- |
 | 领域服务 | `src/modules/leadgen/services/send-service.ts`（`createSendService`、`createSimulatedTransport`、`sendIdempotencyKey`） |
 | 持久化 | `src/modules/leadgen/services/send-repository.ts`（CAS 认领/释放、按 key 查重、状态落库） |
+| 发送前置控制 | `src/modules/leadgen/services/send-guards.ts`（抑制名单查询、预留 CAS 消费/退还，事务内完成） |
 | HTTP | `src/app/api/leadgen/drafts/[id]/sends/route.ts`（`POST`，feature `leadgen.sends.approve`） |
 | 实体 | `src/modules/leadgen/data/entities.ts` → `LeadgenSend`（表 `leadgen_sends`，**已在生产**，本步无新迁移） |
 | 审批收紧 | `src/modules/leadgen/services/outreach-service.ts`（已投递草稿拒绝再审批） |
@@ -57,11 +62,22 @@
 
 ## 5. 仍未做（真实外发需要单独授权）
 
-1. **供应商适配器**：`OutboundTransport` 目前只有模拟实现；真实实现要接获准渠道（SMTP/供应商 API）、
-   退回处理、bounce/complaint 回执接收（`leadgen_message_receipts` 已有表但没有写入方）。
-2. **send 额度原子扣减**：`quota_kind = 'send'` 的预留目前不会在 dispatch 时被消费；
-   真实外发前必须把 `leaseToken` 与 CAS 认领放进同一事务，避免“扣了不发”或“发了不扣”。
-3. **外发开关**：没有 flag、没有环境变量能打开真实发送，需要新增到生命周期配置里并默认关闭。
-4. **抑制名单前置检查**：`leadgen_suppressions` 表存在，dispatch 尚未查询；真实外发必须在认领前查。
+已收口（2026-11-12，`d34c51c`）：抑制名单前置检查、`send` 预留的原子消费与失败退还——
+三项都在 dispatch 内实现并由 M4 实测（见 §6、`EVIDENCE-2026-11-12-M6-DISPATCH.md`）。
 
-以上四项都属于 `M6 真实外发`，按原授权边界另批；本步不启用、不绕过。
+仍未做：
+
+1. **供应商适配器**：`OutboundTransport` 只有模拟实现；真实实现要接获准渠道（SMTP/供应商 API）、
+   退回处理、bounce/complaint 回执接收（`leadgen_message_receipts` 已有表但没有写入方）。
+2. **外发开关**：没有 flag、没有环境变量能打开真实发送；需要新增到生命周期配置里并默认关闭。
+3. **额度桶的层级选择**：dispatch 目前消费调用方给的 lease，不校验预留是否属于本员工/本任务
+   （四层桶全部满足即可）；真实外发前应把 `subject_kind/subject_id` 与草稿/员工绑定。
+
+以上三项属于 `M6 真实外发`，按原授权边界另批；本步不启用、不绕过。
+
+## 6. M4 #7 现在证明什么（19 项）
+
+超额度 429、首次预留 201、同键重放、额度耗尽 429、headroom 非负、`send` 预留 201、
+草稿创建、审批绑定正文、审批重放、改正文 409、**抑制命中 409**、**无预留 400**、
+一次审批一次投递（`simulated`）、**预留被消费 0:1**、重放不重复投递、`leadgen_sends` 仅 1 行、
+**重放不再扣额度**、令牌不能跨草稿复用、投递后连审批重放也 409。
