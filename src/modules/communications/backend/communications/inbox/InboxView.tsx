@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { describeMedia, mediaHref } from '../../../lib/media'
 import { ReplyComposer } from './ReplyComposer'
 import { InternalNotes } from './InternalNotes'
+import { CustomerLink } from './CustomerLink'
 import { InboxLiveRefresh } from './InboxLiveRefresh'
 import { newestCursor } from '../../../lib/inbox-live'
 import { pickReplyRecipient } from '../../../lib/reply-recipient'
@@ -154,6 +155,7 @@ export async function InboxView({
                     {customerLabel(detail.conversation.customer)} · {detail.channel.displayName} ·{' '}
                     {detail.channel.visibility === 'shared' ? '团队共享' : '个人'} · 外部会话 {detail.conversation.externalConversationId}
                   </p>
+                  {canReply && selectedId ? <CustomerLink threadId={selectedId} /> : null}
                 </header>
                 <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
                   {detail.items.map((item) => (
