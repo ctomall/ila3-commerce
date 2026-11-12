@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-12T12:38:34.636Z",
+  "generatedAt": "2026-11-12T14:35:51.232Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
-    "leadgen-api": false,
+    "leadgen-api": true,
     "employee-B": true,
     "second-organization": false,
     "dsh-profile-per-employee": true,
@@ -18,11 +18,11 @@
   },
   "summary": {
     "total": 12,
-    "pass": 9,
-    "passWeak": 1,
+    "pass": 10,
+    "passWeak": 2,
     "fail": 0,
-    "blocked": 1,
-    "invalid": 1
+    "blocked": 0,
+    "invalid": 0
   },
   "results": [
     {
@@ -40,8 +40,8 @@
       "requires": [
         "leadgen-api"
       ],
-      "status": "invalid",
-      "detail": "openapi 里没有 /leadgen/candidates/{id}：404 不能当作拒绝证据"
+      "status": "pass",
+      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"a9b05415-9045-4c5c-82bf-4de0026763d5\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
     },
     {
       "id": 1.2,
@@ -93,7 +93,7 @@
         "tool-execute"
       ],
       "status": "pass",
-      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3031}"
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3226}"
     },
     {
       "id": 4,
@@ -112,7 +112,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"809ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"244ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,
@@ -131,12 +131,9 @@
       "requires": [
         "leadgen-api"
       ],
-      "weakReason": "额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验",
-      "status": "blocked",
-      "missing": [
-        "leadgen-api"
-      ],
-      "detail": "缺少 fixture：leadgen-api"
+      "status": "pass-weak",
+      "weakReason": "额度绕过、审批绑定、发送侧一次性令牌均已实测（模拟传输，externalEffect=false）；真实外发与 dispatch 上原子扣减 send 额度属 M6 另批",
+      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"b16e141b-d84e-4c46-9ff6-9a2a750c652c\\\",\\\"leaseToken\\\":\\\"dfc95ba4-240f-47b1-96fb-abeabec986e7\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true},{\"name\":\"one-approval-one-dispatch\",\"ok\":true,\"detail\":\"201 \\\"simulated\\\"\"},{\"name\":\"dispatch-replayed-not-duplicated\",\"ok\":true},{\"name\":\"single-send-row\",\"ok\":true},{\"name\":\"approval-not-reusable-on-other-draft\",\"ok\":true},{\"name\":\"approve-after-dispatch-refused\",\"ok\":true}]"
     }
   ]
 }
