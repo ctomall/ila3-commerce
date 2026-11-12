@@ -1,0 +1,56 @@
+{
+  "generatedAt": "2026-11-12T07:45:22.669Z",
+  "base": "http://127.0.0.1:3000",
+  "actor": "employee",
+  "steps": [
+    {
+      "name": "run-created",
+      "runId": "30f506a7-b6a4-4589-8cdb-a2fce633e3a2"
+    },
+    {
+      "name": "run-replayed",
+      "runId": "30f506a7-b6a4-4589-8cdb-a2fce633e3a2",
+      "same": true
+    },
+    {
+      "name": "candidate-submitted",
+      "candidateId": "f8019351-44f1-4219-be22-ade75a4ca143"
+    },
+    {
+      "name": "verified",
+      "verdict": "pass",
+      "cached": false
+    },
+    {
+      "name": "approved",
+      "replayed": false
+    },
+    {
+      "name": "decision-replayed",
+      "replayed": true
+    },
+    {
+      "name": "crm-written",
+      "crmEntityId": "f46b98ba-b4b6-431a-9ab7-e324797d3758",
+      "created": true
+    },
+    {
+      "name": "crm-write-replayed",
+      "crmEntityId": "f46b98ba-b4b6-431a-9ab7-e324797d3758",
+      "created": false
+    },
+    {
+      "name": "listed",
+      "status": "crm_written"
+    }
+  ],
+  "runId": "30f506a7-b6a4-4589-8cdb-a2fce633e3a2",
+  "candidateId": "f8019351-44f1-4219-be22-ade75a4ca143",
+  "crmEntityId": "f46b98ba-b4b6-431a-9ab7-e324797d3758",
+  "fixture": {
+    "companyName": "M5 Acceptance Co 1794469521093",
+    "domain": "m5-acceptance-1794469521093.example",
+    "email": "li.wei@m5-acceptance-1794469521093.example",
+    "note": "test company created by M5 acceptance; deletion needs a separate decision"
+  }
+}
