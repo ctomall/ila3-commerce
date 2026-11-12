@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
+import { planChannelDisconnect, planChannelReconnect } from '../../../lib/channel-actions'
 
 type Availability = { available: boolean; code: string; hint: string }
 
@@ -42,6 +43,8 @@ export function ChannelsView() {
   const [summary, setSummary] = useState<Summary | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [busyId, setBusyId] = useState<string | null>(null)
+  const [actionNote, setActionNote] = useState<{ id: string; ok: boolean; text: string } | null>(null)
 
   const load = useCallback(async () => {
     setLoading(true)
@@ -65,6 +68,57 @@ export function ChannelsView() {
   useEffect(() => {
     void load()
   }, [load])
+
+  async function disconnect(channel: Channel) {
+    const plan = planChannelDisconnect({
+      id: channel.id,
+      visibility: channel.visibility,
+      providerKey: channel.providerKey,
+      displayName: channel.displayName,
+    })
+    if (!window.confirm(plan.warning)) return
+    setBusyId(channel.id)
+    setActionNote(null)
+    try {
+      const response = await fetch(plan.url, { method: plan.method })
+      if (response.status === 403) {
+        setActionNote({ id: channel.id, ok: false, text: `没有解除权限：需要 ${plan.permission}` })
+        return
+      }
+      if (!response.ok) {
+        const payload = (await response.json().catch(() => ({}))) as { error?: string }
+        setActionNote({
+          id: channel.id,
+          ok: false,
+          text: payload.error || `解除失败（HTTP ${response.status}）`,
+        })
+        return
+      }
+      setActionNote({ id: channel.id, ok: true, text: '已解除：历史消息保留，账号不再收发。' })
+      await load()
+    } catch (caught) {
+      setActionNote({
+        id: channel.id,
+        ok: false,
+        text: `解除失败：${caught instanceof Error ? caught.message : String(caught)}`,
+      })
+    } finally {
+      setBusyId(null)
+    }
+  }
+
+  function reconnect(channel: Channel) {
+    const plan = planChannelReconnect({
+      id: channel.id,
+      visibility: channel.visibility,
+      providerKey: channel.providerKey,
+    })
+    if (plan.kind === 'hub-profile') {
+      setActionNote({ id: channel.id, ok: true, text: plan.note })
+      return
+    }
+    window.location.assign(plan.href)
+  }
 
   return (
     <div className="space-y-4 p-6">
@@ -108,6 +162,7 @@ export function ChannelsView() {
               <th className="py-2">状态</th>
               <th className="py-2">可收</th>
               <th className="py-2">可发</th>
+              <th className="py-2">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -131,6 +186,32 @@ export function ChannelsView() {
                   {!channel.availability.outbound.available ? (
                     <div className="mt-1 text-muted-foreground">{channel.availability.outbound.hint}</div>
                   ) : null}
+                </td>
+                <td className="py-2">
+                  <div className="flex flex-col items-start gap-1">
+                    <button
+                      type="button"
+                      onClick={() => reconnect(channel)}
+                      className="rounded border px-2 py-0.5"
+                    >
+                      重连 / 重新授权
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void disconnect(channel)}
+                      disabled={busyId === channel.id}
+                      className="rounded border px-2 py-0.5 disabled:opacity-50"
+                    >
+                      {busyId === channel.id ? '解除中…' : '解除绑定'}
+                    </button>
+                    {actionNote?.id === channel.id ? (
+                      <span
+                        className={`max-w-[18rem] ${actionNote.ok ? 'text-muted-foreground' : 'text-red-700 dark:text-red-300'}`}
+                      >
+                        {actionNote.text}
+                      </span>
+                    ) : null}
+                  </div>
                 </td>
               </tr>
             ))}
