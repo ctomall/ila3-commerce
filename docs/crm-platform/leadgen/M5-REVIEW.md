@@ -52,7 +52,14 @@
 4. **补齐**：审核列表 UI。`POST /leadgen/candidates` 已进入草案，合同门 17 操作校验通过。
 5. **M4 剩余**：#7 配额/审批绕过、#1.1 leadgen 候选越权，需本分支合入后才有路径可测。
 
-## 5. 应用与回退（批准后）
+## 5. 部署前置门禁（已在分支上运行，非应用）
+
+`node --input-type=module -e "import {preflightMigrations} from './scripts/auto-deploy/migration-preflight.mjs'; ..."`（releaseDir=分支 `a7f606c`，baselineDir=main）
+
+结果：**ok=true，4 片迁移 51 条语句全部 expand，destructive=0，unknown=0**——部署管线的静态 expand-only 门禁会接受这批迁移（旧进程可继续运行）。
+证据：`evidence/preflight-20261112.json`。注意：这是分类器结论，**不等于已应用**；生产应用仍需批准。
+
+## 6. 应用与回退（批准后）
 
 ```
 # 预检 + 备份
