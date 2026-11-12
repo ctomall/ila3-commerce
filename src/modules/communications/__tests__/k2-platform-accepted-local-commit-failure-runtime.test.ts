@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { execFileSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
-import { randomUUID } from 'node:crypto'
+import { createHash, randomUUID } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
 
 /**
@@ -285,12 +285,17 @@ function buildPatchedCommand(): string {
       'export function computeBackoffMs() { return 1; }\n',
   )
 
+  // Manifest order matters: dedupe anchors on the pristine hub text, and
+  // attempt-unknown rewrites the send/commit window around it. Run each script
+  // with the mirror as its working directory too — the dedupe script resolves
+  // its target relative to cwd, and a pristine CI install would otherwise get
+  // patched in place while the mirror stayed unpatched.
   for (const script of [
-    'scripts/patches/apply-outbound-attempt-unknown.mjs',
     'scripts/patches/apply-dedupe-external-message-id.mjs',
+    'scripts/patches/apply-outbound-attempt-unknown.mjs',
   ]) {
     execFileSync(process.execPath, [path.join(repoRoot, script)], {
-      cwd: repoRoot,
+      cwd: tempRoot,
       encoding: 'utf8',
       env: { ...process.env, OM_PATCH_REPO_ROOT: tempRoot },
     })
@@ -364,6 +369,49 @@ describe('K2 provider accepted / local commit failed (runtime)', () => {
     })
     // A committed-send event must never claim success for an uncommitted send.
     expect(names).not.toContain('communication_channels.message.sent')
+  })
+
+  it('patches the mirror, never the installed tree (the pristine-install path)', async () => {
+    // CI runs `yarn test` before the build step applies managed patches, so the
+    // installed dist there is pristine. The dedupe script resolves its target
+    // relative to the working directory; run from the repo root it would patch
+    // the real install and leave the mirror untouched (which is exactly how this
+    // suite failed once). Pin the contract: the mirror is patched, the installed
+    // tree is byte-identical afterwards.
+    const repoRoot = process.cwd()
+    const installed = path.join(
+      repoRoot,
+      'node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js',
+    )
+    const digest = (file: string) => createHash('sha256').update(fs.readFileSync(file)).digest('hex')
+    const before = digest(installed)
+
+    const tempRoot = path.join(repoRoot, '.tmp', `k2commit-mirror-${randomUUID()}`)
+    const target = path.join(
+      tempRoot,
+      'node_modules/@open-mercato/core/dist/modules/communication_channels/commands/deliver-outbound-message.js',
+    )
+    fs.mkdirSync(path.dirname(target), { recursive: true })
+    // The pristine anchors the dedupe patch expects, at their real indentation.
+    fs.writeFileSync(
+      target,
+      [
+        '      const externalMessageRowId = randomUUID();',
+        '      const externalMessage = em.create(ExternalMessage, {',
+        '      em.persist(externalMessage);',
+      ].join('\n'),
+    )
+
+    execFileSync(process.execPath, [path.join(repoRoot, 'scripts/patches/apply-dedupe-external-message-id.mjs')], {
+      cwd: tempRoot,
+      encoding: 'utf8',
+      env: { ...process.env, OM_PATCH_REPO_ROOT: tempRoot },
+    })
+
+    const patched = fs.readFileSync(target, 'utf8')
+    expect(patched).toContain('/* [patched:dedupe-external-id] */')
+    expect(patched).toContain('if (!existingExternal) em.persist(externalMessage);')
+    expect(digest(installed)).toBe(before)
   })
 
   it('after the unknown marker itself failed, a redelivery expires the lease and never re-sends', async () => {
