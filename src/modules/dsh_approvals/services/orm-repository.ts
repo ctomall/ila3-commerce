@@ -53,7 +53,10 @@ export type ApprovalStore = {
     argsPreview: Record<string, unknown>
     now: string
   }): Promise<WriteApproval>
-  consume(input: { id: string; now: string }): Promise<boolean>
+  /** Atomically claim an approved row (approved -> executing). */
+  claim(input: { id: string; now: string }): Promise<boolean>
+  /** Finish a claimed row: consumed on success, approved again on failure. */
+  settle(input: { id: string; status: 'consumed' | 'approved'; now: string }): Promise<boolean>
   decide(input: {
     id: string
     userId: string
@@ -203,13 +206,27 @@ export function createApprovalStore(em: EntityManager): ApprovalStore {
       }
     },
 
-    async consume(input) {
+    async claim(input) {
       return guarded(async () => {
         const manager = fork()
         const changed = await manager.nativeUpdate(
           DshWriteApproval,
           { id: input.id, status: 'approved' },
-          { status: 'consumed', consumedAt: new Date(input.now) },
+          { status: 'executing' },
+        )
+        return changed === 1
+      })
+    },
+
+    async settle(input) {
+      return guarded(async () => {
+        const manager = fork()
+        const changed = await manager.nativeUpdate(
+          DshWriteApproval,
+          { id: input.id, status: 'executing' },
+          input.status === 'consumed'
+            ? { status: 'consumed', consumedAt: new Date(input.now) }
+            : { status: 'approved' },
         )
         return changed === 1
       })

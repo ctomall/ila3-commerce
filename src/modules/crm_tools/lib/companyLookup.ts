@@ -83,7 +83,11 @@ export type CompanyRow = {
  */
 export type CompanyQuery = {
   where: Record<string, unknown>
-  options: { limit: number; orderBy: Record<string, 'asc' | 'desc'> }
+  options: {
+    limit: number
+    orderBy: Record<string, 'asc' | 'desc'>
+    populate: readonly ['entity']
+  }
   /** Row cap for the fetch. Equals `options.limit` unless this is a search. */
   scanLimit: number
   /** True when the caller asked for a text search, which has to happen in memory. */
@@ -106,7 +110,15 @@ export function buildFindCompaniesQuery(scope: ToolScope, input: FindCompaniesIn
     where,
     // The column values are ciphertext at rest, so a SQL `ilike` can never match. Searching
     // therefore fetches a bounded page and filters it in JS — see `filterByQuery`.
-    options: { limit: searching ? SEARCH_SCAN_LIMIT : limit, orderBy: { legalName: 'asc' } },
+    //
+    // `entity` is populated because the id the CRM UI and every write route use is the
+    // parent `CustomerEntity` id, not this profile row's id. Returning the profile id made
+    // `crm.update_company` answer 404 for a company the read tool had just listed.
+    options: {
+      limit: searching ? SEARCH_SCAN_LIMIT : limit,
+      orderBy: { legalName: 'asc' },
+      populate: ['entity'] as const,
+    },
     scanLimit: searching ? SEARCH_SCAN_LIMIT : limit,
     searching,
   }
@@ -126,6 +138,7 @@ export function filterByQuery(rows: CompanyRow[], query: string | undefined): Co
 /** Whatever the ORM hands back, narrowed to the fields this tool promises. */
 export type CompanyRecordLike = {
   id?: unknown
+  entity?: unknown
   legalName?: unknown
   brandName?: unknown
   domain?: unknown
@@ -141,7 +154,13 @@ export function shapeCompanyRecords(records: unknown): CompanyRow[] {
   for (const raw of records) {
     if (!raw || typeof raw !== 'object') continue
     const row = raw as CompanyRecordLike
-    const id = typeof row.id === 'string' ? row.id : null
+    const relation = row.entity && typeof row.entity === 'object' ? (row.entity as { id?: unknown }) : null
+    const id =
+      relation && typeof relation.id === 'string'
+        ? relation.id
+        : typeof row.id === 'string'
+          ? row.id
+          : null
     const legalName = typeof row.legalName === 'string' ? row.legalName : ''
     const brandName = typeof row.brandName === 'string' ? row.brandName.trim() : ''
     const name = brandName !== '' ? brandName : legalName

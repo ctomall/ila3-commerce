@@ -33,15 +33,17 @@ function store(initial: WriteApproval | null, consumeResult = true) {
   const createPending = jest.fn(async (input: Parameters<ApprovalStore['createPending']>[0]) => ({
     ...approval({ id: 'approval-new', argsPreview: input.argsPreview }),
   }))
-  const consume = jest.fn(async (_input: { id: string; now: string }) => consumeResult)
+  const claim = jest.fn(async (_input: { id: string; now: string }) => consumeResult)
+  const settle = jest.fn(async (_input: { id: string; status: 'consumed' | 'approved'; now: string }) => true)
   const value: ApprovalStore = {
     loadForGate: jest.fn(async () => initial),
     createPending,
-    consume,
+    claim,
+    settle,
     decide: jest.fn() as unknown as ApprovalStore['decide'],
     listPending: jest.fn() as unknown as ApprovalStore['listPending'],
   }
-  return { value, createPending, consume }
+  return { value, createPending, claim, settle }
 }
 
 const base = {
@@ -86,7 +88,7 @@ describe('runWriteGate', () => {
     await expect(runWriteGate({ ...base, store: s.value })).resolves.toMatchObject({
       action: 'execute',
     })
-    expect(s.consume).toHaveBeenCalledWith({ id: 'approval-1', now: NOW })
+    expect(s.claim).toHaveBeenCalledWith({ id: 'approval-1', now: NOW })
   })
 
   it('does not execute when another call consumed the approval first', async () => {

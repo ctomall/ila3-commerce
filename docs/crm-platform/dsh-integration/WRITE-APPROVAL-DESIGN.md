@@ -17,8 +17,9 @@ CRM 界面显式批准。写工具不是自动执行能力，而是「模型提�
    会结束，员工批准后模型在**新的一轮**重试。`run_id` 仍保留用于审计。
 4. 审批只由审批人本人使用：`dsh_write_approvals.user_id` 必须等于会话用户，
    tenant/organization 也必须一致。
-5. 一条审批只能消费一次（原子 `update ... where status='approved'`），重放同一调用
-   得到 `approval_consumed`，不会二次写入。
+5. 一条审批只能消费一次：执行前先原子认领（`approved -> executing`），并发调用
+   只有一个能认领；执行成功后置 `consumed`，执行失败（未写入）则回退为 `approved`，
+   重放同一调用得到 `approval_consumed`，不会二次写入。
 6. 审批有效期 10 分钟；过期后需重新发起，不复用旧批准。
 7. 写工具只允许字段白名单；`ownerUserId`、`isActive`、自定义字段等**不在**首批
    允许范围（避免借写工具改归属/停用）。
@@ -36,7 +37,9 @@ DSH 模型 -> MCP crm_update_company
      2. authorizeToolCall (binding active / ACL / canWriteToCrm)
      3. OM_DSH_WRITES !== '1' -> 403 write_not_enabled
      4. args_hash = sha256(canonicalJson(args))
-     5. 已有 approved 且未过期 -> 原子 consume -> 执行 -> 200
+     5. 已有 approved 且未过期 -> 原子 claim(approved->executing)
+        -> 命令总线写入成功 -> settle(consumed) -> 200
+        -> 写入失败（未落库）-> settle(approved) -> 403/404，可原样重试
      6. 否则 ensurePending -> 403 approval_required {approvalId, expiresAt}
   -> 助手告诉员工：已在审批中心发起写入审批
 
@@ -57,7 +60,7 @@ DSH 模型 -> MCP crm_update_company
 | tool | text | 工具名（当前仅 `crm.update_company`） |
 | args_hash | text | 规范化参数 SHA-256 |
 | args_preview | jsonb | 人类可读摘要（公司 id/名称/变更字段），不含密钥 |
-| status | text | pending / approved / rejected / consumed / expired |
+| status | text | pending / approved / executing / consumed / rejected / expired |
 | requested_at / expires_at | timestamptz | pending 有效期 10 分钟 |
 | decided_at / decided_by | timestamptz / uuid | 审批人 |
 | consumed_at | timestamptz | 实际执行时刻 |

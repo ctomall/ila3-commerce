@@ -16,7 +16,14 @@
  */
 import { createHash } from 'node:crypto'
 
-export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'consumed' | 'expired'
+export type ApprovalStatus =
+  | 'pending'
+  | 'approved'
+  | 'rejected'
+  /** Claimed by one call, execution in flight. A crashed claim is treated as expired. */
+  | 'executing'
+  | 'consumed'
+  | 'expired'
 
 export type WriteApproval = {
   id: string
@@ -141,9 +148,15 @@ export async function gateDecision(input: {
   }
   if (approval.status === 'approved') {
     if (!isApprovalUsable(approval, now)) return { action: 'expired', approval }
+    // Claim before executing: approved -> executing, so two concurrent calls can
+    // never both write. The claim is settled to `consumed` after the command
+    // succeeds and reverted to `approved` when it fails (nothing was written).
     const won = await input.consume(approval.id)
     return won ? { action: 'execute', approval } : { action: 'consumed', approval }
   }
   if (approval.status === 'rejected') return { action: 'rejected', approval }
+  // `executing` without this call's claim means a previous process died mid-write.
+  // Treat it as expired instead of parking the request forever.
+  if (approval.status === 'executing') return { action: 'expired', approval }
   return { action: 'consumed', approval }
 }

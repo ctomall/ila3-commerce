@@ -57,7 +57,7 @@ export async function runWriteGate(input: {
   const outcome = await gateDecision({
     approval,
     now: input.now,
-    consume: (approvalId) => input.store.consume({ id: approvalId, now: input.now }),
+    consume: (approvalId) => input.store.claim({ id: approvalId, now: input.now }),
   })
 
   if (outcome.action === 'execute') return { action: 'execute', approval: outcome.approval }

@@ -181,6 +181,7 @@ export async function POST(req: NextRequest, context: RouteContext): Promise<Nex
 
   // Write tools have a second, human gate. The switch is the production
   // rollback: with `OM_DSH_WRITES` unset the bridge behaves exactly as before.
+  let claimed: { store: ApprovalStore; approvalId: string } | null = null
   if (descriptor.readOnly !== true) {
     if (!writesEnabled()) {
       audit('write_not_enabled')
@@ -209,6 +210,9 @@ export async function POST(req: NextRequest, context: RouteContext): Promise<Nex
         preview,
         now: new Date().toISOString(),
       })
+      if (gate.action === 'execute') {
+        claimed = { store, approvalId: gate.approval.id }
+      }
       if (gate.action !== 'execute') {
         const code = gate.action
         audit(code)
@@ -240,9 +244,22 @@ export async function POST(req: NextRequest, context: RouteContext): Promise<Nex
 
   try {
     const result = await descriptor.execute(parsed.data, executionContext)
+    if (claimed) {
+      // The command succeeded: the single-use approval is now spent.
+      await claimed.store
+        .settle({ id: claimed.approvalId, status: 'consumed', now: new Date().toISOString() })
+        .catch(() => undefined)
+    }
     audit('allowed')
     return NextResponse.json({ ok: true, tool, result })
   } catch (error) {
+    if (claimed) {
+      // Nothing was written: hand the approval back so a corrected/retried call
+      // does not need a second human decision.
+      await claimed.store
+        .settle({ id: claimed.approvalId, status: 'approved', now: new Date().toISOString() })
+        .catch(() => undefined)
+    }
     if (isToolExecutionError(error)) {
       audit(error.code)
       return errorResponse(error.status, error.code, error.message)

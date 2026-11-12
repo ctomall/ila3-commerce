@@ -10,7 +10,10 @@ jest.mock('@/bootstrap-api', () => ({ bootstrap: jest.fn() }))
 jest.mock('@/lib/dsh/tool-bridge/deps', () => ({ buildToolBridgeDeps: jest.fn() }))
 jest.mock('@/lib/dsh/tool-bridge/approval-gate', () => ({ runWriteGate: jest.fn() }))
 jest.mock('@/modules/dsh_approvals/services/orm-repository', () => ({
-  createRequestApprovalStore: jest.fn(async () => ({})),
+  createRequestApprovalStore: jest.fn(async () => ({
+    claim: jest.fn(async () => true),
+    settle: jest.fn(async () => true),
+  })),
   ApprovalUnavailableError: class ApprovalUnavailableError extends Error {},
 }))
 jest.mock('@open-mercato/shared/lib/logger', () => {
