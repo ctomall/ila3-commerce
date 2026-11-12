@@ -28,7 +28,7 @@
 | 草稿 | `POST /leadgen/drafts` | 幂等：`candidate_id + body_hash` |
 | 审批 | `POST /leadgen/drafts/{id}/approvals` | 绑定 `draft_hash`；正文变动 409 |
 | 发送 | `POST /leadgen/drafts/{id}/sends` | 需 `approvalId` + `leaseToken`；send_key 由服务端派生，一个审批最多一次投递；抑制命中 409、无预留 400、预留只消费一次；过期/撤销/改正文/跨草稿复用 409 |
-| 抑制 | `GET|POST /leadgen/suppressions` | 邮箱以 hash 呈现；upsert 幂等 |
+| 抑制 | `GET|POST|DELETE /leadgen/suppressions` | 邮箱以 hash 呈现；同地址只保留一条生效行（部分唯一索引）；`DELETE` 解除后恢复可投递 |
 | 回调 | `POST /leadgen/webhooks/providers/{provider}` | 验签（`x-auth: signature`）；`provider_event_id` 去重 |
 | 绑定 | `GET|PUT /leadgen/bindings/employees` | 按 `version` 乐观锁 |
 

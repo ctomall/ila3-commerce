@@ -790,7 +790,6 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
               })
               const releaseBody = await releaseRes.json().catch(() => ({}))
               checks.push({ name: 'suppression-released', ok: releaseRes.status === 200 && Number(releaseBody?.released) >= 1 })
-              outstandingSuppression = null
               const noLease = await dispatch(draftId, approvalId)
               checks.push({ name: 'dispatch-without-lease-refused', ok: noLease.status === 400 })
               const sendOnce = await dispatch(draftId, approvalId, leaseToken)

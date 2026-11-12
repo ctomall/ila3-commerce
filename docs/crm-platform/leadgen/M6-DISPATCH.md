@@ -30,6 +30,7 @@
 | 传输失败不烧令牌 | 行置 `failed`、草稿 `sent -> approved`、预留退还 | 502 `transport_failed` |
 | 已投递草稿不得再审批 | `status === 'sent'` 时拒绝，**包括同一审批的重放**（先判状态再查重放） | 409 `already_sent` |
 | 抑制名单优先于审批 | 先查 `leadgen_suppressions(email_hash)`，命中即拒 | 409 `suppressed` |
+| 抑制名单可运维 | `POST/GET/DELETE /api/leadgen/suppressions`（部分唯一索引保证一个地址只有一条生效行；解除后立即恢复可投递） | 400 `invalid_input` |
 | 投递必须有 `send` 额度预留 | 必须带 `leaseToken`；无则拒并回滚草稿认领 | 400 `quota_lease_required` |
 | 预留必须指名该草稿 | 预留时强制 `draftId`（`subject_kind='draft'`）；dispatch 校验 `subject_id` 就是本草稿 | 400 `draft_required` / 409 `quota_lease_scope_mismatch` |
 | 预留只被花一次 | 预留 CAS `reserved -> consumed` + 桶 `reserved-1/consumed+1` 同事务 | 409 `quota_lease_invalid` |
@@ -76,11 +77,12 @@
 
 以上三项属于 `M6 真实外发`，按原授权边界另批；本步不启用、不绕过。
 
-## 6. M4 #7 现在证明什么（24 项）
+## 6. M4 #7 现在证明什么（26 项）
 
 超额度 429、首次预留 201、同键重放、额度耗尽 429、headroom 非负、`send` 预留 201、
 草稿创建、审批绑定正文、审批重放、改正文 409、**抑制命中 409**、**无预留 400**、
 一次审批一次投递（`simulated`）、**预留被消费 0:1**、重放不重复投递、`leadgen_sends` 仅 1 行、
 **重放不再扣额度**、令牌不能跨草稿复用、投递后连审批重放也 409；
 以及本轮新增的 **预留必须指名草稿**（无 draftId 400）、**lease 只能给它的草稿用**（409）、
-**被拒的 dispatch 不消耗 lease**（桶停在 `1:1`）、**正确的草稿能消耗该 lease**（桶到 `0:2`）。
+**被拒的 dispatch 不消耗 lease**（桶停在 `1:1`）、**正确的草稿能消耗该 lease**（桶到 `0:2`）、
+**抑制项由产品接口写入**（201）、**解除抑制后同一草稿可投递**。
