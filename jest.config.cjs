@@ -4,9 +4,20 @@
 // and are excluded here.
 // `create-mercato-app` skips `__tests__`/`__integration__` while copying the
 // template, so a freshly scaffolded app owns no test files until you write one.
+// Process-spawning suites (DSH launcher, MCP child, chat route) need a few
+// seconds; under external CPU contention on a shared host (e.g. a running
+// Android emulator) the 30 s default can be exceeded by a test that passes in
+// seconds on an idle machine. JEST_TIMEOUT raises the ceiling only for that
+// invocation; CI keeps the default.
+const timeoutFromEnv = Number.parseInt(process.env.JEST_TIMEOUT ?? '', 10)
+const testTimeout =
+  Number.isFinite(timeoutFromEnv) && timeoutFromEnv >= 1000 && timeoutFromEnv <= 300000
+    ? timeoutFromEnv
+    : 30000
+
 module.exports = {
   testEnvironment: 'node',
-  testTimeout: 30000,
+  testTimeout,
 
   rootDir: '.',
   roots: ['<rootDir>/src'],
