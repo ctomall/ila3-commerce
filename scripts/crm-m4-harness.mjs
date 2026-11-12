@@ -625,6 +625,42 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         })
         checks.push({ name: 'exhausted-429', ok: second.status === 429 })
         checks.push({ name: 'no-negative-headroom', ok: Number(psqlValue(`select reserved_units + consumed_units from leadgen_quota_buckets where id = '${bucketId}'`)) === 1 })
+
+        // Approval-token abuse, first half: an approval is bound to the reviewed body.
+        // Sending does not exist (M6), so reuse at the send boundary cannot be tested.
+        const candidate = psqlValue(
+          `select id || '|' || coalesce(contact_email, 'qa@m4.example') from leadgen_candidates where tenant_id = '${tenantId}' and organization_id = '${organizationId}' and status in ('approved','crm_written') order by updated_at desc limit 1`,
+        )
+        const [candidateId, recipient] = (candidate ?? '').split('|')
+        if (candidateId) {
+          const draftRes = await fetch(`${BASE}/api/leadgen/drafts`, {
+            method: 'POST',
+            headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+            body: JSON.stringify({ candidateId, recipientEmail: recipient || 'qa@m4.example', subject: 'M4 approval binding', bodyMarkdown: `body ${keyBase}` }),
+          })
+          const draftBody = await draftRes.json().catch(() => ({}))
+          const draftId = draftBody?.draft?.id
+          const bodyHash = draftBody?.bodyHash
+          checks.push({ name: 'draft-created', ok: [200, 201].includes(draftRes.status) && Boolean(draftId) })
+          if (draftId && bodyHash) {
+            const approve = (hash, key) =>
+              fetch(`${BASE}/api/leadgen/drafts/${draftId}/approvals`, {
+                method: 'POST',
+                headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                body: JSON.stringify({ decision: 'approved', draftHash: hash }),
+              })
+            const firstApprove = await approve(bodyHash)
+            const replayApprove = await approve(bodyHash)
+            const staleApprove = await approve(`${bodyHash}-edited`)
+            checks.push({ name: 'approval-bound-to-body', ok: firstApprove.status === 201 })
+            checks.push({ name: 'approval-replayed', ok: replayApprove.status === 200 })
+            checks.push({ name: 'edited-body-refused', ok: staleApprove.status === 409 })
+          }
+          psqlValue(`delete from leadgen_approvals where draft_id in (select id from leadgen_drafts where candidate_id = '${candidateId}' and subject = 'M4 approval binding')`)
+          psqlValue(`delete from leadgen_drafts where candidate_id = '${candidateId}' and subject = 'M4 approval binding'`)
+        } else {
+          checks.push({ name: 'draft-created', ok: false, detail: 'no approved candidate to draft against' })
+        }
       } finally {
         psqlValue(`delete from leadgen_quota_reservations where idempotency_key like '${keyBase}%'`)
         psqlValue(`delete from leadgen_quota_buckets where id = '${bucketId}'`)
@@ -632,7 +668,7 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
       const ok = checks.length > 0 && checks.every((check) => check.ok)
       return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
     },
-    weakReason: '额度绕过已实测；审批令牌复用属于 M6，当前没有审批接口可打',
+    weakReason: '额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验',
     judge: (r) => {
       try {
         const parsed = JSON.parse(r.text)

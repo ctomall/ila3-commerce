@@ -1121,6 +1121,8 @@
     "leadgen.candidates.view",
     "leadgen.candidates.review",
     "leadgen.candidates.manage",
+    "leadgen.sends.draft",
+    "leadgen.sends.approve",
     "leadgen.quota.view",
     "leadgen.quota.manage",
     "translations.view",
