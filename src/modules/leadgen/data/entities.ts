@@ -200,6 +200,14 @@ export class LeadgenCandidateEvidence {
   @Property({ type: 'text', nullable: true })
   excerpt?: string | null
 
+  /**
+   * Structured fields the extractor read from the page. The verifier signals
+   * (company/domain/contact agreement) need these; storing only an excerpt
+   * makes a stored verification impossible to reproduce.
+   */
+  @Property({ type: 'jsonb', nullable: true })
+  fields?: Record<string, string> | null
+
   @Property({ type: 'text', nullable: true })
   method?: string | null
 

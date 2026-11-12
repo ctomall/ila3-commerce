@@ -173,7 +173,13 @@ export type LeadgenRepository = {
     startedAt: string
     completedAt: string
   }): Promise<VerificationRow>
-  listEvidence(candidateId: string): Promise<unknown[]>
+  listEvidence(candidateId: string): Promise<EvidenceInput[]>
+  insertEvidence(input: {
+    candidateId: string
+    evidence: EvidenceInput[]
+    now: string
+    newId: () => string
+  }): Promise<void>
   listVerifications(candidateId: string): Promise<VerificationRow[]>
   /** Creates the CRM company through the existing command bus and returns its id. */
   createCrmCompany(input: {
@@ -205,6 +211,19 @@ export type LeadgenError =
 
 export type ServiceResult<T> = { ok: true; value: T } | { ok: false; code: LeadgenError; extra?: Record<string, unknown> }
 
+export type EvidenceInput = {
+  url: string
+  fetchedAt: string
+  contentHash: string
+  fields?: Record<string, string> | null
+  kind?: string
+  httpStatus?: number | null
+  excerpt?: string | null
+  method?: string | null
+  adapter?: string | null
+  rank?: number
+}
+
 export type SubmitCandidateInput = {
   tenantId: string
   organizationId: string
@@ -216,6 +235,7 @@ export type SubmitCandidateInput = {
   contactTitle?: string | null
   contactEmail?: string | null
   sourceUrl?: string | null
+  evidence?: EvidenceInput[]
 }
 
 export type DecisionInput = {
@@ -312,6 +332,9 @@ export function createLeadgenService(deps: ServiceDeps) {
       createdAt: at,
       updatedAt: at,
     })
+    if (input.evidence && input.evidence.length > 0) {
+      await repo.insertEvidence({ candidateId: candidate.id, evidence: input.evidence, now: at, newId })
+    }
     return { ok: true, value: { candidate, created: true } }
   }
 

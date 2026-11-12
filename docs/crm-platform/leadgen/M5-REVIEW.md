@@ -12,6 +12,7 @@
 | `Migration20261108192028_leadgen` | 候选/证据/公司认领/调研 run/验证（13 条） |
 | `Migration20261108194144_leadgen` | 额度/草稿/审批/发送/抑制/bot 绑定等（35 条，4 条手写部分唯一索引） |
 | `Migration20261112060000_leadgen_decisions` | `leadgen_candidate_decisions`：`decision_key` 幂等 + 审核人/理由/合并目标审计（2 条） |
+| `Migration20261112063000_leadgen_evidence_fields` | `leadgen_candidate_evidence.fields jsonb`：验证器需要结构化字段，只有 excerpt 无法复现判决（1 条） |
 
 为什么加第三张：合同要求 `decision_key` 幂等与“谁审的”审计，原 schema 没有承载处；
 不加就会在接口层伪造幂等。
@@ -34,17 +35,19 @@
 | 候选状态机/指纹/写计划/验证摘要 | `src/modules/leadgen/services/candidate-rules.ts` | 纯函数；11 例单测 |
 | 审核、入库编排 | `services/leadgen-service.ts` | `decisionKey` 重放；二次决定 409；`merge` 必填目标；写入前 `approved → writing_crm` 抢占；CRM 失败回退 `approved`；认领冲突只回 owner |
 | ORM 适配 | `services/orm-repository.ts` | 原子状态 CAS；公司创建走 `customers.companies.create`（审核人身份） |
-| API | `src/app/api/leadgen/{runs,candidates,candidates/[id],candidates/[id]/decisions,candidates/[id]/crm-write}` | 会话身份；`leadgen.*` feature；跨组织 404；body 不能选 tenant/org |
+| API | `src/app/api/leadgen/{runs,candidates,candidates/[id],candidates/[id]/decisions,candidates/[id]/crm-write,candidates/[id]/verify}` | 会话身份；`leadgen.*` feature；跨组织 404；body 不能选 tenant/org |
+| 验证 | `/verify` 用纯 `verifyCandidate` 计算，再按 `(candidate, verifier_version, input_digest)` 复用存储；`deliverability` 固定 `unknown` | 同输入不重算；证据来自 `fields` 列 |
 | ACL | `src/modules/leadgen/acl.ts` | view / review / crm.write / runs.create |
 
-测试：`17` 例服务/规则 + `6` 例路由守卫 = 23 例通过；分支 `tsc --noEmit` 0 错误。
+测试：`18` 例服务/规则（含验证复用）+ `6` 例路由守卫 = 24 例通过；分支 `tsc --noEmit` 0 错误；
+4 片迁移的隔离库演练再次 PASS（18 列变更随 snapshot 一致）。
 
 ## 4. 仍需批准/补齐（未做）
 
 1. **合并与迁移应用**：把 `feat/leadgen-m5` 合入 main 并在生产执行 3 片迁移（生产迁移属另批）。
 2. **`contact_email` 是否加密**：当前列是明文 + hash；决定加密则要改实体/迁移并回填方案。
 3. **4 条部分唯一索引方案**：保持手写 + 白名单 + 每次复核，还是改为生成器支持。
-4. **补齐**：`/verify` 路由（当前只落库服务，未暴露 HTTP）、证据结构化字段入库（现 schema 的 evidence 无 fields 列，验证器需要）、审核列表 UI。
+4. **补齐**：候选提交入口（合同 14 条路径没有 `POST /leadgen/candidates`，入库靠服务/未来 AI 工具）、审核列表 UI。
 5. **M4 剩余**：#7 配额/审批绕过、#1.1 leadgen 候选越权，需本分支合入后才有路径可测。
 
 ## 5. 应用与回退（批准后）
