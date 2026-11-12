@@ -1,0 +1,49 @@
+{
+  "generatedAt": "2026-11-12T06:32:00.441Z",
+  "base": "http://127.0.0.1:3000",
+  "kind": "baseline",
+  "note": "A baseline is not a target: no pass/fail without an agreed target.",
+  "definitions": {
+    "onlineUsers": "authenticated CRM sessions active in a window (not measured here)",
+    "parallelAiRuns": "assistant runs simultaneously executing DSH for one organization"
+  },
+  "n": 2,
+  "sequential": {
+    "label": "single",
+    "status": 200,
+    "firstByteMs": 6205,
+    "totalMs": 7804,
+    "bytes": 7931,
+    "hasOk": true,
+    "errorLine": null
+  },
+  "parallel": [
+    {
+      "label": "parallel-1",
+      "status": 409,
+      "firstByteMs": 307,
+      "totalMs": 307,
+      "bytes": 63,
+      "hasOk": false,
+      "errorLine": null
+    },
+    {
+      "label": "parallel-2",
+      "status": 200,
+      "firstByteMs": 1559,
+      "totalMs": 2862,
+      "bytes": 7933,
+      "hasOk": true,
+      "errorLine": null
+    }
+  ],
+  "parallelWallMs": 2864,
+  "wallOverheadMs": 2,
+  "runsByStatus": "cancelled:30\ncompleted:86\nfailed:7",
+  "activeRuns": "0",
+  "customerEntities": {
+    "before": "9",
+    "after": "9",
+    "unchanged": true
+  }
+}
