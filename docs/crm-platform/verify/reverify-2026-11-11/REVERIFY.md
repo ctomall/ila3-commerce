@@ -333,3 +333,18 @@ Chromium `prefers-color-scheme: dark`（html class=dark，body `rgb(10,10,10)`�
 T13 暗色基线已在当前构建重拍 6 张（`docs/visual-baseline/dark-*.png`，1440×900，html.dark）。
 
 **结论不变**：T4/T11/T14/T13 通过；T7/T8 保留待决策；DSH 生产可用但目标不标 complete。
+
+## 9. 2026-11-12 产品口径决定（用户「全部授权」）
+
+本节记录原待决口径的最终决定，覆盖第 7/8 节中“待产品决策”的表述，但不改写历史测量值。
+
+| 项 | 决定 | 依据 |
+| --- | --- | --- |
+| T7 剩余 44 条英文 | **豁免**：属已安装包内部硬编码（integrations 25、search 19），不是本应用可维护的 UI 文案；1 条 `success` 为数据状态值 | `release-6a721d1/t7-classification.json`；本应用 9/12 目标页已归零 |
+| T8 主分组 14 组 | **保留 14 组，不做合并** | 14 组对应声明式容器/设置分区；合并会改变 IA 并触发 `src/nav` 所有权测试重写，收益不足 |
+| 助手入口默认可见 | **默认可见** | 生产实测：`/backend` 首屏存在两个 `aria-label="打开 AI 助手"` 触发按钮，`/api/ai_assistant/ai/agents` 返回 `aiConfigured=true`；无需 localStorage 强制。截图 `evidence/backend-launcher-default.png` |
+
+据此更新结论：
+- T7：**通过（产品豁免后）**——应用自有 UI 残留为 0，剩余为包内硬编码与状态数据值。
+- T8：**通过（口径变更：保留 14 组）**——名称覆盖 63/63、Tab 顺序可用；分组数不再是失败项。
+- T2/T9/T16 仍保持原状态，未在本次口径内改动。
