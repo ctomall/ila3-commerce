@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import { createLogger } from '@open-mercato/shared/lib/logger'
+import { WHATSAPP_WEBHOOK_RATE_LIMIT } from '../../../lib/webhook-rate-limit'
 import {
   WebhookBodyTooLargeError,
   readBoundedWebhookBody,
@@ -19,7 +20,20 @@ const logger = createLogger('communications').child({component: 'webhook-whatsap
 
 export const metadata = {
   path: '/communications/webhook/whatsapp',
-  POST: { requireAuth: false },
+  POST: {
+    requireAuth: false,
+    /**
+     * Design rev2 `F8-04` / D-6: shed junk BEFORE HMAC verification, because the
+     * handler cannot cheaply reject untrusted traffic. The dispatcher keys this by
+     * client IP; an account dimension is not knowable until the payload is
+     * trusted. Every WhatsApp event arrives from Meta's small IP set, so the
+     * default is deliberately generous and env-tunable
+     * (`RATE_LIMIT_CC_WEBHOOK_WHATSAPP_POINTS` / `_DURATION` / `_BLOCK_DURATION`): start high,
+     * observe real volume, then tighten. Provider 429-retry semantics are
+     * unverified, so a low cap could silently lose legitimate deliveries.
+     */
+    rateLimit: WHATSAPP_WEBHOOK_RATE_LIMIT,
+  },
 }
 
 

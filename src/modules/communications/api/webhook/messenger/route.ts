@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import { createLogger } from '@open-mercato/shared/lib/logger'
+import { MESSENGER_WEBHOOK_RATE_LIMIT } from '../../../lib/webhook-rate-limit'
 import {
   WebhookBodyTooLargeError,
   readBoundedWebhookBody,
@@ -19,7 +20,20 @@ const logger = createLogger('communications').child({component: 'webhook-messeng
 
 export const metadata = {
   path: '/communications/webhook/messenger',
-  POST: { requireAuth: false },
+  POST: {
+    requireAuth: false,
+    /**
+     * Design rev2 `F8-04` / D-6: shed junk BEFORE HMAC verification, because the
+     * handler cannot cheaply reject untrusted traffic. The dispatcher keys this by
+     * client IP; an account dimension is not knowable until the payload is
+     * trusted. Every Messenger event arrives from Meta's small IP set, so the
+     * default is deliberately generous and env-tunable
+     * (`RATE_LIMIT_CC_WEBHOOK_MESSENGER_POINTS` / `_DURATION` / `_BLOCK_DURATION`): start high,
+     * observe real volume, then tighten. Provider 429-retry semantics are
+     * unverified, so a low cap could silently lose legitimate deliveries.
+     */
+    rateLimit: MESSENGER_WEBHOOK_RATE_LIMIT,
+  },
 }
 
 
