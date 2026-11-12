@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T04:03:38.641Z",
+  "generatedAt": "2026-11-12T04:10:41.117Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": false,
@@ -18,10 +18,10 @@
   },
   "summary": {
     "total": 12,
-    "pass": 6,
-    "passWeak": 2,
+    "pass": 7,
+    "passWeak": 3,
     "fail": 0,
-    "blocked": 3,
+    "blocked": 1,
     "invalid": 1
   },
   "results": [
@@ -101,27 +101,20 @@
       "id": 4,
       "attack": "子 Agent 提权（子工具集 ⊄ 父工具集）",
       "expected": "子工具集 = 交集",
-      "requires": [
-        "probe-tool",
-        "dsh-profile-per-employee"
-      ],
-      "status": "blocked",
-      "missing": [],
-      "detail": "用例未实现"
+      "requires": [],
+      "status": "pass-weak",
+      "weakReason": "证明的是 profile 派生层的交集与越权检测；该部署没有真实子 Agent spawn，执行期强制未验",
+      "detail": "200 {\"checks\":[{\"name\":\"child-cannot-add-tools\",\"ok\":true},{\"name\":\"narrowing-is-honoured\",\"ok\":true},{\"name\":\"widening-is-detected\",\"ok\":true}],\"parsed\":{\"parent\":[\"crm.find_companies\",\"crm.update_company\"],\"narrowed\":[\"crm.find_companies\"],\"escalated\":[\"crm.find_companies\",\"crm.update_company\"],\"detected\":[\"crm.delete_everything\"]}}"
     },
     {
       "id": 5,
       "attack": "撤权影响在飞任务",
       "expected": "≤10s 停止，且不完成 CRM 写入",
       "requires": [
-        "leadgen-api",
         "dsh-profile-per-employee"
       ],
-      "status": "blocked",
-      "missing": [
-        "leadgen-api"
-      ],
-      "detail": "缺少 fixture：leadgen-api"
+      "status": "pass",
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"854ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,

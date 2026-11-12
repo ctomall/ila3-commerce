@@ -1,8 +1,8 @@
 # M4 对抗用例执行记录
 
-生成时间：2026-11-12T04:03:38.641Z · 目标：http://127.0.0.1:3000
+生成时间：2026-11-12T04:10:41.117Z · 目标：http://127.0.0.1:3000
 
-共 12 例 · 通过 6 · 弱通过 2 · 失败 0 · 无法执行（缺 fixture）3 · **用例无效 1**
+共 12 例 · 通过 7 · 弱通过 3 · 失败 0 · 无法执行（缺 fixture）1 · **用例无效 1**
 
 写入检查：`customer_entities` 9 → 9（未写入）
 
@@ -16,8 +16,8 @@
 | 2 | 直连写接口 + body 注入 tenantId/organizationId | 400/403/422，且不写库 | 通过 | 403 {"error":"Not authorized to target this tenant."} |
 | 3 | 未知 agent 在进入模型前被拒（原误标为“伪造身份”） | 404 agent_unknown，且不进入模型 | 通过 | 404 {"error":"Assistant not found","code":"agent_unknown"} |
 | 3.1 | 模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId） | 运行时按真实会话解析 actor，注入值不生效 | 弱通过 | 200 {"resolvedUserId":"7a176d46-6474-47c1-be56-d11b2d9452f1","baselineUserId":"7a176d46-6474-47c1-be56-d11b2d9452f1","re |
-| 4 | 子 Agent 提权（子工具集 ⊄ 父工具集） | 子工具集 = 交集 | 阻塞 | 用例未实现 |
-| 5 | 撤权影响在飞任务 | ≤10s 停止，且不完成 CRM 写入 | 阻塞 | 缺少 fixture：leadgen-api |
+| 4 | 子 Agent 提权（子工具集 ⊄ 父工具集） | 子工具集 = 交集 | 弱通过 | 200 {"checks":[{"name":"child-cannot-add-tools","ok":true},{"name":"narrowing-is-honoured","ok":true},{"name":"widening- |
+| 5 | 撤权影响在飞任务 | ≤10s 停止，且不完成 CRM 写入 | 通过 | 200 [{"name":"employee-resolved","ok":true},{"name":"run-in-flight","ok":true},{"name":"revoke-accepted","ok":true,"deta |
 | 6 | 跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态） | 互不可读，跨读返回空 + 审计 | 通过 | 200 [{"name":"two-employees-with-homes","ok":true},{"name":"homes-0700","ok":true},{"name":"distinct-unix-owners","ok":t |
 | 7 | 配额/审批绕过（超额度、审批令牌复用） | 429 / 4xx | 阻塞 | 缺少 fixture：leadgen-api |
 

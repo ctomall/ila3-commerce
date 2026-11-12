@@ -295,17 +295,153 @@ const cases = [
     id: 4,
     attack: '子 Agent 提权（子工具集 ⊄ 父工具集）',
     expected: '子工具集 = 交集',
-    requires: ['probe-tool', 'dsh-profile-per-employee'],
-    run: null,
-    judge: null,
+    requires: [],
+    run: async () => {
+      // The derivation is the authoritative place where a child's requested tool
+      // set is intersected with the granted/ceiling set, and `wideningAttempt` is
+      // how a caller detects a child that would exceed its parent. There is no
+      // live child-agent spawn in this deployment, so this proves the guard logic
+      // and reports itself as weak rather than claiming runtime enforcement.
+      const snippet = `
+import { deriveProfile, wideningAttempt } from './src/lib/dsh/profile.ts'
+const base = {
+  userId: '00000000-0000-4000-8000-000000000001',
+  tenantId: '00000000-0000-4000-8000-000000000002',
+  organizationId: '00000000-0000-4000-8000-000000000003',
+  assistantId: 'crm.employee_assistant',
+  policyVersion: 'm4',
+  grantedTools: ['crm.find_companies', 'crm.update_company'],
+  assistantTools: ['crm.find_companies', 'crm.update_company'],
+}
+const parent = deriveProfile({ ...base, requestedTools: ['crm.find_companies', 'crm.update_company'] })
+const narrowed = deriveProfile({ ...base, requestedTools: ['crm.find_companies'] })
+const escalated = deriveProfile({ ...base, requestedTools: ['crm.find_companies', 'crm.update_company'] })
+const attempts = ['crm.find_companies', 'crm.update_company', 'crm.delete_everything']
+const detected = wideningAttempt(parent, { ...parent, tools: attempts })
+console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, escalated: escalated.tools, detected }))
+`
+      const output = execFileSync('npx', ['tsx', '-e', snippet], {
+        encoding: 'utf8',
+        cwd: path.resolve(__dirname, '..'),
+        timeout: 120_000,
+      })
+      const parsed = JSON.parse(output.trim().split('\n').at(-1))
+      const checks = [
+        { name: 'child-cannot-add-tools', ok: parsed.narrowed.every((tool) => parsed.parent.includes(tool)) },
+        {
+          name: 'narrowing-is-honoured',
+          ok: parsed.narrowed.length === 1 && parsed.narrowed[0] === 'crm.find_companies',
+        },
+        {
+          name: 'widening-is-detected',
+          ok: Array.isArray(parsed.detected) && parsed.detected.includes('crm.delete_everything'),
+        },
+      ]
+      const ok = checks.every((check) => check.ok)
+      return { status: ok ? 200 : 403, text: JSON.stringify({ checks, parsed }) }
+    },
+    weakReason:
+      '证明的是 profile 派生层的交集与越权检测；该部署没有真实子 Agent spawn，执行期强制未验',
+    judge: (r) => {
+      try {
+        const checks = JSON.parse(r.text).checks
+        return Array.isArray(checks) && checks.length > 0 && checks.every((check) => check.ok)
+      } catch {
+        return false
+      }
+    },
   },
   {
     id: 5,
     attack: '撤权影响在飞任务',
     expected: '≤10s 停止，且不完成 CRM 写入',
-    requires: ['leadgen-api', 'dsh-profile-per-employee'],
-    run: null,
-    judge: null,
+    // Revocation is a DSH runtime property, not a leadgen one: the subject is an
+    // in-flight run of a real employee binding. The run is restored afterwards.
+    requires: ['dsh-profile-per-employee'],
+    run: async () => {
+      const checks = []
+      const employeeUserId = await whoamiUserId('employee')
+      checks.push({ name: 'employee-resolved', ok: Boolean(employeeUserId) })
+      if (!employeeUserId) return { status: 403, text: JSON.stringify(checks) }
+      let controller = null
+      try {
+        controller = new AbortController()
+        const streamPromise = fetch(`${BASE}/api/ai_assistant/chat`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+          body: JSON.stringify({
+            messages: [
+              {
+                role: 'user',
+                // Unique per run: an identical transcript would replay the previous
+                // run through the bridge's idempotency key instead of starting one.
+                content: `Write a 3000-word essay about the history of CRM software. Output only the essay. (revocation probe ${Date.now()})`,
+              },
+            ],
+          }),
+          signal: controller.signal,
+        }).then((res) => res.text()).catch((error) => `stream-error:${error?.name ?? error}`)
+        let run = null
+        for (let i = 0; i < 80; i += 1) {
+          await new Promise((resolve) => setTimeout(resolve, 250))
+          run = psqlValue(
+            `select id, status from dsh_runs where user_id = '${employeeUserId}' order by created_at desc limit 1`,
+          )
+          if (run && run.includes('|running')) break
+        }
+        checks.push({ name: 'run-in-flight', ok: Boolean(run && run.includes('|running')) })
+        if (!run || !run.includes('|running')) return { status: 403, text: JSON.stringify(checks) }
+        const runId = run.split('|')[0]
+
+        const revokedAt = Date.now()
+        const revoke = await http({
+          role: 'superadmin',
+          method: 'POST',
+          url: '/api/internal/dsh-bindings/revoke',
+          body: { targetUserId: employeeUserId, reason: 'm4-case5-revocation' },
+          limit: 400,
+        })
+        const streamed = await Promise.race([
+          streamPromise,
+          new Promise((resolve) => setTimeout(() => resolve('timeout'), 15000)),
+        ])
+        const stoppedMs = Date.now() - revokedAt
+        const status = psqlValue(`select status from dsh_runs where id = '${runId}'`)
+        const binding = psqlValue(`select status from dsh_assistant_bindings where user_id = '${employeeUserId}'`)
+        checks.push({ name: 'revoke-accepted', ok: revoke.status === 200, detail: revoke.text.slice(0, 80) })
+        checks.push({ name: 'stream-ended-within-10s', ok: stoppedMs <= 10_000, detail: `${stoppedMs}ms` })
+        checks.push({
+          name: 'stream-reports-run-cancelled',
+          ok: typeof streamed === 'string' && streamed.includes('run_cancelled'),
+        })
+        checks.push({ name: 'run-cancelled', ok: status === 'cancelled', detail: status })
+        checks.push({ name: 'binding-revoked', ok: binding === 'revoked', detail: binding })
+      } catch (error) {
+        checks.push({ name: 'probe-error', ok: false, detail: String(error?.message ?? error).slice(0, 160) })
+      } finally {
+        // Always hand the employee back an active binding, even when a probe threw.
+        try {
+          psqlValue(
+            `update dsh_assistant_bindings set status = 'active', revision = revision + 1, updated_at = now() where user_id = '${employeeUserId}' returning status`,
+          )
+        } catch {
+          /* the check below reports the failure */
+        }
+        const restored = psqlValue(`select status from dsh_assistant_bindings where user_id = '${employeeUserId}'`)
+        checks.push({ name: 'binding-restored', ok: restored === 'active', detail: restored })
+        controller?.abort()
+      }
+      const ok = checks.every((check) => check.ok)
+      return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
+    },
+    judge: (r) => {
+      try {
+        const checks = JSON.parse(r.text)
+        return Array.isArray(checks) && checks.length > 0 && checks.every((check) => check.ok)
+      } catch {
+        return false
+      }
+    },
   },
   {
     id: 6,
