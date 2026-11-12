@@ -472,14 +472,28 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
 这证明**正式入口**（UI 用的那条路径，不是内部路由）真正执行 DSH：同样的请求打到
 `/api/internal/ai-assistant-dsh-chat` 得到同一套帧，而旧 OpenCode 的词表里没有 `dsh.event`。
 
-### 两个实测到的边界（保留，不修）
+### 两个实测到的边界（2026-11-12 已修，`f2403fb`）
 
-1. **`initialize` 超时 = 10s，重负载下会打穿**。16:19 在高负载（load 12–17）时返回
+修复后复验（同一运行 release `f2403fb`）：
+
+- **失败 Run 的重放不再静默**：重放失败 Run `9fcc1850…` 得到 `["error","done"]`，
+  `error = dsh initialize failed: initialize timed out after 10000ms`
+  （`evidence/replay-failed-run-2026-11-12T16-53-00Z.json`）；
+- **`initialize` 上限可配**：`OM_DSH_INIT_TIMEOUT_MS` 可放宽（上限 120s），未设置时行为不变；
+  单测同时断言“未设置则不传字段”和“设置则透传 25000”；
+- 正常路径仍在：新 nonce 的真实请求 PASS，`dsh.event` 帧 + `dsh_runs` completed
+  （`evidence/public-chat-path-2026-11-12T16-53-50-674Z.json`）。
+
+同一提交门禁：`build-freshness` / `contract` / `security-probe` / `m4-harness` 全 PASS。
+
+### 两个边界（原始记录，修复前）
+
+1. （已修，见上）**`initialize` 超时 = 10s，重负载下会打穿**。16:19 在高负载（load 12–17）时返回
    `502 {"error":"DSH runtime failed to start"}`，应用日志
    `dsh initialize failed: initialize timed out after 10000ms`。
    运行时的 `initializeTimeoutMs` 已可配置（默认 10s），但**路由没有传值**；
    若要提高成功率，应把它接到环境变量并在高负载窗口放宽，这属于生产配置变更，未擅自改。
-2. **同一 prompt 会重放同一 Run**（幂等设计，正确）；但**失败 Run 的重放只回 `done`**，
+2. （已修，见上）**同一 prompt 会重放同一 Run**（幂等设计，正确）；但**失败 Run 的重放只回 `done`**，
    没有 `error` 帧。浏览器会把这种重放读成“成功但没输出”。
    证据：`evidence/public-chat-path-2026-11-12T16-24-13-894Z.json`（23 字节，仅 `done`）。
    建议在客户端或路由把“重放到的 Run 状态”透出，这件事属于 A/B 的收口项，尚未做。

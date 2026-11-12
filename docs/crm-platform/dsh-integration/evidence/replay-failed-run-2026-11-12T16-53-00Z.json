@@ -1,0 +1,15 @@
+{
+ "path": "/api/ai_assistant/chat",
+ "mode": "replay failed run",
+ "runId": "9fcc1850-f384-45ae-bd28-d54ebffc8221",
+ "status": 200,
+ "bytes": 115,
+ "frameTypes": [
+  "error",
+  "done"
+ ],
+ "error": "dsh initialize failed: initialize timed out after 10000ms",
+ "body": "data: {\"type\":\"error\",\"error\":\"dsh initialize failed: initialize timed out after 10000ms\"}\n\ndata: {\"type\":\"done\"}\n\n",
+ "release": "f2403fb43677b71c6520236c8ad10483dc0723fb",
+ "probedAt": "2026-11-12T16:54:24.082986+00:00"
+}
