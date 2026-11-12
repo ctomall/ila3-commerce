@@ -658,7 +658,10 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
           sessionId: null,
           status: 'running',
           cursor: 2,
-          createdAt: new Date(Date.now() - 10_000).toISOString(),
+          // Ten minutes, not ten seconds: the sweep's single-instance threshold is
+          // PROCESS_STARTED_AT - 5 s, so a 10 s-old row is only "stale" on a fast
+          // run. The test means "created before this process started", so say that.
+          createdAt: new Date(Date.now() - 10 * 60_000).toISOString(),
         } as never,
       ])
       mockCreateRequestRunService.mockResolvedValueOnce(service)
