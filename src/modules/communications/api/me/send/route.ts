@@ -16,6 +16,7 @@ import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbou
 import { CommunicationChannel, ExternalConversation, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { canActorReply } from '../../../lib/reply-permission-server'
 import { sanitizeCallerChannelMetadata } from '../../../lib/channel-metadata'
+import { checkOutboundBodyLength } from '../../../lib/outbound-body-limit'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -314,6 +315,34 @@ export async function POST(req: Request): Promise<Response> {
     }
   }
   if (policyEm) {
+    // One channel read serves both the body-limit check and the template/media
+    // shape rules below; the limit comes from the connector capability, so no
+    // provider length is hard-coded here (design rev2 F3-01).
+    const policyChannel = await policyEm.findOne(CommunicationChannel, {
+      id: body.channelId,
+      tenantId: auth.tenantId as string,
+      organizationId,
+      deletedAt: null,
+    } as never)
+    const limitViolation = checkOutboundBodyLength({
+      providerKey: (policyChannel as { providerKey?: string } | null)?.providerKey,
+      body: body.body,
+    })
+    if (limitViolation) {
+      // Refuse before the ledger claim and the hub call: the platform would reject
+      // this anyway, and the caller deserves the actual limit instead of a generic
+      // provider failure.
+      return NextResponse.json(
+        {
+          error: `正文超出该渠道上限：最多 ${limitViolation.maxLength} 字符（当前 ${limitViolation.actual}）`,
+          code: limitViolation.code,
+          maxLength: limitViolation.maxLength,
+          actual: limitViolation.actual,
+          providerKey: limitViolation.providerKey,
+        },
+        { status: 422 },
+      )
+    }
     if (!hasTemplate) {
       const policy = await checkCustomerWindow({
         em: policyEm,
@@ -342,16 +371,10 @@ export async function POST(req: Request): Promise<Response> {
       )
     }
     if (hasTemplate || hasMedia) {
-      const shapedChannel = await policyEm.findOne(CommunicationChannel, {
-        id: body.channelId,
-        tenantId: auth.tenantId as string,
-        organizationId,
-        deletedAt: null,
-      } as never)
-      const channelType = (shapedChannel?.channelType ?? '').toLowerCase()
+      const channelType = ((policyChannel as { channelType?: string } | null)?.channelType ?? '').toLowerCase()
       const messengerLinkOnly =
         hasMedia && channelType === 'messenger' && typeof body.media?.link === 'string'
-      if (shapedChannel && channelType !== 'whatsapp' && !messengerLinkOnly) {
+      if (policyChannel && channelType !== 'whatsapp' && !messengerLinkOnly) {
         return NextResponse.json(
           {
             error: hasTemplate

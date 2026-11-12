@@ -12,6 +12,7 @@ import {
 import { SendRequest } from '../data/entities'
 import { computeSendPayloadHash } from '../lib/send-request'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../lib/outbound-media'
+import { checkOutboundBodyLength } from '../lib/outbound-body-limit'
 import { CustomerEntity } from '@open-mercato/core/modules/customers/data/entities'
 import { Message } from '@open-mercato/core/modules/messages/data/entities'
 
@@ -21,6 +22,12 @@ jest.mock('@open-mercato/shared/lib/auth/server', () => ({
 
 jest.mock('@open-mercato/shared/lib/di/container', () => ({
   createRequestContainer: jest.fn(),
+}))
+
+jest.mock('../lib/outbound-body-limit', () => ({
+  BODY_TOO_LONG: 'BODY_TOO_LONG',
+  // Default: no violation, so existing send cases keep exercising their own rule.
+  checkOutboundBodyLength: jest.fn(() => null),
 }))
 
 jest.mock('../lib/outbound-media', () => {
@@ -38,6 +45,7 @@ jest.mock('../lib/outbound-media', () => {
 })
 
 const mockAuth = getAuthFromRequest as jest.MockedFunction<typeof getAuthFromRequest>
+const mockBodyLimit = checkOutboundBodyLength as jest.MockedFunction<typeof checkOutboundBodyLength>
 const mockContainer = createRequestContainer as jest.MockedFunction<typeof createRequestContainer>
 
 type Row = Record<string, unknown>
@@ -166,6 +174,112 @@ describe('POST /api/communications/me/send', () => {
     const res = await POST(new Request('http://localhost/api/communications/me/send', { method: 'POST' }))
     expect(res.status).toBe(401)
     expect(mockContainer).not.toHaveBeenCalled()
+  })
+
+  it('refuses text over the channel limit before the ledger claim and the hub call (S87 / F3-01)', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      channels: [
+        {
+          id: '11111111-1111-4111-8111-111111111111',
+          userId: 'u1',
+          providerKey: 'whatsapp-business',
+          channelType: 'whatsapp',
+          status: 'connected',
+          visibility: 'shared',
+        },
+      ],
+    })
+    const send = jest.fn()
+    useContainer(() => send, em)
+    mockBodyLimit.mockReturnValueOnce({
+      code: 'BODY_TOO_LONG',
+      providerKey: 'whatsapp-business',
+      maxLength: 4096,
+      actual: 5000,
+    })
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['8613800000000'],
+          subject: 'Re: demo',
+          body: { plain: 'x'.repeat(5000) },
+          clientRequestId: 'req-too-long',
+        }),
+      }),
+    )
+    expect(res.status).toBe(422)
+    await expect(res.json()).resolves.toMatchObject({
+      code: 'BODY_TOO_LONG',
+      maxLength: 4096,
+      actual: 5000,
+    })
+    expect(mockBodyLimit).toHaveBeenCalledWith(expect.objectContaining({ providerKey: 'whatsapp-business' }))
+    expect(send).not.toHaveBeenCalled()
+    // Nothing persisted: no ledger claim was taken for a send we refused.
+    expect(em.persisted).toHaveLength(0)
+  })
+
+  it('forwards a media caption to the hub instead of dropping it (S87 / F3-02)', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      channels: [
+        {
+          id: '11111111-1111-4111-8111-111111111111',
+          userId: 'u1',
+          providerKey: 'whatsapp-business',
+          channelType: 'whatsapp',
+          status: 'connected',
+          visibility: 'shared',
+        },
+      ],
+      conversations: [
+        {
+          id: 'conv-1',
+          channelId: '11111111-1111-4111-8111-111111111111',
+          externalConversationId: '+15550001111',
+        },
+      ],
+      // Inside the 24h customer-service window, so free-form media is allowed.
+      messages: [
+        {
+          id: 'em-1',
+          direction: 'inbound',
+          conversationId: 'conv-1',
+          createdAt: new Date(Date.now() - 60 * 60 * 1000),
+        },
+      ],
+    })
+    const send = jest.fn(async () => ({
+      ok: true as const,
+      messageId: 'm1',
+      threadId: 'th1',
+      channelId: 'ch1',
+      providerKey: 'whatsapp-business',
+    }))
+    useContainer(() => send, em)
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['8613800000000'],
+          subject: 'Re: demo',
+          body: { plain: '' },
+          media: { kind: 'image', link: 'https://example.test/pic.jpg', caption: '物流截图' },
+          clientRequestId: 'req-caption',
+        }),
+      }),
+    )
+    expect(res.status).toBe(202)
+    const [, , input] = send.mock.calls[0] as unknown as [unknown, unknown, Record<string, unknown>]
+    expect(input.channelMetadata).toMatchObject({
+      media: { kind: 'image', link: 'https://example.test/pic.jpg', caption: '物流截图' },
+    })
   })
 
   it('rejects a body with neither plain nor html text', async () => {

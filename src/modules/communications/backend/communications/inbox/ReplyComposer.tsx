@@ -35,6 +35,7 @@ export function ReplyComposer(props: {
   const [text, setText] = useState('')
   const [mediaKind, setMediaKind] = useState<(typeof MEDIA_KINDS)[number]>('image')
   const [mediaLink, setMediaLink] = useState('')
+  const [mediaCaption, setMediaCaption] = useState('')
   const [templateName, setTemplateName] = useState('')
   const [templateLanguage, setTemplateLanguage] = useState('zh_CN')
   const [pending, setPending] = useState(false)
@@ -49,6 +50,7 @@ export function ReplyComposer(props: {
       text,
       mediaKind,
       mediaLink,
+      mediaCaption,
       templateName,
       templateLanguage,
       to: props.to,
@@ -84,7 +86,11 @@ export function ReplyComposer(props: {
         clientRequestId: decision.clientRequestId,
       }
       if (mode === 'media') {
-        payload.media = {kind: mediaKind, link: mediaLink.trim()}
+        payload.media = {
+          kind: mediaKind,
+          link: mediaLink.trim(),
+          ...(mediaCaption.trim() ? {caption: mediaCaption.trim()} : {}),
+        }
       }
       if (mode === 'template') {
         payload.template = {name: templateName.trim(), language: templateLanguage.trim() || 'zh_CN'}
@@ -104,6 +110,7 @@ export function ReplyComposer(props: {
         setAttempt(null)
         setText('')
         setMediaLink('')
+        setMediaCaption('')
         setTemplateName('')
         const success = sendSuccessMessage(answer)
         setStatus({ ok: !success.attention, message: success.message })
@@ -189,6 +196,18 @@ export function ReplyComposer(props: {
             className="min-w-0 flex-1 rounded border px-3 py-1.5 text-sm"
             aria-label="媒体链接"
           />
+          {whatsapp ? (
+            <input
+              value={mediaCaption}
+              onChange={(event) => setMediaCaption(event.target.value)}
+              maxLength={1024}
+              placeholder="配文 caption（≤1024 字符，可留空）"
+              className="min-w-0 flex-1 rounded border px-3 py-1.5 text-sm"
+              aria-label="媒体配文"
+            />
+          ) : (
+            <span className="text-xs text-muted-foreground">Messenger 不支持配文</span>
+          )}
         </div>
       ) : null}
 
