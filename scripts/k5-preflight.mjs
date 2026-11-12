@@ -11,6 +11,7 @@
  * Credentials are read from the environment; nothing is logged or persisted.
  */
 import { randomUUID } from 'node:crypto'
+import { isMainEntry } from './lib/is-main-entry.mjs'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -143,7 +144,7 @@ export async function runPreflight({ env = process.env, fetchImpl = fetch, log =
   return result
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (isMainEntry(import.meta.url)) {
   runPreflight({ log: (line) => console.log(line) }).then(
     (result) => {
       console.log(JSON.stringify(result, null, 2))

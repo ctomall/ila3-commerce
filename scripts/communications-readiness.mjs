@@ -13,6 +13,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import pg from 'pg'
 import { classify as classifyOutbound } from './audit-stuck-outbound.mjs'
+import { isMainEntry } from './lib/is-main-entry.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 
@@ -162,7 +163,7 @@ export async function main(argv = process.argv.slice(2)) {
   return verdict.ready ? 0 : 1
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (isMainEntry(import.meta.url)) {
   main().then((code) => {
     process.exitCode = code
   })
