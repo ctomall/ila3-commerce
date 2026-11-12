@@ -41,7 +41,7 @@
 | 额度 | `GET /leadgen/quota/buckets`、`POST /leadgen/quota/reservations` | 四层桶取最小余量；`Idempotency-Key` 重放；任一桶不足整单失败；超限 429 带缺口 |
 | ACL | `src/modules/leadgen/acl.ts` | `leadgen.candidates.view` / `.review` / `.manage` / `quota.view` / `quota.manage`，与合同 `x-required-features` 逐条对齐 |
 
-测试：`23` 例服务/规则（含验证复用、额度重放/超限）+ `6` 例路由守卫 = 29 例通过；分支 `tsc --noEmit` 0 错误；
+测试：`36` 例（规则/服务/额度/审核门 + 路由守卫）通过；分支全量 unit `956 passed`（`JEST_MAX_WORKERS=2`，13.5s）；`tsc --noEmit` 0 错误；
 4 片迁移的隔离库演练再次 PASS（18 列变更随 snapshot 一致）。
 
 ## 4. 仍需批准/补齐（未做）
