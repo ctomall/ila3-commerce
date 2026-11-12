@@ -16,6 +16,7 @@ import { classify as classifyOutbound } from './audit-stuck-outbound.mjs'
 import { isMainEntry } from './lib/is-main-entry.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const DEFAULT_DEAD_LETTER_WARNING = 25
 
 export function evaluate(facts) {
   const blockers = []
@@ -31,6 +32,16 @@ export function evaluate(facts) {
   const unresolvedUnknown = facts.stuck.unresolvedUnknownLinks ?? facts.stuck.unknownLinks ?? 0
   if (unresolvedUnknown > 0) warnings.push(`${unresolvedUnknown} unknown-outcome send(s) need reconciliation (see audit-stuck-outbound)`)
   if (!facts.webhookVerifyToken) warnings.push('META_WEBHOOK_VERIFY_TOKEN is not configured (WhatsApp verify endpoint returns 503)')
+  // Unmatched receipts and dropped ingest jobs land in the hub dead-letter table
+  // (S83). The table has no automatic retention, so a growing recent count is the
+  // only signal that something is silently failing — surface it as a warning.
+  const recentDeadLetters = facts.deadLetters?.recent24h ?? 0
+  const deadLetterLimit = facts.deadLetters?.warningThreshold ?? DEFAULT_DEAD_LETTER_WARNING
+  if (recentDeadLetters > deadLetterLimit) {
+    warnings.push(
+      `${recentDeadLetters} channel ingest dead-letter row(s) in the last 24h (threshold ${deadLetterLimit}); inspect channel_ingest_dead_letters`,
+    )
+  }
   return { ready: blockers.length === 0, blockers, warnings }
 }
 
@@ -120,12 +131,27 @@ async function readFacts(minutes = 30) {
       completed = c.rows
     }
     const stuck = classifyOutbound({ links, unknown, ledger, completed, minutes })
+    let deadLetters = null
+    try {
+      const d = await client.query(
+        `select count(*)::int as total,
+                count(*) filter (where created_at > now() - interval '24 hours')::int as recent
+           from channel_ingest_dead_letters`,
+      )
+      deadLetters = { total: d.rows[0].total, recent24h: d.rows[0].recent }
+    } catch (error) {
+      // 42P01: the hub migration that owns this table is not applied. That is
+      // reported as "unavailable", never as "no dead letters".
+      deadLetters = error.code === '42P01' ? { unavailable: true } : null
+      if (error.code !== '42P01') throw error
+    }
     return {
       ledgerTable,
       payloadHashColumn,
       migrationRows,
       channels: channels.rows[0],
       webhookVerifyToken: hasVerifyToken(),
+      deadLetters,
       stuck: {
         minutes,
         staleLinks: stuck.staleLinks.length,
@@ -159,7 +185,8 @@ export async function main(argv = process.argv.slice(2)) {
     for (const item of verdict.warnings) console.log(`  warning: ${item}`)
     console.log(
       `  facts: ledger=${facts.ledgerTable} payload_hash=${facts.payloadHashColumn} migrations=${facts.migrationRows} ` +
-        `channels=${facts.channels.total}/${facts.channels.connected} connected verifyToken=${facts.webhookVerifyToken}`,
+        `channels=${facts.channels.total}/${facts.channels.connected} connected verifyToken=${facts.webhookVerifyToken} ` +
+        `deadLetters=${facts.deadLetters?.unavailable ? 'unavailable' : `${facts.deadLetters?.recent24h ?? 0}/24h(${facts.deadLetters?.total ?? 0} total)`}`,
     )
   }
   return verdict.ready ? 0 : 1

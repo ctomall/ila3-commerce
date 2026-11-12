@@ -53,3 +53,21 @@ test('unknown-outcome sends are a warning, not a blocker', () => {
   assert.equal(verdict.ready, true)
   assert.ok(verdict.warnings.some((w) => w.includes('3 unknown-outcome')))
 })
+
+test('recent dead letters are a warning above the threshold, and quiet below it', () => {
+  const quiet = evaluate({ ...base, deadLetters: { total: 3, recent24h: 3 } })
+  assert.equal(quiet.warnings.some((w) => w.includes('dead-letter')), false)
+
+  const loud = evaluate({ ...base, deadLetters: { total: 40, recent24h: 30 } })
+  assert.equal(loud.ready, true)
+  assert.ok(loud.warnings.some((w) => w.includes('30 channel ingest dead-letter row(s)')))
+
+  const raised = evaluate({ ...base, deadLetters: { total: 40, recent24h: 30, warningThreshold: 100 } })
+  assert.equal(raised.warnings.some((w) => w.includes('dead-letter')), false)
+})
+
+test('an unavailable dead-letter table is not reported as "no dead letters"', () => {
+  const verdict = evaluate({ ...base, deadLetters: { unavailable: true } })
+  assert.equal(verdict.ready, true)
+  assert.equal(verdict.warnings.some((w) => w.includes('dead-letter')), false)
+})
