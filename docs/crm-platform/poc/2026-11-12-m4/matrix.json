@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-11-12T18:49:20.342Z",
+  "generatedAt": "2026-11-12T18:56:16.055Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
-    "leadgen-api": true,
+    "leadgen-api": false,
     "employee-B": true,
     "second-organization": false,
     "dsh-profile-per-employee": true,
@@ -18,11 +18,11 @@
   },
   "summary": {
     "total": 12,
-    "pass": 11,
-    "passWeak": 1,
+    "pass": 10,
+    "passWeak": 0,
     "fail": 0,
-    "blocked": 0,
-    "invalid": 0
+    "blocked": 1,
+    "invalid": 1
   },
   "results": [
     {
@@ -40,8 +40,8 @@
       "requires": [
         "leadgen-api"
       ],
-      "status": "pass",
-      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"9e16a02c-c885-4df2-b7e8-ee5e6ff61564\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
+      "status": "invalid",
+      "detail": "openapi 里没有 /leadgen/candidates/{id}：404 不能当作拒绝证据"
     },
     {
       "id": 1.2,
@@ -93,7 +93,7 @@
         "tool-execute"
       ],
       "status": "pass",
-      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3226}"
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3031}"
     },
     {
       "id": 4,
@@ -111,7 +111,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"53ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"909ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,
@@ -130,9 +130,12 @@
       "requires": [
         "leadgen-api"
       ],
-      "status": "pass-weak",
       "weakReason": "额度绕过、审批绑定、一次性令牌、抑制名单与 send 额度原子扣减均已实测（模拟传输，externalEffect=false）；真实供应商投递仍属 M6 另批",
-      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"ccb29713-bf49-42fe-b558-ab1c66418f96\\\",\\\"leaseToken\\\":\\\"bf97813f-f7a1-46c7-8e4a-a77b40ab8665\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true},{\"name\":\"send-lease-requires-draft\",\"ok\":true},{\"name\":\"send-lease-reserved\",\"ok\":true,\"detail\":\"201 null\"},{\"name\":\"suppression-recorded\",\"ok\":true,\"detail\":\"201\"},{\"name\":\"suppressed-recipient-refused\",\"ok\":true},{\"name\":\"suppression-released\",\"ok\":true},{\"name\":\"dispatch-without-lease-refused\",\"ok\":true},{\"name\":\"one-approval-one-dispatch\",\"ok\":true,\"detail\":\"201 \\\"simulated\\\"\"},{\"name\":\"send-quota-consumed\",\"ok\":true},{\"name\":\"dispatch-replayed-not-duplicated\",\"ok\":true},{\"name\":\"single-send-row\",\"ok\":true},{\"name\":\"send-quota-not-double-charged\",\"ok\":true},{\"name\":\"approval-not-reusable-on-other-draft\",\"ok\":true},{\"name\":\"send-lease-bound-to-its-draft\",\"ok\":true},{\"name\":\"mismatch-kept-lease-reserved\",\"ok\":true},{\"name\":\"lease-funds-its-own-draft\",\"ok\":true},{\"name\":\"bound-lease-consumed\",\"ok\":true},{\"name\":\"approve-after-dispatch-refused\",\"ok\":true}]"
+      "status": "blocked",
+      "missing": [
+        "leadgen-api"
+      ],
+      "detail": "缺少 fixture：leadgen-api"
     }
   ]
 }
