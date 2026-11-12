@@ -21,6 +21,7 @@ jest.mock('@/modules/leadgen/services/orm-repository', () => ({
 
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { POST as decisions } from '../candidates/[id]/decisions/route'
+import { POST as submit } from '../candidates/route'
 import { POST as crmWrite } from '../candidates/[id]/crm-write/route'
 
 const mockAuth = getAuthFromRequest as unknown as Mock<typeof getAuthFromRequest>
@@ -62,6 +63,24 @@ describe('leadgen decisions route', () => {
       params: Promise.resolve({ id: 'nope' }),
     })
     expect(res.status).toBe(404)
+  })
+})
+
+describe('leadgen candidate submission', () => {
+  it('requires a session', async () => {
+    mockAuth.mockResolvedValue(null)
+    const req = new NextRequest('http://localhost/api/leadgen/candidates', {
+      method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}',
+    })
+    expect((await submit(req)).status).toBe(401)
+  })
+
+  it('rejects a missing run id or company name before storage', async () => {
+    const req = new NextRequest('http://localhost/api/leadgen/candidates', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ runId: 'nope', companyName: '' }),
+    })
+    expect((await submit(req)).status).toBe(400)
   })
 })
 
