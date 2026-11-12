@@ -48,7 +48,10 @@ const CAPABILITIES: ChannelCapabilities = {
   deleteMessage: false,
   presence: false,
   richBlocks: false,
-  interactiveComponents: true,
+  // Inbound button_reply/list_reply are parsed into text, but no outbound
+  // interactive builder exists, so the capability must read false: this flag
+  // drives outbound affordances and must not promise a message we never build.
+  interactiveComponents: false,
   inlineImages: true,
   conversationHistory: false,
   contactCards: false,
