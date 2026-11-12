@@ -59,7 +59,22 @@
 结果：**ok=true，4 片迁移 51 条语句全部 expand，destructive=0，unknown=0**——部署管线的静态 expand-only 门禁会接受这批迁移（旧进程可继续运行）。
 证据：`evidence/preflight-20261112.json`。注意：这是分类器结论，**不等于已应用**；生产应用仍需批准。
 
-## 6. 应用与回退（批准后）
+## 6. 合并前静态门禁（分支上已全部通过）
+
+| 检查 | 结果 |
+| --- | --- |
+| `yarn lint` | 0 error（29 warning） |
+| `yarn i18n:check-hardcoded` | 0 error（新增内容仅 throw-error advisory） |
+| `tsc --noEmit` | 0 error |
+| 定向测试 | 36 例通过 |
+| 全量 unit | 103 套件 / 956 例通过（`JEST_MAX_WORKERS=2`） |
+| `node scripts/crm-contract-check.mjs` | 17 操作 / 14 路径通过 |
+| 迁移演练 | 4 片 up/down/reapply PASS（17 表，生产未变） |
+| deploy preflight | expand 4/4，0 destructive/0 unknown |
+
+`nav-baseline` / `ui-regression` 等浏览器门依赖“已部署的同一提交”，只能在合并并切换后跑；这也是审核 UI 放到合并后补的原因（导航基线必须来自真实部署，不能手改）。
+
+## 7. 应用与回退（批准后）
 
 ```
 # 预检 + 备份
