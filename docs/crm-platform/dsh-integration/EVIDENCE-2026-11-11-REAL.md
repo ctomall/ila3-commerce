@@ -528,3 +528,22 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
    被强杀的处理进程留下的行也不会永久锁住员工。
 
 修复后同一演练全绿；`451f99f0…` 那条历史僵尸行由启动扫描落成 `failed / server_restart`，可作为对照。
+
+
+## 重启后重放（2026-11-12 19:48，release `6b389f7`）
+
+脚本：`node scripts/crm-dsh-replay-after-restart.mjs`（一次真实模型调用 + 重启 release 服务 + 按 `runId` 重放）。
+证据：`evidence/replay-after-restart-2026-11-12T19-48-40-097Z.json`。
+
+| 检查 | 实测 |
+| --- | --- |
+| 首个 Run | 200，`status=completed`，`dsh_run_events` 17 行 |
+| 服务重启 | `systemctl restart ila3-auto-deploy-app.service`，healthz 恢复 **12.4s** |
+| 重启后重放（`last-event-id: 0`） | 200，帧序含 `thinking/dsh.event/text/debug`，以 `done` 结束 |
+| 重放是否报错 | **无 `error` 帧**（Run 是 completed，不是 failed） |
+| Run 状态 | 仍 `completed` |
+| 事件是否重复 | 17 → **17**（重放只读，不追加） |
+| 是否新建 Run | `dsh_runs` 总数不变 |
+
+这补的是“重启恢复”的另一半：重启演练证明在飞 Run 会被落成 `failed/server_restart`；
+这里证明**已完成的 Run 及其事件在重启后仍可完整重放**，且重放不会制造第二条 Run 或重复事件。

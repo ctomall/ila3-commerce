@@ -1,0 +1,37 @@
+{
+ "probedAt": "2026-11-12T19:48:40.097Z",
+ "release": "6b389f7ee2d97f3b5f75c18152b99b7d9503a292",
+ "service": "ila3-auto-deploy-app.service",
+ "runId": "28c3caff-b285-4bad-9741-5c6e2cf8bb32",
+ "sessionId": "session-7da7603ab89849f2959adb1ac948753d",
+ "restartHealthMs": 12433,
+ "eventsBefore": 17,
+ "eventsAfter": 17,
+ "runsBefore": 215,
+ "runsAfter": 215,
+ "replayStatus": 200,
+ "replayTypes": [
+  "thinking",
+  "dsh.event",
+  "text",
+  "debug",
+  "object",
+  "string",
+  "integer",
+  "done"
+ ],
+ "replayError": null,
+ "checks": {
+  "first-run-completed": true,
+  "events-persisted": true,
+  "service-restarted": true,
+  "replay-200": true,
+  "replay-has-frames": true,
+  "replay-ends-with-done": true,
+  "replay-no-error-frame": true,
+  "run-still-completed": true,
+  "no-event-duplication": true,
+  "replay-created-no-run": true
+ },
+ "ok": true
+}
