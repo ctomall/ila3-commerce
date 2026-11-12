@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import Link from 'next/link'
 import { Page, PageBody } from '@open-mercato/ui/backend/Page'
 import { apiCall } from '@open-mercato/ui/backend/utils/apiCall'
 import { Alert } from '@open-mercato/ui/primitives/alert'
@@ -79,7 +80,7 @@ export function ConnectChannelForm() {
           {success ? (
             <Alert>
               渠道已连接{success.externalIdentifier ? `（外部账号 ${success.externalIdentifier}）` : ''}。
-              <a className="ml-1 underline" href="/backend/communication_channels/channels">查看渠道</a>
+              <Link className="ml-1 underline" href="/backend/communication_channels/channels">查看渠道</Link>
             </Alert>
           ) : null}
 
@@ -124,7 +125,7 @@ export function ConnectChannelForm() {
 
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={busy}>{busy ? '连接中…' : '连接'}</Button>
-              <a className="text-sm underline" href="/backend/communications/inbox">返回收件箱</a>
+              <Link className="text-sm underline" href="/backend/communications/inbox">返回收件箱</Link>
             </div>
           </form>
         </div>
