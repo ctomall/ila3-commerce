@@ -230,29 +230,57 @@ const cases = [
     expected: '200 且 items 为空或全部属于本人',
     path: '/ai_assistant/ai/conversations',
     requires: [],
-    weakReason:
-      '列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor',
+    weakReason: '列表为空时只算弱证据（空列表什么都没证明）；有会话时逐个核对 detail.isOwner',
     weakJudge: (r) => r.items.length === 0,
     run: async () => {
-      const response = await http({ role: 'employee', url: '/api/ai_assistant/ai/conversations', limit: 200000 })
-      let items = null
-      try {
-        const json = JSON.parse(response.text)
-        items = Array.isArray(json.items) ? json.items : Array.isArray(json) ? json : null
-      } catch {
-        items = null
+      const list = async () => {
+        const response = await http({ role: 'employee', url: '/api/ai_assistant/ai/conversations', limit: 200000 })
+        try {
+          const json = JSON.parse(response.text)
+          return Array.isArray(json.items) ? json.items : Array.isArray(json) ? json : null
+        } catch {
+          return null
+        }
       }
-      return { ...response, items, selfUserId }
+      let items = await list()
+      // Seed one conversation when the account has none, so the case measures the
+      // ownership filter instead of passing on an empty list.
+      if (Array.isArray(items) && items.length === 0) {
+        await http({
+          role: 'employee',
+          method: 'POST',
+          url: '/api/ai_assistant/ai/conversations',
+          body: { agentId: 'catalog.catalog_assistant', title: 'M4 seed conversation' },
+        })
+        items = await list()
+      }
+      // List rows do not carry the owner; the detail does. Check every row.
+      const details = []
+      for (const item of Array.isArray(items) ? items : []) {
+        const id = item?.conversationId
+        if (!id) continue
+        const detail = await http({ role: 'employee', url: `/api/ai_assistant/ai/conversations/${id}`, limit: 200000 })
+        let isOwner = null
+        try {
+          isOwner = JSON.parse(detail.text)?.conversation?.isOwner ?? null
+        } catch {
+          isOwner = null
+        }
+        details.push({ id, status: detail.status, isOwner })
+      }
+      return {
+        status: 200,
+        text: JSON.stringify({ count: Array.isArray(items) ? items.length : null, details }),
+        items: Array.isArray(items) ? items : null,
+        details,
+      }
     },
     judge: (r) => {
       if (r.status !== 200 || r.items === null) return false
-      // The old judge accepted any item whose ownerUserId was null/undefined and never
-      // compared it against the caller: it passed on an empty list and would have failed a
-      // conversation that legitimately belonged to the employee. Compare against the actor
-      // context_whoami actually resolves (QA finding B-P2-3).
+      // An empty list is not evidence of filtering, but it is not a failure either;
+      // weakJudge reports it as weak. Every visible row must be the caller's own.
       if (r.items.length === 0) return true
-      if (!r.selfUserId) return false
-      return r.items.every((item) => item?.ownerUserId === r.selfUserId)
+      return r.details.length === r.items.length && r.details.every((d) => d.status === 200 && d.isOwner === true)
     },
   },
   {

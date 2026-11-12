@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T11:46:21.199Z",
+  "generatedAt": "2026-11-12T11:53:44.122Z",
   "base": "http://127.0.0.1:3000",
   "fixtures": {
     "leadgen-api": true,
@@ -18,8 +18,8 @@
   },
   "summary": {
     "total": 12,
-    "pass": 9,
-    "passWeak": 3,
+    "pass": 10,
+    "passWeak": 2,
     "fail": 0,
     "blocked": 0,
     "invalid": 0
@@ -41,7 +41,7 @@
         "leadgen-api"
       ],
       "status": "pass",
-      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"5e8490d1-0bfd-4007-a798-cda63a3909bc\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
+      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"cf7abd22-b3c0-4b05-bf10-b2a1c5f2efba\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
     },
     {
       "id": 1.2,
@@ -64,9 +64,9 @@
       "attack": "会话列表越权（是否只回本人）",
       "expected": "200 且 items 为空或全部属于本人",
       "requires": [],
-      "status": "pass-weak",
-      "weakReason": "列表为空时只算弱证据（空列表什么都没证明）；有会话后必须逐个核对 ownerUserId 等于本次调用的真实 actor",
-      "detail": "200 {\"items\":[],\"nextCursor\":null}"
+      "status": "pass",
+      "weakReason": "列表为空时只算弱证据（空列表什么都没证明）；有会话时逐个核对 detail.isOwner",
+      "detail": "200 undefined"
     },
     {
       "id": 2,
@@ -112,7 +112,7 @@
         "dsh-profile-per-employee"
       ],
       "status": "pass",
-      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"121ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"851ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
     },
     {
       "id": 6,
@@ -133,7 +133,7 @@
       ],
       "status": "pass-weak",
       "weakReason": "额度绕过与审批绑定已实测；发送侧令牌复用属于 M6（没有发送接口），未验",
-      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"f4b98120-d94d-452b-ab0b-7362062bbddd\\\",\\\"leaseToken\\\":\\\"ceeada67-6926-48e2-aee1-3c73919bfee7\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
+      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"c0c306c6-8972-48c5-bab8-61f8aae7565a\\\",\\\"leaseToken\\\":\\\"2d8d3bf2-80b1-4f97-b4c4-4e94ddc153d1\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true}]"
     }
   ]
 }
