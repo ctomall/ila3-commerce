@@ -14,6 +14,8 @@ import { Message } from '@open-mercato/core/modules/messages/data/entities'
 import { sanitizeChannelHtml } from '@open-mercato/core/modules/communication_channels/lib/sanitize-channel-html'
 import { htmlToPlainText } from '@open-mercato/shared/lib/html/htmlToPlainText'
 import { extractMediaSummary } from '../../../../../lib/media'
+import { describeChannelAvailability } from '../../../../../lib/channel-availability'
+import { hasChannelAdapter } from '@open-mercato/core/modules/communication_channels/lib/adapter-registry-singleton'
 
 export const metadata = {
   path: '/communications/me/threads/[id]/messages',
@@ -239,6 +241,17 @@ export async function GET(
     }
   })
 
+  // Design rev2 F8-05: the conversation itself must say whether this account can
+  // currently receive/send, so an outbound-only email account is not rendered as
+  // an empty thread with no explanation.
+  const availability = describeChannelAvailability({
+    providerKey: channel.providerKey,
+    channelType: channel.channelType,
+    status: channel.status,
+    externalIdentifier: channel.externalIdentifier,
+    adapterRegistered: channel.providerKey ? hasChannelAdapter(channel.providerKey) : false,
+  })
+
   return NextResponse.json({
     conversation: {
       id: conversation.id,
@@ -264,6 +277,8 @@ export async function GET(
       visibility: channel.visibility === 'shared' ? 'shared' : 'private',
       /** Drives capability gating in the inbox (media/template). */
       capabilities: (channel.capabilities as Record<string, unknown> | undefined) ?? {},
+      /** F8-05: can this account receive / send right now, and why not. */
+      availability,
     },
     items,
     nextAfter,

@@ -1426,3 +1426,41 @@ describe('customer-service window policy', () => {
     expect(res.status).toBe(202)
   })
 })
+
+describe('GET thread detail availability (S90b / F8-05)', () => {
+  beforeEach(() => {
+    jest.resetAllMocks()
+  })
+
+  it('tells the conversation that an outbound-only email account cannot receive', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      channels: [
+        {
+          id: 'ch-1',
+          userId: null,
+          providerKey: 'resend',
+          channelType: 'email',
+          displayName: '客服邮箱',
+          status: 'connected',
+          visibility: 'shared',
+        },
+      ],
+      conversations: [{ id: 'conv-1', channelId: 'ch-1', externalConversationId: 'cust@example.test' }],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/[id]/messages/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads/conv-1/messages'), {
+      params: { id: 'conv-1' },
+    })
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.channel.availability.inbound).toMatchObject({
+      available: false,
+      code: 'provider_has_no_inbound',
+    })
+    // The adapter is not registered in a jest process, so outbound is attributed
+    // to the deployment rather than the provider.
+    expect(payload.channel.availability.outbound.code).toBe('adapter_missing')
+  })
+})

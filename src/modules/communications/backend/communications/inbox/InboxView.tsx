@@ -41,7 +41,13 @@ type MessageRow = {
 
 type ThreadDetail = {
   conversation: { id: string; subject: string | null; externalConversationId: string; customer: ThreadRow['customer'] }
-  channel: ThreadRow['channel'] & { status?: string | null }
+  channel: ThreadRow['channel'] & {
+    status?: string | null
+    availability?: {
+      inbound: { available: boolean; code: string; hint: string }
+      outbound: { available: boolean; code: string; hint: string }
+    }
+  }
   items: MessageRow[]
   /** Older-page cursor; absent when the window is already the oldest. */
   nextBefore?: string | null
@@ -157,6 +163,22 @@ export async function InboxView({
                   </p>
                   {canReply && selectedId ? <CustomerLink threadId={selectedId} /> : null}
                 </header>
+                {detail.channel.availability &&
+                (!detail.channel.availability.inbound.available ||
+                  !detail.channel.availability.outbound.available) ? (
+                  <div
+                    role="status"
+                    className="mx-5 mt-3 rounded border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200"
+                  >
+                    <p className="font-medium">这个账号当前不能完整收发</p>
+                    {!detail.channel.availability.inbound.available ? (
+                      <p className="mt-1">收：{detail.channel.availability.inbound.hint}</p>
+                    ) : null}
+                    {!detail.channel.availability.outbound.available ? (
+                      <p className="mt-1">发：{detail.channel.availability.outbound.hint}</p>
+                    ) : null}
+                  </div>
+                ) : null}
                 <div className="flex-1 space-y-3 overflow-y-auto px-5 py-4">
                   {detail.items.map((item) => (
                     <article
@@ -226,6 +248,10 @@ export async function InboxView({
                   {!canReply ? (
                     <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
                       只读：当前账号没有回复权限（需要 communications.reply，或已授予的旧版连接权限）。可继续查看客户消息。
+                    </p>
+                  ) : detail.channel.availability?.outbound.available === false ? (
+                    <p className="mt-2 rounded border border-dashed px-3 py-2 text-xs text-muted-foreground">
+                      当前账号发不出去（原因见上方提示）：不要在这里回复，请管理员处理账号后再发。
                     </p>
                   ) : ['whatsapp', 'messenger', 'email', 'imap', 'gmail'].includes(
                       (detail.channel.channelType ?? '').toLowerCase(),
