@@ -13,10 +13,16 @@ import {
 } from '../../../lib/send-request'
 import { checkCustomerWindow } from '../../../lib/send-window'
 import { OutboundMediaError, uploadAttachmentAsMedia } from '../../../lib/outbound-media'
-import { CommunicationChannel, ExternalConversation, MessageChannelLink } from '@open-mercato/core/modules/communication_channels/data/entities'
+import {
+  CommunicationChannel,
+  ExternalConversation,
+  ExternalMessage,
+  MessageChannelLink,
+} from '@open-mercato/core/modules/communication_channels/data/entities'
 import { canActorReply } from '../../../lib/reply-permission-server'
 import { sanitizeCallerChannelMetadata } from '../../../lib/channel-metadata'
 import { checkOutboundBodyLength } from '../../../lib/outbound-body-limit'
+import { buildEmailReplyMetadata } from '../../../lib/email-reply-metadata'
 
 function noNewlines(value: string): boolean {
   return !/[\r\n]/.test(value)
@@ -267,6 +273,11 @@ export async function POST(req: Request): Promise<Response> {
 
   const hasTemplate = Boolean(templateMetadata)
 
+  // Filled by the policy block below; the email reply headers need the channel
+  // type and the parent's provider Message-ID after that block.
+  let routeChannel: CommunicationChannel | null = null
+  let parentExternalMessageId: string | null = null
+
   let requestEm: EntityManager | null = null
   const forkEm = (): EntityManager | null => {
     if (requestEm) return requestEm
@@ -293,8 +304,30 @@ export async function POST(req: Request): Promise<Response> {
       tenantId: auth.tenantId as string,
       direction: 'inbound',
     } as never)
-    const parentConversationId =
-      (parentLink as { externalConversationId?: string | null } | null)?.externalConversationId ?? null
+    const parentLinkRow = parentLink as
+      | {
+          externalConversationId?: string | null
+          externalMessageId?: string | null
+          channelMetadata?: Record<string, unknown> | null
+        }
+      | null
+    // The address the reply must point at: the parent's provider Message-ID.
+    // Inbound parents carry it on the external message row; an outbound parent
+    // stores the id the transport minted in the link metadata.
+    if (parentLinkRow?.externalMessageId) {
+      const parentExternal = await policyEm.findOne(ExternalMessage, {
+        id: parentLinkRow.externalMessageId,
+        tenantId: auth.tenantId as string,
+        conversationId: body.threadId,
+      } as never)
+      const value = (parentExternal as { externalMessageId?: string | null } | null)?.externalMessageId
+      parentExternalMessageId = typeof value === 'string' && value.length > 0 ? value : null
+    }
+    if (!parentExternalMessageId) {
+      const stored = parentLinkRow?.channelMetadata?.messageId
+      parentExternalMessageId = typeof stored === 'string' && stored.length > 0 ? stored : null
+    }
+    const parentConversationId = parentLinkRow?.externalConversationId ?? null
     const sameThread =
       parentConversationId === body.threadId &&
       Boolean(
@@ -324,6 +357,7 @@ export async function POST(req: Request): Promise<Response> {
       organizationId,
       deletedAt: null,
     } as never)
+    routeChannel = policyChannel as CommunicationChannel | null
     const limitViolation = checkOutboundBodyLength({
       providerKey: (policyChannel as { providerKey?: string } | null)?.providerKey,
       body: body.body,
@@ -527,10 +561,21 @@ export async function POST(req: Request): Promise<Response> {
     }
   }
 
+  // Email threading (design rev2 F3-10): the hub's delivery command resolves a
+  // chat reply target but never writes `In-Reply-To`, and the caller-supplied
+  // `inReplyTo`/`references` are stripped by `sanitizeCallerChannelMetadata`. So
+  // the BFF derives them from the VERIFIED parent (same conversation, checked
+  // above) and only for email channels; a caller can never aim the header.
+  const emailReplyMetadata = buildEmailReplyMetadata({
+    parentExternalMessageId,
+    channelType: routeChannel?.channelType,
+  })
+
   const channelMetadata = {
     // Routing fields are validated server-side; strip anything a caller could use
     // to redirect the recipient or forge threading headers (defence in depth).
     ...callerChannelMetadata,
+    ...emailReplyMetadata,
     ...(templateMetadata ? { template: templateMetadata } : {}),
     ...(resolvedMedia ? { media: resolvedMedia } : {}),
     ...(body.clientRequestId ? { clientRequestId: body.clientRequestId } : {}),

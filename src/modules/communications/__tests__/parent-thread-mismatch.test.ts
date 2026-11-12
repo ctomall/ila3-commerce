@@ -4,6 +4,7 @@ import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import {
   CommunicationChannel,
   ExternalConversation,
+  ExternalMessage,
   MessageChannelLink,
 } from '@open-mercato/core/modules/communication_channels/data/entities'
 import { SendRequest } from '../data/entities'
@@ -34,16 +35,43 @@ const THREAD = '22222222-2222-4222-8222-222222222222'
 const OTHER_THREAD = '33333333-3333-4333-8333-333333333333'
 const PARENT = '44444444-4444-4444-8444-444444444444'
 
-function fakeEm(options: { linkThread: string | null }) {
+function fakeEm(options: {
+  linkThread: string | null
+  linkExternalMessageId?: string | null
+  parentProviderId?: string | null
+  channelType?: string
+}) {
   let nextId = 1
   const findOne = jest.fn(async (entity: unknown, where: Row) => {
     if (entity === CommunicationChannel) {
-      return { id: where.id, channelType: 'email', userId: 'u1', tenantId: 't1', organizationId: 'o1' }
+      return {
+        id: where.id,
+        channelType: options.channelType ?? 'email',
+        providerKey: (options.channelType ?? 'email') === 'email' ? 'imap' : 'whatsapp-business',
+        userId: 'u1',
+        tenantId: 't1',
+        organizationId: 'o1',
+      }
+    }
+    if (entity === ExternalMessage) {
+      return {
+        id: where.id,
+        externalMessageId: options.parentProviderId ?? null,
+        direction: 'inbound',
+        conversationId: THREAD,
+        // Inside the 24h window, so a chat-channel case is not refused earlier.
+        createdAt: new Date(),
+        providerTimestamp: new Date(),
+      }
     }
     if (entity === SendRequest) return null
     if (entity === MessageChannelLink) {
       if (where.messageId !== PARENT || where.direction !== 'inbound') return null
-      return { externalConversationId: options.linkThread }
+      return {
+        externalConversationId: options.linkThread,
+        externalMessageId: options.linkExternalMessageId ?? null,
+        channelMetadata: null,
+      }
     }
     if (entity === ExternalConversation) {
       if (where.id === THREAD && where.channelId === CHANNEL) return { id: THREAD }
@@ -137,6 +165,34 @@ describe('reply parent must belong to the claimed conversation', () => {
     expect(send).toHaveBeenCalledTimes(1)
     const sent = (send as jest.MockedFunction<(...args: unknown[]) => Promise<unknown>>).mock.calls[0][2] as Row
     expect(sent.parentMessageId).toBe(PARENT)
+  })
+
+  it('derives the email In-Reply-To/References from the verified parent (S87b / F3-10)', async () => {
+    const { em } = fakeEm({
+      linkThread: THREAD,
+      linkExternalMessageId: 'em-parent',
+      parentProviderId: '<parent-msg@acme.test>',
+    })
+    const send = jest.fn(async () => ({
+      ok: true as const,
+      messageId: 'm-3',
+      threadId: 'th-3',
+      channelId: CHANNEL,
+      providerKey: 'imap',
+    }))
+    mockContainer.mockResolvedValue(containerWith(em, send) as never)
+
+    // A caller-supplied header must never win: it is stripped before the hub and
+    // the value below comes from the parent row instead.
+    const response = await post(
+      payload({ channelMetadata: { inReplyTo: '<evil@attacker.test>', references: ['<evil@attacker.test>'] } }),
+    )
+    expect(response.status).toBe(202)
+    const sent = (send as jest.MockedFunction<(...args: unknown[]) => Promise<unknown>>).mock.calls[0][2] as Row
+    expect(sent.channelMetadata).toMatchObject({
+      inReplyTo: '<parent-msg@acme.test>',
+      references: ['<parent-msg@acme.test>'],
+    })
   })
 
   it('keeps old clients working: no threadId means no parent-thread check', async () => {
