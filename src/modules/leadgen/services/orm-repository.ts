@@ -110,6 +110,18 @@ function verificationRow(row: LeadgenVerification): VerificationRow {
   }
 }
 
+/**
+ * The command bus returns the handler's value directly, or wraps it in `{ result }`
+ * depending on the caller. Reading only `outcome.entityId` made every CRM write
+ * fail with "returned no entityId" after the company had actually been created.
+ */
+export function commandResultEntityId(outcome: unknown): string | null {
+  if (!outcome || typeof outcome !== 'object') return null
+  const record = outcome as { result?: unknown; entityId?: unknown }
+  const value = (record.result ?? record) as { entityId?: unknown }
+  return typeof value?.entityId === 'string' && value.entityId.length > 0 ? value.entityId : null
+}
+
 export function createOrmLeadgenRepository(
   em: EntityManager,
   container: AwilixContainer,
@@ -404,9 +416,10 @@ export function createOrmLeadgenRepository(
           selectedOrganizationId: input.organizationId,
           organizationIds: [input.organizationId],
         },
-      })) as { entityId?: string } | null
-      if (!result?.entityId) throw new Error('customers.companies.create returned no entityId')
-      return result.entityId
+      }))
+      const entityId = commandResultEntityId(result)
+      if (!entityId) throw new Error('customers.companies.create returned no entityId')
+      return entityId
     },
   }
 }
