@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { hasNewMessages, livePollDelayMs, pollOutcome } from '../../../lib/inbox-live'
+import { hasNewMessages, livePollDelayMs, nextPollDelayMs, pollOutcome } from '../../../lib/inbox-live'
 
 /**
  * Poll the incremental `after` cursor while the tab is visible and refresh the
@@ -23,6 +23,7 @@ export function InboxLiveRefresh({
   useEffect(() => {
     if (!after) return
     let stopped = false
+    let failures = 0
     let timer: ReturnType<typeof setTimeout> | null = null
 
     const schedule = (delay: number) => {
@@ -40,6 +41,7 @@ export function InboxLiveRefresh({
         const url = `/api/communications/me/threads/${encodeURIComponent(threadId)}/messages?after=${encodeURIComponent(after)}&limit=1`
         const response = await fetch(url, { cache: 'no-store' })
         if (response.ok) {
+          failures = 0
           const payload = (await response.json().catch(() => null)) as unknown
           if (!stopped && hasNewMessages(payload)) {
             router.refresh()
@@ -53,11 +55,14 @@ export function InboxLiveRefresh({
           if (timer) clearTimeout(timer)
           router.refresh()
           return
+        } else {
+          failures += 1
         }
       } catch {
-        /* offline/transient: retry on the next tick */
+        /* offline/transient: retry with backoff */
+        failures += 1
       }
-      schedule(intervalMs)
+      schedule(nextPollDelayMs(failures, intervalMs)!)
     }
     const onVisibility = () => {
       if (stopped) return

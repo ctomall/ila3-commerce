@@ -43,3 +43,23 @@ export function pollOutcome(status: number): PollOutcome {
   if (status === 401 || status === 403 || status === 404) return 'surface-and-stop'
   return 'continue'
 }
+
+/**
+ * Delay before the next poll after `failures` consecutive transient failures.
+ *
+ * A fixed interval keeps hammering a server that is down or rate-limiting, and
+ * burns battery on a phone. Back off exponentially from the base interval and
+ * cap at five minutes; a successful poll resets the counter to zero, so recovery
+ * is immediate once the server answers again. Returning null keeps the existing
+ * "hidden tab does not poll" behaviour.
+ */
+export function nextPollDelayMs(
+  failures: number,
+  intervalMs: number,
+  visibility: 'visible' | 'hidden' | string = 'visible',
+): number | null {
+  if (visibility !== 'visible') return null
+  const base = Math.max(5_000, Math.min(intervalMs, 300_000))
+  const steps = Math.min(Math.max(0, Math.floor(failures)), 4)
+  return Math.min(base * 2 ** steps, 300_000)
+}
