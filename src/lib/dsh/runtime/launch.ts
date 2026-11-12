@@ -35,8 +35,23 @@ import {
 import { createTransport, type DshTransport } from './transport'
 import type { DshEvent, DshRunHandle, DshRunInput, DshRunResult } from './types'
 
-/** Default handshake bound. */
-export const DEFAULT_INITIALIZE_TIMEOUT_MS = 10_000
+/**
+ * Default handshake bound.
+ *
+ * This bounds only a *live but silent* child: a crash, a missing binary or a
+ * rejected config closes the pipe and fails the pending request immediately, so a
+ * generous bound does not slow real startup failures down.
+ *
+ * The production bound used to be 10 s, and a real run hit it — `initialize timed
+ * out after 10000ms` → 502 — while the host was loaded. A direct measurement of
+ * the non-isolated handshake gives 0.76–2.3 s even at load 69, so DSH booting is
+ * not what consumed those seconds; the isolated start path (sudo + runner + a
+ * freshly created employee HOME) is the candidate this bound widening covers.
+ * 60 s keeps one cold start inside the budget and stays under the 120 s run
+ * timeout; a child that dies still fails at once, because the pipe close rejects
+ * the pending request.
+ */
+export const DEFAULT_INITIALIZE_TIMEOUT_MS = 60_000
 /** Default per-request bound after the handshake. */
 export const DEFAULT_REQUEST_TIMEOUT_MS = 30_000
 /** Default cooperative shutdown bound during cancel/close. */

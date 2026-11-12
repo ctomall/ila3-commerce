@@ -290,10 +290,10 @@ function runTimeoutMs(): number {
 }
 
 /**
- * The DSH `initialize` handshake is bounded at 10 s by the runtime. On a loaded host
- * that bound is reachable: a real run once failed with `initialize timed out after
- * 10000ms` and the browser received 502. Production can widen it through the env
- * without a code change; unset keeps the runtime default so behaviour is unchanged.
+ * Override for the DSH `initialize` handshake bound. The runtime default is 60 s
+ * (see `lib/dsh/runtime/launch.ts`: a 10 s default did cost a real run a 502 with
+ * `initialize timed out after 10000ms` on a loaded host). Unset keeps that default;
+ * the env widens or narrows it without a code change, clamped to 120 s.
  */
 const MAX_INITIALIZE_TIMEOUT_MS = 120_000
 function initializeTimeoutMs(): number | undefined {

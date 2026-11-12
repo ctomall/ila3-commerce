@@ -200,6 +200,10 @@ function handle(message) {
   if (method === 'initialize') {
     record({ kind: 'initialize', params: message.params })
     if (mode === 'init-hang') return
+    if (mode === 'init-slow') {
+      setTimeout(() => answer(id, { serverInfo: { name: 'fake-dsh', version: 'test' } }), 1_200)
+      return
+    }
     if (mode === 'init-error') {
       answerError(id, -32000, 'no model route')
       return

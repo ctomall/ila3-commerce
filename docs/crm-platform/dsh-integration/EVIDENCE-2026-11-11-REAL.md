@@ -479,8 +479,7 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
 - **失败 Run 的重放不再静默**：重放失败 Run `9fcc1850…` 得到 `["error","done"]`，
   `error = dsh initialize failed: initialize timed out after 10000ms`
   （`evidence/replay-failed-run-2026-11-12T16-53-00Z.json`）；
-- **`initialize` 上限可配**：`OM_DSH_INIT_TIMEOUT_MS` 可放宽（上限 120s），未设置时行为不变；
-  单测同时断言“未设置则不传字段”和“设置则透传 25000”；
+- **`initialize` 上限默认 60s、可配**：`OM_DSH_INIT_TIMEOUT_MS` 可覆盖（上限 120s）；未设置时走运行时默认 60s。只对“子进程活着但不吭声”生效——崩溃/缺二进制/配置被拒会关管道，待处理请求立即失败，所以放宽不会拖慢真实启动失败。依据：负载 69 下非隔离握手实测 0.76–2.3s，说明那次 10s 超时耗在隔离启动（sudo + runner + 新建员工 HOME），不是 DSH 本身慢；单测同时断言“默认 60s 容忍 1.2s 冷启动”、“未设置则不传字段”和“设置则透传 25000”；
 - **`initialize` 超时自动重试一次**（`28c2c09`）：真实故障是负载 12–17 时
   `502 DSH runtime failed to start` + 日志 `initialize timed out after 10000ms`；现在命中该错误时
   重启子进程重试一次（其它启动错误不重试，仍立即 502）。单测 43/43 断言“超时重试一次成功”和

@@ -297,6 +297,13 @@ describe('startDshRun', () => {
     await expect(handle.close()).resolves.toEqual({ stopped: true })
   })
 
+  it('tolerates a cold initialize that answers after a second under the default bound', async () => {
+    const { input } = makeRun('init-slow')
+    const handle = await start(input)
+    await expect(handle.result).resolves.toMatchObject({ finishReason: 'completed' })
+    await expect(handle.close()).resolves.toEqual({ stopped: true })
+  })
+
   it('rejects a hung initialize, kills the child and reports no process leak', async () => {
     const { input, recordPath } = makeRun('init-hang', {
       initializeTimeoutMs: 100,
