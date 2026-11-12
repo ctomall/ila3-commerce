@@ -31,6 +31,7 @@
 | 已投递草稿不得再审批 | `status === 'sent'` 时拒绝，**包括同一审批的重放**（先判状态再查重放） | 409 `already_sent` |
 | 抑制名单优先于审批 | 先查 `leadgen_suppressions(email_hash)`，命中即拒 | 409 `suppressed` |
 | 投递必须有 `send` 额度预留 | 必须带 `leaseToken`；无则拒并回滚草稿认领 | 400 `quota_lease_required` |
+| 预留必须指名该草稿 | 预留时强制 `draftId`（`subject_kind='draft'`）；dispatch 校验 `subject_id` 就是本草稿 | 400 `draft_required` / 409 `quota_lease_scope_mismatch` |
 | 预留只被花一次 | 预留 CAS `reserved -> consumed` + 桶 `reserved-1/consumed+1` 同事务 | 409 `quota_lease_invalid` |
 | 失败/写行失败退还额度 | `refundLease`：`consumed -> refunded` + 桶回滚 | — |
 
@@ -70,14 +71,16 @@
 1. **供应商适配器**：`OutboundTransport` 只有模拟实现；真实实现要接获准渠道（SMTP/供应商 API）、
    退回处理、bounce/complaint 回执接收（`leadgen_message_receipts` 已有表但没有写入方）。
 2. **外发开关**：没有 flag、没有环境变量能打开真实发送；需要新增到生命周期配置里并默认关闭。
-3. **额度桶的层级选择**：dispatch 目前消费调用方给的 lease，不校验预留是否属于本员工/本任务
-   （四层桶全部满足即可）；真实外发前应把 `subject_kind/subject_id` 与草稿/员工绑定。
+3. **额度桶的员工归属**：lease 现在绑定草稿（`subject_kind='draft'`），但还没校验预留是否由本员工发起
+   （四层桶满足即可）；真实外发前应把 `scope_kind='employee'` 与调用者绑定。
 
 以上三项属于 `M6 真实外发`，按原授权边界另批；本步不启用、不绕过。
 
-## 6. M4 #7 现在证明什么（19 项）
+## 6. M4 #7 现在证明什么（24 项）
 
 超额度 429、首次预留 201、同键重放、额度耗尽 429、headroom 非负、`send` 预留 201、
 草稿创建、审批绑定正文、审批重放、改正文 409、**抑制命中 409**、**无预留 400**、
 一次审批一次投递（`simulated`）、**预留被消费 0:1**、重放不重复投递、`leadgen_sends` 仅 1 行、
-**重放不再扣额度**、令牌不能跨草稿复用、投递后连审批重放也 409。
+**重放不再扣额度**、令牌不能跨草稿复用、投递后连审批重放也 409；
+以及本轮新增的 **预留必须指名草稿**（无 draftId 400）、**lease 只能给它的草稿用**（409）、
+**被拒的 dispatch 不消耗 lease**（桶停在 `1:1`）、**正确的草稿能消耗该 lease**（桶到 `0:2`）。

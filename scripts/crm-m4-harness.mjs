@@ -722,7 +722,7 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
               // reserve after the draft exists so the lease can be bound to it.
               sendBucketId = `00000000-0000-4000-8000-${String(Date.now() + 1).slice(-12)}`
               psqlValue(
-                `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${sendBucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'send', '${period}', 1, 0, 0, 1, now(), now())`,
+                `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${sendBucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'send', '${period}', 2, 0, 0, 1, now(), now())`,
               )
               const reserveSend = async (draft, keySuffix) => {
                 const res = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
@@ -790,53 +790,48 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
                 name: 'send-quota-not-double-charged',
                 ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${sendBucketId}'`) === '0:1',
               })
-              // The same token must not travel to a different body.
-              const otherDraft = await fetch(`${BASE}/api/leadgen/drafts`, {
-                method: 'POST',
-                headers: { cookie: cookies.employee, 'content-type': 'application/json' },
-                body: JSON.stringify({ candidateId, recipientEmail: recipient || 'qa@m4.example', subject: 'M4 approval binding', bodyMarkdown: `other body ${keyBase}` }),
-              })
-              const otherDraftBody = await otherDraft.json().catch(() => ({}))
-              const otherDraftId = otherDraftBody?.draft?.id
-              if (otherDraftId) {
-                const crossed = await dispatch(otherDraftId, approvalId, leaseToken)
-                checks.push({ name: 'approval-not-reusable-on-other-draft', ok: crossed.status === 404 })
+              // The same token must not travel to a different body, and a lease minted
+              // for one draft must not fund another draft's send.
+              const makeDraft = async (label) => {
+                const res = await fetch(`${BASE}/api/leadgen/drafts`, {
+                  method: 'POST',
+                  headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                  body: JSON.stringify({ candidateId, recipientEmail: recipient || 'qa@m4.example', subject: 'M4 approval binding', bodyMarkdown: `${label} ${keyBase}` }),
+                })
+                const body = await res.json().catch(() => ({}))
+                return { id: body?.draft?.id, bodyHash: body?.bodyHash }
               }
-              // A lease minted for one draft must not fund another draft's send.
-              if (otherDraftId) {
-                const secondBucketId = `00000000-0000-4000-8000-${String(Date.now() + 3).slice(-12)}`
-                psqlValue(
-                  `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${secondBucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'send', '${period}', 1, 0, 0, 1, now(), now())`,
-                )
-                sendBucket2Id = secondBucketId
-                const boundToOther = await reserveSend(otherDraftId, 'send-other')
-                if (boundToOther.leaseToken) {
-                  const thirdDraft = await fetch(`${BASE}/api/leadgen/drafts`, {
-                    method: 'POST',
-                    headers: { cookie: cookies.employee, 'content-type': 'application/json' },
-                    body: JSON.stringify({ candidateId, recipientEmail: recipient || 'qa@m4.example', subject: 'M4 approval binding', bodyMarkdown: `third body ${keyBase}` }),
+              const approveDraft = async (draft) => {
+                const res = await fetch(`${BASE}/api/leadgen/drafts/${draft.id}/approvals`, {
+                  method: 'POST',
+                  headers: { cookie: cookies.employee, 'content-type': 'application/json' },
+                  body: JSON.stringify({ decision: 'approved', draftHash: draft.bodyHash }),
+                })
+                const body = await res.json().catch(() => ({}))
+                return body?.approval?.id ?? null
+              }
+              const other = await makeDraft('other body')
+              if (other.id) {
+                const crossed = await dispatch(other.id, approvalId, leaseToken)
+                checks.push({ name: 'approval-not-reusable-on-other-draft', ok: crossed.status === 404 })
+                const otherApproval = await approveDraft(other)
+                const third = await makeDraft('third body')
+                const thirdApproval = third.id ? await approveDraft(third) : null
+                const boundToOther = await reserveSend(other.id, 'send-other')
+                if (otherApproval && third.id && thirdApproval && boundToOther.leaseToken) {
+                  const wrongDraft = await dispatch(third.id, thirdApproval, boundToOther.leaseToken)
+                  checks.push({ name: 'send-lease-bound-to-its-draft', ok: wrongDraft.status === 409 })
+                  // A refused dispatch must not spend the lease it could not use.
+                  checks.push({
+                    name: 'mismatch-kept-lease-reserved',
+                    ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${sendBucketId}'`) === '1:1',
                   })
-                  const thirdBody = await thirdDraft.json().catch(() => ({}))
-                  const thirdDraftId = thirdBody?.draft?.id
-                  const thirdApproval = thirdDraftId
-                    ? await (async () => {
-                        const res = await fetch(`${BASE}/api/leadgen/drafts/${thirdDraftId}/approvals`, {
-                          method: 'POST',
-                          headers: { cookie: cookies.employee, 'content-type': 'application/json' },
-                          body: JSON.stringify({ decision: 'approved', draftHash: thirdBody?.bodyHash }),
-                        })
-                        return (await res.json().catch(() => ({})))?.approval?.id ?? null
-                      })()
-                    : null
-                  if (thirdDraftId && thirdApproval) {
-                    const wrongDraft = await dispatch(thirdDraftId, thirdApproval, boundToOther.leaseToken)
-                    checks.push({ name: 'send-lease-bound-to-its-draft', ok: wrongDraft.status === 409 })
-                    // A refused dispatch must not spend the lease it could not use.
-                    checks.push({
-                      name: 'mismatch-kept-lease-reserved',
-                      ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${secondBucketId}'`) === '1:0',
-                    })
-                  }
+                  const ownDraft = await dispatch(other.id, otherApproval, boundToOther.leaseToken)
+                  checks.push({ name: 'lease-funds-its-own-draft', ok: ownDraft.status === 201 })
+                  checks.push({
+                    name: 'bound-lease-consumed',
+                    ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${sendBucketId}'`) === '0:2',
+                  })
                 }
               }
               // A dispatched draft cannot mint a fresh approval for the same body.
