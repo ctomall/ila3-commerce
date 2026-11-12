@@ -18,7 +18,7 @@
 | M7 Bot | **判定+编排层完成** | 验签/时效/重放/身份四道关顺序固定 + 群聊只读 + 脱敏 + 审计 | 真实 IM 渠道回调未接 |
 | M8 验收 | **发布级 PASS（2026-11-12, commit 6c96938）** | **23 道门**、发布级判定（`--require-clean/--require-no-skip`）、恢复演练结构+值级、变异 19/19、试用 sessions 口径实测 | 正版发布级全绿要 `quote-regression` 的夹具 |
 
-**最后一份发布级运行**：`verify/verify-2026-11-12T08-48-46.md` — **PASS 25 · FAIL 0 · SKIP 0**（M5 上线 + M4 缺口收口后，运行 release `bfc2724`；M4 pass 8 · weak 4 · blocked 0 · invalid 0）。
+**最后一份发布级运行**：`verify/verify-2026-11-12T09-26-21.md` — **PASS 25 · FAIL 0 · SKIP 0**（M5 审核 UI 上线后，运行 release `744cece`；M4 pass 8 · weak 4 · blocked 0 · invalid 0）。
 
 上一份：`verify/verify-2026-11-12T06-12-35.md` — **PASS 25 · FAIL 0 · SKIP 0**，发布级门禁 **PASS**（运行中的 release `8d42e12`，M4 pass 7 · weak 3 · blocked 1 · invalid 1）。
 host 有外部负载时用 `JEST_TIMEOUT=90000 JEST_MAX_WORKERS=2` 跑同一套门禁（默认值不变；原因见 `jest.config.cjs` 注释）。
