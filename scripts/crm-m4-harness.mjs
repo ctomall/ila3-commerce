@@ -626,10 +626,11 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
     expected: '429 / 4xx',
     // Quota bypass is testable now that the reservation API is live: a fixture bucket
     // with one unit must refuse two, and the reservation must not be booked twice.
-    // The approval token's single-use contract is now tested at the dispatch boundary
-    // through the simulated transport. Real provider sending, and consuming a `send`
-    // quota unit atomically with dispatch, belong to the separately authorized M6, so
-    // the case still reports pass-weak instead of claiming the whole attack is covered.
+    // The dispatch boundary is now exercised end to end through the simulated transport:
+    // one approval -> one dispatch, a suppressed recipient is refused, a dispatch without
+    // a `send` reservation is refused, and the reservation is consumed exactly once.
+    // Real provider delivery stays in the separately authorized M6, so the case still
+    // reports pass-weak instead of claiming the whole attack is covered.
     requires: ['leadgen-api'],
     run: async () => {
       const checks = []
@@ -672,6 +673,20 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         checks.push({ name: 'exhausted-429', ok: second.status === 429 })
         checks.push({ name: 'no-negative-headroom', ok: Number(psqlValue(`select reserved_units + consumed_units from leadgen_quota_buckets where id = '${bucketId}'`)) === 1 })
 
+        // A dispatch must be funded: reserve one `send` unit and keep its lease.
+        const sendBucketId = `00000000-0000-4000-8000-${String(Date.now() + 1).slice(-12)}`
+        psqlValue(
+          `insert into leadgen_quota_buckets (id, tenant_id, organization_id, scope_kind, scope_id, quota_kind, period_key, limit_units, reserved_units, consumed_units, version, created_at, updated_at) values ('${sendBucketId}', '${tenantId}', '${organizationId}', 'tenant', null, 'send', '${period}', 1, 0, 0, 1, now(), now())`,
+        )
+        const sendReserve = await fetch(`${BASE}/api/leadgen/quota/reservations`, {
+          method: 'POST',
+          headers: { cookie: cookies.employee, 'content-type': 'application/json', 'idempotency-key': `${keyBase}-send` },
+          body: JSON.stringify({ quotaKind: 'send', units: 1 }),
+        })
+        const sendReserveBody = await sendReserve.json().catch(() => ({}))
+        const leaseToken = sendReserveBody?.reservation?.leaseToken
+        checks.push({ name: 'send-lease-reserved', ok: sendReserve.status === 201 && Boolean(leaseToken) })
+
         // Approval-token abuse: an approval is bound to the reviewed body, and the
         // dispatch boundary accepts exactly one dispatch per approval. The transport
         // is the simulated one (`externalEffect: false`), so this proves the token
@@ -706,13 +721,24 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
             const firstApproval = await firstApprove.json().catch(() => ({}))
             const approvalId = firstApproval?.approval?.id
             if (approvalId) {
-              const dispatch = (draft, token) =>
+              const dispatch = (draft, token, lease) =>
                 fetch(`${BASE}/api/leadgen/drafts/${draft}/sends`, {
                   method: 'POST',
                   headers: { cookie: cookies.employee, 'content-type': 'application/json' },
-                  body: JSON.stringify({ approvalId: token }),
+                  body: JSON.stringify(lease ? { approvalId: token, leaseToken: lease } : { approvalId: token }),
                 })
-              const sendOnce = await dispatch(draftId, approvalId)
+              // A suppression hit outranks the approval: the recipient opted out.
+              const recipientEmail = String(recipient || 'qa@m4.example')
+              const recipientHash = createHash('sha256').update(recipientEmail.trim().toLowerCase()).digest('hex')
+              psqlValue(
+                `insert into leadgen_suppressions (id, tenant_id, organization_id, email_hash, email, reason, created_at) values ('00000000-0000-4000-8000-${String(Date.now() + 2).slice(-12)}', '${tenantId}', '${organizationId}', '${recipientHash}', '${recipientEmail.replace(/'/g, '')}', 'unsubscribe', now())`,
+              )
+              const suppressed = await dispatch(draftId, approvalId, leaseToken)
+              checks.push({ name: 'suppressed-recipient-refused', ok: suppressed.status === 409 })
+              psqlValue(`delete from leadgen_suppressions where email_hash = '${recipientHash}'`)
+              const noLease = await dispatch(draftId, approvalId)
+              checks.push({ name: 'dispatch-without-lease-refused', ok: noLease.status === 400 })
+              const sendOnce = await dispatch(draftId, approvalId, leaseToken)
               const sendOnceBody = await sendOnce.json().catch(() => ({}))
               checks.push({
                 name: 'one-approval-one-dispatch',
@@ -723,7 +749,11 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
                   sendOnceBody?.transport?.externalEffect === false,
                 detail: `${sendOnce.status} ${JSON.stringify(sendOnceBody?.send?.state ?? null)}`,
               })
-              const sendAgain = await dispatch(draftId, approvalId)
+              checks.push({
+                name: 'send-quota-consumed',
+                ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${sendBucketId}'`) === '0:1',
+              })
+              const sendAgain = await dispatch(draftId, approvalId, leaseToken)
               const sendAgainBody = await sendAgain.json().catch(() => ({}))
               checks.push({
                 name: 'dispatch-replayed-not-duplicated',
@@ -736,6 +766,10 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
                 name: 'single-send-row',
                 ok: psqlValue(`select count(*) from leadgen_sends where approval_id = '${approvalId}'`) === '1',
               })
+              checks.push({
+                name: 'send-quota-not-double-charged',
+                ok: psqlValue(`select reserved_units || ':' || consumed_units from leadgen_quota_buckets where id = '${sendBucketId}'`) === '0:1',
+              })
               // The same token must not travel to a different body.
               const otherDraft = await fetch(`${BASE}/api/leadgen/drafts`, {
                 method: 'POST',
@@ -745,7 +779,7 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
               const otherDraftBody = await otherDraft.json().catch(() => ({}))
               const otherDraftId = otherDraftBody?.draft?.id
               if (otherDraftId) {
-                const crossed = await dispatch(otherDraftId, approvalId)
+                const crossed = await dispatch(otherDraftId, approvalId, leaseToken)
                 checks.push({ name: 'approval-not-reusable-on-other-draft', ok: crossed.status === 404 })
               }
               // A dispatched draft cannot mint a fresh approval for the same body.
@@ -763,13 +797,13 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
         }
       } finally {
         psqlValue(`delete from leadgen_quota_reservations where idempotency_key like '${keyBase}%'`)
-        psqlValue(`delete from leadgen_quota_buckets where id = '${bucketId}'`)
+        psqlValue(`delete from leadgen_quota_buckets where id = '${bucketId}' or id = '${typeof sendBucketId !== 'undefined' ? sendBucketId : '00000000-0000-0000-0000-000000000000'}'`)
       }
       const ok = checks.length > 0 && checks.every((check) => check.ok)
       return { status: ok ? 200 : 403, text: JSON.stringify(checks) }
     },
     weakReason:
-      '额度绕过、审批绑定、发送侧一次性令牌均已实测（模拟传输，externalEffect=false）；真实外发与 dispatch 上原子扣减 send 额度属 M6 另批',
+      '额度绕过、审批绑定、一次性令牌、抑制名单与 send 额度原子扣减均已实测（模拟传输，externalEffect=false）；真实供应商投递仍属 M6 另批',
     judge: (r) => {
       try {
         const parsed = JSON.parse(r.text)

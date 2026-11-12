@@ -60,6 +60,9 @@ export type DispatchErrorCode =
   | 'draft_not_approved'
   | 'already_sent'
   | 'send_in_progress'
+  | 'suppressed'
+  | 'quota_lease_required'
+  | 'quota_lease_invalid'
   | 'transport_failed'
 
 /**
@@ -89,6 +92,24 @@ export function createSimulatedTransport(): OutboundTransport {
       return { providerMessageId: null }
     },
   }
+}
+
+/**
+ * The controls a dispatch must satisfy besides the approval token: a suppression
+ * hit keeps the recipient out, and a funded `send` quota reservation is consumed
+ * exactly once. Both are backed by existing tables; neither contacts a provider.
+ */
+export type SendGuards = {
+  isSuppressed(input: {
+    tenantId: string
+    organizationId: string
+    emailHash: string
+  }): Promise<boolean>
+  consumeLease(input: { tenantId: string; organizationId: string; leaseToken: string }): Promise<
+    | { ok: true; reservationId: string; units: number }
+    | { ok: false; code: 'lease_not_found' | 'lease_not_send' | 'lease_expired' | 'lease_already_used' }
+  >
+  refundLease(input: { tenantId: string; organizationId: string; leaseToken: string }): Promise<void>
 }
 
 export type SendRepository = {
@@ -164,17 +185,20 @@ export function sendIdempotencyKey(input: {
 
 export function createSendService(deps: {
   repo: SendRepository
+  guards: SendGuards
   transport: OutboundTransport
   now: () => string
   newId: () => string
 }) {
-  const { repo, transport, now, newId } = deps
+  const { repo, guards, transport, now, newId } = deps
 
   async function dispatch(input: {
     tenantId: string
     organizationId: string
     draftId: string
     approvalId: string
+    /** Lease of a `send` quota reservation; one lease funds one dispatch. */
+    leaseToken?: string
   }): Promise<DispatchResult> {
     const draft = await repo.getDraft({
       tenantId: input.tenantId,
@@ -182,6 +206,14 @@ export function createSendService(deps: {
       id: input.draftId,
     })
     if (!draft) return { ok: false, code: 'draft_not_found' }
+    // A suppression hit outranks any approval: the recipient asked not to be mailed.
+    if (await guards.isSuppressed({
+      tenantId: input.tenantId,
+      organizationId: input.organizationId,
+      emailHash: draft.recipientHash,
+    })) {
+      return { ok: false, code: 'suppressed' }
+    }
 
     const approval = await repo.getApproval({
       tenantId: input.tenantId,
@@ -236,28 +268,69 @@ export function createSendService(deps: {
       return { ok: false, code: 'already_sent' }
     }
 
-    const leaseExpiresAt = new Date(Date.parse(at) + SEND_LEASE_MS).toISOString()
-    let send: SendRow
-    if (existing) {
-      const attempt = existing.attempt + 1
-      await repo.markSendDispatching({ id: existing.id, attempt, leaseExpiresAt, now: at })
-      send = { ...existing, state: 'dispatching', attempt, leaseExpiresAt, updatedAt: at }
-    } else {
-      send = await repo.insertSend({
-        id: newId(),
+    // A dispatch must be funded: one `send` reservation funds exactly one send.
+    if (!input.leaseToken) {
+      await repo.releaseDraftClaim({
         tenantId: input.tenantId,
         organizationId: input.organizationId,
-        draftId: draft.id,
-        approvalId: approval.id,
-        draftHash: draft.bodyHash,
-        idempotencyKey,
-        providerKey: transport.key,
-        channel: draft.channel,
-        state: 'dispatching',
-        attempt: 1,
-        leaseExpiresAt,
+        id: draft.id,
         now: at,
       })
+      return { ok: false, code: 'quota_lease_required' }
+    }
+    const consumed = await guards.consumeLease({
+      tenantId: input.tenantId,
+      organizationId: input.organizationId,
+      leaseToken: input.leaseToken,
+    })
+    if (!consumed.ok) {
+      await repo.releaseDraftClaim({
+        tenantId: input.tenantId,
+        organizationId: input.organizationId,
+        id: draft.id,
+        now: at,
+      })
+      return { ok: false, code: 'quota_lease_invalid' }
+    }
+
+    const leaseExpiresAt = new Date(Date.parse(at) + SEND_LEASE_MS).toISOString()
+    let send: SendRow
+    try {
+      if (existing) {
+        const attempt = existing.attempt + 1
+        await repo.markSendDispatching({ id: existing.id, attempt, leaseExpiresAt, now: at })
+        send = { ...existing, state: 'dispatching', attempt, leaseExpiresAt, updatedAt: at }
+      } else {
+        send = await repo.insertSend({
+          id: newId(),
+          tenantId: input.tenantId,
+          organizationId: input.organizationId,
+          draftId: draft.id,
+          approvalId: approval.id,
+          draftHash: draft.bodyHash,
+          idempotencyKey,
+          providerKey: transport.key,
+          channel: draft.channel,
+          state: 'dispatching',
+          attempt: 1,
+          leaseExpiresAt,
+          now: at,
+        })
+      }
+    } catch (error) {
+      // The row could not be recorded: give the quota back rather than spend it on nothing.
+      await guards.refundLease({
+        tenantId: input.tenantId,
+        organizationId: input.organizationId,
+        leaseToken: input.leaseToken,
+      })
+      await repo.releaseDraftClaim({
+        tenantId: input.tenantId,
+        organizationId: input.organizationId,
+        id: draft.id,
+        now: now(),
+      })
+      throw error
     }
 
     try {
@@ -289,6 +362,12 @@ export function createSendService(deps: {
     } catch {
       const at2 = now()
       await repo.markSendFailed({ id: send.id, errorCode: 'transport_failed', now: at2 })
+      // The reservation goes back, so a failed attempt does not spend quota.
+      await guards.refundLease({
+        tenantId: input.tenantId,
+        organizationId: input.organizationId,
+        leaseToken: input.leaseToken,
+      })
       // The approval is not burned: the draft goes back to `approved`.
       await repo.releaseDraftClaim({
         tenantId: input.tenantId,

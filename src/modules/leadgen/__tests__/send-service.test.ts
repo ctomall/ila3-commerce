@@ -6,6 +6,7 @@ import {
   createSendService,
   sendIdempotencyKey,
   type OutboundTransport,
+  type SendGuards,
   type SendRepository,
   type SendRow,
 } from '../services/send-service'
@@ -142,16 +143,38 @@ function transport(overrides: Partial<OutboundTransport> = {}): OutboundTranspor
   }
 }
 
-function service(repo: SendRepository, outbound = transport()) {
-  // The service only needs a unique id per insert.
-  let idSeq = 0
+function guards(overrides: Partial<SendGuards> = {}): SendGuards {
   return {
-    send: createSendService({ repo, transport: outbound, now: () => NOW, newId: () => `send-${++idSeq}` }),
-    outbound,
+    isSuppressed: jest.fn(async () => false),
+    consumeLease: jest.fn(async () => ({ ok: true as const, reservationId: 'res-1', units: 1 })),
+    refundLease: jest.fn(async () => undefined),
+    ...overrides,
   }
 }
 
-const target = { tenantId: TENANT, organizationId: ORG, draftId: 'draft-1', approvalId: 'approval-1' }
+function service(repo: SendRepository, outbound = transport(), guard = guards()) {
+  // The service only needs a unique id per insert.
+  let idSeq = 0
+  return {
+    send: createSendService({
+      repo,
+      guards: guard,
+      transport: outbound,
+      now: () => NOW,
+      newId: () => `send-${++idSeq}`,
+    }),
+    outbound,
+    guards: guard,
+  }
+}
+
+const target = {
+  tenantId: TENANT,
+  organizationId: ORG,
+  draftId: 'draft-1',
+  approvalId: 'approval-1',
+  leaseToken: 'lease-1',
+}
 
 describe('leadgen dispatch boundary (simulated transport)', () => {
   it('dispatching an approved draft records one simulated send and claims the draft', async () => {
@@ -285,20 +308,86 @@ describe('leadgen dispatch boundary (simulated transport)', () => {
         throw new Error('provider down')
       }),
     })
-    const { send } = service(repo, failing)
+    const { send, guards: failingGuards } = service(repo, failing)
 
     const failed = await send.dispatch(target)
     expect(failed).toEqual({ ok: false, code: 'transport_failed' })
     expect(state.sends[0].state).toBe('failed')
     expect(state.drafts[0].status).toBe('approved')
+    expect(failingGuards.refundLease).toHaveBeenCalledTimes(1)
 
-    const retry = createSendService({ repo, transport: transport(), now: () => NOW, newId: () => 'send-retry' })
+    const retry = createSendService({
+      repo,
+      guards: guards(),
+      transport: transport(),
+      now: () => NOW,
+      newId: () => 'send-retry',
+    })
     const retried = await retry.dispatch(target)
     expect(retried.ok).toBe(true)
     if (!retried.ok) return
     expect(retried.send.attempt).toBe(2)
     expect(state.sends).toHaveLength(1)
     expect(state.drafts[0].status).toBe('sent')
+  })
+
+  it('refuses a suppressed recipient before spending any lease', async () => {
+    const { repo, state } = makeRepo()
+    const guard = guards({ isSuppressed: jest.fn(async () => true) })
+    const { send } = service(repo, transport(), guard)
+
+    await expect(send.dispatch(target)).resolves.toEqual({ ok: false, code: 'suppressed' })
+    expect(guard.consumeLease).not.toHaveBeenCalled()
+    expect(state.sends).toHaveLength(0)
+    expect(state.drafts[0].status).toBe('approved')
+  })
+
+  it('refuses a dispatch that has no quota lease and leaves the draft approved', async () => {
+    const { repo, state } = makeRepo()
+    const { send, guards: guard } = service(repo)
+
+    await expect(send.dispatch({ ...target, leaseToken: undefined })).resolves.toEqual({
+      ok: false,
+      code: 'quota_lease_required',
+    })
+    expect(guard.consumeLease).not.toHaveBeenCalled()
+    expect(state.sends).toHaveLength(0)
+    expect(state.drafts[0].status).toBe('approved')
+  })
+
+  it('refuses an unusable lease (expired or already spent) and releases the draft', async () => {
+    const { repo, state } = makeRepo()
+    const guard = guards({
+      consumeLease: jest.fn(async () => ({ ok: false as const, code: 'lease_already_used' as const })),
+    })
+    const { send } = service(repo, transport(), guard)
+
+    await expect(send.dispatch(target)).resolves.toEqual({ ok: false, code: 'quota_lease_invalid' })
+    expect(state.sends).toHaveLength(0)
+    expect(state.drafts[0].status).toBe('approved')
+  })
+
+  it('consumes the lease exactly once, never on replay', async () => {
+    const { repo } = makeRepo()
+    const { send, guards: guard } = service(repo)
+
+    const first = await send.dispatch(target)
+    const second = await send.dispatch(target)
+    expect(first.ok && second.ok).toBe(true)
+    expect(guard.consumeLease).toHaveBeenCalledTimes(1)
+  })
+
+  it('refunds the lease when the send row cannot be recorded', async () => {
+    const { repo, state } = makeRepo()
+    const guard = guards()
+    repo.insertSend = jest.fn(async () => {
+      throw new Error('write failed')
+    })
+    const { send } = service(repo, transport(), guard)
+
+    await expect(send.dispatch(target)).rejects.toThrow('write failed')
+    expect(guard.refundLease).toHaveBeenCalledTimes(1)
+    expect(state.drafts[0].status).toBe('approved')
   })
 
   it('does not see a draft from another scope', async () => {

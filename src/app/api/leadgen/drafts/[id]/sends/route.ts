@@ -11,6 +11,7 @@ import { bootstrap } from '@/bootstrap-api'
 import { leadgenContext, refusal } from '@/modules/leadgen/lib/route-context'
 import { createSendService, createSimulatedTransport } from '@/modules/leadgen/services/send-service'
 import { createRequestSendRepository } from '@/modules/leadgen/services/send-repository'
+import { createRequestSendGuards } from '@/modules/leadgen/services/send-guards'
 
 bootstrap()
 export const runtime = 'nodejs'
@@ -19,6 +20,8 @@ export const dynamic = 'force-dynamic'
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i
 
 const CONFLICT = new Set([
+  'suppressed',
+  'quota_lease_invalid',
   'approval_not_approved',
   'approval_expired',
   'approval_revoked',
@@ -45,10 +48,13 @@ export async function POST(
   const record = typeof body === 'object' && body !== null ? (body as Record<string, unknown>) : {}
   const approvalId = typeof record.approvalId === 'string' ? record.approvalId : ''
   if (!UUID_RE.test(approvalId)) return refusal(400, 'invalid_input', 'approvalId is required')
+  const leaseToken = typeof record.leaseToken === 'string' && record.leaseToken.trim() ? record.leaseToken.trim() : undefined
   try {
     const repo = await createRequestSendRepository()
+    const guards = await createRequestSendGuards()
     const service = createSendService({
       repo,
+      guards,
       transport: createSimulatedTransport(),
       now: () => new Date().toISOString(),
       newId: () => crypto.randomUUID(),
@@ -58,6 +64,7 @@ export async function POST(
       organizationId: ctx.value.auth.organizationId,
       draftId: id,
       approvalId,
+      leaseToken,
     })
     if (!result.ok) {
       const status =
