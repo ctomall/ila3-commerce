@@ -304,7 +304,13 @@ export async function startDshRun(
     const provisioned = provisionEmployee(isolation, identity, input.runId)
     effectiveWorkspace = provisioned.workspace
     effectiveHome = provisioned.home
-    childEnv = { ...buildDshEnv({ dshHome: effectiveHome, env: input.env }), TMPDIR: provisioned.tmp }
+    childEnv = {
+      ...buildDshEnv({ dshHome: effectiveHome, env: input.env }),
+      // The employee user must not inherit the app user's HOME: DSH reads
+      // per-user config under it, and the app HOME is not readable by it.
+      HOME: provisioned.home,
+      TMPDIR: provisioned.tmp,
+    }
     childEnv.DSH_RUN_CWD = effectiveWorkspace
     const stringEnv: Record<string, string> = {}
     for (const [key, value] of Object.entries(childEnv)) {
