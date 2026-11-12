@@ -15,9 +15,20 @@ const testTimeout =
     ? timeoutFromEnv
     : 30000
 
+// Jest's default worker count oversubscribes a host that is already busy with
+// another agent's emulator/build, and the process-timing suites then fail on
+// scheduling delay rather than on behaviour. JEST_MAX_WORKERS lowers that for
+// one invocation; CI keeps Jest's default.
+const workersFromEnv = Number.parseInt(process.env.JEST_MAX_WORKERS ?? '', 10)
+const maxWorkers =
+  Number.isFinite(workersFromEnv) && workersFromEnv >= 1 && workersFromEnv <= 16
+    ? workersFromEnv
+    : undefined
+
 module.exports = {
   testEnvironment: 'node',
   testTimeout,
+  ...(maxWorkers ? { maxWorkers } : {}),
 
   rootDir: '.',
   roots: ['<rootDir>/src'],
