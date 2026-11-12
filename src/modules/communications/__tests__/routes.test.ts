@@ -121,7 +121,13 @@ function createFakeEm(rows: {
     return row
   })
   const flush = jest.fn(async () => undefined)
-  return { find, findOne, create, persist, remove, flush, persisted, removed }
+  // Only the threads list counts; unknown entities must fail loudly rather than
+  // silently returning 0 and hiding a wrong query.
+  const count = jest.fn(async (entity: unknown) => {
+    if (entity === ExternalConversation) return (rows.conversations ?? []).length
+    throw new Error(`unexpected entity in fake em.count: ${String(entity)}`)
+  })
+  return { find, findOne, count, create, persist, remove, flush, persisted, removed }
 }
 
 function useContainer(
@@ -761,6 +767,63 @@ describe('GET /api/communications/me/threads', () => {
     const res = await GET(new Request('http://localhost/api/communications/me/threads'))
     expect(res.status).toBe(200)
     await expect(res.json()).resolves.toEqual({ items: [], nextBefore: null, total: 0 })
+  })
+
+  it('reports the filtered total, not the page size (S86 / F2-06)', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      channels: [{ id: 'ch-1', userId: null, providerKey: 'imap', channelType: 'email', visibility: 'shared' }],
+      conversations: [
+        { id: 'conv-1', channelId: 'ch-1', externalConversationId: 'x1', lastMessageAt: new Date('2026-11-09T10:00:00Z') },
+        { id: 'conv-2', channelId: 'ch-1', externalConversationId: 'x2', lastMessageAt: new Date('2026-11-09T09:00:00Z') },
+        { id: 'conv-3', channelId: 'ch-1', externalConversationId: 'x3', lastMessageAt: new Date('2026-11-09T08:00:00Z') },
+      ],
+    })
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads?limit=1&before=2026-11-10T00:00:00Z'))
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.items).toHaveLength(1)
+    expect(payload.total).toBe(3)
+    // The cursor narrows the page, never the count.
+    const countWhere = (em.count.mock.calls[0] as unknown[])[1] as Record<string, unknown>
+    expect(countWhere).not.toHaveProperty('lastMessageAt')
+    expect(countWhere).toMatchObject({ tenantId: 't1' })
+  })
+
+  it('degrades to total=null instead of failing the inbox when the count throws', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({
+      channels: [{ id: 'ch-1', userId: null, providerKey: 'imap', channelType: 'email', visibility: 'shared' }],
+      conversations: [{ id: 'conv-1', channelId: 'ch-1', externalConversationId: 'x1', lastMessageAt: new Date('2026-11-09T10:00:00Z') }],
+    })
+    em.count.mockRejectedValueOnce(new Error('count timed out'))
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads'))
+    expect(res.status).toBe(200)
+    const payload = await res.json()
+    expect(payload.items).toHaveLength(1)
+    expect(payload.total).toBeNull()
+  })
+
+  it('rejects a malformed channelId before querying', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const em = createFakeEm({})
+    useContainer(() => undefined, em)
+    const { GET } = await import('../api/me/threads/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads?channelId=not-a-uuid'))
+    expect(res.status).toBe(422)
+    expect(em.find).not.toHaveBeenCalled()
+  })
+
+  it('rejects anonymous callers without touching the container', async () => {
+    mockAuth.mockResolvedValue(null as never)
+    const { GET } = await import('../api/me/threads/route')
+    const res = await GET(new Request('http://localhost/api/communications/me/threads'))
+    expect(res.status).toBe(401)
+    expect(mockContainer).not.toHaveBeenCalled()
   })
 })
 

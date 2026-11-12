@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { EntityManager, FilterQuery } from '@mikro-orm/postgresql'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
+import { createLogger } from '@open-mercato/shared/lib/logger'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import {
   ChannelThreadMapping,
@@ -26,6 +27,8 @@ export const metadata = {
 
 const DEFAULT_LIMIT = 30
 const MAX_LIMIT = 100
+
+const logger = createLogger('communications').child({ component: 'threads-route' })
 
 type ThreadRow = {
   id: string
@@ -103,14 +106,16 @@ export async function GET(req: Request): Promise<Response> {
   }
 
   const channelById = new Map(channels.map((channel) => [channel.id, channel]))
-  const conversationWhere: Record<string, unknown> = {
+  const scopeWhere: Record<string, unknown> = {
     tenantId,
     channelId: { $in: [...channelById.keys()] },
     ...channelOrgScopeWhere(organizationId),
   }
-  if (before) {
-    conversationWhere.lastMessageAt = { $lt: before }
-  }
+  // The page cursor narrows messages, never the total: "how many conversations
+  // match my filter" must not change because the caller scrolled.
+  const conversationWhere: Record<string, unknown> = before
+    ? { ...scopeWhere, lastMessageAt: { $lt: before } }
+    : scopeWhere
 
   const conversations = await em.find(
     ExternalConversation,
@@ -122,6 +127,8 @@ export async function GET(req: Request): Promise<Response> {
     conversations.length > limit
       ? (page[page.length - 1]?.lastMessageAt?.toISOString() ?? null)
       : null
+
+  const total = await countConversations(em, scopeWhere)
 
   const conversationIds = page.map((conversation) => conversation.id)
   const links = conversationIds.length
@@ -194,7 +201,30 @@ export async function GET(req: Request): Promise<Response> {
     }
   })
 
-  return NextResponse.json({ items, nextBefore, total: items.length })
+  return NextResponse.json({ items, nextBefore, total })
+}
+
+/**
+ * Conversation count for the current filter.
+ *
+ * `total` used to be `items.length`, so a full page always claimed "30
+ * conversations" (design rev2 `F2-06`). It is now a real count over the same
+ * scope as the page, ignoring the `before` cursor.
+ *
+ * Best effort on purpose: counting must never take the inbox down, and a wrong
+ * number is worse than an unknown one. On failure this returns `null` and the
+ * response omits nothing else — clients must treat `null` as "unknown".
+ */
+async function countConversations(
+  em: EntityManager,
+  where: Record<string, unknown>,
+): Promise<number | null> {
+  try {
+    return await em.count(ExternalConversation, where as FilterQuery<ExternalConversation>)
+  } catch (error) {
+    logger.warn('conversation count failed; reporting total=null', { error })
+    return null
+  }
 }
 
 export const openApi = {
@@ -204,7 +234,11 @@ export const openApi = {
       summary: 'List external conversations visible to the current user',
       tags: ['Communications'],
       responses: [
-        { status: 200, description: 'Conversation page ordered by last message time' },
+        {
+          status: 200,
+          description:
+            'Conversation page ordered by last message time. `total` is the number of conversations matching the filter (ignoring the `before` cursor) or null when the count could not be taken.',
+        },
         { status: 401, description: 'Unauthorized' },
         { status: 422, description: 'Invalid channelId or before cursor' },
       ],
