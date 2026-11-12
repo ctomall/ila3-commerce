@@ -782,6 +782,22 @@ console.log(JSON.stringify({ parent: parent.tools, narrowed: narrowed.tools, esc
                 ok: [200, 201].includes(suppressRes.status) && Boolean(suppressBody?.suppression?.id),
                 detail: `${suppressRes.status}`,
               })
+              // Negative control: the feature gate is checked before the body, so a
+              // role without leadgen features cannot write the list or dispatch at all.
+              if (cookies.admin) {
+                const adminSuppress = await fetch(`${BASE}/api/leadgen/suppressions`, {
+                  method: 'POST',
+                  headers: { cookie: cookies.admin, 'content-type': 'application/json' },
+                  body: JSON.stringify({ email: 'nobody@example.invalid', reason: 'unsubscribe' }),
+                })
+                checks.push({ name: 'suppression-write-needs-feature', ok: adminSuppress.status === 403 })
+                const adminSend = await fetch(`${BASE}/api/leadgen/drafts/${draftId}/sends`, {
+                  method: 'POST',
+                  headers: { cookie: cookies.admin, 'content-type': 'application/json' },
+                  body: JSON.stringify({ approvalId }),
+                })
+                checks.push({ name: 'send-route-needs-feature', ok: adminSend.status === 403 })
+              }
               const suppressed = await dispatch(draftId, approvalId, leaseToken)
               checks.push({ name: 'suppressed-recipient-refused', ok: suppressed.status === 409 })
               const releaseRes = await fetch(`${BASE}/api/leadgen/suppressions?email=${encodeURIComponent(recipientEmail)}`, {
