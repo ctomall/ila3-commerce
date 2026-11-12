@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-11-12T06:17:33.519Z",
+  "releaseRef": "feat/leadgen-m5 cff9aef",
+  "baselineRef": "main 794e987",
+  "ok": true,
+  "scanned": 4,
+  "expand": 4,
+  "destructive": 0,
+  "unknown": 0,
+  "blocker": null,
+  "items": [
+    {
+      "file": "src/modules/leadgen/migrations/Migration20261108192028_leadgen.ts",
+      "kind": "expand",
+      "statements": 13,
+      "reasons": []
+    },
+    {
+      "file": "src/modules/leadgen/migrations/Migration20261108194144_leadgen.ts",
+      "kind": "expand",
+      "statements": 35,
+      "reasons": []
+    },
+    {
+      "file": "src/modules/leadgen/migrations/Migration20261112060000_leadgen_decisions.ts",
+      "kind": "expand",
+      "statements": 2,
+      "reasons": []
+    },
+    {
+      "file": "src/modules/leadgen/migrations/Migration20261112063000_leadgen_evidence_fields.ts",
+      "kind": "expand",
+      "statements": 1,
+      "reasons": []
+    }
+  ]
+}
