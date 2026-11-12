@@ -494,6 +494,91 @@ describe('POST /api/communications/me/send', () => {
     expect(send).not.toHaveBeenCalled()
   })
 
+  it('refuses the same clientRequestId when the template changed', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({ ok: true as const }))
+    const claims = createFakeEm({
+      sendRequests: [
+        {
+          id: 'sr-template',
+          clientRequestId: 'req-12345678',
+          channelId: 'ch1',
+          messageId: 'm-first',
+          messageThreadId: 'th-first',
+          createdAt: new Date(),
+          payloadHash: computeSendPayloadHash({
+            channelId: '11111111-1111-4111-8111-111111111111',
+            to: ['customer@example.test'],
+            subject: 'Re: demo',
+            body: { plain: 'hello' },
+            template: { name: 'quote_followup', language: 'zh_CN' },
+          }),
+        },
+      ],
+    })
+    useContainer(() => send, claims)
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-12345678',
+          template: { name: 'other_template', language: 'zh_CN' },
+        }),
+      }),
+    )
+    expect(res.status).toBe(409)
+    await expect(res.json()).resolves.toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+    expect(send).not.toHaveBeenCalled()
+  })
+
+  it('refuses the same clientRequestId when the media changed', async () => {
+    mockAuth.mockResolvedValue(signedIn)
+    const send = jest.fn(async () => ({ ok: true as const }))
+    const claims = createFakeEm({
+      sendRequests: [
+        {
+          id: 'sr-media',
+          clientRequestId: 'req-12345678',
+          channelId: 'ch1',
+          messageId: 'm-first',
+          messageThreadId: 'th-first',
+          createdAt: new Date(),
+          payloadHash: computeSendPayloadHash({
+            channelId: '11111111-1111-4111-8111-111111111111',
+            to: ['customer@example.test'],
+            subject: 'Re: demo',
+            body: { plain: 'hello' },
+            media: { kind: 'image', attachmentId: '123e4567-e89b-42d3-a456-426614174000' },
+          }),
+        },
+      ],
+    })
+    useContainer(() => send, claims)
+    const { POST } = await import('../api/me/send/route')
+    const res = await POST(
+      new Request('http://localhost/api/communications/me/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          channelId: '11111111-1111-4111-8111-111111111111',
+          to: ['customer@example.test'],
+          subject: 'Re: demo',
+          body: { plain: 'hello' },
+          clientRequestId: 'req-12345678',
+          media: { kind: 'image', attachmentId: '223e4567-e89b-42d3-a456-426614174000' },
+        }),
+      }),
+    )
+    expect(res.status).toBe(409)
+    await expect(res.json()).resolves.toMatchObject({ code: 'IDEMPOTENCY_KEY_REUSED' })
+    expect(send).not.toHaveBeenCalled()
+  })
+
+
   it('answers 409 while the first attempt is still in flight', async () => {
     mockAuth.mockResolvedValue(signedIn)
     const send = jest.fn(async () => ({ ok: true as const }))
