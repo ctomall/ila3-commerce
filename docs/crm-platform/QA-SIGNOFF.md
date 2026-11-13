@@ -90,6 +90,9 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
     （`dsh-integration/evidence/replay-after-restart-2026-11-13T02-47-10-647Z.json`）；
   - 并发冲突：跨员工并行都 200/completed 且 `user_id` 不同、同员工第二个 `409`、并发墙钟 3.2 s
     （`dsh-integration/evidence/concurrency-drill-2026-11-13T02-48-16-740Z.json`）；
+  - 断线重连：中途 abort 后 Run 落 `cancelled`（不会卡 `running`），按 runId 重连拿到
+    `thinking,dsh.event,text,debug,error,done` 且以 `done` 收尾
+    （`dsh-integration/evidence/reconnect-drill-2026-11-13T02-59-49-381Z.json`）；
 - 未覆盖：那次 10 s 超时的根因仍无当时耗时数据，等价于“瞬时停顿”假设，未证明。
 
 ### 部署产物实测（2026-11-13 00:2x，release `b3013e2`）
