@@ -93,6 +93,12 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
   - 断线重连：中途 abort 后 Run 落 `cancelled`（不会卡 `running`），按 runId 重连拿到
     `thinking,dsh.event,text,debug,error,done` 且以 `done` 收尾
     （`dsh-integration/evidence/reconnect-drill-2026-11-13T02-59-49-381Z.json`）；
+  - 受控工具桥（真实模型）：`POST /api/ai_assistant/chat` 让助手调用 `crm_find_companies`，实测
+    `tool-call` 的 `toolName=mcp__crm__crm_find_companies`、随后有 `tool-result` 且结果里是真实公司行
+    （`Harborview Analytics` 等），Run `dbb88702` completed
+    （`dsh-integration/evidence/tool-bridge-2026-11-13T03-38-23-604Z.json`，
+    脚本 `scripts/crm-dsh-tool-probe.mjs`）；边界：只证明“调用路径 + 按员工 CRM 授权返回”，
+    员工/团队/组织范围仍由 `dsh-profile` 与 `scope-query` 单测各自证明，不把组织隔离冒充员工客户隔离；
   - 业务入口（AI SDK UI 流）：`POST /api/ai_assistant/ai/chat` 真实模型 PASS——文本 delta 里带回
     探针 marker、`dsh_runs` 落 completed（run `c7fca3dd`，靠 marker 绑定到这一轮），
     证明 UI 走的 agentic 入口由 DSH 执行
