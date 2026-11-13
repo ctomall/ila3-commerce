@@ -93,6 +93,11 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
   - 断线重连：中途 abort 后 Run 落 `cancelled`（不会卡 `running`），按 runId 重连拿到
     `thinking,dsh.event,text,debug,error,done` 且以 `done` 收尾
     （`dsh-integration/evidence/reconnect-drill-2026-11-13T02-59-49-381Z.json`）；
+  - 业务入口（AI SDK UI 流）：`POST /api/ai_assistant/ai/chat` 真实模型 PASS——文本 delta 里带回
+    探针 marker、`dsh_runs` 落 completed（run `c7fca3dd`，靠 marker 绑定到这一轮），
+    证明 UI 走的 agentic 入口由 DSH 执行
+    （`dsh-integration/evidence/agentic-chat-path-2026-11-13T03-24-40-940Z.json`，
+    脚本 `scripts/crm-agentic-chat-probe.mjs`）；
 - 未覆盖：那次 10 s 超时的根因仍无当时耗时数据，等价于“瞬时停顿”假设，未证明。
 
 ### 部署产物实测（2026-11-13 00:2x，release `b3013e2`）

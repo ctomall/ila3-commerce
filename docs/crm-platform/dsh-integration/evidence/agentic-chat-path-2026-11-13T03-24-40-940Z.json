@@ -1,0 +1,30 @@
+{
+ "probedAt": "2026-11-13T03:24:40.940Z",
+ "base": "http://127.0.0.1:3000",
+ "role": "employee",
+ "path": "/api/ai_assistant/ai/chat",
+ "release": "35d2f9735cd9dfaf011566a0a9e5dba957419de2",
+ "status": 200,
+ "contentType": "text/event-stream",
+ "bytes": 280,
+ "marker": "AGENTIC_2026-11-13T032440940Z_OK",
+ "textDeltaBytes": 32,
+ "finishMarker": true,
+ "joinedHead": "AGENTIC_2026-11-13T032440940Z_OK",
+ "dshRunId": "c7fca3dd-2a00-4272-83b8-fdb70149892a",
+ "dshRunStatus": "completed",
+ "joinedByMarker": true,
+ "checks": {
+  "status-200": true,
+  "stream-content-type": true,
+  "text-delta-present": true,
+  "finish-marker": true,
+  "run-persisted": true,
+  "run-completed": true,
+  "reply-carries-marker": true,
+  "run-bound-to-turn": true
+ },
+ "ok": true,
+ "firstBytes": "data: {\"type\":\"text-start\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\",\"delta\":\"AGENTIC_2026-11-13T032440940Z_OK\"}\n\ndata: {\"type\":\"text-end\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\"}\n\ndata: [DONE]\n\n",
+ "lastBytes": "data: {\"type\":\"text-start\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\"}\n\ndata: {\"type\":\"text-delta\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\",\"delta\":\"AGENTIC_2026-11-13T032440940Z_OK\"}\n\ndata: {\"type\":\"text-end\",\"id\":\"t-060f16e7-6cc2-4015-a527-ba1fc2d8767a\"}\n\ndata: [DONE]\n\n"
+}
