@@ -85,6 +85,12 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - 依据：负载 69 下非隔离握手实测 0.76–2.3 s（见 `dsh-integration/EVIDENCE-2026-11-11-REAL.md`
   「`initialize` 握手耗时实测」）；**隔离启动路径（sudo + runner + 员工 HOME）未单独计时**，这是本条的未覆盖面；
 - 运行 release：`b3013e2`，healthz 200，`ila3-auto-deploy.timer` active；
+- 导航基线重录（2026-11-13 01:03）：并行协作者按用户批准执行了 `communications.reply` 角色授权迁移
+  （`audit/reply-role-migration-2026-11-13T01-03-07-217Z.json`），回收遗留
+  `communication_channels.connect_user_channel`，因此员工侧 `我的通信渠道` 入口按该 feature 的正常门控消失、
+  admin 侧多出 1 个 feature。基线按规程重录（employee 69 main / admin 301 features），
+  这不是把回归算绿：门控由已批准的迁移造成，页面本身仍可访问；若产品要求该入口继续对员工可见，
+  需要把入口改挂 `communications.reply` 而不是回收基线；
 - 发布级复验：`verify/verify-2026-11-13T00-56-05.md` — **PASS 25 · FAIL 0 · SKIP 0**；
   该轮在 `git worktree add --detach b3013e2` 的干净检出里跑（共享 checkout 有另一位写入者的未提交改动），
   产物已拷回并提交；

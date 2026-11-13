@@ -2284,6 +2284,7 @@
     "ai_assistant.tools.list",
     "ai_assistant.mcp_servers.view",
     "ai_assistant.mcp_servers.manage",
+    "communications.reply",
     "translations.view",
     "translations.manage",
     "translations.manage_locales",

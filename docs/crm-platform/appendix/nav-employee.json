@@ -758,15 +758,6 @@
       "defaultName": "账户",
       "items": [
         {
-          "id": "/backend/profile/communication-channels",
-          "href": "/backend/profile/communication-channels",
-          "title": "我的通信渠道",
-          "defaultTitle": "我的通信渠道",
-          "enabled": true,
-          "pageContext": "profile",
-          "order": 20
-        },
-        {
           "id": "/backend/profile/notification-preferences",
           "href": "/backend/profile/notification-preferences",
           "title": "通知偏好",
@@ -1019,13 +1010,6 @@
           "order": 1
         },
         {
-          "id": "backend-profile-communication-channels",
-          "label": "我的通信渠道",
-          "labelKey": "communication_channels.profile.title",
-          "href": "/backend/profile/communication-channels",
-          "order": 20
-        },
-        {
           "id": "backend-profile-notification-preferences",
           "label": "通知偏好",
           "labelKey": "notifications.preferences.pageTitle",
@@ -1038,7 +1022,6 @@
   "profilePathPrefixes": [
     "/backend/profile/",
     "/backend/profile/change-password",
-    "/backend/profile/communication-channels",
     "/backend/profile/notification-preferences"
   ],
   "grantedFeatures": [
@@ -1136,12 +1119,12 @@
     "messages.manage",
     "communication_channels.view",
     "communication_channels.react",
-    "communication_channels.connect_user_channel",
     "communication_channels.share_own_channel",
     "phone_calls.view",
     "ai_assistant.view",
     "ai_assistant.conversations.share",
     "dsh_approvals.review",
+    "communications.reply",
     "leadgen.candidates.view",
     "leadgen.candidates.review",
     "leadgen.candidates.manage",

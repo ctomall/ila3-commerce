@@ -15,13 +15,13 @@
     "mainItems": 131,
     "settingsSections": 10,
     "settingsItems": 65,
-    "grantedFeatures": 300
+    "grantedFeatures": 301
   },
   {
     "role": "employee",
     "file": "docs/crm-platform/appendix/nav-employee.json",
     "groups": 22,
-    "mainItems": 70,
+    "mainItems": 69,
     "settingsSections": 8,
     "settingsItems": 17,
     "grantedFeatures": 126
