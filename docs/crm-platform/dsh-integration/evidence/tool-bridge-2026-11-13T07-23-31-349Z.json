@@ -1,0 +1,42 @@
+{
+ "probedAt": "2026-11-13T07:23:31.349Z",
+ "base": "http://127.0.0.1:3000",
+ "role": "employee",
+ "path": "/api/ai_assistant/chat",
+ "release": "dde866312210215e1a04f90a5fbd2231e75dbcb7",
+ "status": 200,
+ "contentType": "text/event-stream",
+ "bytes": 10411,
+ "nonce": "2026-11-13T072331349Z",
+ "sessionId": "session-6cce4a1473f54e64840bed86b907ec57",
+ "toolNames": [
+  "mcp__crm__crm_find_companies"
+ ],
+ "toolCallCount": 2,
+ "toolResultCount": 1,
+ "firstToolCall": {
+  "type": "tool-call",
+  "id": "call_00_NqbYllnWaubB8gav5bXl2705",
+  "toolName": "mcp__crm__crm_find_companies",
+  "args": {
+   "limit": 2
+  }
+ },
+ "firstToolResult": "{\"type\":\"tool-result\",\"id\":\"call_00_NqbYllnWaubB8gav5bXl2705\",\"result\":[{\"type\":\"text\",\"text\":\"{\\\"companies\\\":[{\\\"id\\\":\\\"bc7f08f6-927f-4279-8de0-fab72afa4b6e\\\",\\\"name\\\":\\\"Harborview Analytics\\\",\\\"domain\\\":\\\"harborviewanalytics.com\\\",\\\"websiteUrl\\\":\\\"https://harborviewanalytics.com\\\",\\\"industry\\\":\\\"Software\\\",\\\"sizeBucket\\\":\\\"201-500\\\"},{\\\"id\\\":\\\"f67258f2-cde8-4d55-97b0-7e2477519724\\\",\\\"name\\\":\\\"Co",
+ "dshRunId": "4f661efe-4eff-4e5f-9579-87b3e9efb1b4",
+ "dshRunStatus": "completed",
+ "dshRunError": "",
+ "checks": {
+  "status-200": true,
+  "sse-content-type": true,
+  "tool-call-present": true,
+  "tool-name-is-crm": true,
+  "tool-result-present": true,
+  "run-persisted": true,
+  "run-completed": true,
+  "done-frame": true
+ },
+ "ok": true,
+ "firstBytes": "id: 1\ndata: {\"type\":\"thinking\"}\n\nid: 2\ndata: {\"type\":\"dsh.event\",\"dshType\":\"session.event\",\"seq\":1,\"payload\":{\"sessionId\":\"session-6cce4a1473f54e64840bed86b907ec57\",\"event\":{\"type\":\"agent/inbox/spliced\",\"seq\":0,\"time\":1794554613957,\"data\":{\"target\":\"next-turn\",\"start\":0,\"inserted\":[{\"content\":[{\"type\":\"text\",\"text\":\"请调用 crm_find_companies 工具（参数 limit=2），然后在回答里写出你拿到的第一家公司名字，并附上探针号 2026-11-13T072331",
+ "lastBytes": "nd\",\"seq\":18,\"time\":1794554616276,\"data\":{\"turn\":1,\"step\":2}}},\"dshEventType\":\"step/end\"}\n\nid: 24\ndata: {\"type\":\"debug\",\"partType\":\"status\",\"data\":{\"sessionId\":\"session-6cce4a1473f54e64840bed86b907ec57\",\"status\":\"idle\"}}\n\ndata: {\"type\":\"done\",\"sessionId\":\"session-6cce4a1473f54e64840bed86b907ec57\"}\n\n"
+}

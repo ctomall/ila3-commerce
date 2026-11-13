@@ -77,6 +77,18 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测运行目录里的 release.json sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 07:2x，release `dde8663`）
+
+同 release 上重跑三条真模型探针（每次一个新 Run，避免回放旧证据）：
+
+| 探针 | 结果 | 证据 |
+| --- | --- | --- |
+| 公开聊天入口 `POST /api/ai_assistant/chat` | PASS 8/8，`dsh.event` 帧 + Run `af0f5b54` completed | `dsh-integration/evidence/public-chat-path-2026-11-13T07-23-15-195Z.json` |
+| 业务入口（AI SDK UI 流）`/api/ai_assistant/ai/chat` | PASS 8/8，文本 delta 带 marker + Run `a6c35932` completed | `dsh-integration/evidence/agentic-chat-path-2026-11-13T07-23-18-728Z.json` |
+| 受控工具桥 `crm_find_companies` | PASS 8/8，`tool-call`=`mcp__crm__crm_find_companies` + `tool-result` 真实公司行 + Run `4f661efe` completed | `dsh-integration/evidence/tool-bridge-2026-11-13T07-23-31-349Z.json` |
+
+三条都是“当前部署的 release = 当前 HEAD”时跑的；探针脚本各自带 nonce/marker，回放旧 Run 会让断言变红而不是变绿。
+
 ### 部署产物实测（2026-11-13 05:3x，release `d374da4`）
 
 - 门禁数升到 **26**：新增 `evidence-links`（签收文档引用的证据文件必须都存在，且引用的复验报告带结论）；
