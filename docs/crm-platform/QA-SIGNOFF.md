@@ -77,6 +77,16 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测 `release.json` sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 02:3x，release `b861e56`）
+
+- 变更集：只在 `initialize` 握手 ≥5 s 时打一行 warn（耗时/load1/runId/上限），只观测不失败；
+  同轮补齐握手实测：非隔离 0.76–2.3 s（load 69）、隔离 0.79–1.03 s、隔离+空 HOME 0.77–0.84 s，
+  三条路径都解释不了那次 10 s 超时，60 s 上限因此定位为“防瞬时停顿的护栏”而非修复；
+- 发布级复验：`verify/verify-2026-11-13T02-32-51.md` — **PASS 25 · FAIL 0 · SKIP 0**（干净 worktree）；
+- 正式入口真实模型探针（同一 release）：PASS，`dsh.event` 帧 + `dsh_runs` completed
+  （run `08e80a10`，`dsh-integration/evidence/public-chat-path-2026-11-13T02-33-39-526Z.json`）；
+- 未覆盖：那次 10 s 超时的根因仍无当时耗时数据，等价于“瞬时停顿”假设，未证明。
+
 ### 部署产物实测（2026-11-13 00:2x，release `b3013e2`）
 
 - 变更集：DSH `initialize` 握手默认上限 10s → 60s（只对“子进程活着但不吭声”生效；崩溃/缺二进制
