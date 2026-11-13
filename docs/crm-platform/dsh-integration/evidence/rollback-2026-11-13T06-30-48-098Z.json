@@ -1,0 +1,39 @@
+{
+ "at": "2026-11-13T06:30:48.098Z",
+ "apply": true,
+ "target": {
+  "sha": "41d04fa218cf8f37b835774cbd35c54ad8ff4362",
+  "dir": "/home/pro/releases/mercato/41d04fa218cf8f37b835774cbd35c54ad8ff4362",
+  "via": "previous symlink"
+ },
+ "current": "2e022c66e8f7417747661430a0130c2707e15f56",
+ "service": "ila3-auto-deploy-app.service",
+ "timer": "ila3-auto-deploy.timer",
+ "problems": [],
+ "ok": true,
+ "steps": [
+  {
+   "step": "stop-timer",
+   "ok": true
+  },
+  {
+   "step": "swap-symlinks",
+   "ok": true
+  },
+  {
+   "step": "restart-service",
+   "ok": true
+  },
+  {
+   "step": "healthz",
+   "ok": true,
+   "ms": 19124
+  },
+  {
+   "step": "start-timer",
+   "ok": true
+  }
+ ],
+ "healthMs": 19124,
+ "note": "origin/main (2e022c6) is ahead of the rolled-back release; the auto-deploy timer will ship it at the next tick unless the timer is stopped"
+}
