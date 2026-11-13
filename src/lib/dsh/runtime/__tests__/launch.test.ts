@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from '@jest/globals'
+import { afterEach, describe, expect, it, jest } from '@jest/globals'
 import type { ChildProcess } from 'node:child_process'
 import { EventEmitter } from 'node:events'
 import fs from 'node:fs'
@@ -295,6 +295,34 @@ describe('startDshRun', () => {
       finishReason: 'completed',
     })
     await expect(handle.close()).resolves.toEqual({ stopped: true })
+  })
+
+  it('warns when the handshake is slow but inside the ceiling', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const { input } = makeRun('init-very-slow')
+      const handle = await start(input)
+      await expect(handle.result).resolves.toMatchObject({ finishReason: 'completed' })
+      await expect(handle.close()).resolves.toEqual({ stopped: true })
+      const printed = warn.mock.calls.flat().join(' ')
+      expect(printed).toContain('initialize handshake took')
+      expect(printed).toContain('run run-a1')
+    } finally {
+      warn.mockRestore()
+    }
+  })
+
+  it('stays quiet about a normal handshake', async () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const { input } = makeRun('success')
+      const handle = await start(input)
+      await handle.result
+      await handle.close()
+      expect(warn).not.toHaveBeenCalled()
+    } finally {
+      warn.mockRestore()
+    }
   })
 
   it('tolerates a cold initialize that answers after a second under the default bound', async () => {

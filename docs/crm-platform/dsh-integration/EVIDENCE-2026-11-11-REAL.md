@@ -474,34 +474,35 @@ idempotencyKey：同一轮网络重试重放，新轮次因文本变化自然换
 
 ### 两个实测到的边界（2026-11-12 已修，`f2403fb`）
 
-### `initialize` 握手耗时实测（2026-11-13 00:0x，负载 69）
+### `initialize` 握手耗时实测（2026-11-13 00:0x–02:2x）
 
-方法：用仓库里的运行时模块直接跑一次握手，不经过 HTTP，也不触发模型调用——
-`createTransport(spawn($DSH_BIN, ['--profile','sdk-minimal']))` +
-`request('initialize', {...}, 60000)`，连跑 3 次，取每次的墙钟时间。
+方法：用仓库里的运行时模块直接跑握手，不经过 HTTP，也不触发模型调用——
+`createTransport(spawn(...))` + `request('initialize', {...}, 60000)`，每次取墙钟时间。
 
-```
-load 69.27 70.27 49.02
-attempt 1: 2349 ms
-attempt 2:  760 ms
-attempt 3:  759 ms
-```
+**非隔离路径**（load 69，3 次）：`2349 / 760 / 759 ms`。
+
+**隔离路径**（`sudo -n -u dsh-<hash> -- /usr/local/lib/dsh-agent/run-with-env <env> <DSH_BIN> --profile sdk-minimal`，
+按生产方式建 `/run/dsh-agent/<runId>` 目录 2770、env 0640；load 4.75，3 次）：`1029 / 793 / 814 ms`。
+
+**隔离 + 全新空 HOME**（同一员工用户、临时 HOME 目录，模拟首次运行；load 3.85，3 次）：
+`813 / 772 / 841 ms`。
 
 结论与边界：
 
-- DSH CLI 自身的冷启动 + 握手在负载 69 下也只有 0.76–2.3 s，**不是** 10 s 超时的来源；
-- 那次 `initialize timed out after 10000ms` 的额外秒数只能落在隔离启动路径
-  （`sudo -n -u dsh-<hash>` + runner + 首次为员工准备的 HOME）上——**该路径尚未单独计时**，
-  这是本条实测没有覆盖的部分，不要把它当成已证明；
-- 因此默认上限从 10 s 提到 60 s 是为这条未计时路径留余量，而不是因为 DSH 慢；
-  只对“子进程活着但不吭声”生效（崩溃/缺二进制会关管道并立即失败）。
+- 三条路径都是 **0.77–1.03 s**，包括“隔离 + 空 HOME”，所以那次
+  `initialize timed out after 10000ms` **不能**用稳态握手耗时解释：更像当时的瞬时停顿
+  （load 12–17、内存/swap 压力），但**当时没有耗时数据，根因仍未证明**；
+- 因此 60 s 上限是防瞬时停顿的护栏，不是对已复现慢启动的修复；它只对“子进程活着但不吭声”生效
+  （崩溃/缺二进制会关管道并立即失败）；
+- 新增可观测（2026-11-13）：握手 ≥ 5 s 时打一行 `console.warn`，带耗时、load1、runId 和当前上限
+  （`SLOW_INITIALIZE_WARN_MS`，只观测、不失败），下一次同类故障就有数据可判。
 
 修复后复验（同一运行 release `f2403fb`）：
 
 - **失败 Run 的重放不再静默**：重放失败 Run `9fcc1850…` 得到 `["error","done"]`，
   `error = dsh initialize failed: initialize timed out after 10000ms`
   （`evidence/replay-failed-run-2026-11-12T16-53-00Z.json`）；
-- **`initialize` 上限默认 60s、可配**：`OM_DSH_INIT_TIMEOUT_MS` 可覆盖（上限 120s）；未设置时走运行时默认 60s。只对“子进程活着但不吭声”生效——崩溃/缺二进制/配置被拒会关管道，待处理请求立即失败，所以放宽不会拖慢真实启动失败。依据：负载 69 下非隔离握手实测 0.76–2.3s，说明那次 10s 超时耗在隔离启动（sudo + runner + 新建员工 HOME），不是 DSH 本身慢；单测同时断言“默认 60s 容忍 1.2s 冷启动”、“未设置则不传字段”和“设置则透传 25000”；
+- **`initialize` 上限默认 60s、可配**：`OM_DSH_INIT_TIMEOUT_MS` 可覆盖（上限 120s）；未设置时走运行时默认 60s。只对“子进程活着但不吭声”生效——崩溃/缺二进制/配置被拒会关管道，待处理请求立即失败，所以放宽不会拖慢真实启动失败。依据：非隔离 / 隔离 / 隔离+空 HOME 三条路径实测均 0.77–1.03s（见上），那次 10s 超时不能用稳态耗时解释，按瞬时停顿处理；单测同时断言“默认 60s 容忍 1.2s 冷启动”、“未设置则不传字段”和“设置则透传 25000”；
 - **`initialize` 超时自动重试一次**（`28c2c09`）：真实故障是负载 12–17 时
   `502 DSH runtime failed to start` + 日志 `initialize timed out after 10000ms`；现在命中该错误时
   重启子进程重试一次（其它启动错误不重试，仍立即 502）。单测 43/43 断言“超时重试一次成功”和

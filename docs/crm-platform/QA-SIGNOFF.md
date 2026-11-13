@@ -82,8 +82,9 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - 变更集：DSH `initialize` 握手默认上限 10s → 60s（只对“子进程活着但不吭声”生效；崩溃/缺二进制
   会关管道并立即失败，不被上限拖慢），夹具新增 `init-slow`，launch 套件断言默认上限容忍 1.2s 冷启动；
   另有一条 `.gitignore` 让 `.build-probe/` 本地构建探针不再弄脏发布级干净树判定；
-- 依据：负载 69 下非隔离握手实测 0.76–2.3 s（见 `dsh-integration/EVIDENCE-2026-11-11-REAL.md`
-  「`initialize` 握手耗时实测」）；**隔离启动路径（sudo + runner + 员工 HOME）未单独计时**，这是本条的未覆盖面；
+- 依据：非隔离 / 隔离 / 隔离+空 HOME 三条路径实测均 **0.77–1.03 s**（见
+  `dsh-integration/EVIDENCE-2026-11-11-REAL.md`「`initialize` 握手耗时实测」），那次 10s 超时不能用稳态耗时解释；
+  60s 是防瞬时停顿的护栏；握手 ≥5s 会打一行带耗时的 warn（只观测不失败），下一次同类故障有数据可判；
 - 运行 release：`b3013e2`，healthz 200，`ila3-auto-deploy.timer` active；
 - 导航基线重录（2026-11-13 01:03）：并行协作者按用户批准执行了 `communications.reply` 角色授权迁移
   （`audit/reply-role-migration-2026-11-13T01-03-07-217Z.json`），回收遗留

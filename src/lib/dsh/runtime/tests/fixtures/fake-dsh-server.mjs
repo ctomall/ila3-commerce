@@ -204,6 +204,10 @@ function handle(message) {
       setTimeout(() => answer(id, { serverInfo: { name: 'fake-dsh', version: 'test' } }), 1_200)
       return
     }
+    if (mode === 'init-very-slow') {
+      setTimeout(() => answer(id, { serverInfo: { name: 'fake-dsh', version: 'test' } }), 5_200)
+      return
+    }
     if (mode === 'init-error') {
       answerError(id, -32000, 'no model route')
       return

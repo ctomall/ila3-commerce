@@ -23,6 +23,7 @@
 
 import { spawn, type ChildProcess } from 'node:child_process'
 import fs from 'node:fs'
+import { loadavg } from 'node:os'
 import { randomUUID } from 'node:crypto'
 import { resolve } from 'node:path'
 import {
@@ -52,6 +53,14 @@ import type { DshEvent, DshRunHandle, DshRunInput, DshRunResult } from './types'
  * the pending request.
  */
 export const DEFAULT_INITIALIZE_TIMEOUT_MS = 60_000
+/**
+ * Warn when the handshake is slow but still inside the ceiling.
+ *
+ * The 10 s ceiling once produced a 502 with no data about what the handshake
+ * actually cost, so the next incident could not be told apart from a stall. This
+ * threshold is observation only: it never fails a run.
+ */
+export const SLOW_INITIALIZE_WARN_MS = 5_000
 /** Default per-request bound after the handshake. */
 export const DEFAULT_REQUEST_TIMEOUT_MS = 30_000
 /** Default cooperative shutdown bound during cancel/close. */
@@ -385,6 +394,7 @@ export async function startDshRun(
     spawnFailure = error
   })
 
+  const handshakeStartedAt = performance.now()
   try {
     const initResult = await transport.request('initialize', {
       cwd: effectiveWorkspace,
@@ -397,6 +407,13 @@ export async function startDshRun(
     }, initializeTimeoutMs)
     if (!isRecord(initResult)) {
       throw new Error(`initialize returned no object: ${JSON.stringify(initResult)}`)
+    }
+    const handshakeMs = Math.round(performance.now() - handshakeStartedAt)
+    if (handshakeMs >= SLOW_INITIALIZE_WARN_MS) {
+      const [oneMinute] = loadavg()
+      console.warn(
+        `[dsh] initialize handshake took ${handshakeMs}ms (load1 ${oneMinute.toFixed(2)}, run ${input.runId}, ceiling ${initializeTimeoutMs}ms)`,
+      )
     }
   } catch (error) {
     await transport.close()
