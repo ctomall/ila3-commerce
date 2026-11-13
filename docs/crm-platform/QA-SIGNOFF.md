@@ -93,6 +93,10 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
   - 断线重连：中途 abort 后 Run 落 `cancelled`（不会卡 `running`），按 runId 重连拿到
     `thinking,dsh.event,text,debug,error,done` 且以 `done` 收尾
     （`dsh-integration/evidence/reconnect-drill-2026-11-13T02-59-49-381Z.json`）；
+  - 重复请求/幂等（真实账号）：同一句 prompt 连发两次 → 第二次回放**同一个 Run** `25d2f41f`、
+    该 session 仍只有 1 行 `dsh_runs`、流仍以 `done` 收尾；换新 prompt 才产生新 Run `2813e94c`
+    （`dsh-integration/evidence/idempotency-2026-11-13T04-26-36-104Z.json`，
+    脚本 `scripts/crm-dsh-idempotency-drill.mjs`）；同 release `nav-baseline` 复核仍 PASS；
   - 受控工具桥（真实模型）：`POST /api/ai_assistant/chat` 让助手调用 `crm_find_companies`，实测
     `tool-call` 的 `toolName=mcp__crm__crm_find_companies`、随后有 `tool-result` 且结果里是真实公司行
     （`Harborview Analytics` 等），Run `dbb88702` completed

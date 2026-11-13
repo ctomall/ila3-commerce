@@ -1,0 +1,49 @@
+{
+ "probedAt": "2026-11-13T04:26:36.104Z",
+ "base": "http://127.0.0.1:3000",
+ "role": "employee",
+ "path": "/api/ai_assistant/chat",
+ "release": "6796b149023305e1fbaf0880fea79d0984a82496",
+ "nonce": "2026-11-13T042636104Z",
+ "first": {
+  "status": 200,
+  "sessionId": "session-d62e10896773433ba353535c885eb1f5",
+  "runId": "25d2f41f-453a-4393-b5c3-87324b4708d8",
+  "runStatus": "completed",
+  "runsForSession": 1,
+  "done": true,
+  "dshFrames": 11,
+  "bytes": 7907
+ },
+ "replay": {
+  "status": 200,
+  "sessionId": "session-d62e10896773433ba353535c885eb1f5",
+  "runId": "25d2f41f-453a-4393-b5c3-87324b4708d8",
+  "runStatus": "completed",
+  "runsForSession": 1,
+  "done": true,
+  "dshFrames": 11,
+  "bytes": 7907
+ },
+ "second": {
+  "status": 200,
+  "sessionId": "session-3f9fad12465c4e5bb36d33e1eed41daf",
+  "runId": "2813e94c-9f5c-4853-a69d-7b6743a1392e",
+  "runStatus": "completed",
+  "runsForSession": 1,
+  "done": true,
+  "dshFrames": 11,
+  "bytes": 7941
+ },
+ "checks": {
+  "first-200": true,
+  "first-run-completed": true,
+  "replay-200": true,
+  "replay-same-run": true,
+  "replay-no-extra-run": true,
+  "replay-has-done": true,
+  "new-turn-new-run": true,
+  "new-turn-completed": true
+ },
+ "ok": true
+}
