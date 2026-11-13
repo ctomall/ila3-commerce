@@ -30,6 +30,8 @@ webhook 处理器必须先验 HMAC 才能信任任何内容——包括账号维
 
 1. **默认键是 `global`，不是每 IP**：分发器用 `getClientIp(req, trustProxyDepth)` 当 key，而 `getClientIp` 在 `RATE_LIMIT_TRUST_PROXY_DEPTH <= 0` 时返回 `null`，分发器回落 `RATE_LIMIT_FALLBACK_KEY = 'global'`。也就是说：**当前部署（未设该 env）下，每个 provider 只有一个全局桶**，1200/分钟是该渠道全部事件的总闸。
    - 想按真实客户端 IP 分桶，需要设 `RATE_LIMIT_TRUST_PROXY_DEPTH`；但链路是 Cloudflare→本机，取第几跳必须**先核对实际 `X-Forwarded-For` 链**再设，设错等于按伪造头分桶。这是生产 env 变更，等你批准。
+   - **链路已只读核对（2026-11-13）**：`mercato.ila3.top` → `cloudflared-mercato.service`（`--config /etc/cloudflared/mercato.yml`）→ `http://127.0.0.1:3000`，中间**没有 nginx**；应用进程监听 `*:3000`；生产 release `.env` 里该变量是注释态 `# RATE_LIMIT_TRUST_PROXY_DEPTH=0`（即默认 0）。
+   - **建议（第一阶段）**：保持 `0`。Meta 事件来自其固定 IP 段，按 IP 分桶≈按 Meta 整体分桶，挡不住异常源、却可能把正常投递 429 掉。要改成按 IP，先用真实 webhook（P-3）抓一次实际头，确认 cloudflared 是否追加跳数，再定深度；同网段可直连 `*:3000` 伪造 `X-Forwarded-For`，这也是不盲目信任该头的理由。
 2. **平台 429 重试语义未核实**（Meta 文档出口被拦）。在观察真实 429 数量前，不宣称“与平台重试兼容”。
 3. 限流在**认证解析之后、handler 之前**执行；本应用这两条路由 `requireAuth:false`，所以等价于“验签前”。
 

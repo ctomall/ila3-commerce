@@ -35,8 +35,9 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 ### ② webhook 限流的分桶深度（S88）
 
 - 现状：默认 `RATE_LIMIT_TRUST_PROXY_DEPTH` 未设，限流键是 `global`（每 provider 1200/min 全局桶，不是每 IP）。
-- 要按真实 IP：先核对 Cloudflare→本机实际 `X-Forwarded-For` 链，再设合理深度；设错等于按伪造头分桶。
-- 不设也能用（全局桶），但要接受高峰被 429 的可能；平台对 429 的重试语义仍未核实。
+- 链路已只读核对（2026-11-13）：`mercato.ila3.top` → `cloudflared-mercato.service` → `http://127.0.0.1:3000`，中间**无 nginx**；应用监听 `*:3000`；生产 `.env` 里该变量仍是注释态 `# RATE_LIMIT_TRUST_PROXY_DEPTH=0`。
+- **建议：第一阶段保持 0**（全局桶）。Meta 事件来自固定 IP 段，按 IP 分桶≈按 Meta 整体分桶，挡不住异常源却可能误伤正常投递；若你要改按 IP，我再用真实 webhook（P-3）抓一次实际头、确认 cloudflared 是否追加跳数后给深度值。
+- 平台对 429 的重试语义仍未核实（Meta 文档出口被拦），所以不建议在没数据前收紧。
 
 ### ③ 真实渠道环境（P-1 / P-2 / P-3）
 
