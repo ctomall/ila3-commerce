@@ -63,6 +63,10 @@ const GATES = [
   // --check turns the recorded baseline into an assertion. Without it this gate ran the
   // recorder: it refreshed appendix/nav-*.json and could not fail on an entry count or a
   // duplicate title, so the M1 acceptance criterion was enforced by nobody.
+  // The acceptance record cites reports, drill JSON and screenshots. A citation that no
+  // longer resolves reads to an independent reviewer as "not recorded", so the link check
+  // is a gate rather than a habit: three dead references had already accumulated.
+  { id: 'evidence-links', cmd: 'node scripts/crm-evidence-links.mjs', why: '签收文档引用的证据文件都存在，且引用的复验报告带结论' },
   { id: 'nav-baseline', cmd: 'node scripts/crm-nav-baseline.mjs --check', why: '入口数与冻结基线一致、重名 0' },
   // The structural checker existed and exited 1 on issues, but was never in the gate set.
   { id: 'nav-structure', cmd: 'node scripts/nav-check.mjs', why: '导航数据本身无问题（重名 href/空标签/孤儿分组）' },

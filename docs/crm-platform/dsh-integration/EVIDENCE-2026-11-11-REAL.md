@@ -182,7 +182,7 @@ DSH_HOME 或 `.env`。这是 C 的阻断问题。
 
 用 Playwright（headless Chromium，任务专属 profile）以 API 登录后加载 `/backend`：
 
-- acceptance 员工与 superadmin 的 `button[aria-label="打开 AI 助手"]` 均为 **`display:none` / 0×0**，页面上没有可见的聊天入口；截图：`prod-ui-assistant-hidden-admin.png`、`prod-ui-assistant-hidden-employee.png`。
+- acceptance 员工与 superadmin 的 `button[aria-label="打开 AI 助手"]` 均为 **`display:none` / 0×0**，页面上没有可见的聊天入口。**两张截图当时没有入库、也没有保留下来**，所以这里只保留 DOM 测量结论，不再给出图片引用（2026-11-13 复核：仓库历史里不存在该文件名）。
 - 该隐藏行为在切换前即存在（同一构建的 `AiAssistantIntegration` 只在挂载处渲染 DockableChat），不是 DSH SSE 改动导致。
 - 因无可见入口，本轮无法完成“点击 → 输入 → 停止 → 重连”的 UI 回归；只能完成 API 级生产验证（见 §10）。
 

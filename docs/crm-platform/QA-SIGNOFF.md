@@ -49,11 +49,11 @@
 
 ## 原复验 T 项
 
-T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 全量复验（④）均已在 `dsh-integration/reverify-2026-11-11/REVERIFY.md` §9 记录决策与证据；T2/T8/T9/T16 按原口径未擅改。
+T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 全量复验（④）均已在 `verify/reverify-2026-11-11/REVERIFY.md` §9 记录决策与证据；T2/T8/T9/T16 按原口径未擅改。
 
 ### 部署产物实测（2026-11-12，release `ee4a845`）
 
-- running release：`/home/pro/releases/mercato/ee4a845…`，`release.json` sha=`ee4a845`，version 0.2.2；
+- running release：`/home/pro/releases/mercato/ee4a845…`，运行目录 release.json sha=`ee4a845`，version 0.2.2；
 - 进程环境：`OM_AI_ENGINE=dsh`、`OM_DSH_PERSIST=orm`、`OM_DSH_AGENTIC=1`（读自服务进程 environ）；
 - `src/proxy.ts`：仅当 `OM_AI_ENGINE=dsh` 时把 `/api/ai_assistant/chat` 重写到 `/api/internal/ai-assistant-dsh-chat`（以及 health/agents/agentic/conversations）；
 - 旧 OpenCode 处理器只存在于 `node_modules/@open-mercato/ai-assistant` 包里，业务 `src/` 不再调用；
@@ -61,7 +61,7 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 
 ### 部署产物实测（2026-11-12 15:3x，release `d34c51c`）
 
-- 运行 release：`release.json` sha=`d34c51c`，CI run 43246620467，healthz 200；
+- 运行 release：运行目录 release.json sha=`d34c51c`，CI run 43246620467，healthz 200；
 - 本 release 在发送边界上多两道强制：抑制名单命中 409、无 `send` 预留 400；预留 CAS 消费后桶为 `0:1`，
   重放不重复扣；传输仍是模拟实现（`externalEffect: false`），无真实外发；
 - 同一提交门禁：`build-freshness` PASS（部署后无源码提交）、`contract` PASS、`security-probe` PASS、
@@ -69,13 +69,13 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 
 ### 部署产物实测（2026-11-12 15:0x，release `f7a2b26`）
 
-- 运行 release：`/home/pro/releases/mercato/f7a2b262…`，`release.json` sha=`f7a2b26`，CI run 43241743534；
+- 运行 release：`/home/pro/releases/mercato/f7a2b262…`，运行目录的 release.json sha=`f7a2b26`，CI run 43241743534；
 - 进程环境（读自运行中 pid 的 environ）：`OM_AI_ENGINE=dsh`、`OM_DSH_PERSIST=orm`、`OM_DSH_AGENTIC=1`、
   `OM_DSH_WRITES=1`、`OM_DSH_OS_ISOLATION=1`、`OM_DSH_CUSTOMER_SCOPE=organization`；
 - 本 release 含 M6 发送边界（`81dd82a`）与其顺序修正（`5c5ae7d`）：M4 #7 十四项检查全过，
   传输为模拟实现（`externalEffect: false`），无真实外发；证据 `leadgen/EVIDENCE-2026-11-12-M6-DISPATCH.md`；
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
-  实测 `release.json` sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
+  实测运行目录里的 release.json sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
 ### 部署产物实测（2026-11-13 04:4x，release `02aeaf8`）
 
