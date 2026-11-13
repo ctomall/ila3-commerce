@@ -10,7 +10,7 @@
 | 验收点 | 代码 | 测试 | 部署 | 业务验收 | 证据 |
 | --- | --- | --- | --- | --- | --- |
 | 正式聊天入口走 DSH 而非 OpenCode | ✅ `src/app/api/internal/ai-assistant-dsh-chat/**`、proxy 重写 | ✅ 单测 + 代理测试 | ✅ `OM_AI_ENGINE=dsh`（实测见下） | ✅ 公开入口实测：`POST /api/ai_assistant/chat` → 11 个 `dsh.event` 帧 + `dsh_runs` completed | `docs/crm-platform/dsh-integration/EVIDENCE-2026-11-11-REAL.md` §公开入口；脚本 `scripts/crm-public-chat-dsh-probe.mjs` |
-| 受控切换与回退 | ✅ `OM_AI_ENGINE` 开关 | ✅ 代理测试覆盖两分支 | ✅ | ✅ 切换记录 | 同上 + `DESIGN.md` |
+| 受控切换与回退 | ✅ `OM_AI_ENGINE` 开关 | ✅ 代理测试覆盖两分支 | ✅ 开关实测：置空后 health 变成包内形状、chat 无 `dsh.event`、不新建 Run | ⚠️ **回退开关可用但旧引擎不可用**：置空后 chat 走包内路径，最终 `error: fetch failed`（它依赖的 OpenCode 端点 `localhost:4096` 未运行） | `dsh-integration/evidence/engine-switch-2026-11-13T06-08-02-585Z.json`；脚本 `scripts/crm-engine-switch-drill.mjs` |
 
 ## B. 一人一助手绑定与 Run 持久化
 
@@ -180,7 +180,10 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 可以现在签的部分（每一项都有代码路径 + 同提交测试 + 部署 + 业务/对抗证据）：
 
 1. **A 引擎替换**：正式入口 `POST /api/ai_assistant/chat` 实测执行 DSH（`dsh.event` 帧 + `dsh_runs` completed），
-   旧 OpenCode 处理器不在业务 `src/` 调用链上；切换开关 `OM_AI_ENGINE` 有回退路径。
+   旧 OpenCode 处理器不在业务 `src/` 调用链上。**回退口径要改**：`OM_AI_ENGINE` 开关实测能把流量切回包内路径
+   （health 换形状、chat 零 `dsh.event`、不新建 `dsh_runs`），但包内路径依赖的 OpenCode 端点 `localhost:4096`
+   在本部署里没有运行，chat 会以 `error: fetch failed` 失败。因此真正可用的回退是**回滚 release**
+   （`deploy.mjs --from-artifact --sha <上一个 DSH release>`，产物已在本地缓存），不是把开关置空。
 2. **B 一人一助手 + Run 持久化**：绑定持久化、Run/幂等/游标/结果落库、重启恢复、超时、取消、并发冲突、断线重连均有实测。
 3. **C 生命周期鉴权与隔离**：逐工具鉴权 + 写入前复核、撤权 10s 内终止、两名真实员工 OS 级隔离（跨读/凭据拒绝）。
 4. **D 受控工具桥**：`crm.find_companies` 复用既有授权，真实账号→助手→DSH→工具→结果闭环已走通（mock 与真实模型分别报告）。

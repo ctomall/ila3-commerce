@@ -1,0 +1,37 @@
+{
+ "probedAt": "2026-11-13T06:08:02.585Z",
+ "onBase": "http://127.0.0.1:3000",
+ "offBase": "http://127.0.0.1:3911",
+ "role": "employee",
+ "release": "41d04fa218cf8f37b835774cbd35c54ad8ff4362",
+ "onHealth": {
+  "status": 200,
+  "engine": "dsh",
+  "body": "{\"status\":\"ok\",\"engine\":\"dsh\",\"healthy\":true,\"url\":null,\"mcpUrl\":\"http://127.0.0.1:3000/api/internal/dsh-tools\"}"
+ },
+ "offHealth": {
+  "status": 200,
+  "engine": null,
+  "body": "{\"status\":\"error\",\"mcpHealth\":{\"healthy\":false},\"search\":{\"available\":{},\"driver\":\"meilisearch\",\"url\":null},\"message\":\"fetch failed\",\"url\":\"http://localhost:4096\",\"mcpUrl\":\"http://localhost:3001\"}"
+ },
+ "offChat": {
+  "status": 200,
+  "contentType": "text/event-stream",
+  "dshFrames": 0,
+  "bytes": 144,
+  "runsBefore": 244,
+  "runsAfter": 244,
+  "bodyHead": "data: {\"type\":\"session-authorized\",\"sessionToken\":\"sess_<redacted>...\"}\n\ndata: {\"type\":\"thinking\"}\n\ndata: {\"type\":\"error\",\"error\":\"fetch failed\"}\n\n"
+ },
+ "checks": {
+  "on-health-200": true,
+  "on-engine-is-dsh": true,
+  "off-health-200": true,
+  "off-engine-not-dsh": true,
+  "off-chat-no-dsh-frames": true,
+  "off-chat-created-no-run": true,
+  "off-chat-answered-or-failed": true
+ },
+ "ok": true,
+ "redactions": "session token from the probe stream replaced with sess_<redacted>"
+}
