@@ -79,3 +79,28 @@ S85 收回 employee 的 legacy connect 后，这个入口对员工就是死链�
 | `prod-employee-{channels,channels-connect,inbox,exceptions}.png` | 员工视角（4 张，含两张 Access Denied） |
 
 复跑命令见 §1；换 `--label`/`--out` 即可给下一次 release 出对照图。
+
+## 6. 修复已上线 + 修复后复验（2026-11-13 04:25 UTC）
+
+| 步骤 | 结果 |
+| --- | --- |
+| 推送 | `e703cbd`（截图/文档）→ `6796b14`（证据脚本断言） |
+| CI `build-artifact` | run `43363564258`：typecheck / unit / build / package / verify / upload **全绿** |
+| 自动部署 | `ila3-auto-deploy` 于 04:25:56 切到 release `6796b149…`，3000 端口健康（307），页面右下角 `v0.2.2 (6796b14)` |
+| 修复后复验 | `--label postfix --expect-connect-cta hidden`：**8 截图 / 15 断言全过** |
+
+修复前后对照（截图取自生产同一条命令）：
+
+| 观察点 | 修复前 `be8b034e` | 修复后 `6796b14` |
+| --- | --- | --- |
+| 员工渠道页「连接渠道」 | 有（与超管截图字节相同） | **无**（`connectCta=false`） |
+| 员工收件箱「连接渠道」 | 有 | **无** |
+| 超管渠道页「连接渠道」 | 有 | 有（`connectCta=true`） |
+| 员工 channels API / threads | 200 / 200 | 200 / 200 |
+| 员工 reconciliation / dead-letters | 403 / 403 | 403 / 403 |
+| 员工 connect 向导 / exceptions 页 | Access Denied | Access Denied |
+
+- 修复后证据：`docs/crm-platform/verify/communications-ui-postfix-2026-11-13/`（`evidence.json` 含 9 条断言 + 8 张 sha256）
+- 员工渠道页截图 sha `1d83523f…`，超管同页 `836ed026…` —— 两个角色不再是同一张图。
+
+仍然成立的口径：页面依然全是空态（0 渠道 / 0 会话），真实收发仍按 P-1/P-3 记「待环境」；本片只证明 UI 与权限门，不证明送达。
