@@ -77,6 +77,11 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测运行目录里的 release.json sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 07:4x，release `cc1d3d8`）
+
+- 发布级复验：`verify/verify-2026-11-13T07-41-22.md` — **PASS 26 · FAIL 0 · SKIP 0**（干净 worktree，检出同 commit）；
+- 该 release 相对上一轮只多了三条探针的新证据，运行时未变；门禁把“证据链接完整性”和“探针结果”一起纳入判定。
+
 ### 部署产物实测（2026-11-13 07:2x，release `dde8663`）
 
 同 release 上重跑三条真模型探针（每次一个新 Run，避免回放旧证据）：
