@@ -77,6 +77,17 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测 `release.json` sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 04:4x，release `02aeaf8`）
+
+- 本 release = 并行协作者的 connect 入口修复（`9377485`）+ 其 UI 证据（`e703cbd`、`6796b14`、`02aeaf8`）
+  + 本轮幂等探针（`b1e0676`），代码与运行时一并复验；
+- 发布级复验：`verify/verify-2026-11-13T04-49-00.md` — **PASS 25 · FAIL 0 · SKIP 0**（干净 worktree，
+  检出同 commit）；`nav-baseline` 在本 release 复核 PASS，说明“对不能用向导者隐藏入口”没有破坏基线；
+- 幂等实测：同一 prompt 连发两次回放同一 Run、该 session 仍 1 行、换 prompt 才新建 Run
+  （`dsh-integration/evidence/idempotency-2026-11-13T04-26-36-104Z.json`）；
+- 依赖说明：本 release 的 CI 产物由协作者的提交触发（我的 `b1e0676` 那次 CI 被后一次 push 取消，
+  属并发取消，提交随后搭上 `02aeaf8` 的产物一起上线）。
+
 ### 部署产物实测（2026-11-13 02:3x，release `b861e56`）
 
 - 变更集：只在 `initialize` 握手 ≥5 s 时打一行 warn（耗时/load1/runId/上限），只观测不失败；
