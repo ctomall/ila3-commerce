@@ -77,6 +77,13 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测运行目录里的 release.json sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 05:3x，release `d374da4`）
+
+- 门禁数升到 **26**：新增 `evidence-links`（签收文档引用的证据文件必须都存在，且引用的复验报告带结论）；
+- 发布级复验：`verify/verify-2026-11-13T05-35-27.md` — **PASS 26 · FAIL 0 · SKIP 0**（干净 worktree，检出同 commit）；
+- 该门禁首跑即修掉 3 条腐烂引用：`REVERIFY.md` 目录写错、两张从未入库的截图、把运行时 `release.json`
+  当成仓库路径的写法；净结果 63 条引用全部解析、0 缺失、0 无结论。
+
 ### 部署产物实测（2026-11-13 04:4x，release `02aeaf8`）
 
 - 本 release = 并行协作者的 connect 入口修复（`9377485`）+ 其 UI 证据（`e703cbd`、`6796b14`、`02aeaf8`）
