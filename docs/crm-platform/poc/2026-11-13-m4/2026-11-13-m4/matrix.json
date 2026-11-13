@@ -1,0 +1,138 @@
+{
+  "generatedAt": "2026-11-13T00:52:39.959Z",
+  "base": "http://127.0.0.1:3000",
+  "fixtures": {
+    "leadgen-api": true,
+    "employee-B": true,
+    "second-organization": false,
+    "dsh-profile-per-employee": true,
+    "probe-tool": true,
+    "tool-execute": true,
+    "existing-quote": true
+  },
+  "rowCount": {
+    "table": "customer_entities",
+    "before": 9,
+    "after": 9,
+    "unchanged": true
+  },
+  "summary": {
+    "total": 12,
+    "pass": 11,
+    "passWeak": 1,
+    "fail": 0,
+    "blocked": 0,
+    "invalid": 0
+  },
+  "results": [
+    {
+      "id": 1,
+      "attack": "猜 ID：随机 uuid 取记录（现有模块）",
+      "expected": "404（不泄露存在性）",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"未找到\"}"
+    },
+    {
+      "id": 1.1,
+      "attack": "猜 ID：跨员工取 candidate/run（leadgen API）",
+      "expected": "404",
+      "requires": [
+        "leadgen-api"
+      ],
+      "status": "pass",
+      "detail": "404 [{\"name\":\"fixture-inserted\",\"ok\":true,\"detail\":\"18ff49fe-c906-42f0-9c6b-7f6a40c22da2\\nINSERT 0 1\"},{\"name\":\"foreign-detail-404\",\"ok\":true},{\"name\":\"unknown-detail-404\",\"ok\":true},{\"name\":\"foreign-row-not-listed\",\"ok\":true}]"
+    },
+    {
+      "id": 1.2,
+      "attack": "猜 ID：AI 会话（他人/不存在）",
+      "expected": "404 conversation_not_found",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Conversation not found.\",\"code\":\"conversation_not_found\"}"
+    },
+    {
+      "id": 1.3,
+      "attack": "猜 ID：AI 会话参与者列表",
+      "expected": "404（不泄露会话是否存在）",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Conversation not found.\",\"code\":\"conversation_not_found\"}"
+    },
+    {
+      "id": 1.4,
+      "attack": "会话列表越权（是否只回本人）",
+      "expected": "200 且 items 为空或全部属于本人",
+      "requires": [],
+      "status": "pass",
+      "weakReason": "列表为空时只算弱证据（空列表什么都没证明）；有会话时逐个核对 detail.isOwner",
+      "detail": "200 {\"count\":1,\"details\":[{\"id\":\"e21b0d0e-2a56-41e5-ab08-e9c86b4eabf2\",\"status\":200,\"isOwner\":true}]}"
+    },
+    {
+      "id": 2,
+      "attack": "直连写接口 + body 注入 tenantId/organizationId",
+      "expected": "400/403/422，且不写库",
+      "requires": [],
+      "status": "pass",
+      "detail": "403 {\"error\":\"Not authorized to target this tenant.\"}"
+    },
+    {
+      "id": 3,
+      "attack": "未知 agent 在进入模型前被拒（原误标为“伪造身份”）",
+      "expected": "404 agent_unknown，且不进入模型",
+      "requires": [],
+      "status": "pass",
+      "detail": "404 {\"error\":\"Assistant not found\",\"code\":\"agent_unknown\"}"
+    },
+    {
+      "id": 3.1,
+      "attack": "模型伪造操作者（body/query 指定 actorUserId / onBehalfOfUserId）",
+      "expected": "运行时按真实会话解析 actor，注入值不生效",
+      "requires": [
+        "probe-tool",
+        "tool-execute"
+      ],
+      "status": "pass",
+      "detail": "200 {\"resolvedUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"baselineUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"auditActor\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"responseBytes\":3226}"
+    },
+    {
+      "id": 4,
+      "attack": "子 Agent 提权（子工具集 ⊄ 父工具集）",
+      "expected": "子工具集 = 交集",
+      "requires": [],
+      "status": "pass",
+      "detail": "200 {\"checks\":[{\"name\":\"child-cannot-add-tools\",\"ok\":true},{\"name\":\"narrowing-is-honoured\",\"ok\":true},{\"name\":\"widening-is-detected\",\"ok\":true},{\"name\":\"no-spawn-capability-deployed\",\"ok\":true,\"detail\":\"78 tools\"},{\"name\":\"no-browser-capability-deployed\",\"ok\":true,\"detail\":\"none\"}],\"parsed\":{\"parent\":[\"crm.find_companies\",\"crm.update_company\"],\"narrowed\":[\"crm.find_companies\"],\"escalated\":[\"crm.find_companies\",\"crm.update_company\"],\"detected\":[\"crm.delete_everything\"]}}"
+    },
+    {
+      "id": 5,
+      "attack": "撤权影响在飞任务",
+      "expected": "≤10s 停止，且不完成 CRM 写入",
+      "requires": [
+        "dsh-profile-per-employee"
+      ],
+      "status": "pass",
+      "detail": "200 [{\"name\":\"employee-resolved\",\"ok\":true},{\"name\":\"run-in-flight\",\"ok\":true},{\"name\":\"revoke-accepted\",\"ok\":true,\"detail\":\"{\\\"bindingId\\\":\\\"d8dffc01-6a4b-42c4-836a-8fa3a428dcf7\\\",\\\"revokedRuns\\\":1}\"},{\"name\":\"stream-ended-within-10s\",\"ok\":true,\"detail\":\"743ms\"},{\"name\":\"stream-reports-run-cancelled\",\"ok\":true},{\"name\":\"run-cancelled\",\"ok\":true,\"detail\":\"cancelled\"},{\"name\":\"binding-revoked\",\"ok\":true,\"detail\":\"revoked\"},{\"name\":\"binding-restored\",\"ok\":true,\"detail\":\"active\"}]"
+    },
+    {
+      "id": 6,
+      "attack": "跨员工 DSH 隔离（会话/文件/记忆/凭据/浏览器态）",
+      "expected": "互不可读，跨读返回空 + 审计",
+      "requires": [
+        "dsh-profile-per-employee"
+      ],
+      "status": "pass",
+      "detail": "200 [{\"name\":\"two-employees-with-homes\",\"ok\":true},{\"name\":\"homes-0700\",\"ok\":true},{\"name\":\"distinct-unix-owners\",\"ok\":true},{\"name\":\"cross-employee-read-denied\",\"ok\":true},{\"name\":\"app-user-read-denied\",\"ok\":true},{\"name\":\"credentials-denied-to-employee\",\"ok\":true},{\"name\":\"distinct-workspace-roots\",\"ok\":true},{\"name\":\"distinct-bindings\",\"ok\":true}]"
+    },
+    {
+      "id": 7,
+      "attack": "配额/审批绕过（超额度、审批令牌复用）",
+      "expected": "429 / 4xx",
+      "requires": [
+        "leadgen-api"
+      ],
+      "status": "pass-weak",
+      "weakReason": "额度绕过、审批绑定、一次性令牌、抑制名单与 send 额度原子扣减均已实测（模拟传输，externalEffect=false）；真实供应商投递仍属 M6 另批",
+      "detail": "200 [{\"name\":\"over-limit-429\",\"ok\":true},{\"name\":\"first-reservation-201\",\"ok\":true,\"detail\":\"201 {\\\"reservation\\\":{\\\"id\\\":\\\"857e5d28-1d77-499f-9883-b7672944a722\\\",\\\"leaseToken\\\":\\\"dc787972-005e-4f48-b69e-a978aa9ad134\\\",\\\"bucketI\"},{\"name\":\"same-key-replayed\",\"ok\":true},{\"name\":\"exhausted-429\",\"ok\":true},{\"name\":\"no-negative-headroom\",\"ok\":true},{\"name\":\"draft-created\",\"ok\":true},{\"name\":\"approval-bound-to-body\",\"ok\":true},{\"name\":\"approval-replayed\",\"ok\":true},{\"name\":\"edited-body-refused\",\"ok\":true},{\"name\":\"send-lease-requires-draft\",\"ok\":true},{\"name\":\"send-lease-reserved\",\"ok\":true,\"detail\":\"201 null\"},{\"name\":\"suppression-recorded\",\"ok\":true,\"detail\":\"201\"},{\"name\":\"suppression-write-needs-feature\",\"ok\":true},{\"name\":\"send-route-needs-feature\",\"ok\":true},{\"name\":\"suppressed-recipient-refused\",\"ok\":true},{\"name\":\"suppression-released\",\"ok\":true},{\"name\":\"dispatch-without-lease-refused\",\"ok\":true},{\"name\":\"one-approval-one-dispatch\",\"ok\":true,\"detail\":\"201 \\\"simulated\\\"\"},{\"name\":\"send-quota-consumed\",\"ok\":true},{\"name\":\"dispatch-replayed-not-duplicated\",\"ok\":true},{\"name\":\"single-send-row\",\"ok\":true},{\"name\":\"send-quota-not-double-charged\",\"ok\":true},{\"name\":\"approval-not-reusable-on-other-draft\",\"ok\":true},{\"name\":\"send-lease-bound-to-its-draft\",\"ok\":true},{\"name\":\"mismatch-kept-lease-reserved\",\"ok\":true},{\"name\":\"lease-funds-its-own-draft\",\"ok\":true},{\"name\":\"bound-lease-consumed\",\"ok\":true},{\"name\":\"approve-after-dispatch-refused\",\"ok\":true}]"
+    }
+  ]
+}

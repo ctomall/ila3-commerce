@@ -1,0 +1,168 @@
+{
+  "generatedAt": "2026-11-13T00:22:39.680Z",
+  "base": "http://127.0.0.1:3000",
+  "rowCount": {
+    "tables": [
+      "customer_entities",
+      "customer_companies",
+      "customer_people",
+      "sales_quotes",
+      "dictionary_entries"
+    ],
+    "before": {
+      "customer_entities": 9,
+      "customer_companies": 3,
+      "customer_people": 6,
+      "sales_quotes": 1,
+      "dictionary_entries": 291
+    },
+    "after": {
+      "customer_entities": 9,
+      "customer_companies": 3,
+      "customer_people": 6,
+      "sales_quotes": 1,
+      "dictionary_entries": 291
+    },
+    "changed": [],
+    "unchanged": true
+  },
+  "baseline": {
+    "employeeVisibleCompanyIds": 3
+  },
+  "summary": {
+    "cases": 14,
+    "asExpected": 14,
+    "needsReview": 0
+  },
+  "results": [
+    {
+      "role": "anon",
+      "method": "GET",
+      "path": "/api/customers/companies",
+      "expected": "401",
+      "status": 401,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"未登录\"}"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/customers/companies",
+      "expected": "200",
+      "status": 200,
+      "verdict": "as-expected",
+      "body": "{\"items\":[{\"id\":\"b026cb18-bf9c-45c6-8b14-805eede4ff4c\",\"display_name\":\"Brightside Solar\",\"description\":\"Community solar developer helping multifamily buildings reduce energy costs across California.\",\"owner_user_id\":null"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/sales/quotes",
+      "expected": "200",
+      "status": 200,
+      "verdict": "as-expected",
+      "body": "{\"items\":[{\"id\":\"ce2cba82-4834-4896-9094-46b7f081f04a\",\"quoteNumber\":\"QUOTE-20261108-00008\",\"status\":null,\"statusEntryId\":null,\"customerEntityId\":null,\"customerContactId\":null,\"billingAddressId\":null,\"shippingAddressId\":"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/audit_logs/audit-logs/actions?canViewTenant=true&scope=tenant",
+      "expected": "200",
+      "status": 200,
+      "verdict": "as-expected",
+      "semanticCheck": "passed",
+      "body": "{\"items\":[{\"id\":\"6bb8945a-7633-44a9-b8a9-45474b205798\",\"commandId\":\"customers.companies.create\",\"actionLabel\":\"创建公司\",\"executionState\":\"done\",\"actorUserId\":\"7a176d46-6474-47c1-be56-d11b2d9452f1\",\"actorUserName\":\"employee@"
+    },
+    {
+      "role": "admin",
+      "method": "GET",
+      "path": "/api/audit_logs/audit-logs/actions",
+      "expected": "200|403",
+      "status": 200,
+      "verdict": "as-expected",
+      "body": "{\"items\":[{\"id\":\"5b25f578-976a-4f99-93a5-4e7b96b837d1\",\"commandId\":\"customers.companies.delete\",\"actionLabel\":\"删除公司\",\"executionState\":\"done\",\"actorUserId\":\"77f676ed-7ab0-4245-a67a-d3b3e2d5170b\",\"actorUserName\":\"acceptanc"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/customers/companies?tenantId=00000000-0000-0000-0000-000000000000",
+      "expected": "403",
+      "status": 403,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"Not authorized to target this tenant.\"}"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/customers/companies?organizationId=00000000-0000-0000-0000-000000000000",
+      "expected": "403|200",
+      "status": 200,
+      "verdict": "as-expected",
+      "semanticCheck": "passed",
+      "body": "{\"items\":[{\"id\":\"b026cb18-bf9c-45c6-8b14-805eede4ff4c\",\"display_name\":\"Brightside Solar\",\"description\":\"Community solar developer helping multifamily buildings reduce energy costs across California.\",\"owner_user_id\":null"
+    },
+    {
+      "role": "employee",
+      "method": "POST",
+      "path": "/api/customers/companies",
+      "expected": "400|403|422",
+      "status": 400,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"Invalid input\",\"details\":[{\"expected\":\"string\",\"code\":\"invalid_type\",\"path\":[\"displayName\"],\"message\":\"Invalid input: expected string, received undefined\"}]}"
+    },
+    {
+      "role": "employee",
+      "method": "POST",
+      "path": "/api/customers/companies",
+      "expected": "400|403|422",
+      "status": 403,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"Not authorized to target this tenant.\"}"
+    },
+    {
+      "role": "employee",
+      "method": "DELETE",
+      "path": "/api/customers/companies/00000000-0000-0000-0000-000000000000",
+      "expected": "403|404",
+      "status": 404,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"未找到\"}"
+    },
+    {
+      "role": "employee",
+      "method": "POST",
+      "path": "/api/ai_assistant/ai/chat?agent=probe.does_not_exist",
+      "expected": "404",
+      "status": 404,
+      "verdict": "as-expected",
+      "semanticCheck": "passed",
+      "body": "{\"error\":\"Assistant not found\",\"code\":\"agent_unknown\"}"
+    },
+    {
+      "role": "anon",
+      "method": "POST",
+      "path": "/api/ai_assistant/ai/chat?agent=probe.does_not_exist",
+      "expected": "401",
+      "status": 401,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"Unauthorized\"}"
+    },
+    {
+      "role": "anon",
+      "method": "GET",
+      "path": "/api/docs/openapi",
+      "expected": "401",
+      "status": 401,
+      "verdict": "as-expected",
+      "body": "{\"error\":\"unauthorized\"}"
+    },
+    {
+      "role": "employee",
+      "method": "GET",
+      "path": "/api/docs/openapi",
+      "expected": "200",
+      "status": 200,
+      "verdict": "as-expected",
+      "body": "{\"openapi\":\"3.1.0\",\"info\":{\"title\":\"ILA3 Commerce API\",\"version\":\"0.9.0\",\"description\":\"为所有已启用模块自动生成的 OpenAPI 定义。\"},\"servers\":[{\"url\":\"https://mercato.ila3.top/api\",\"description\":\"默认环境\"}],\"paths\":{\"/dashboards/layout\":{\""
+    }
+  ]
+}

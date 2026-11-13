@@ -77,6 +77,20 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - `build-freshness` 在本轮为红：并行协作者在部署后继续提交，HEAD 领先运行 release；
   实测 `release.json` sha 与部署时 `origin/main` 一致、服务启动晚于构建（详见同一证据文档 §5）。
 
+### 部署产物实测（2026-11-13 00:2x，release `b3013e2`）
+
+- 变更集：DSH `initialize` 握手默认上限 10s → 60s（只对“子进程活着但不吭声”生效；崩溃/缺二进制
+  会关管道并立即失败，不被上限拖慢），夹具新增 `init-slow`，launch 套件断言默认上限容忍 1.2s 冷启动；
+  另有一条 `.gitignore` 让 `.build-probe/` 本地构建探针不再弄脏发布级干净树判定；
+- 依据：负载 69 下非隔离握手实测 0.76–2.3 s（见 `dsh-integration/EVIDENCE-2026-11-11-REAL.md`
+  「`initialize` 握手耗时实测」）；**隔离启动路径（sudo + runner + 员工 HOME）未单独计时**，这是本条的未覆盖面；
+- 运行 release：`b3013e2`，healthz 200，`ila3-auto-deploy.timer` active；
+- 发布级复验：`verify/verify-2026-11-13T00-56-05.md` — **PASS 25 · FAIL 0 · SKIP 0**；
+  该轮在 `git worktree add --detach b3013e2` 的干净检出里跑（共享 checkout 有另一位写入者的未提交改动），
+  产物已拷回并提交；
+- 共享 checkout 里的同门禁运行 `verify-2026-11-13T00-27-37.md` 25 道门同样全绿，但结论为 FAIL——
+  期间另一写入者改写 `slices/` 三份文档，按 `--require-clean` 口径不算提交级证据，如实保留。
+
 ### 部署产物实测（2026-11-12 19:45，release `6b389f7`）
 
 - 发布级复验：`verify/verify-2026-11-12T19-45-03.md` — **PASS 25 · FAIL 0 · SKIP 0**，干净工作树；
