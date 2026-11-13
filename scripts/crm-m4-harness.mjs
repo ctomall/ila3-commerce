@@ -21,6 +21,28 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { credentials, loginWithRetry } from './lib/session.mjs'
 
 const BASE = process.env.M4_BASE_URL ?? 'http://127.0.0.1:3000'
+
+// A restarted service can close a keep-alive socket mid-response; that is not a security
+// finding and must not turn the gate red. GETs are retried a few times on network errors;
+// writes are never retried here, because a POST that already executed must not run twice
+// and every case that needs a retry owns that decision itself.
+const rawFetch = globalThis.fetch
+globalThis.fetch = async (input, init = {}) => {
+  const method = String(init.method ?? 'GET').toUpperCase()
+  const retriable = method === 'GET' || method === 'HEAD'
+  let lastError
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      return await rawFetch(input, init)
+    } catch (error) {
+      lastError = error
+      const text = `${String(error?.message ?? error)} ${String(error?.cause?.code ?? '')}`
+      if (!retriable || !/fetch failed|other side closed|ECONNRESET|socket hang up/i.test(text)) throw error
+      await new Promise((resolve) => setTimeout(resolve, 1_000 * attempt))
+    }
+  }
+  throw lastError
+}
 const outFlag = process.argv.indexOf('--out')
 const OUT = path.resolve(
   outFlag === -1 ? `docs/crm-platform/poc/${new Date().toISOString().slice(0, 10)}-m4` : process.argv[outFlag + 1],
