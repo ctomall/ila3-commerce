@@ -13,6 +13,7 @@
 | 真库 6 套（隔离库） | ✅ | `yarn realdb:check` 6/6 PASS（S104 新增权限迁移演练），自动清理 |
 | `yarn lint` | ✅ | 全仓 `yarn lint` exit 0（0 errors / 29 warnings）；本任务 62 个改动文件单独 lint exit 0（零输出） |
 | `yarn ds:check` | ⚠️ 本任务新增 0 | 模块内 72 → 16，剩余 16 条全部在 S85 基线文件（InboxView 13、ReplyComposer 3）；全仓仍 298 条来自他人文件（S103） |
+| 生产 UI 实测 | ✅ 8 张截图 / 12 条断言 | S106：真实 superadmin+employee 登录 release `be8b034e`，四个页面渲染、employee 两个管理页 Access Denied、API 403 门正确（`docs/crm-platform/verify/communications-ui-prod-2026-11-13/`） |
 | `yarn build` | ✅（有条件） | 仓库内 dist + 12G/TasksMax≥8192 的一次性单元：exit 0、`status:"ok"`、`BUILD_ID qdk-QWt7ONKJxEKuuejYY`（S105 §2） |
 | 真实收发整链 | ⛔ **待环境** | P-1 阻塞 WA/MS；邮箱凭据缺（P-2 网络已实测可通） |
 
@@ -82,6 +83,7 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 - 构建只在“仓库内 dist + ≥12G/TasksMax≥8192”条件下绿；默认 dist 符号链接未修前，开箱 `yarn build` 仍会失败（运维项）。
 - 事件总线真实消费（索引、通知、客户时间线）——真库 runner 里总线缺失。
 - 备注编辑/删除、审计导出、模板管理（属 P1/二期）。
+- S106 抓到的「员工可见连接入口」缺陷已修（`9377485`，测试 4 条），但**生产 release `be8b034e` 还不含该提交**：视觉复验要等下一次发布，不能当成已上线。
 - 邮件渠道仍是**个人范围**连接；团队共享邮箱需安装包支持租户级邮件凭据（架构决策）。
 
 ## 5. 恢复工作的入口

@@ -1,0 +1,400 @@
+{
+  "generatedAt": "2026-11-13T03:55:19.197Z",
+  "base": "http://127.0.0.1:3000",
+  "label": "prod",
+  "release": {
+    "schema": 1,
+    "status": "ok",
+    "sha": "be8b034e5a6be54fa4dab7f270a93e9ac1137378",
+    "shortSha": "be8b034e",
+    "version": "0.2.2",
+    "createdAt": "2026-11-13T03:50:07.152Z",
+    "source": {
+      "method": "ci-artifact",
+      "repository": "ctomall/ila3-commerce",
+      "workflowRunId": 43360429139,
+      "workflow": {
+        "path": ".github/workflows/build-artifact.yml",
+        "name": "build-artifact"
+      },
+      "runUrl": "https://github.com/ctomall/ila3-commerce/actions/runs/43360429139",
+      "artifactName": "mercato-release-be8b034e5a6be54fa4dab7f270a93e9ac1137378",
+      "note": "Installed from the CI release package; no Next build ran on this host."
+    },
+    "envFiles": [
+      {
+        "name": ".env",
+        "bytes": 58284,
+        "sha256": "fac346443c096af060b62fd045bae4f6c63e29deaf9b309d07220ccedf69f318"
+      }
+    ],
+    "commands": {
+      "install": "yarn install --immutable",
+      "build": "skipped (built in CI)"
+    },
+    "logs": {
+      "artifact": "/home/pro/.local/state/ila3-deploy/logs/deploy-20261113034834-be8b034e-artifact.log",
+      "install": "/home/pro/.local/state/ila3-deploy/logs/artifact-43360429139-20261113034835-be8b034e-artifact-install.log"
+    },
+    "install": {
+      "ms": 61952,
+      "status": 0,
+      "tail": "➤ YN0000: · Yarn 4.18.1\n➤ YN0000: ┌ Resolution step\n➤ YN0000: └ Completed in 0s 442ms\n➤ YN0000: ┌ Post-resolution validation\n➤ YN0060: │ bullmq-otel is listed by your project with version 1.3.1 (pdecf43), which doesn't satisfy what bullmq and other dependencies request (but they have non-overlapping ranges!).\n➤ YN0002: │ ila3-commerce@workspace:. doesn't provide react-is (p37dfb0), requested by @open-mercato/tillio and other dependencies.\n➤ YN0086: │ Some peer dependencies are incorrectly met by your project; run yarn explain peer-requirements <hash> for details, where <hash> is the six-letter p-prefixed code.\n➤ YN0086: │ Some peer dependencies are incorrectly met by dependencies; run yarn explain peer-requirements for details.\n➤ YN0000: └ Completed\n➤ YN0000: ┌ Fetch step\n➤ YN0000: └ Completed in 12s 462ms\n➤ YN0000: ┌ Link step\n➤ YN0004: │ @firebase/util@npm:1.15.3 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ @newrelic/fn-inspect@npm:5.1.0 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ @newrelic/native-metrics@npm:13.1.0 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ @parcel/watcher@npm:2.6.0 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ better-sqlite3@npm:13.0.3 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ cpu-features@npm:0.0.10 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ esbuild@npm:0.28.2 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ isolated-vm@npm:7.0.1 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ msgpackr-extract@npm:3.0.4 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ protobufjs@npm:7.6.6 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ ssh2@npm:1.17.0 lists build scripts, but all build scripts have been disabled.\n➤ YN0004: │ unrs-resolver@npm:1.12.2 lists build scripts, but all build scripts have been disabled.\n➤ YN0007: │ ila3-commerce@workspace:. must be built because it never has been before or the last one failed\n➤ YN0000: └ Completed in 47s 648ms\n➤ YN0000: · Done with warnings in 1m 2s"
+    },
+    "buildInfo": {
+      "version": "0.2.2",
+      "commit": "be8b034e",
+      "builtAt": "2026-11-13T03:43:17.838Z",
+      "status": "ok",
+      "treeDigest": "6128e1dbc05dbbdbef7f02ef7427d228af8253d596c12b6095f54aa10e5737ca"
+    },
+    "artifact": {
+      "id": 14008372181,
+      "name": "mercato-release-be8b034e5a6be54fa4dab7f270a93e9ac1137378",
+      "size": 274483477,
+      "digest": "ef62071249028dfc48e5ae9ec89cf00641f93b2c91224727208542204863162c",
+      "archive": {
+        "file": "release.tar.gz",
+        "sha256": "8ca5280cfdc282f601f59b87b8c45a67ba95379360022dbd88043d80a3994852",
+        "bytes": 269404317
+      },
+      "manifestSha256": "ea86aceb5a5f777918d9c8340ca9e19b0f23a0f122837330fd0beda6f5069c71",
+      "contentDigest": "7e96eb33a203fccc8ef38dec083fc931fce1517e26d01fbaf5f47dccbb9c2244",
+      "files": 20266,
+      "symlinks": 33,
+      "extractedBytes": 1086821382,
+      "verifiedAt": "2026-11-13T03:50:07.197Z",
+      "downloadMs": 0
+    },
+    "artifactManifest": {
+      "path": "/home/pro/releases/mercato/be8b034e5a6be54fa4dab7f270a93e9ac1137378/release-manifest.json",
+      "schema": 1,
+      "checks": [
+        "typecheck",
+        "unit",
+        "build"
+      ],
+      "runtime": {
+        "nodeMajor": 24,
+        "platform": "linux",
+        "arch": "x64"
+      },
+      "createdAt": "2026-11-13T03:48:07.159Z"
+    }
+  },
+  "roles": {
+    "superadmin": {
+      "role": "superadmin",
+      "login": {
+        "ok": true,
+        "status": 200,
+        "attempts": 1
+      },
+      "apis": {
+        "channels": {
+          "status": 200,
+          "body": "{\"items\":[],\"summary\":{\"total\":0,\"inboundUnavailable\":0,\"outboundUnavailable\":0}}"
+        },
+        "threads": {
+          "status": 200,
+          "body": "{\"items\":[],\"nextBefore\":null,\"total\":0}"
+        },
+        "reconciliation": {
+          "status": 200,
+          "body": "{\"items\":[],\"total\":0}"
+        },
+        "dead-letters": {
+          "status": 200,
+          "body": "{\"items\":[],\"total\":0}"
+        }
+      },
+      "pages": {
+        "channels": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/channels",
+          "pathname": "/backend/communications/channels",
+          "title": "渠道账号",
+          "heading": "渠道账号",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 渠道账号 平台身份来自平台返回，不手填；「可收/可发」按账号状态与当前连接的适配器判定，不猜测平台网络。 刷新 连接渠道 共 0 个账号；收不到信的 0 个，发不出去的 0 个。 还没有可用账号。管理员连接渠道后，这里会出现平台身份与收发状态。",
+          "mainTextLength": 176,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "刷新",
+            "连接渠道"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-channels.png"
+        },
+        "channels-connect": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/channels/connect",
+          "pathname": "/backend/communications/channels/connect",
+          "title": "连接渠道",
+          "heading": "连接渠道",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 连接渠道 为整个组织创建 WhatsApp 或 Messenger 渠道。凭据只提交给服务端，不写入日志。邮件渠道在「我的资料 → 连接渠道」按个人范围连接，这里只给出入口与所需字段。 渠道类型 * WhatsApp Business (Cloud API) WhatsApp Business (Cloud API) Facebook Page Messenger Resend（邮件，只发不收） IMAP + SMTP（邮件，可收可发） Amazon SES（邮件，只发不收） Gmail（邮件，可收可发） 显示名称 * 员工在收件箱里看到的渠道名称 System user access token * 包含 whatsapp_business_messaging 权限 Phone number ID * Cloud API 的号码 ID，不是显示号码 App secret * 用于校验入站 webhook 签名 Graph base URL（可选） 默认 https://graph.facebook.com 连接 返回收件箱",
+          "mainTextLength": 523,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "WhatsApp Business (Cloud API)",
+            "连接",
+            "返回收件箱"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-channels-connect.png"
+        },
+        "inbox": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/inbox",
+          "pathname": "/backend/communications/inbox",
+          "title": "全渠道收件箱",
+          "heading": "全渠道收件箱",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 连接渠道 没有可访问的会话。 选择左侧会话查看消息",
+          "mainTextLength": 101,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "连接渠道"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-inbox.png"
+        },
+        "exceptions": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/exceptions",
+          "pathname": "/backend/communications/exceptions",
+          "title": "发送结果对账",
+          "heading": "发送结果对账",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 发送结果对账 这里只记录人工核实结论：不会重发、不会改发送状态。同一结果只接受一条结论，后续如需改判请走运维流程。 刷新 待对账 0 条 没有待对账的结果。发送结果未知的消息才会出现在这里。 入站死信 平台推来的消息/回执没能入库时留在这里。只展示失败信息，不展示抓取的原始报文；需要重放请走运维。 刷新死信 没有死信。",
+          "mainTextLength": 214,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "刷新",
+            "刷新死信"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-exceptions.png"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "channels",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-channels.png",
+          "sha256": "8a32230944251676cbfbf1432af09b694127879b4da7f385dc6f106d3e5c32aa",
+          "bytes": 73066
+        },
+        {
+          "name": "channels-connect",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-channels-connect.png",
+          "sha256": "264c98bf1c9c013b01e7c77dc62175f34b676847aee16d42900c2cbbb21b41cc",
+          "bytes": 110275
+        },
+        {
+          "name": "inbox",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-inbox.png",
+          "sha256": "dbd0d51f59acfcc2287a404aa175acd6dd86a589d7bad7cee66bf4e2c5b91684",
+          "bytes": 62262
+        },
+        {
+          "name": "exceptions",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-superadmin-exceptions.png",
+          "sha256": "733a397be0fad8cf2773215e25eaf6bbe196b8fe98b119c00e193d1d496a1074",
+          "bytes": 83511
+        }
+      ],
+      "diagnostics": {
+        "pageErrors": [],
+        "consoleErrors": [],
+        "serverErrors": [],
+        "failedRequests": []
+      },
+      "checks": []
+    },
+    "employee": {
+      "role": "employee",
+      "login": {
+        "ok": true,
+        "status": 200,
+        "attempts": 1
+      },
+      "apis": {
+        "channels": {
+          "status": 200,
+          "body": "{\"items\":[],\"summary\":{\"total\":0,\"inboundUnavailable\":0,\"outboundUnavailable\":0}}"
+        },
+        "threads": {
+          "status": 200,
+          "body": "{\"items\":[],\"nextBefore\":null,\"total\":0}"
+        },
+        "reconciliation": {
+          "status": 403,
+          "body": "{\"error\":\"无权访问\",\"requiredFeatures\":[\"communication_channels.manage\"]}"
+        },
+        "dead-letters": {
+          "status": 403,
+          "body": "{\"error\":\"无权访问\",\"requiredFeatures\":[\"communication_channels.manage\"]}"
+        }
+      },
+      "pages": {
+        "channels": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/channels",
+          "pathname": "/backend/communications/channels",
+          "title": "渠道账号",
+          "heading": "渠道账号",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 渠道账号 平台身份来自平台返回，不手填；「可收/可发」按账号状态与当前连接的适配器判定，不猜测平台网络。 刷新 连接渠道 共 0 个账号；收不到信的 0 个，发不出去的 0 个。 还没有可用账号。管理员连接渠道后，这里会出现平台身份与收发状态。",
+          "mainTextLength": 176,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "刷新",
+            "连接渠道"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-channels.png"
+        },
+        "channels-connect": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/channels/connect",
+          "pathname": "/backend/communications/channels/connect",
+          "title": "连接渠道",
+          "heading": "",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access Denied You do not have permission to view this page. Please contact your administrator. Go to Dashboard",
+          "mainTextLength": 164,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "Go to Dashboard"
+          ],
+          "denied": true,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-channels-connect.png"
+        },
+        "inbox": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/inbox",
+          "pathname": "/backend/communications/inbox",
+          "title": "全渠道收件箱",
+          "heading": "全渠道收件箱",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 连接渠道 没有可访问的会话。 选择左侧会话查看消息",
+          "mainTextLength": 101,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "连接渠道"
+          ],
+          "denied": false,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-inbox.png"
+        },
+        "exceptions": {
+          "ok": true,
+          "url": "http://127.0.0.1:3000/backend/communications/exceptions",
+          "pathname": "/backend/communications/exceptions",
+          "title": "发送结果对账",
+          "heading": "",
+          "mainText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access Denied You do not have permission to view this page. Please contact your administrator. Go to Dashboard",
+          "mainTextLength": 164,
+          "rows": 0,
+          "controls": [
+            "隐私",
+            "关闭",
+            "接受 Cookie",
+            "Go to Dashboard"
+          ],
+          "denied": true,
+          "loading": false,
+          "screenshot": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-exceptions.png"
+        }
+      },
+      "screenshots": [
+        {
+          "name": "channels",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-channels.png",
+          "sha256": "fcf043f3b170121e08ad893bf9b2dad9e00a1ab67dff5fc3c4b37a6787305c12",
+          "bytes": 73391
+        },
+        {
+          "name": "channels-connect",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-channels-connect.png",
+          "sha256": "bd260a3f88aad8490e8f214f369dacc764ce2ea653e9427034191380f67dbf8b",
+          "bytes": 63428
+        },
+        {
+          "name": "inbox",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-inbox.png",
+          "sha256": "dbd0d51f59acfcc2287a404aa175acd6dd86a589d7bad7cee66bf4e2c5b91684",
+          "bytes": 62262
+        },
+        {
+          "name": "exceptions",
+          "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-ui-prod-2026-11-13/prod-employee-exceptions.png",
+          "sha256": "42869e36f3ec15effa7502764cbc53b451d39e8ec5224eace6a40f979e4a4e35",
+          "bytes": 63189
+        }
+      ],
+      "diagnostics": {
+        "pageErrors": [],
+        "consoleErrors": [],
+        "serverErrors": [],
+        "failedRequests": []
+      },
+      "checks": []
+    }
+  },
+  "failures": [],
+  "assertions": [
+    {
+      "name": "inbox renders for both roles",
+      "ok": true,
+      "detail": "superadmin=true employee=true"
+    },
+    {
+      "name": "channels list renders for both roles",
+      "ok": true,
+      "detail": "superadmin=true employee=true"
+    },
+    {
+      "name": "employee is denied the tenant connect wizard",
+      "ok": true,
+      "detail": "denied=true rendered=true"
+    },
+    {
+      "name": "employee is denied the exceptions console (manage)",
+      "ok": true,
+      "detail": "denied=true rendered=true"
+    },
+    {
+      "name": "threads API is readable for both roles (view)",
+      "ok": true,
+      "detail": "superadmin=200 employee=200"
+    },
+    {
+      "name": "dead-letters API is manage-only",
+      "ok": true,
+      "detail": "superadmin=200 employee=403"
+    }
+  ],
+  "ok": true
+}
