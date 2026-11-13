@@ -98,3 +98,22 @@ NODE_ENV=production NODE_OPTIONS=--max-old-space-size=5632 \
 `yarn build` 的 `build:inner` 把 `NODE_OPTIONS` 固定成 8192，所以这次只能绕过 wrapper，**仅用于判断“堆压到 5.5G 是否足够”**；若足够，把该上限写进构建脚本属配置变更，仍需批准。
 
 延期原因：发起前检查宿主内存（2026-11-13T00:47Z），`available` 只有 **7GiB**，同时有一个 RSS **6.7GiB** 的任务在跑。此刻再起 7G 受管单元可能触发全局 OOM、波及别人的任务，按 AGENTS 资源规范先延期；等可用内存回到约 10GiB 以上且无并发重任务时再跑。
+
+## 8. 尝试四结果（2026-11-13T00:50Z 起，6 分 12 秒）：Webpack 在解析阶段就失败，与内存无关
+
+命令：`NODE_ENV=production NODE_OPTIONS=--max-old-space-size=5632 OM_DIST_DIR=.build-probe/next node node_modules/next/dist/bin/next build --webpack`
+
+结果：**exit 1**，错误是
+
+```
+Module not found: Can't resolve '@/.mercato/generated/inbox-actions.generated'
+Import trace: ./node_modules/@open-mercato/core/dist/modules/inbox_ops/api/proposals/[id]/reject/route.js
+  → ./.mercato/generated/api-routes.generated.ts → src/app/api/docs/document-cache.ts → ...
+> Build failed because of webpack errors
+```
+
+- 文件**存在**（`.mercato/generated/inbox-actions.generated.ts`，`require.resolve` 能解析）；`tsconfig.json` 里有 `@/.mercato/* → ./.mercato/*` 的更具体映射，TS 侧正常。
+- 失败点是安装包里对生成文件的**动态 import** 在 Webpack 解析下没走通（Node/Turbopack 路径正常）。这是 webpack 构建路径在本仓的既有问题，不是本任务代码、也不是内存。
+- 资源侧这次只用了 5G peak / 651M swap（`Consumed 4min 31s CPU over 6min 12s`），没有 OOM——进一步说明上一轮是走到编译阶段后才撞内存。
+
+**结论**：本仓只有 Turbopack 路径可用；而 Turbopack 在 7G 受管单元里会在编译阶段被 OOM（尝试三）。所以要拿到绿色构建，只剩两条路：放宽重任务单元内存（~12G），或用 CI 构建。两条都需要你/环境负责人拍板。
