@@ -1,0 +1,33 @@
+{
+ "probedAt": "2026-11-13T07:08:53.092Z",
+ "base": "http://127.0.0.1:3912",
+ "role": "employee",
+ "path": "/api/ai_assistant/chat",
+ "expectedTimeoutMs": 6000,
+ "release": "4f14a88281606a7807899deeb5084bbc352062d2",
+ "status": 200,
+ "bytes": 7454,
+ "elapsedMs": 7605,
+ "nonce": "2026-11-13T070853092Z",
+ "sessionId": "session-bc091eaa5a03409896fce5b12157bcd1",
+ "runStartedAt": "2026-11-13 07:08:54.57+00",
+ "errorFrame": "dsh run timed out after 6000ms",
+ "dshRunStatus": "failed",
+ "dshRunError": "dsh run timed out after 6000ms",
+ "finishReason": "timed-out",
+ "leftoverChildren": "1",
+ "checks": {
+  "status-200": true,
+  "stream-reports-timeout": true,
+  "stream-names-the-bound": true,
+  "stream-ends-with-done": true,
+  "run-terminal": true,
+  "run-failed": true,
+  "run-error-is-timeout": true,
+  "finish-reason-timed-out": true,
+  "elapsed-near-the-bound": true,
+  "fresh-run-not-a-replay": true
+ },
+ "ok": true,
+ "tail": "onId\":\"session-bc091eaa5a03409896fce5b12157bcd1\",\"sessionFormatVersion\":4,\"throughSeq\":9}}},\"dshEventType\":\"session-log-deepseek/delivery-accepted\"}\n\nid: 14\ndata: {\"type\":\"error\",\"error\":\"dsh run timed out after 6000ms\"}\n\ndata: {\"type\":\"done\",\"sessionId\":\"session-bc091eaa5a03409896fce5b12157bcd1\"}\n\n"
+}

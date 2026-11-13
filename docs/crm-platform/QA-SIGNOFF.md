@@ -111,6 +111,10 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
   - 断线重连：中途 abort 后 Run 落 `cancelled`（不会卡 `running`），按 runId 重连拿到
     `thinking,dsh.event,text,debug,error,done` 且以 `done` 收尾
     （`dsh-integration/evidence/reconnect-drill-2026-11-13T02-59-49-381Z.json`）；
+  - 超时（B）：在 6 s 上限的候选实例上发一个长任务，流里出现 `error: dsh run timed out after 6000ms`
+    并紧跟 `done`；`dsh_runs` 落 `failed` / `finishReason:"timed-out"` / `finalResponse:""`，
+    墙钟 7.6 s，结束后无 `sdk-minimal` 子进程残留（`dsh-integration/evidence/timeout-2026-11-13T07-08-53-092Z.json`，
+    脚本 `scripts/crm-dsh-timeout-drill.mjs`；探针带 nonce，避免回放旧 Run 冒充新超时）；
   - 重复请求/幂等（真实账号）：同一句 prompt 连发两次 → 第二次回放**同一个 Run** `25d2f41f`、
     该 session 仍只有 1 行 `dsh_runs`、流仍以 `done` 收尾；换新 prompt 才产生新 Run `2813e94c`
     （`dsh-integration/evidence/idempotency-2026-11-13T04-26-36-104Z.json`，
