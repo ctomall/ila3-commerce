@@ -1,0 +1,116 @@
+{
+  "generatedAt": "2026-11-13T05:06:13.853Z",
+  "base": "http://127.0.0.1:3100",
+  "label": "seeded",
+  "role": "employee",
+  "steps": {
+    "login": {
+      "status": 200
+    },
+    "threads": {
+      "status": 200,
+      "total": 1,
+      "first": {
+        "id": "ce1710c7-12f0-4a94-a069-3da7e24addac",
+        "channelId": "548de414-ff1b-4ea6-b7a1-5c2417babef3",
+        "externalConversationId": "user-778812",
+        "subject": "Reply",
+        "contactPersonId": null,
+        "assignedUserId": "7a176d46-6474-47c1-be56-d11b2d9452f1",
+        "lastMessageAt": "2026-11-13T05:05:04.354Z",
+        "lastMessageId": "4720a3e4-054e-4ed4-a283-8a017eeff99b",
+        "customer": null,
+        "lastMessageThreadId": "4833d101-7683-407a-88df-cc32e9c70dcc",
+        "channel": {
+          "id": "548de414-ff1b-4ea6-b7a1-5c2417babef3",
+          "providerKey": "__test_seed_chat__",
+          "channelType": "whatsapp",
+          "displayName": "团队 WhatsApp（隔离验收场）",
+          "visibility": "shared"
+        }
+      }
+    },
+    "inboxText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 Reply 未关联客户 团队 WhatsApp（隔离验收场） · 团队共享 · 2026/11/13 05:05:04 选择左侧会话查看消息",
+    "threadText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 Reply 未关联客户 团队 WhatsApp（隔离验收场） · 团队共享 · 2026/11/13 05:05:04 Reply 未关联客户 · 团队 WhatsApp（隔离验收场） · 团队共享 · 外部会话 user-778812 未关联客户 这个账号当前不能完整收发 收：该渠道在此版本只支持发送，收不到客户来信；需要收信请接入带入站能力的邮箱或 IM 渠道。 客户 · 王小雨 received 2026/11/13 04:52:03 (no subject) 你好，我上周下的订单还没收到，麻烦帮我看一下物流。 平台消息号：s107-in-1 客户 · 王小雨 received 2026/11/13 04:52:03 (no subject) 订单号是 A-1042，收件地址没变。谢谢！ 平台消息号：s107-in-2 我方发出 待发送 2026/11/13 05:05:28 Reply 已收到，我这边查一下物流，今天下班前把单号发给你。 平台消息号：s107-echo-1 已到最早 回复身份：团队 WhatsApp（隔离验收场）（团队共享渠道）· 服务端会再次校验归属与发送窗口 文本 媒体链接 模板 仅 WhatsApp 支持 media id 与模板；Messenger 媒体需公网链接 发送回复 服务端会再次校验归属、渠道能力与发送窗口 内部备注 仅内部可见，客户与平台都收不到 还没有备注。写给同事看的线索、承诺和风险放在这里。 保存备注 客服窗口内可直接回复文本；超出 24 小时窗口需改用已审核模板，服务端会返回 422 WINDOW_CLOSED 而不是让平台拒收。",
+    "note": {
+      "filled": true,
+      "clicked": true,
+      "saved": true
+    },
+    "reply": {
+      "clicked": true,
+      "sendStatus": 202,
+      "sendBody": "{\"messageId\":\"34471ffd-030b-43bf-b299-7d7cae5244f1\",\"threadId\":\"4833d101-7683-407a-88df-cc32e9c70dcc\",\"channelId\":\"548de414-ff1b-4ea6-b7a1-5c2417babef3\",\"providerKey\":\"__test_seed_chat__\",\"clientRequestId\":\"026620bd-0e10-4a34-82bf-3f8e08694e54\",\"enqueuedForDelivery\":true,\"ledgerRecorded\":true}"
+    },
+    "replyText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 Reply 未关联客户 团队 WhatsApp（隔离验收场） · 团队共享 · 2026/11/13 05:06:18 Reply 未关联客户 · 团队 WhatsApp（隔离验收场） · 团队共享 · 外部会话 user-778812 未关联客户 这个账号当前不能完整收发 收：该渠道在此版本只支持发送，收不到客户来信；需要收信请接入带入站能力的邮箱或 IM 渠道。 客户 · 王小雨 received 2026/11/13 04:52:03 (no subject) 你好，我上周下的订单还没收到，麻烦帮我看一下物流。 平台消息号：s107-in-1 客户 · 王小雨 received 2026/11/13 04:52:03 (no subject) 订单号是 A-1042，收件地址没变。谢谢！ 平台消息号：s107-in-2 我方发出 待发送 2026/11/13 05:05:28 Reply 已收到，我这边查一下物流，今天下班前把单号发给你。 平台消息号：s107-echo-1 已到最早 回复身份：团队 WhatsApp（隔离验收场）（团队共享渠道）· 服务端会再次校验归属与发送窗口 文本 媒体链接 模板 仅 WhatsApp 支持 media id 与模板；Messenger 媒体需公网链接 发送回复 服务端会再次校验归属、渠道能力与发送窗口 已提交投递；平台回执到达后状态会更新。 内部备注 仅内部可见，客户与平台都收不到 客户要求周五前送达；已答应今天给出物流单号。 7a176d46 · 2026/11/13 05:06:17 保存备注 客服窗口内可直接回复文本；超出 24 小时窗口需改用已审核模板，服务端会返回 422 WINDOW_CLOSED 而不是让平台拒收。",
+    "channels": {
+      "status": 200,
+      "items": 1
+    }
+  },
+  "screenshots": [
+    {
+      "name": "inbox-list",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-inbox-list.png",
+      "sha256": "843aee2c0c4887cec3281d6f621ca057b40dd83e9ef681c7e874d1506371221f",
+      "bytes": 43919
+    },
+    {
+      "name": "thread",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-thread.png",
+      "sha256": "30d246fc148f69549a9353fe5211c0d5dd4082162efadef8b017dadc211366d6",
+      "bytes": 163284
+    },
+    {
+      "name": "internal-note",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-internal-note.png",
+      "sha256": "bc3ba0065e14ff5d2d2f65923fc64ee9af307bfba23b67ecd8390672521e2a59",
+      "bytes": 163330
+    },
+    {
+      "name": "reply-sent",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-reply-sent.png",
+      "sha256": "aa525603fff252b41c7b50874947e8ce8e112a6243cbfd10b0c739282d1955a9",
+      "bytes": 168920
+    }
+  ],
+  "checks": [
+    {
+      "name": "employee login succeeds",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "name": "seeded conversation is listable",
+      "ok": true,
+      "detail": "total=1 id=ce1710c7-12f0-4a94-a069-3da7e24addac"
+    },
+    {
+      "name": "inbox lists the conversation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "thread shows the customer message body",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "internal note is saved and rendered",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "reply send reaches the API",
+      "ok": true,
+      "detail": "status=202"
+    },
+    {
+      "name": "seeded channels are visible to the employee",
+      "ok": true,
+      "detail": "status=200 items=1"
+    }
+  ],
+  "failures": [],
+  "ok": true
+}

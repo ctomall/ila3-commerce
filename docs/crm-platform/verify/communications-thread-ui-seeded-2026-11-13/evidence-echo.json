@@ -1,0 +1,76 @@
+{
+  "generatedAt": "2026-11-13T05:05:29.319Z",
+  "base": "http://127.0.0.1:3100",
+  "label": "seeded",
+  "role": "employee",
+  "steps": {
+    "login": {
+      "status": 200
+    },
+    "threads": {
+      "status": 200,
+      "total": 1,
+      "first": {
+        "id": "ce1710c7-12f0-4a94-a069-3da7e24addac",
+        "channelId": "548de414-ff1b-4ea6-b7a1-5c2417babef3",
+        "externalConversationId": "user-778812",
+        "subject": "Reply",
+        "contactPersonId": null,
+        "assignedUserId": "7a176d46-6474-47c1-be56-d11b2d9452f1",
+        "lastMessageAt": "2026-11-13T05:05:04.354Z",
+        "lastMessageId": "4720a3e4-054e-4ed4-a283-8a017eeff99b",
+        "customer": null,
+        "lastMessageThreadId": "4833d101-7683-407a-88df-cc32e9c70dcc",
+        "channel": {
+          "id": "548de414-ff1b-4ea6-b7a1-5c2417babef3",
+          "providerKey": "__test_seed_chat__",
+          "channelType": "whatsapp",
+          "displayName": "团队 WhatsApp（隔离验收场）",
+          "visibility": "shared"
+        }
+      }
+    },
+    "inboxText": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 Reply 未关联客户 团队 WhatsApp（隔离验收场） · 团队共享 · 2026/11/13 05:05:04 选择左侧会话查看消息",
+    "echo": {
+      "rendered": true
+    }
+  },
+  "screenshots": [
+    {
+      "name": "inbox-list",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-inbox-list.png",
+      "sha256": "843aee2c0c4887cec3281d6f621ca057b40dd83e9ef681c7e874d1506371221f",
+      "bytes": 43919
+    },
+    {
+      "name": "thread-with-echo",
+      "path": "/home/pro/apps/mercato/docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/seeded-thread-with-echo.png",
+      "sha256": "a1e934bc190441a173290f6a2b84291d7c6d74319bc34eabf0bbe68a8ecb4791",
+      "bytes": 166683
+    }
+  ],
+  "checks": [
+    {
+      "name": "employee login succeeds",
+      "ok": true,
+      "detail": "status 200"
+    },
+    {
+      "name": "seeded conversation is listable",
+      "ok": true,
+      "detail": "total=1 id=ce1710c7-12f0-4a94-a069-3da7e24addac"
+    },
+    {
+      "name": "inbox lists the conversation",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "provider echo renders as an outbound bubble",
+      "ok": true,
+      "detail": ""
+    }
+  ],
+  "failures": [],
+  "ok": true
+}

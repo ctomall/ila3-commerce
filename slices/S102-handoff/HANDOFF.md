@@ -15,6 +15,7 @@
 | `yarn ds:check` | ⚠️ 本任务新增 0 | 模块内 72 → 16，剩余 16 条全部在 S85 基线文件（InboxView 13、ReplyComposer 3）；全仓仍 298 条来自他人文件（S103） |
 | 生产 UI 实测 | ✅ 8 张截图 / 12 条断言 | S106：真实 superadmin+employee 登录 release `be8b034e`，四个页面渲染、employee 两个管理页 Access Denied、API 403 门正确（`docs/crm-platform/verify/communications-ui-prod-2026-11-13/`） |
 | `yarn build` | ✅（有条件） | 仓库内 dist + 12G/TasksMax≥8192 的一次性单元：exit 0、`status:"ok"`、`BUILD_ID qdk-QWt7ONKJxEKuuejYY`（S105 §2） |
+| 真实数据 UI 验收（隔离） | ✅ 5 张截图 / 11 条断言 | S107：一次性库副本 + 3100 实例，employee 真实操作收件箱/会话/备注/回复；stub 回显在 `docs/crm-platform/verify/communications-thread-ui-seeded-2026-11-13/` |
 | 真实收发整链 | ⛔ **待环境** | P-1 阻塞 WA/MS；邮箱凭据缺（P-2 网络已实测可通） |
 
 一条命令复跑前四项：`yarn preflight:communications`（约 1 分 34 秒；加 `--with-lint` 附带全仓 lint）。构建单独按 S105 §2 的命令复跑（默认 `.mercato/next` 符号链接未修前，直接 `yarn build` 仍会在 postcss 求值处报错）。
