@@ -51,7 +51,7 @@
 | F3-08 幂等 | ✅ 复用现有 | D5 §9；本任务未改 |
 | F3-10 邮件线程头 | ✅ 代码级 | S87b；**未在真实邮箱验证归并** |
 | F4-01 客户关联 | ✅ | S89（会话内不支持新建客户） |
-| F5-01 权限 | ⚠️ 代码已备，生产未生效 | S85；隔离库演练已通过（S104：check/refuse/apply/幂等/校验回滚/rollback SQL + 真库套件）；生产仍等你批 `--apply` |
+| F5-01 权限 | ✅ 生产已生效（2026-11-13） | S85；隔离库演练（S104）+ 生产 `--apply` 经用户批准执行、`changed:3`、审计含 3 条 rollbackSql、事后 `pendingTenants:0`（S105 §1） |
 | F8-01 发布兼容 | ⚠️ 策略已写，运行时未实现版本门 | 见 §3 |
 | F8-03 人工恢复 | ✅ 出站 unknown + 入站死信可见 | S91a/S91b；死信重放仍走运维 |
 | F8-04 webhook 限流 | ✅ | S88；默认全局桶（见 S88 README 已知边界） |
@@ -62,7 +62,7 @@
 1. **API 兼容**：新增字段（`total` 语义修正、`channel.availability`、备注/对账接口）只增不改名；`total` 是唯一语义变更，旧值本就是错的（页大小），按“修复”处理并在本文件留痕。
 2. **Android 版本窗**：最低支持版本按 OTA manifest 的实际值声明（当前 `3.71.54 / 37154`），**代码里没有版本门**；要落地需在 API 层加最低版本拒绝，属 P1，不在本片伪造。
 3. **回退边界**：S85 是唯一的权限数据变更，回退 SQL 随审计记录落盘；其余各片无数据库迁移，回退=回滚部署到上一 release。
-4. **发布前检查**：`yarn preflight:communications`（S100）串起 `generate → typecheck → 模块测试 → 真库 6 套`（S104 起），约 1.5 分钟；**构建（`yarn build`）当前 BLOCKED（资源）**：符号链接 dist 时 Turbopack 报 `Cannot find module '@tailwindcss/postcss'`；把 dist 指到仓库内后该报错消失，构建 41 分钟后被 7G 受管单元 OOM 杀死（S101 §6）——均未指向本任务文件，在此之前不得声称构建通过；typecheck 失败会按 owned/foreign 归因——本片范围内失败退出码 1，仅他人未提交代码导致则退出码 2（BLOCKED，不得当成自身回归，也不得发布）。仍须在干净工作树复跑。
+4. **发布前检查**：`yarn preflight:communications`（S100）串起 `generate → typecheck → 模块测试 → 真库 6 套`（S104 起），约 1.5 分钟；**构建（`yarn build`）2026-11-13 转绿（有条件）**：仓库内 dist（`OM_DIST_DIR`）+ 一次性 `MemoryMax=12G / TasksMax=8192` 单元下 exit 0、`status:"ok"`、`BUILD_ID qdk-QWt7ONKJxEKuuejYY`；默认 `.mercato/next` 仍是 `/storage` 符号链接，开箱即绿需环境侧改真实目录（S105 §2）；typecheck 失败会按 owned/foreign 归因——本片范围内失败退出码 1，仅他人未提交代码导致则退出码 2（BLOCKED，不得当成自身回归，也不得发布）。仍须在干净工作树复跑。
 
 ## 4. 待环境（未验收，禁止当作已通过）
 
@@ -70,10 +70,10 @@
 | --- | --- | --- |
 | P-1 | 放通 `graph.facebook.com:443`（含媒体上传） | WhatsApp/Messenger 出站与媒体无法真实验收 |
 | P-2 | 原为“可达 IMAP 主机”；2026-11-13 实测 `imap.gmail.com:993`、`smtp.gmail.com:587` 可通（Google OAuth 端点不通，但装好的 `channel-imap` 用用户名+密码） | 网络已具备；仍缺真实邮箱凭据（并入 P-3）才能验收“来信” |
-| P-3 | WhatsApp Cloud / Messenger Page / Resend 真实账号 | 只能验证代码路径，不能验证真实送达 |
+| P-3 | WhatsApp Cloud / Messenger Page / Resend 真实账号。生产现状（2026-11-13 只读）：`communication_channels` **0**、`external_conversations` **0**，渠道 env 只有 `META_WEBHOOK_VERIFY_TOKEN` | 只能验证代码路径，不能验证真实送达 |
 
 **分层验收记录**（只能这样记，不能合并成闭环）：
 - 入站链路：WA/MS webhook 已注册且单测覆盖签名/钉定/去重/死信；**无真实 Meta 回调**。
 - 出站链路：发送路由单测覆盖上限、幂等、媒体、线程头；**无真实外发**。
 - 整链（收→回→送达）：**未验收**，缺 P-1（WA/MS）或真实邮箱凭据 + P-3。
-- 构建门禁：`yarn build` 未绿（S101 §6：postcss 触发条件已定位，剩 7G 内存 OOM）。
+- 构建门禁：2026-11-13 绿（仓库内 dist + 12G，S105 §2）；默认 dist 符号链接与 7G 单元仍需环境侧调整。

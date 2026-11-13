@@ -1,7 +1,7 @@
 # 交接清单 · 全渠道工作台 P0（实施完成，待验收）
 
-> 本页是**一页可勾选的交接单**：代码侧 P0 已交付、门禁除构建外全绿；剩下的每一项都需要你或环境负责人拍板。
-> 仓库 `/home/pro/apps/mercato` main；21 个提交（S85–S101）；设计依据 `full-design/rev2/`（D-1～D-7 已决）。
+> 本页是**一页可勾选的交接单**：代码侧 P0 已交付，门禁全绿（构建带运行条件，见 ④）；生产权限已于 2026-11-13 经批准执行。剩余只有环境项（真实渠道账号 / Meta 出口）。
+> 仓库 `/home/pro/apps/mercato` main；提交 S85–S105；设计依据 `full-design/rev2/`（D-1～D-7 已决）。
 
 ## 1. 门禁现状（本机实测）
 
@@ -13,14 +13,14 @@
 | 真库 6 套（隔离库） | ✅ | `yarn realdb:check` 6/6 PASS（S104 新增权限迁移演练），自动清理 |
 | `yarn lint` | ✅ | 全仓 `yarn lint` exit 0（0 errors / 29 warnings）；本任务 62 个改动文件单独 lint exit 0（零输出） |
 | `yarn ds:check` | ⚠️ 本任务新增 0 | 模块内 72 → 16，剩余 16 条全部在 S85 基线文件（InboxView 13、ReplyComposer 3）；全仓仍 298 条来自他人文件（S103） |
-| `yarn build` | ⛔ **BLOCKED（资源）** | 换仓库内 dist 后 postcss 报错消失；受管单元 7G 内存 OOM（S101 §6）。需内存策略批准 |
+| `yarn build` | ✅（有条件） | 仓库内 dist + 12G/TasksMax≥8192 的一次性单元：exit 0、`status:"ok"`、`BUILD_ID qdk-QWt7ONKJxEKuuejYY`（S105 §2） |
 | 真实收发整链 | ⛔ **待环境** | P-1 阻塞 WA/MS；邮箱凭据缺（P-2 网络已实测可通） |
 
-一条命令复跑前四项：`yarn preflight:communications`（约 1 分 34 秒；加 `--with-lint` 附带全仓 lint）。
+一条命令复跑前四项：`yarn preflight:communications`（约 1 分 34 秒；加 `--with-lint` 附带全仓 lint）。构建单独按 S105 §2 的命令复跑（默认 `.mercato/next` 符号链接未修前，直接 `yarn build` 仍会在 postcss 求值处报错）。
 
-## 2. 需要你拍板的四件事
+## 2. 决策与执行状态
 
-### ① 生产权限落地（F5-01，会改全公司业务员授权）
+### ① 生产权限落地（F5-01）· **已于 2026-11-13 执行**
 
 ```bash
 ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
@@ -31,6 +31,7 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 - 回退：审计记录里带 `rollbackSql`（`docs/crm-platform/audit/reply-role-migration-*.json`），执行后重启 app 单元或等缓存 5 分钟。
 - **已演练**：同一脚本在一次性 PostgreSQL 上跑通 check→refuse→apply→幂等→verify 失败回滚→rollback SQL，并固化为真库套件 `reply-role-migration`（`slices/S104-reply-role-migration-drill/README.md`）。
 - 先看计划：去掉 `--apply` 即只读检查。
+- **执行结果**：批准人「用户对话批准『批准所有』2026-11-13」；`changed:3`（superadmin/admin 补 reply；employee 补 reply 并收回 legacy），审计 `docs/crm-platform/audit/reply-role-migration-2026-11-13T01-03-07-217Z.json`；执行后只读复核 `pendingTenants:0`。**未重启 app 单元**（按 5 分钟缓存窗口生效）。
 
 ### ② webhook 限流的分桶深度（S88）
 
@@ -53,13 +54,16 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 - `api.resend.com:443` **通** → Resend 出站网络已具备，只缺账号/已验证发件人；
 - `imap.gmail.com:993`、`smtp.gmail.com:587` **通**；`accounts.google.com:443`、`oauth2.googleapis.com:443` 不通——但装好的 `channel-imap` 用 IMAP/SMTP 用户名+密码（不走 Google OAuth），所以入站邮件不再卡网络，只缺凭据。
 
+生产库现状（2026-11-13 只读核查）：`communication_channels` **0**、`external_conversations` **0**、`messages` 7；与渠道相关的 env 只有 `META_WEBHOOK_VERIFY_TOKEN`。因此真实收发不只是网络问题，**没有任何已连接账号/凭据**。
+
 三者到位前，主线“收→回→送达”整链**不会**记为通过；现有证据只到“入站链路”与“出站路由”分层。
 
-### ④ 构建门禁解除（S101，已收敛为一个原因）
+### ④ 构建门禁 · **已解除（有条件）**
 
-- 已定位：`.mercato/next` 是符号链接 → `/storage/build-cache/crm/next`；用它构建时 Turbopack 报 7 条 `Cannot find module '@tailwindcss/postcss'`。把 dist 指到仓库内（`OM_DIST_DIR=…`）后，同一 HEAD、同一 node_modules，**该错误不再出现**，构建进入编译阶段（历史工作树用本地 dist 也留有 `status:"ok"` 的构建记录）。
-- 现在只差内存：受管单元 `MemoryHigh=5G / MemoryMax=7G`，构建 41 分 46 秒后被 cgroup OOM 杀死（journal `Failed with result 'oom-kill'`，5G peak / 940.3M swap）。
-- 需要你批一项：把该单元 `MemoryMax` 提到约 12G 跑一次构建，或以 CI 构建结果作证据。批准后我会把 dist 指到仓库内目录复跑，不再走符号链接缓存。
+- 根因：`.mercato/next` 与 `.mercato/next-staging` 都指向 `/storage/build-cache`；Turbopack 的 postcss 运行时代码生成在 distDir 内，distDir 在仓库外时 `require('@tailwindcss/postcss')` 解析失败（日志 Require stack 直接指向 `/storage/build-cache/...`）。换成仓库内 dist 后该错误 0 次。
+- 内存：12G 单元里 `next-build` RSS 峰值约 8.4G，7G 单元必然 OOM；`Collecting page data` 需要 `TasksMax` 大于 512（8192 通过）。
+- 绿色证据（2026-11-13）：`OM_DIST_DIR=.mercato/next-gate yarn build` 在 `MemoryMax=12G / TasksMax=8192` 的一次性 scope 下 **exit 0**，`.mercato/build-info.json` `status:"ok"`，`BUILD_ID qdk-QWt7ONKJxEKuuejYY`（S105 §2）。
+- 运维条件：想让默认 `yarn build` 开箱即绿，需要把 `.mercato/next` 改成仓库内真实目录（或固定 `OM_DIST_DIR`），并给构建单元 ≥12G、`TasksMax≥8192`。这是环境/资源策略，未擅自改共享 wrapper 或删符号链接。
 
 ## 3. 交付物索引
 
@@ -74,15 +78,15 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 
 ## 4. 未验证清单（不得当作已通过）
 
-- `yarn build` 未绿（S101：postcss 触发条件已定位，剩余原因为 7G 内存 OOM）。
-- hub `sendAsUser` 真实投递、任何真实渠道收发（P-1 阻塞 WA/MS；邮件缺账号凭据，网络已实测可通）。
+- hub `sendAsUser` 真实投递、任何真实渠道收发（P-1 阻塞 WA/MS；生产 0 个渠道账号；邮件缺账号凭据，网络已实测可通）。
+- 构建只在“仓库内 dist + ≥12G/TasksMax≥8192”条件下绿；默认 dist 符号链接未修前，开箱 `yarn build` 仍会失败（运维项）。
 - 事件总线真实消费（索引、通知、客户时间线）——真库 runner 里总线缺失。
 - 备注编辑/删除、审计导出、模板管理（属 P1/二期）。
 - 邮件渠道仍是**个人范围**连接；团队共享邮箱需安装包支持租户级邮件凭据（架构决策）。
 
 ## 5. 恢复工作的入口
 
-1. `git log --oneline -25` 看片序（S85→S102）；
-2. `yarn preflight:communications` 复跑门禁；
-3. 从第 2 节四个决策中任一项被批准处继续；
+1. `git log --oneline -30` 看片序（S85→S105）；
+2. `yarn preflight:communications` 复跑门禁；构建按 S105 §2 的命令复跑；
+3. 环境项到位（P-1 出口 / P-3 账号）后做真实收发验收，按 `ACCEPTANCE-MATRIX.md` §4 记录，不要拿分层证据拼闭环；
 4. 若继续做 P1：从 `ACCEPTANCE-MATRIX.md` §2 的 P1 行开始，不要重开二期范围。
