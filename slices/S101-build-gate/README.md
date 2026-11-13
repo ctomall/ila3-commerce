@@ -85,3 +85,16 @@ XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000
 | 构建仍未通过 | 无 BUILD_ID、无 `status:"ok"` |
 
 因此解除方式收敛为一条：**把重任务单元内存提到约 12G（需你/环境负责人批准资源策略），或在 CI 构建**；沿用符号链接缓存目录时，需先确认它不是报错触发条件（建议把 dist 改成仓库内目录后重建缓存）。
+
+## 7. 尝试四（计划）与延期原因
+
+计划（与前三者本质不同）：Webpack，但把 V8 堆**压到受管单元以内**，让 GC 在 7G 里工作，而不是撞 8G 上限后被 OOM：
+
+```bash
+NODE_ENV=production NODE_OPTIONS=--max-old-space-size=5632 \
+  OM_DIST_DIR=.build-probe/next node node_modules/next/dist/bin/next build --webpack
+```
+
+`yarn build` 的 `build:inner` 把 `NODE_OPTIONS` 固定成 8192，所以这次只能绕过 wrapper，**仅用于判断“堆压到 5.5G 是否足够”**；若足够，把该上限写进构建脚本属配置变更，仍需批准。
+
+延期原因：发起前检查宿主内存（2026-11-13T00:47Z），`available` 只有 **7GiB**，同时有一个 RSS **6.7GiB** 的任务在跑。此刻再起 7G 受管单元可能触发全局 OOM、波及别人的任务，按 AGENTS 资源规范先延期；等可用内存回到约 10GiB 以上且无并发重任务时再跑。
