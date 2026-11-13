@@ -39,7 +39,7 @@ function stateChip(availability: Availability) {
  * F8-05 — an explicit can-receive / can-send state with an actionable hint, so a
  * channel that cannot receive is never mistaken for an empty inbox.
  */
-export function ChannelsView() {
+export function ChannelsView({ canConnect = false }: { canConnect?: boolean }) {
   const [channels, setChannels] = useState<Channel[]>([])
   const [summary, setSummary] = useState<Summary | null>(null)
   const [loading, setLoading] = useState(true)
@@ -134,9 +134,11 @@ export function ChannelsView() {
           <button type="button" onClick={() => void load()} className="rounded border px-3 py-1 text-xs">
             刷新
           </button>
-          <Link href="/backend/communications/channels/connect" className="rounded border px-3 py-1 text-xs">
-            连接渠道
-          </Link>
+          {canConnect ? (
+            <Link href="/backend/communications/channels/connect" className="rounded border px-3 py-1 text-xs">
+              连接渠道
+            </Link>
+          ) : null}
         </div>
       </header>
 

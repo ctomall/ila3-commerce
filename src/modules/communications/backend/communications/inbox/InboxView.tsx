@@ -75,12 +75,15 @@ export async function InboxView({
   selectedId: selectedIdProp,
   before = null,
   canReply = false,
+  canConnect = false,
 }: {
   selectedId?: string | null
   /** Older-page cursor from the URL; null/absent means the newest window. */
   before?: string | null
   /** Resolved server-side with the same reply grants the send route enforces. */
   canReply?: boolean
+  /** Resolved server-side with the wizard's own feature; the link must not lead to Access Denied. */
+  canConnect?: boolean
 }) {
   const headerStore = await headers()
   const cookie = headerStore.get('cookie') ?? ''
@@ -108,9 +111,11 @@ export async function InboxView({
                 <h1 className="text-base font-semibold">全渠道收件箱</h1>
                 <p className="text-xs text-muted-foreground">客户 · 渠道 · 来源账号</p>
               </div>
-              <Link className="text-xs underline" href="/backend/communications/channels/connect">
-                连接渠道
-              </Link>
+              {canConnect ? (
+                <Link className="text-xs underline" href="/backend/communications/channels/connect">
+                  连接渠道
+                </Link>
+              ) : null}
             </div>
             <ul className="divide-y overflow-y-auto">
               {threads.map((thread) => (
