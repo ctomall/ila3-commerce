@@ -51,7 +51,7 @@
 | F3-08 幂等 | ✅ 复用现有 | D5 §9；本任务未改 |
 | F3-10 邮件线程头 | ✅ 代码级 | S87b；**未在真实邮箱验证归并** |
 | F4-01 客户关联 | ✅ | S89（会话内不支持新建客户） |
-| F5-01 权限 | ⚠️ 代码已备，生产未生效 | S85；等你批 `--apply` |
+| F5-01 权限 | ⚠️ 代码已备，生产未生效 | S85；隔离库演练已通过（S104：check/refuse/apply/幂等/校验回滚/rollback SQL + 真库套件）；生产仍等你批 `--apply` |
 | F8-01 发布兼容 | ⚠️ 策略已写，运行时未实现版本门 | 见 §3 |
 | F8-03 人工恢复 | ✅ 出站 unknown + 入站死信可见 | S91a/S91b；死信重放仍走运维 |
 | F8-04 webhook 限流 | ✅ | S88；默认全局桶（见 S88 README 已知边界） |
@@ -62,7 +62,7 @@
 1. **API 兼容**：新增字段（`total` 语义修正、`channel.availability`、备注/对账接口）只增不改名；`total` 是唯一语义变更，旧值本就是错的（页大小），按“修复”处理并在本文件留痕。
 2. **Android 版本窗**：最低支持版本按 OTA manifest 的实际值声明（当前 `3.71.54 / 37154`），**代码里没有版本门**；要落地需在 API 层加最低版本拒绝，属 P1，不在本片伪造。
 3. **回退边界**：S85 是唯一的权限数据变更，回退 SQL 随审计记录落盘；其余各片无数据库迁移，回退=回滚部署到上一 release。
-4. **发布前检查**：`yarn preflight:communications`（S100）串起 `generate → typecheck → 模块测试 → 真库 5 套`，约 1.5 分钟；**构建（`yarn build`）当前 BLOCKED（资源）**：符号链接 dist 时 Turbopack 报 `Cannot find module '@tailwindcss/postcss'`；把 dist 指到仓库内后该报错消失，构建 41 分钟后被 7G 受管单元 OOM 杀死（S101 §6）——均未指向本任务文件，在此之前不得声称构建通过；typecheck 失败会按 owned/foreign 归因——本片范围内失败退出码 1，仅他人未提交代码导致则退出码 2（BLOCKED，不得当成自身回归，也不得发布）。仍须在干净工作树复跑。
+4. **发布前检查**：`yarn preflight:communications`（S100）串起 `generate → typecheck → 模块测试 → 真库 6 套`（S104 起），约 1.5 分钟；**构建（`yarn build`）当前 BLOCKED（资源）**：符号链接 dist 时 Turbopack 报 `Cannot find module '@tailwindcss/postcss'`；把 dist 指到仓库内后该报错消失，构建 41 分钟后被 7G 受管单元 OOM 杀死（S101 §6）——均未指向本任务文件，在此之前不得声称构建通过；typecheck 失败会按 owned/foreign 归因——本片范围内失败退出码 1，仅他人未提交代码导致则退出码 2（BLOCKED，不得当成自身回归，也不得发布）。仍须在干净工作树复跑。
 
 ## 4. 待环境（未验收，禁止当作已通过）
 

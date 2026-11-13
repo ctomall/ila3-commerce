@@ -46,7 +46,11 @@ const RELEASE = process.env.ILA3_RELEASE_ROOT
   ? path.join(process.env.ILA3_RELEASE_ROOT, 'current')
   : '/home/pro/releases/mercato/current'
 const REPO_ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..')
-const AUDIT_DIR = path.join(REPO_ROOT, 'docs/crm-platform/audit')
+// ILA3_AUDIT_DIR lets a drill write its record into a throwaway directory instead of
+// the repository audit trail; production runs keep the default.
+const AUDIT_DIR = process.env.ILA3_AUDIT_DIR
+  ? path.resolve(process.env.ILA3_AUDIT_DIR)
+  : path.join(REPO_ROOT, 'docs/crm-platform/audit')
 
 function valueOf(flag) {
   const index = process.argv.indexOf(flag)

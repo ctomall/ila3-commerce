@@ -1,0 +1,28 @@
+{
+  "at": "2026-11-13T00:40:08.570Z",
+  "tenantId": "5f0f0f0f-0000-4000-8000-000000000104",
+  "approvedBy": "isolated drill (disposable PostgreSQL)",
+  "replyFeature": "communications.reply",
+  "legacyFeature": "communication_channels.connect_user_channel",
+  "changes": [
+    {
+      "role": "employee",
+      "grant": [
+        "communications.reply"
+      ],
+      "revoke": [
+        "communication_channels.connect_user_channel"
+      ],
+      "before": [
+        "communication_channels.connect_user_channel"
+      ],
+      "after": [
+        "communications.reply"
+      ]
+    }
+  ],
+  "rollbackSql": [
+    "update role_acls set features_json = '[\"communication_channels.connect_user_channel\"]'::jsonb, updated_at = now() where id = 'cccccccc-3333-4333-8333-333333333333';"
+  ],
+  "note": "RbacService caches grants for 5 minutes; restart the app unit to apply immediately."
+}

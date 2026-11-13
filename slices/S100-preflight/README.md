@@ -6,7 +6,7 @@
 ## 1. 用法
 
 ```bash
-yarn preflight:communications            # generate + typecheck + 模块测试 + 真库 5 套
+yarn preflight:communications            # generate + typecheck + 模块测试 + 真库 6 套（S104 起）
 yarn preflight:communications --with-lint
 yarn preflight:communications --skip-generate --skip-typecheck
 yarn preflight:communications --owned src/modules/communications --owned scripts

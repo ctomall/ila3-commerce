@@ -10,7 +10,7 @@
 | `yarn generate` | ✅ | preflight 步骤 PASS（~44s） |
 | `yarn typecheck` | ✅ | exit 0（owned/foreign 归因已就绪） |
 | 模块测试 | ✅ | 57 套件 / 334 测试（9 跳过=realdb 需环境变量） |
-| 真库 5 套（隔离库） | ✅ | `yarn realdb:check` 全 PASS，自动清理 |
+| 真库 6 套（隔离库） | ✅ | `yarn realdb:check` 6/6 PASS（S104 新增权限迁移演练），自动清理 |
 | `yarn lint` | ✅ | 全仓 `yarn lint` exit 0（0 errors / 29 warnings）；本任务 62 个改动文件单独 lint exit 0（零输出） |
 | `yarn ds:check` | ⚠️ 本任务新增 0 | 模块内 72 → 16，剩余 16 条全部在 S85 基线文件（InboxView 13、ReplyComposer 3）；全仓仍 298 条来自他人文件（S103） |
 | `yarn build` | ⛔ **BLOCKED（资源）** | 换仓库内 dist 后 postcss 报错消失；受管单元 7G 内存 OOM（S101 §6）。需内存策略批准 |
@@ -29,6 +29,7 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 
 - 影响：`employee` 获得 `communications.reply`、失去 `communication_channels.connect_user_channel`（不能再自建个人渠道，改用团队共享）。
 - 回退：审计记录里带 `rollbackSql`（`docs/crm-platform/audit/reply-role-migration-*.json`），执行后重启 app 单元或等缓存 5 分钟。
+- **已演练**：同一脚本在一次性 PostgreSQL 上跑通 check→refuse→apply→幂等→verify 失败回滚→rollback SQL，并固化为真库套件 `reply-role-migration`（`slices/S104-reply-role-migration-drill/README.md`）。
 - 先看计划：去掉 `--apply` 即只读检查。
 
 ### ② webhook 限流的分桶深度（S88）

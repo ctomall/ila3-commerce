@@ -48,6 +48,10 @@ const SUITES = [
     name: 'send-ledger',
     test: 'src/modules/communications/__tests__/send-ledger-realdb.test.ts',
   },
+  {
+    name: 'reply-role-migration',
+    test: 'src/modules/communications/__tests__/reply-role-migration-realdb.test.ts',
+  },
 ]
 
 const keep = process.argv.includes('--keep')
