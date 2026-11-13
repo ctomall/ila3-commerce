@@ -85,6 +85,11 @@ T4/T11/T14（①）、T7（②）、T11 错误态（③）、T13 暗色基线 + 
 - 发布级复验：`verify/verify-2026-11-13T02-32-51.md` — **PASS 25 · FAIL 0 · SKIP 0**（干净 worktree）；
 - 正式入口真实模型探针（同一 release）：PASS，`dsh.event` 帧 + `dsh_runs` completed
   （run `08e80a10`，`dsh-integration/evidence/public-chat-path-2026-11-13T02-33-39-526Z.json`）；
+- 同 release 复测两条链路证据（满足“同一候选 commit”要求）：
+  - 重启恢复：`replay-after-restart` 10/10，重放 17→17 帧、无重复、未新建 Run，重启到 healthz 恢复 14.1 s
+    （`dsh-integration/evidence/replay-after-restart-2026-11-13T02-47-10-647Z.json`）；
+  - 并发冲突：跨员工并行都 200/completed 且 `user_id` 不同、同员工第二个 `409`、并发墙钟 3.2 s
+    （`dsh-integration/evidence/concurrency-drill-2026-11-13T02-48-16-740Z.json`）；
 - 未覆盖：那次 10 s 超时的根因仍无当时耗时数据，等价于“瞬时停顿”假设，未证明。
 
 ### 部署产物实测（2026-11-13 00:2x，release `b3013e2`）

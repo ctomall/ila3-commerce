@@ -1,0 +1,60 @@
+{
+ "probedAt": "2026-11-13T02:48:16.740Z",
+ "release": "7a67f4b85df3993f2c5e358c5b3aa7c79e24b8be",
+ "base": "http://127.0.0.1:3000",
+ "roles": [
+  "employee",
+  "admin"
+ ],
+ "parallelAcrossEmployees": {
+  "wallMs": 3249,
+  "requests": [
+   {
+    "role": "employee",
+    "label": "parallel-employee",
+    "status": 200,
+    "ms": 2891,
+    "bytes": 7913,
+    "sessionId": "session-df823447831c443e90189b6384ea2744"
+   },
+   {
+    "role": "admin",
+    "label": "parallel-admin",
+    "status": 200,
+    "ms": 3204,
+    "bytes": 7924,
+    "sessionId": "session-6370581575204611ba9fb4354305d494"
+   }
+  ],
+  "runs": [
+   {
+    "id": "cb42598e-d8ce-4327-923f-d90a1f984b2d",
+    "status": "completed",
+    "userId": "7a176d46-6474-47c1-be56-d11b2d9452f1"
+   },
+   {
+    "id": "b6cebdd0-b02f-4ec2-8677-db977de42af3",
+    "status": "completed",
+    "userId": "11f0dd3c-99df-43b3-be3c-2bd90e24b165"
+   }
+  ]
+ },
+ "sameEmployeeAtOnce": {
+  "statuses": [
+   200,
+   409
+  ],
+  "latenciesMs": [
+   1500,
+   312
+  ]
+ },
+ "checks": {
+  "both-stream-200": true,
+  "both-runs-persisted": true,
+  "both-runs-completed": true,
+  "runs-belong-to-different-users": true,
+  "same-user-conflict": true
+ },
+ "ok": true
+}

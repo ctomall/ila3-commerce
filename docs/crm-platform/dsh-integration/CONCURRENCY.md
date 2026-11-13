@@ -39,6 +39,25 @@
 
 **结论（当前架构）**：每名员工同时只允许 **1 个** AI Run；第二个并发请求按设计返回 409，不排队、不静默丢失。
 
+### 跨员工并行 · 复测（2026-11-13 02:48，release `7a67f4b`）
+
+同一脚本在当次生产 release 上重跑，用来满足“同一候选 commit 的证据”：
+
+| 检查 | 实测 |
+| --- | --- |
+| 两名员工同时发一个真实 Run | 都 200，两行 `dsh_runs` 都 `completed` |
+| 两行 Run 归属 | `user_id` 不同 |
+| 同一员工同时发两个 | `[200, 409]` |
+| 跨员工并发墙钟 | **3.2 s** |
+
+证据：`evidence/concurrency-drill-2026-11-13T02-48-16-740Z.json`。
+
+### 重启恢复 · 复测（2026-11-13 02:47，release `7a67f4b`）
+
+`node scripts/crm-dsh-replay-after-restart.mjs` → 10/10：重启后重放同一个 completed Run
+拿到 17→17 帧、无重复、无 error 帧、未新建 Run；重启到 healthz 恢复 **14.1 s**。
+证据：`evidence/replay-after-restart-2026-11-13T02-47-10-647Z.json`。
+
 ### 跨员工并行（2026-11-12 18:19，release `232d48e`）
 
 命令：`node scripts/crm-dsh-concurrency-drill.mjs`
