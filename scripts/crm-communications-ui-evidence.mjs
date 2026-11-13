@@ -34,6 +34,7 @@ const LABEL = String(arg('--label', 'prod'))
 const STAMP = new Date().toISOString().replace(/[:.]/g, '-')
 const OUT = path.resolve(arg('--out', path.join('docs/crm-platform/verify', `communications-ui-${STAMP}`)))
 const ROLES = String(arg('--roles', 'superadmin,employee')).split(',').map((r) => r.trim()).filter(Boolean)
+const EXPECT_CONNECT_CTA = String(arg('--expect-connect-cta', 'any'))
 const CREDS_PATH = '/home/pro/.ila3-admin-credentials'
 const RELEASE_JSON = '/home/pro/releases/mercato/current/release.json'
 
@@ -124,6 +125,7 @@ async function surface(page) {
       mainTextLength: text.length,
       rows: document.querySelectorAll('tbody tr').length,
       controls: [...new Set(controls)].slice(0, 40),
+      connectCta: controls.includes('连接渠道'),
       denied: /无权限|没有权限|无访问权限|Access Denied|403|forbidden|Forbidden/.test(text),
       loading: /正在加载|Loading/.test(text),
     }
@@ -234,6 +236,23 @@ assert('threads API is readable for both roles (view)',
 assert('dead-letters API is manage-only',
   superApis['dead-letters']?.status === 200 && employeeApis['dead-letters']?.status === 403,
   `superadmin=${superApis['dead-letters']?.status} employee=${employeeApis['dead-letters']?.status}`)
+
+// Connect-entry assertion (the S106 defect): the wizard is gated by
+// communication_channels.connect_tenant_channel, so a caller without it must
+// not be offered the link. `shown` documents the pre-fix deployment.
+if (EXPECT_CONNECT_CTA !== 'any') {
+  const adm = superPages.channels?.connectCta
+  const empChannels = employeePages.channels?.connectCta
+  const empInbox = employeePages.inbox?.connectCta
+  if (EXPECT_CONNECT_CTA === 'hidden') {
+    assert('superadmin still sees the connect entry', adm === true, `channels.connectCta=${adm}`)
+    assert('employee sees no connect entry on the channel list', empChannels === false, `channels.connectCta=${empChannels}`)
+    assert('employee sees no connect entry in the inbox', empInbox === false, `inbox.connectCta=${empInbox}`)
+  } else {
+    assert('deployed build still offers the connect entry to both roles', adm === true && empChannels === true && empInbox === true,
+      `superadmin.channels=${adm} employee.channels=${empChannels} employee.inbox=${empInbox}`)
+  }
+}
 
 report.assertions = assertions
 report.failures = failures
