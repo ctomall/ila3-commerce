@@ -14,8 +14,8 @@ const source = fs.readFileSync(path.resolve(process.cwd(), 'scripts/realdb-suite
 const suitePaths = [...source.matchAll(/test:\s*'([^']+)'/g)].map((match) => match[1])
 
 describe('realdb suite harness', () => {
-  it('lists the five real-DB suites and every referenced test file exists', () => {
-    expect(suitePaths).toHaveLength(5)
+  it('lists the six real-DB suites and every referenced test file exists', () => {
+    expect(suitePaths).toHaveLength(6)
     for (const testPath of suitePaths) {
       expect(fs.existsSync(path.resolve(process.cwd(), testPath))).toBe(true)
     }
@@ -24,6 +24,7 @@ describe('realdb suite harness', () => {
     expect(suitePaths.join('\n')).toContain('internal-notes-realdb.test.ts')
     expect(suitePaths.join('\n')).toContain('send-ledger-realdb.test.ts')
     expect(suitePaths.join('\n')).toContain('internal-notes-write-realdb.test.ts')
+    expect(suitePaths.join('\n')).toContain('reply-role-migration-realdb.test.ts')
   })
 
   it('stops and removes the cluster unless --keep is passed', () => {
