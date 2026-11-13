@@ -136,7 +136,7 @@ export function ExceptionsView() {
         <span className="text-xs text-muted-foreground">待对账 {rows.length} 条</span>
       </div>
       {loading ? <p className="text-xs text-muted-foreground">加载中…</p> : null}
-      {error ? <p className="text-xs text-red-700 dark:text-red-300">{error}</p> : null}
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
       {!loading && !error && rows.length === 0 ? (
         <p className="text-xs text-muted-foreground">没有待对账的结果。发送结果未知的消息才会出现在这里。</p>
       ) : null}
@@ -149,7 +149,7 @@ export function ExceptionsView() {
         <button type="button" onClick={() => void loadDeadLetters()} className="rounded border px-3 py-1 text-xs">
           刷新死信
         </button>
-        {deadError ? <p className="text-xs text-red-700 dark:text-red-300">{deadError}</p> : null}
+        {deadError ? <p className="text-xs text-destructive">{deadError}</p> : null}
         {!deadError && deadLetters.length === 0 ? (
           <p className="text-xs text-muted-foreground">没有死信。</p>
         ) : null}
@@ -183,7 +183,7 @@ export function ExceptionsView() {
                   {row.createdAt ? new Date(row.createdAt).toLocaleString('zh-CN', { hour12: false }) : '时间未知'}
                 </p>
               </div>
-              <span className="rounded border border-amber-600/40 bg-amber-500/10 px-2 py-0.5 text-amber-700 dark:text-amber-300">
+              <span className="rounded border border-status-warning-border bg-status-warning-bg px-2 py-0.5 text-status-warning-text">
                 结果未知
               </span>
             </div>

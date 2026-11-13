@@ -1,7 +1,7 @@
-# S101 · 构建门禁：两次尝试均未通过（如实记录，不宣称构建绿）
+# S101 · 构建门禁：三次尝试均未通过（第三次已定位 postcss 报错的触发条件，仍被 7G 内存杀死）
 
-> 目的：P0 交付前还差最后一道门——`yarn build`。本轮跑了两次，**都没通过**，且都不是本片代码导致的错误；结论是“构建门禁被工具链阻塞”，不是“构建通过”。
-> 状态：**BLOCKED（工具链/资源）**；未改依赖、未改构建配置、未动他人文件。
+> 目的：P0 交付前还差最后一道门——`yarn build`。前两次（Turbopack postcss 解析、webpack OOM）都没过；第三次换掉 distDir 后 **postcss 报错消失**，但构建在 41 分钟后被受管单元 OOM 杀死。结论：构建门禁仍 **BLOCKED**，且现在只剩“内存/资源”一个已知原因。
+> 状态：**BLOCKED（资源）**；未改依赖、未改构建配置、未动他人文件。
 
 ## 1. 尝试一：默认 Turbopack 构建
 
@@ -53,3 +53,35 @@ exit status 134
 - `/tmp/s101-build-webpack.log`（webpack，V8 OOM，exit 134）
 - `yarn typecheck` exit 0；`npx jest src/modules/communications` → 57 passed / 9 skipped / 334 tests
 - `.next` 仅剩事件文件（无可用构建产物），未删除任何他人产物
+
+## 6. 尝试三（2026-11-13）：仓库内 dist 目录 → postcss 报错消失，仍被 7G 单元 OOM 杀死
+
+动机：前两次里，第一次的 7 条错误全部发生在 postcss 配置求值阶段。先查 distDir 去哪了：
+
+- `.mercato/next` 在仓库里是**符号链接** → `/storage/build-cache/crm/next`（`ls -l .mercato/next`，建于 11-09 13:43；该缓存 2.6G，**没有 BUILD_ID**）；
+- 多个历史工作树（如 `/data/crm/worktrees/crm-menu-v2`）用**本地** `.mercato/next`，其 `build-info.json` 记录 `status:"ok"`（2026-11-10T10:14:28Z，同 Next 16.3.6、同 postcss 配置——`postcss.config.mjs` 自 `459fcf1` 未变）。
+
+于是第三次只换一个变量，不改任何配置，把产物目录指到仓库内（`OM_DIST_DIR` 是 self-update 用 `.mercato/next-staging` 的同一条已支持路径）：
+
+```
+XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus \
+  /home/pro/.local/bin/ila3-heavy-task env OM_DIST_DIR=.build-probe/next yarn build
+```
+
+观察（日志 `/tmp/s101b-build-localdist.log`）：
+
+- `yarn generate` 完成；Next 16.3.6 Turbopack 启动，进入 `Creating an optimized production build ...`；
+- **第一次那 7 条 `Cannot find module '@tailwindcss/postcss'` 没有再出现**（编译阶段持续约 40 分钟，无该错误）；
+- 41 分 46 秒时被 cgroup OOM 杀死：`journalctl --user -u ila3-heavy-7f6cc5b6af` 记录 “kernel OOM killer killed some processes in this unit … Failed with result 'oom-kill'”，`Consumed … 5G memory peak, 940.3M memory swap peak`；`yarn build` 退出 1，`.build-probe/build-info.json` 停在 `status:"building"`（探针目录已删除，字节留在 `/tmp/s101b-build-probe-stamp.json`）。
+
+旁证：本次 `generate` 的 OpenAPI 步骤出现 `Bundle approach failed: spawnSync /usr/bin/node ETIMEDOUT`，回退到静态抽取（592 paths，schema 省略）。这是受限单元下的生成告警，与 postcss 无关，也不改结论。
+
+### 结论（可核对）
+
+| 结论 | 证据 |
+| --- | --- |
+| postcss 解析错误与“distDir 指向仓库外的符号链接”相关，而不是依赖缺失或本任务代码 | 同一 HEAD、同一 node_modules：符号链接 dist → 7 条解析错误；仓库内 dist → 无该错误 |
+| 构建内存需求超过受管单元 7G | `Failed with result 'oom-kill'`，5G peak / 940.3M swap |
+| 构建仍未通过 | 无 BUILD_ID、无 `status:"ok"` |
+
+因此解除方式收敛为一条：**把重任务单元内存提到约 12G（需你/环境负责人批准资源策略），或在 CI 构建**；沿用符号链接缓存目录时，需先确认它不是报错触发条件（建议把 dist 改成仓库内目录后重建缓存）。

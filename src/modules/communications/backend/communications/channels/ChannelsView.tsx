@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { planChannelDisconnect, planChannelReconnect } from '../../../lib/channel-actions'
 
 type Availability = { available: boolean; code: string; hint: string }
@@ -22,8 +23,8 @@ type Summary = { total: number; inboundUnavailable: number; outboundUnavailable:
 
 function stateChip(availability: Availability) {
   const cls = availability.available
-    ? 'border-emerald-600/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300'
-    : 'border-amber-600/40 bg-amber-500/10 text-amber-700 dark:text-amber-300'
+    ? 'border-status-success-border bg-status-success-bg text-status-success-text'
+    : 'border-status-warning-border bg-status-warning-bg text-status-warning-text'
   return (
     <span className={`rounded border px-2 py-0.5 text-xs ${cls}`}>
       {availability.available ? '可用' : availability.code}
@@ -145,7 +146,7 @@ export function ChannelsView() {
         </p>
       ) : null}
       {loading ? <p className="text-xs text-muted-foreground">加载中…</p> : null}
-      {error ? <p className="text-xs text-red-700 dark:text-red-300">{error}</p> : null}
+      {error ? <p className="text-xs text-destructive">{error}</p> : null}
       {!loading && !error && channels.length === 0 ? (
         <p className="text-xs text-muted-foreground">
           还没有可用账号。管理员连接渠道后，这里会出现平台身份与收发状态。
@@ -153,47 +154,65 @@ export function ChannelsView() {
       ) : null}
 
       {channels.length > 0 ? (
-        <table className="w-full text-left text-xs">
-          <thead className="border-b text-muted-foreground">
-            <tr>
-              <th className="py-2">平台账号</th>
-              <th className="py-2">身份</th>
-              <th className="py-2">归属</th>
-              <th className="py-2">状态</th>
-              <th className="py-2">可收</th>
-              <th className="py-2">可发</th>
-              <th className="py-2">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            {channels.map((channel) => (
-              <tr key={channel.id} className="border-b align-top">
-                <td className="py-2">
-                  <div className="font-medium">{channel.displayName || channel.id.slice(0, 8)}</div>
-                  <div className="text-muted-foreground">{channel.providerKey}</div>
-                </td>
-                <td className="py-2">{channel.externalIdentifier ?? '—'}</td>
-                <td className="py-2">{channel.visibility === 'shared' ? '团队共享' : '个人'}</td>
-                <td className="py-2">{channel.status ?? '未连接'}</td>
-                <td className="py-2">
-                  {stateChip(channel.availability.inbound)}
-                  {!channel.availability.inbound.available ? (
-                    <div className="mt-1 text-muted-foreground">{channel.availability.inbound.hint}</div>
+        <DataTable<Channel>
+          columns={[
+            {
+              id: 'account',
+              header: '平台账号',
+              cell: ({ row }) => (
+                <div>
+                  <div className="font-medium">{row.original.displayName || row.original.id.slice(0, 8)}</div>
+                  <div className="text-muted-foreground">{row.original.providerKey}</div>
+                </div>
+              ),
+            },
+            {
+              id: 'identifier',
+              header: '身份',
+              cell: ({ row }) => row.original.externalIdentifier ?? '—',
+            },
+            {
+              id: 'visibility',
+              header: '归属',
+              cell: ({ row }) => (row.original.visibility === 'shared' ? '团队共享' : '个人'),
+            },
+            {
+              id: 'status',
+              header: '状态',
+              cell: ({ row }) => row.original.status ?? '未连接',
+            },
+            {
+              id: 'inbound',
+              header: '可收',
+              cell: ({ row }) => (
+                <div>
+                  {stateChip(row.original.availability.inbound)}
+                  {!row.original.availability.inbound.available ? (
+                    <div className="mt-1 text-muted-foreground">{row.original.availability.inbound.hint}</div>
                   ) : null}
-                </td>
-                <td className="py-2">
-                  {stateChip(channel.availability.outbound)}
-                  {!channel.availability.outbound.available ? (
-                    <div className="mt-1 text-muted-foreground">{channel.availability.outbound.hint}</div>
+                </div>
+              ),
+            },
+            {
+              id: 'outbound',
+              header: '可发',
+              cell: ({ row }) => (
+                <div>
+                  {stateChip(row.original.availability.outbound)}
+                  {!row.original.availability.outbound.available ? (
+                    <div className="mt-1 text-muted-foreground">{row.original.availability.outbound.hint}</div>
                   ) : null}
-                </td>
-                <td className="py-2">
+                </div>
+              ),
+            },
+            {
+              id: 'actions',
+              header: '操作',
+              cell: ({ row }) => {
+                const channel = row.original
+                return (
                   <div className="flex flex-col items-start gap-1">
-                    <button
-                      type="button"
-                      onClick={() => reconnect(channel)}
-                      className="rounded border px-2 py-0.5"
-                    >
+                    <button type="button" onClick={() => reconnect(channel)} className="rounded border px-2 py-0.5">
                       重连 / 重新授权
                     </button>
                     <button
@@ -205,18 +224,18 @@ export function ChannelsView() {
                       {busyId === channel.id ? '解除中…' : '解除绑定'}
                     </button>
                     {actionNote?.id === channel.id ? (
-                      <span
-                        className={`max-w-[18rem] ${actionNote.ok ? 'text-muted-foreground' : 'text-red-700 dark:text-red-300'}`}
-                      >
+                      <span className={`max-w-72 ${actionNote.ok ? 'text-muted-foreground' : 'text-destructive'}`}>
                         {actionNote.text}
                       </span>
                     ) : null}
                   </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                )
+              },
+            },
+          ]}
+          data={channels}
+          emptyState={<p className="text-xs text-muted-foreground">还没有可用账号。</p>}
+        />
       ) : null}
       {channels.some((channel) => channel.lastError) ? (
         <section className="rounded border border-dashed px-3 py-2 text-xs">

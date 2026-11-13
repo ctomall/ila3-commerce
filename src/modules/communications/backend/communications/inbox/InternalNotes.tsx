@@ -93,7 +93,7 @@ export function InternalNotes(props: { threadId: string }) {
       {notes.length > 0 ? (
         <ul className="mt-2 space-y-2">
           {notes.map((note) => (
-            <li key={note.id} className="rounded bg-amber-500/10 px-2 py-1 text-xs">
+            <li key={note.id} className="rounded bg-status-warning-bg px-2 py-1 text-xs">
               <p className="whitespace-pre-wrap break-words">{note.body}</p>
               <p className="mt-1 text-muted-foreground">
                 {note.authorUserId.slice(0, 8)} · {note.createdAt ? new Date(note.createdAt).toLocaleString('zh-CN', { hour12: false }) : ''}
@@ -120,7 +120,7 @@ export function InternalNotes(props: { threadId: string }) {
           >
             {pending ? '保存中…' : '保存备注'}
           </button>
-          {error ? <span className="text-xs text-red-700 dark:text-red-300">{error}</span> : null}
+          {error ? <span className="text-xs text-destructive">{error}</span> : null}
         </div>
       </form>
     </section>

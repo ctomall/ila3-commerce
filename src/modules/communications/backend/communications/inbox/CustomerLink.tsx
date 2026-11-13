@@ -145,7 +145,7 @@ export function CustomerLink(props: { threadId: string }) {
       ) : loaded && query.trim().length >= 2 && !error ? (
         <p className="mt-2 text-muted-foreground">没有匹配的客户。可先到客户模块新建，再回来关联。</p>
       ) : null}
-      {error ? <p className="mt-2 text-red-700 dark:text-red-300">{error}</p> : null}
+      {error ? <p className="mt-2 text-destructive">{error}</p> : null}
     </div>
   )
 }

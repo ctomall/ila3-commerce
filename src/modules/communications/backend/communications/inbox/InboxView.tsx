@@ -168,7 +168,7 @@ export async function InboxView({
                   !detail.channel.availability.outbound.available) ? (
                   <div
                     role="status"
-                    className="mx-5 mt-3 rounded border border-amber-500/50 bg-amber-500/10 px-3 py-2 text-xs text-amber-800 dark:text-amber-200"
+                    className="mx-5 mt-3 rounded border border-status-warning-border bg-status-warning-bg px-3 py-2 text-xs text-status-warning-text"
                   >
                     <p className="font-medium">这个账号当前不能完整收发</p>
                     {!detail.channel.availability.inbound.available ? (

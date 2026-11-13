@@ -11,10 +11,12 @@
 | `yarn typecheck` | ✅ | exit 0（owned/foreign 归因已就绪） |
 | 模块测试 | ✅ | 57 套件 / 334 测试（9 跳过=realdb 需环境变量） |
 | 真库 5 套（隔离库） | ✅ | `yarn realdb:check` 全 PASS，自动清理 |
-| `yarn build` | ⛔ **BLOCKED** | Turbopack `Cannot find module '@tailwindcss/postcss'`；webpack 在 7G 单元 OOM（S101） |
-| 真实收发整链 | ⛔ **待环境** | P-1/P-2/P-3 未到位 |
+| `yarn lint` | ✅ | 全仓 `yarn lint` exit 0（0 errors / 29 warnings）；本任务 62 个改动文件单独 lint exit 0（零输出） |
+| `yarn ds:check` | ⚠️ 本任务新增 0 | 模块内 72 → 16，剩余 16 条全部在 S85 基线文件（InboxView 13、ReplyComposer 3）；全仓仍 298 条来自他人文件（S103） |
+| `yarn build` | ⛔ **BLOCKED（资源）** | 换仓库内 dist 后 postcss 报错消失；受管单元 7G 内存 OOM（S101 §6）。需内存策略批准 |
+| 真实收发整链 | ⛔ **待环境** | P-1 阻塞 WA/MS；邮箱凭据缺（P-2 网络已实测可通） |
 
-一条命令复跑前四项：`yarn preflight:communications`（约 1 分 34 秒）。
+一条命令复跑前四项：`yarn preflight:communications`（约 1 分 34 秒；加 `--with-lint` 附带全仓 lint）。
 
 ## 2. 需要你拍板的四件事
 
@@ -39,15 +41,23 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 
 | 前置 | 缺什么 | 解锁什么 |
 | --- | --- | --- |
-| P-1 | 放通 `graph.facebook.com:443`（含媒体上传） | WhatsApp/Messenger 出站与媒体真实验收 |
-| P-2 | 可达的 IMAP 主机（或放通 Google） | 邮件“来信”（Resend 只出不进） |
-| P-3 | WhatsApp Cloud / Messenger Page / Resend 真实账号 | 真实送达验收 |
+| P-1 | 放通 `graph.facebook.com:443`（含媒体上传）。2026-11-13 实测仍**不通**（DNS 返回 104.244.42.197 / 2001::1） | WhatsApp/Messenger 出站与媒体真实验收 |
+| P-2 | ~~可达 IMAP 主机~~ → 网络已实测可通（见下）；现在只缺**邮箱凭据**（并入 P-3） | 邮件“来信”（Resend 只出不进） |
+| P-3 | WhatsApp Cloud / Messenger Page / Resend 账号 + 邮箱地址与应用专用密码 | 真实送达与真实来信验收 |
+
+环境探针（2026-11-13，应用机 outbound TCP，`timeout 6 /dev/tcp/<host>/<port>`）：
+
+- `graph.facebook.com:443` **不通** → P-1 仍阻塞 WA/MS；
+- `api.resend.com:443` **通** → Resend 出站网络已具备，只缺账号/已验证发件人；
+- `imap.gmail.com:993`、`smtp.gmail.com:587` **通**；`accounts.google.com:443`、`oauth2.googleapis.com:443` 不通——但装好的 `channel-imap` 用 IMAP/SMTP 用户名+密码（不走 Google OAuth），所以入站邮件不再卡网络，只缺凭据。
 
 三者到位前，主线“收→回→送达”整链**不会**记为通过；现有证据只到“入站链路”与“出站路由”分层。
 
-### ④ 构建门禁解除（S101）
+### ④ 构建门禁解除（S101，已收敛为一个原因）
 
-任选其一：修 Turbopack 的 postcss 插件解析；把重任务单元 `MemoryMax` 提到约 12G 再跑 `next build --webpack`；或以 CI 构建结果作为证据。
+- 已定位：`.mercato/next` 是符号链接 → `/storage/build-cache/crm/next`；用它构建时 Turbopack 报 7 条 `Cannot find module '@tailwindcss/postcss'`。把 dist 指到仓库内（`OM_DIST_DIR=…`）后，同一 HEAD、同一 node_modules，**该错误不再出现**，构建进入编译阶段（历史工作树用本地 dist 也留有 `status:"ok"` 的构建记录）。
+- 现在只差内存：受管单元 `MemoryHigh=5G / MemoryMax=7G`，构建 41 分 46 秒后被 cgroup OOM 杀死（journal `Failed with result 'oom-kill'`，5G peak / 940.3M swap）。
+- 需要你批一项：把该单元 `MemoryMax` 提到约 12G 跑一次构建，或以 CI 构建结果作证据。批准后我会把 dist 指到仓库内目录复跑，不再走符号链接缓存。
 
 ## 3. 交付物索引
 
@@ -62,8 +72,8 @@ ILA3_ALLOW_ROLE_MIGRATION=1 node scripts/crm-reply-role-migration.mjs \
 
 ## 4. 未验证清单（不得当作已通过）
 
-- `yarn build` 未绿（S101）。
-- hub `sendAsUser` 真实投递、任何真实渠道收发（P-1/P-2/P-3）。
+- `yarn build` 未绿（S101：postcss 触发条件已定位，剩余原因为 7G 内存 OOM）。
+- hub `sendAsUser` 真实投递、任何真实渠道收发（P-1 阻塞 WA/MS；邮件缺账号凭据，网络已实测可通）。
 - 事件总线真实消费（索引、通知、客户时间线）——真库 runner 里总线缺失。
 - 备注编辑/删除、审计导出、模板管理（属 P1/二期）。
 - 邮件渠道仍是**个人范围**连接；团队共享邮箱需安装包支持租户级邮件凭据（架构决策）。
