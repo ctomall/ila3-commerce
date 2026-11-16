@@ -1,6 +1,13 @@
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
 
+// DEPRECATED ENGINE (2026-11-16): the packaged OpenCode chat handler is no
+// longer the production engine. `OM_AI_ENGINE=dsh` is pinned in the deploy
+// config (each release's .env plus the systemd runtime env), and this proxy is
+// the only path into the assistant. The packaged handler stays as dead code
+// because we do not patch node_modules; rollback means redeploying the previous
+// release (`scripts/crm-rollback.mjs`), not unsetting this flag — the OpenCode
+// server is not installed on the host.
 // Do NOT import bootstrap here — proxy runs before the app and must stay free
 // of Node.js-only modules like MikroORM. Bootstrap runs in layouts/route handlers.
 const CHAT_PUBLIC_PATH = '/api/ai_assistant/chat'

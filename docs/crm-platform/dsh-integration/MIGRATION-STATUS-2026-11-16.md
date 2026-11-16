@@ -28,6 +28,15 @@
   证据 `evidence/public-chat-path-2026-11-16T07-45-45-683Z.json`。
 - 探针校验项：HTTP 200、SSE content-type、`dsh.event` 帧、text 帧、done 帧、
   run 持久化、run 与 session 绑定、run completed。
+- 入口覆盖复核（同一 release，2026-11-16T07:47Z）：
+  - `GET /api/ai_assistant/health` → `{"status":"ok","engine":"dsh","healthy":true}`（health 重写生效）；
+  - `GET /api/ai_assistant/ai/agents` → 200，`aiConfigured: true`，9 个 agent（agents 包装生效）；
+  - `GET /api/ai_assistant/ai/conversations` → 200，返回本人会话（conversations 重写生效）；
+  - `POST /api/ai_assistant/ai/chat`（agentic）→ `PASS`，run `de74b357…` 落库并 `completed`，
+    证据 `evidence/agentic-chat-path-2026-11-16T07-47-47-249Z.json`。
+- 容器侧：`docker ps` 无 opencode 容器；`docker compose config --services` 默认只有
+  redis / meilisearch / postgres，opencode 仅在 `--profile agents` 下出现；生产由 systemd
+  直接运行应用，不经过 compose。
 
 ## 3. OpenCode 残留（有意保留，非可用路径）
 
@@ -35,7 +44,7 @@
   业务 `src/` 不再直接调用，由 `src/proxy.ts` 在 `OM_AI_ENGINE=dsh` 时旁路。不改 `node_modules`。
 - `docker-compose.yml`、`docker-compose.fullapp.yml` 的 `opencode` 服务已标注 `DEPRECATED`：
   生产不启动，即使启动也不会恢复旧聊天路径（代理重写优先）。
-- `.env` 中 `OPENCODE_*` 为空占位（模板保留），运行时无影响。
+- `.env` 中 3 个空的 `OPENCODE_*` 占位已在 2026-11-16 注释掉；包内仅 `opencode-client` / `opencode-handlers` 读取 `OPENCODE_URL` / `OPENCODE_PASSWORD`，而这两个模块位于被代理旁路的包路由之下，生产不可达。
 
 ## 4. 仍存在的缺口
 
