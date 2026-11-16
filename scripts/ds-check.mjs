@@ -165,7 +165,7 @@ function isPolicyMatch(rule, match) {
   if (rule.id !== 'arbitrary-tailwind') return true
   const token = match.trim()
   return /^(?:[a-z@][\w@/-]*:)*-?[a-z][\w/-]*-\[[^\]]+\]$/.test(token)
-    || /^\[(?:[&@*.]|[a-z-]+:)[^\]]+\]/.test(token)
+    || /^\[(?:[&@*.][^\]]+|[a-z-]+:[^\s\]]+)\]$/.test(token)
 }
 
 export function scanDesignSystem(root = process.cwd(), options = {}) {

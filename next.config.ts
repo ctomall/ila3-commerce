@@ -45,6 +45,8 @@ const nextConfig: NextConfig & { agentRules?: boolean } = {
   // appending its managed agent-rules block on every `next dev`.
   agentRules: false,
   experimental: {
+    // Bound static-generation workers on shared test hosts; CI may override.
+    cpus: Math.max(1, Math.min(8, Number.parseInt(process.env.OM_BUILD_CPUS ?? '2', 10) || 2)),
     serverMinification: false,
     turbopackMinify: false,
     // Mirror apps/mercato: treat these barrel-heavy packages as having

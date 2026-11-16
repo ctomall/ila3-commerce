@@ -16,25 +16,7 @@
     {
       "file": "src/components/DemoFeedbackWidget.tsx",
       "rule": "arbitrary-tailwind",
-      "match": "max-w-[calc(100vw-3rem)]",
-      "reason": "Existing scaffold styling retained as a bounded migration baseline."
-    },
-    {
-      "file": "src/components/DemoFeedbackWidget.tsx",
-      "rule": "arbitrary-tailwind",
       "match": "animate-[subtle-bounce_2s_ease-in-out_infinite]",
-      "reason": "Existing scaffold styling retained as a bounded migration baseline."
-    },
-    {
-      "file": "src/components/DemoFeedbackWidget.tsx",
-      "rule": "arbitrary-tailwind",
-      "match": "min-w-[90px]",
-      "reason": "Existing scaffold styling retained as a bounded migration baseline."
-    },
-    {
-      "file": "src/components/DemoFeedbackWidget.tsx",
-      "rule": "arbitrary-tailwind",
-      "match": "animate-[caption-slide_0.3s_ease-out]",
       "reason": "Existing scaffold styling retained as a bounded migration baseline."
     },
     {
@@ -1199,12 +1181,6 @@
       "file": "src/modules/example/widgets/injection/sales-todos/widget.client.tsx",
       "rule": "manual-dark-override",
       "match": "dark:",
-      "reason": "Existing scaffold styling retained as a bounded migration baseline."
-    },
-    {
-      "file": "src/modules/example/widgets/injection/sales-todos/widget.client.tsx",
-      "rule": "hardcoded-palette",
-      "match": "bg-blue-500",
       "reason": "Existing scaffold styling retained as a bounded migration baseline."
     },
     {
