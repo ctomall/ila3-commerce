@@ -1,0 +1,87 @@
+[
+  {
+    "id": "home",
+    "label": "工作台",
+    "labelKey": "crmNav.workspace.home",
+    "order": 0,
+    "members": [
+      "home"
+    ]
+  },
+  {
+    "id": "customers",
+    "label": "客户与获客",
+    "labelKey": "crmNav.workspace.customers",
+    "order": 10,
+    "members": [
+      "customers"
+    ]
+  },
+  {
+    "id": "communications",
+    "label": "沟通协作",
+    "labelKey": "crmNav.workspace.communications",
+    "order": 20,
+    "members": [
+      "messages",
+      "documents"
+    ]
+  },
+  {
+    "id": "trade",
+    "label": "销售与收款",
+    "labelKey": "crmNav.workspace.trade",
+    "order": 30,
+    "members": [
+      "sales",
+      "payments"
+    ]
+  },
+  {
+    "id": "inventory",
+    "label": "商品与库存",
+    "labelKey": "crmNav.workspace.inventory",
+    "order": 40,
+    "members": [
+      "catalog",
+      "warehouse"
+    ]
+  },
+  {
+    "id": "aftercare",
+    "label": "售后服务",
+    "labelKey": "crmNav.workspace.aftercare",
+    "order": 50,
+    "members": [
+      "aftercare"
+    ]
+  },
+  {
+    "id": "team",
+    "label": "团队与资源",
+    "labelKey": "crmNav.workspace.team",
+    "order": 60,
+    "members": [
+      "people",
+      "scheduling"
+    ]
+  },
+  {
+    "id": "operations",
+    "label": "管理与运营",
+    "labelKey": "crmNav.workspace.operations",
+    "order": 70,
+    "members": [
+      "automation"
+    ]
+  },
+  {
+    "id": "compliance",
+    "label": "专业合规",
+    "labelKey": "crmNav.workspace.compliance",
+    "order": 80,
+    "members": [
+      "compliance"
+    ]
+  }
+]

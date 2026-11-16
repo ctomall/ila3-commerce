@@ -7,6 +7,7 @@ import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { EmptyState } from '@/components/states/EmptyState'
+import { buildWorkspaces, searchWorkspaceEntries } from '@/nav/workspaces'
 import { readCrmCatalog } from '@/nav/crm-navigation'
 
 /**
@@ -24,7 +25,7 @@ export default function BusinessHome() {
   if (isLoading && !catalog) {
     return <div className="h-40 animate-pulse rounded-lg border bg-muted/30" aria-hidden />
   }
-  if (!catalog) {
+  if (!catalog || catalog.error) {
     return (
       <EmptyState
         title={t('crmNav.loadFailed', '导航加载失败')}
@@ -35,7 +36,8 @@ export default function BusinessHome() {
     )
   }
 
-  const groups = catalog.groups
+  const enabled = (payload as unknown as {workspaceNavigationEnabled?:boolean}|null)?.workspaceNavigationEnabled !== false
+  const groups = enabled ? buildWorkspaces(catalog.groups).map(space => ({...space,items:searchWorkspaceEntries([space], '')})) : catalog.groups
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
 
   return (

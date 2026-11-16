@@ -1,10 +1,13 @@
+import { z } from 'zod'
 import { NextResponse, type NextRequest } from 'next/server'
 import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { resolveTranslations } from '@open-mercato/shared/lib/i18n/server'
 import { buildCrmNavigation } from '@/nav/crm-navigation'
 import { buildShellChrome } from '@/nav/shell-chrome'
+import { buildWorkspaceChrome } from '@/nav/workspace-chrome'
 import { NAV_GROUP_CATALOG } from '@/lib/nav/group-catalog'
+import { resolveNavigationPreferenceScope } from '../../lib/preference-scope'
 import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
 
 /**
@@ -37,6 +40,7 @@ export const openApi: OpenApiRouteDoc = {
   methods: {
     GET: {
       summary: 'Authorized navigation organized into declared top-level groups, management centre and account area',
+      query: z.object({ chrome: z.enum(['1']).optional(), path: z.string().max(2048).optional().describe('Presentation-only backend pathname; never grants access or fetches this URL.') }),
       responses: [
         { status: 200, description: 'Backend chrome payload with the CRM catalogue attached.' },
         { status: 401, description: 'Unauthenticated.' },
@@ -146,11 +150,19 @@ export async function GET(req: NextRequest) {
   const { translate } = await resolveTranslations()
   // The shell renders these groups directly; the catalogue stays attached for
   // the management centre and the contract gate.
-  const shell = buildShellChrome(catalog, translate)
+  const requestedPath = req.nextUrl.searchParams.get('path') ?? undefined
+  const shell = process.env.CRM_NAV_WORKSPACES === '0'
+    ? buildShellChrome(catalog, translate)
+    : buildWorkspaceChrome(catalog, requestedPath, translate)
+
+  let navigationPreferenceScope = null
+  try { navigationPreferenceScope = await resolveNavigationPreferenceScope(req, auth) } catch { /* Disable persisted preference when scope cannot be verified. */ }
 
   return NextResponse.json({
     ...payload,
+    navigationPreferenceScope,
     ...shell,
     crm: catalog,
-  })
+    workspaceNavigationEnabled: process.env.CRM_NAV_WORKSPACES !== '0',
+  }, { headers: { 'Cache-Control': 'no-store' } })
 }

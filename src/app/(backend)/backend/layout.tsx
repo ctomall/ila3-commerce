@@ -2,7 +2,7 @@ import { cookies, headers } from 'next/headers'
 import { backendRouteMetadata } from '@/.mercato/generated/backend-route-metadata.generated'
 import { findRouteManifestMatch } from '@open-mercato/shared/modules/registry'
 import { getAuthFromCookies } from '@open-mercato/shared/lib/auth/server'
-import { AppShell } from '@open-mercato/ui/backend/AppShell'
+import { WorkspaceShell } from '@/modules/crm_navigation/components/WorkspaceShell'
 import { resolveSupportedLocalesForRequest, resolveTranslations } from '@open-mercato/shared/lib/i18n/server'
 import { namespacesForBackendRoute, trimDictionaryToNamespaces } from '@/lib/i18n/auth-dict'
 import { resolveForcedLocale } from '@open-mercato/shared/lib/i18n/locale'
@@ -134,7 +134,8 @@ export default async function BackendLayout({
 
   return (
     <I18nProvider locale={locale} dict={dict} localeLocked={resolveForcedLocale(process.env) !== null} supportedLocales={supportedLocales}>
-      <AppShell
+      <WorkspaceShell
+        initialScope={{tenantId:auth?.tenantId ?? null,organizationId:auth?.orgId ?? null}}
         productName={productName}
         email={auth?.email}
         canManageUpgradeActions={canManageUpgradeActions}
@@ -164,7 +165,7 @@ export default async function BackendLayout({
         </PageInjectionBoundary>
         {demoModeEnabled ? <DemoFeedbackWidget demoModeEnabled={demoModeEnabled} /> : null}
         <BrowserTelemetry config={browserTelemetryConfig} />
-      </AppShell>
+      </WorkspaceShell>
     </I18nProvider>
   )
 }

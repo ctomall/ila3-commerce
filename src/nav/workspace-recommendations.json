@@ -1,0 +1,40 @@
+[
+  {
+    "workspaceId": "customers",
+    "features": [
+      "customers.companies.manage",
+      "customers.deals.manage"
+    ]
+  },
+  {
+    "workspaceId": "trade",
+    "features": [
+      "sales.orders.manage",
+      "sales.quotes.manage"
+    ]
+  },
+  {
+    "workspaceId": "inventory",
+    "features": [
+      "wms.manage"
+    ]
+  },
+  {
+    "workspaceId": "communications",
+    "features": [
+      "communications.reply"
+    ]
+  },
+  {
+    "workspaceId": "aftercare",
+    "features": [
+      "warranty_claims.claim.manage"
+    ]
+  },
+  {
+    "workspaceId": "team",
+    "features": [
+      "staff.teams.manage"
+    ]
+  }
+]

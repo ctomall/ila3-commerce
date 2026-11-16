@@ -13,6 +13,10 @@ import { ProfileDropdown } from '@open-mercato/ui/backend/ProfileDropdown'
 import { SettingsButton } from '@open-mercato/ui/backend/SettingsButton'
 import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
+import { NavigationPreferences } from '@/modules/crm_navigation/components/NavigationPreferences'
+import { NavigationSearch } from '@/modules/crm_navigation/components/NavigationSearch'
+import { WorkspaceSwitcher } from '@/modules/crm_navigation/components/WorkspaceSwitcher'
+import { readCrmCatalog } from '@/nav/crm-navigation'
 import { AiAssistantShellIntegration } from '@/components/AiAssistantShellIntegration'
 
 const LazyAiChatHeaderButton = dynamic(
@@ -112,10 +116,11 @@ export function BackendHeaderChrome({
 }: BackendHeaderChromeProps) {
   const t = useT()
   const { payload, isReady } = useBackendChrome()
-  const grantedFeatures = payload?.grantedFeatures ?? []
+  const grantedFeatures = React.useMemo(() => payload?.grantedFeatures ?? [], [payload?.grantedFeatures])
+  const completeGroups = React.useMemo(() => readCrmCatalog(payload)?.groups.map(group => ({ items: group.items })) ?? payload?.groups, [payload])
   const showIntegrationsButton = React.useMemo(
-    () => hasVisibleRoute(payload?.groups, '/backend/integrations'),
-    [payload?.groups],
+    () => hasVisibleRoute(completeGroups, '/backend/integrations'),
+    [completeGroups],
   )
   const showAiAssistant = React.useMemo(
     () => hasFeature(grantedFeatures, 'ai_assistant.view'),
@@ -126,8 +131,8 @@ export function BackendHeaderChrome({
     [grantedFeatures],
   )
   const showMessages = React.useMemo(
-    () => hasVisibleRoute(payload?.groups, '/backend/messages'),
-    [payload?.groups],
+    () => hasVisibleRoute(completeGroups, '/backend/messages'),
+    [completeGroups],
   )
   const showNotifications = React.useMemo(
     () => hasFeature(grantedFeatures, 'notifications.view'),
@@ -164,6 +169,10 @@ export function BackendHeaderChrome({
   return (
     <>
       <AuthSessionGuard serverUserId={userId} />
+      {userId ? <NavigationPreferences key={`${userId}:${tenantId}:${organizationId}`} userId={userId} tenantId={tenantId} organizationId={organizationId}>
+        <WorkspaceSwitcher />
+        <NavigationSearch />
+      </NavigationPreferences> : null}
       {isReady && showAiAssistant ? (
         <AiAssistantShellIntegration tenantId={tenantId} organizationId={organizationId}>
           <LazyAiChatHeaderButton />

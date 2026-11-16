@@ -1,0 +1,26 @@
+[
+  {
+    "id": "organization",
+    "label": "组织与业务设置",
+    "labelKey": "crmNav.settings.organization",
+    "categories": [
+      "users",
+      "channels",
+      "ai",
+      "business",
+      "rules",
+      "portal",
+      "notifications"
+    ]
+  },
+  {
+    "id": "platform",
+    "label": "平台维护",
+    "labelKey": "crmNav.settings.platform",
+    "categories": [
+      "system",
+      "diagnostics",
+      "advanced"
+    ]
+  }
+]

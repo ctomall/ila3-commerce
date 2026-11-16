@@ -23,6 +23,7 @@ jest.mock('../../../lib/core-nav', () => ({
   coreNavigationUrl: () => 'http://127.0.0.1:1/api/auth/admin/nav',
   fetchCoreNavigation: mockFetchCoreNavigation,
 }))
+jest.mock('../../../lib/preference-scope', () => ({resolveNavigationPreferenceScope: async () => ({userId:'user-1',tenantId:'tenant-1',organizationId:'org-1'})}))
 jest.mock('next/server', () => ({
   NextResponse: {
     json: (body: unknown, init?: { status?: number }) => ({
@@ -194,4 +195,51 @@ describe('CRM navigation chrome route', () => {
       (body.crm.manage.categories as Array<{ id: string }>).some((section) => section.id === 'settings.sections.other'),
     ).toBe(false)
   })
+})
+
+
+describe('workspace projection compatibility', () => {
+  it('projects home while keeping all authorized catalogue entries', async () => {
+    const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?chrome=1&path=/backend/workbench'))
+    const body = await res.json()
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    expect(body.crm.groups.map((group: {id: string}) => group.id)).toContain('customers')
+    expect(body.crm.version).toBe(2)
+  })
+  it('keeps old chrome output for an unmatched path without inventing destinations', async () => {
+    const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/forbidden'))
+    const body = await res.json()
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','customers','crm_navigation.utility'])
+  })
+  it('can revert the projection without changing directory contracts', async () => {
+    const before = process.env.CRM_NAV_WORKSPACES
+    process.env.CRM_NAV_WORKSPACES = '0'
+    try {
+      const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/workbench'))
+      const body = await res.json()
+      expect(body.groups.map((group: {id: string}) => group.id)).toContain('customers')
+      expect(body.workspaceNavigationEnabled).toBe(false)
+    } finally {
+      if (before === undefined) delete process.env.CRM_NAV_WORKSPACES
+      else process.env.CRM_NAV_WORKSPACES = before
+    }
+  })
+})
+
+
+describe('projection authorization boundary',()=>{
+ it('refuses unauthenticated navigation before loading the core payload',async()=>{
+  mockAuth.mockResolvedValueOnce(null as never)
+  const res=await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/workbench'))
+  expect(res.status).toBe(401)
+  expect(mockFetchCoreNavigation).not.toHaveBeenCalled()
+ })
+ it('does not put a denied destination into the complete or projected directory',async()=>{
+  mockFetchCoreNavigation.mockResolvedValue({ok:true,status:200,attempts:1,payload:{groups:[],settingsSections:[],profileSections:[],grantedFeatures:[]}})
+  const res=await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/system-admin'))
+  const body=await res.json()
+  expect(body.groups).toEqual([])
+  expect(body.crm.authorized).toEqual([])
+  expect(body.crm.groups).toEqual([])
+ })
 })

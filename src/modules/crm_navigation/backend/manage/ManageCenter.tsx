@@ -8,6 +8,8 @@ import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Input } from '@open-mercato/ui/primitives/input'
 import { EmptyState } from '@/components/states/EmptyState'
+import { Button } from '@open-mercato/ui/primitives/button'
+import { buildSettingsLevels } from '@/nav/settings-levels'
 import { readCrmCatalog } from '@/nav/crm-navigation'
 
 function chipClass(active: boolean) {
@@ -26,13 +28,18 @@ export default function ManageCenter() {
   const catalog = readCrmCatalog(payload)
   const [search, setSearch] = React.useState('')
   const [category, setCategory] = React.useState<string>('all')
+  const [level, setLevel] = React.useState<string>('all')
 
   const categories = React.useMemo(() => catalog?.manage.categories ?? [], [catalog])
+  const levels = React.useMemo(() => buildSettingsLevels(categories), [categories])
+  const effectiveLevel = levels.some(entry => entry.id === level) ? level : 'all'
+  const levelCategories = React.useMemo(() => effectiveLevel === 'all' ? categories : levels.find(entry => entry.id === effectiveLevel)?.categories ?? [], [effectiveLevel, levels, categories])
+  const effectiveCategory = levelCategories.some(entry => entry.id === category) ? category : 'all'
   const needle = search.trim().toLowerCase()
 
   const visible = React.useMemo(() => {
-    return categories
-      .filter((section) => category === 'all' || section.id === category)
+    return levelCategories
+      .filter((section) => effectiveCategory === 'all' || section.id === effectiveCategory)
       .map((section) => {
         const items = section.items.filter((item) => {
           if (!needle) return true
@@ -42,12 +49,12 @@ export default function ManageCenter() {
         return { ...section, items }
       })
       .filter((section) => section.items.length > 0)
-  }, [categories, category, needle, t])
+  }, [levelCategories, effectiveCategory, needle, t])
 
   if (isLoading && !catalog) {
     return <div className="h-40 animate-pulse rounded-lg border bg-muted/30" aria-hidden />
   }
-  if (!catalog) {
+  if (!catalog || catalog.error) {
     return (
       <EmptyState
         title={t('crmNav.loadFailed', '导航加载失败')}
@@ -77,6 +84,11 @@ export default function ManageCenter() {
         </Badge>
       </header>
 
+      {catalog.personal.items.length > 0 ? <section className="rounded-lg border bg-card p-3" aria-label={t('crmNav.utility.account', '个人账户')}>
+        <h2 className="mb-2 text-sm font-semibold">{t('crmNav.utility.account', '个人账户')}</h2>
+        <div className="flex flex-wrap gap-3">{catalog.personal.items.map(item => <Link key={item.href} href={item.href} className="rounded-md p-2 text-sm hover:bg-muted focus-visible:shadow-focus">{item.label}</Link>)}</div>
+      </section> : null}
+
       <div className="flex flex-col gap-3">
         <div className="relative max-w-md">
           <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
@@ -89,12 +101,17 @@ export default function ManageCenter() {
             data-manage-search=""
           />
         </div>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={t('crmNav.settings.levels', '设置层级')}>
+          <Button variant={level === 'all' ? 'default' : 'outline'} size="sm" aria-pressed={level === 'all'} onClick={() => { setLevel('all'); setCategory('all') }}>{t('crmNav.manage.all', '全部')}</Button>
+          {levels.map(entry => <Button key={entry.id} variant={level === entry.id ? 'default' : 'outline'} size="sm" aria-pressed={level === entry.id} onClick={() => { setLevel(entry.id); setCategory('all') }}>{t(entry.labelKey, entry.label)}</Button>)}
+        </div>
         <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('crmNav.manage.categoriesAria', '管理分类')}>
-          <button type="button" className={chipClass(category === 'all')} aria-pressed={category === 'all'} onClick={() => setCategory('all')}>
+          <Button type="button" variant="ghost" className={chipClass(category === 'all')} aria-pressed={category === 'all'} onClick={() => setCategory('all')}>
             {t('crmNav.manage.all', '全部')}
-          </button>
-          {categories.map((section) => (
-            <button
+          </Button>
+          {levelCategories.map((section) => (
+            <Button
+              variant="ghost"
               key={section.id}
               type="button"
               className={chipClass(category === section.id)}
@@ -102,7 +119,7 @@ export default function ManageCenter() {
               onClick={() => setCategory(section.id)}
             >
               {t(`crmNav.manage.category.${section.id}`, section.label)}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

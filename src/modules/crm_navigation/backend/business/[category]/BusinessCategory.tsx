@@ -11,13 +11,15 @@ import { readCrmCatalog } from '@/nav/crm-navigation'
 
 export default function BusinessCategory({ category }: { category: string }) {
   const t = useT()
-  const { payload, isLoading } = useBackendChrome()
+  const { payload, isLoading, refresh } = useBackendChrome()
   const catalog = readCrmCatalog(payload)
   const group = catalog?.groups.find((entry) => entry.id === category)
 
   if (isLoading && !catalog) {
     return <div className="h-40 animate-pulse rounded-lg border bg-muted/30" aria-hidden />
   }
+
+  if (!catalog || catalog.error) return <EmptyState title={t('crmNav.loadFailed', '导航加载失败')} actionLabel={t('crmNav.retry', '重试')} onAction={() => void refresh()} />
 
   const label = group ? t(group.labelKey ?? `crmNav.group.${group.id}`, group.label) : category
 
