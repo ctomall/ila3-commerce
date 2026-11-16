@@ -61,3 +61,11 @@
 node scripts/crm-rollback.mjs            # dry run，目标 = previous
 node scripts/crm-rollback.mjs --apply    # 换 symlink + 重启（实测 19.1s 恢复）
 ```
+
+## 6. 发布验证（2026-11-16T08:26Z）
+
+- 推送 `4f397102` 后 CI `build-artifact` 成功（8.7 分钟），自动部署 `deploy-20261116082308-4f397102` 结果 `deployed`，9 个步骤全 ok（含 `switch`、`candidate-health`、`queue-carryover`）。
+- 新 release 的 `.env` 自动带上 `OM_AI_ENGINE=dsh`（`copyEnvFiles` 从 app 目录复制），进程环境同样可见——固化在发版路径上生效。
+- 新 release 复验：公开入口探针 `PASS`，run `a0626f27…` 落库并 `completed`；
+  证据 `evidence/public-chat-path-2026-11-16T08-26-50-651Z.json`。
+- 外网：`/login` 200（2.7s）、`/start` 200（4.2s）；回滚点 `previous` 指向 `3f109755`。
