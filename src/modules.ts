@@ -396,6 +396,8 @@ export const enabledModules: ModuleEntry[] = [
   { id: 'workbench', from: '@app' },
   // Declared CRM navigation: module page groups in the rail, generated content strip, management centre.
   { id: 'crm_navigation', from: '@app' },
+  // Organization workspace order/visibility/labels, presets and per-user navigation preferences.
+  { id: 'workspace_settings', from: '@app' },
   // M4-3: the employee assistant's read-only CRM tool. No pages, no entities, no
   // migrations — only a module-root ai-tools.ts that the generator folds into the
   // ai-assistant tool registry.

@@ -23,6 +23,7 @@ jest.mock('../../../lib/core-nav', () => ({
   coreNavigationUrl: () => 'http://127.0.0.1:1/api/auth/admin/nav',
   fetchCoreNavigation: mockFetchCoreNavigation,
 }))
+jest.mock('@/modules/workspace_settings/lib/repository', () => ({ loadLayout: async () => ({ config: null, revision: null }) }))
 jest.mock('../../../lib/preference-scope', () => ({resolveNavigationPreferenceScope: async () => ({userId:'user-1',tenantId:'tenant-1',organizationId:'org-1'})}))
 jest.mock('next/server', () => ({
   NextResponse: {

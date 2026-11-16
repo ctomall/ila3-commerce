@@ -8,6 +8,8 @@ import { buildShellChrome } from '@/nav/shell-chrome'
 import { buildWorkspaceChrome } from '@/nav/workspace-chrome'
 import { NAV_GROUP_CATALOG } from '@/lib/nav/group-catalog'
 import { resolveNavigationPreferenceScope } from '../../lib/preference-scope'
+import { assignedPresets } from '@/modules/workspace_settings/lib/layout'
+import { loadLayout } from '@/modules/workspace_settings/lib/repository'
 import { coreNavigationUrl, fetchCoreNavigation } from '../../lib/core-nav'
 
 /**
@@ -150,13 +152,28 @@ export async function GET(req: NextRequest) {
   const { translate } = await resolveTranslations()
   // The shell renders these groups directly; the catalogue stays attached for
   // the management centre and the contract gate.
+  // Organization layout is presentation only. A storage failure must not break
+  // navigation: it degrades to the code-declared defaults.
+  let layout = null
+  try {
+    if (auth.tenantId && auth.orgId) {
+      const { createRequestContainer } = await import('@open-mercato/shared/lib/di/container')
+      const container = await createRequestContainer()
+      const em = container.resolve<{ fork: () => unknown }>('em').fork() as Parameters<typeof loadLayout>[0]
+      layout = (await loadLayout(em, { tenantId: String(auth.tenantId), organizationId: String(auth.orgId) })).config
+    }
+  } catch {
+    layout = null
+  }
+  const presets = layout && auth.sub ? assignedPresets(layout, String(auth.sub), new Set(layout.presets.map(p => p.id))) : []
+
   const requestedPath = req.nextUrl.searchParams.get('path') ?? undefined
   // Projection hint only: buildWorkspaceChrome re-checks it against the
   // authorized catalogue, so an unknown id cannot add a group.
   const requestedWorkspace = (req.nextUrl.searchParams.get('workspace') ?? '').slice(0, 100) || undefined
   const shell = process.env.CRM_NAV_WORKSPACES === '0'
     ? buildShellChrome(catalog, translate)
-    : buildWorkspaceChrome(catalog, requestedPath, translate, requestedWorkspace)
+    : buildWorkspaceChrome(catalog, requestedPath, translate, requestedWorkspace, layout)
 
   let navigationPreferenceScope = null
   try { navigationPreferenceScope = await resolveNavigationPreferenceScope(req, auth) } catch { /* Disable persisted preference when scope cannot be verified. */ }
@@ -167,5 +184,7 @@ export async function GET(req: NextRequest) {
     ...shell,
     crm: catalog,
     workspaceNavigationEnabled: process.env.CRM_NAV_WORKSPACES !== '0',
+    workspaceLayout: layout,
+    assignedPresets: presets,
   }, { headers: { 'Cache-Control': 'no-store' } })
 }

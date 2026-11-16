@@ -1,5 +1,7 @@
 import { describe, it, expect } from '@jest/globals'
 import { buildWorkspaces, selectWorkspace, searchWorkspaceEntries, recommendWorkspaces } from '../workspaces'
+import { applyLayout } from '@/modules/workspace_settings/lib/layout'
+import { presetLanding } from '../workspace-payload'
 import { buildWorkspaceChrome } from '../workspace-chrome'
 import { buildCrmNavigation } from '../crm-navigation'
 import type { CrmNavGroup } from '../crm-navigation'
@@ -116,4 +118,42 @@ describe('authorized workspace projection', () => {
     expect(buildWorkspaceChrome(catalog, '/backend').groups.map(g=>g.id)).toEqual(['home'])
   })
 
+  it('applies an organization layout: order, label and hidden, while hidden stays addressable', () => {
+    const catalog = buildCrmNavigation({groups: [
+      {id:'home',items:[{href:'/backend/workbench',title:'Home',order:1}]},
+      {id:'customers',items:[{href:'/backend/customers/companies',title:'Companies',order:1}]},
+      {id:'sales',items:[{href:'/backend/sales/orders',title:'Orders',order:1}]},
+    ]})
+    const layout = {version:1 as const, order:['trade'], hidden:['customers'], labels:{trade:'Trade'}, presets:[], assignments:{}}
+    const sales = buildWorkspaceChrome(catalog, '/backend/sales/orders', undefined, undefined, layout)
+    expect(sales.groups.map(g => g.id)).toEqual(['home','sales'])
+    // Labels belong to the workspace name (switcher/search); sidebar headers keep
+    // the group labels the modules declare.
+    expect(applyLayout(buildWorkspaces(catalog.groups), layout).visible.find(s => s.id === 'trade')?.label).toBe('Trade')
+    // A hidden workspace that owns the current path falls back to fixed entries.
+    const hiddenOwner = buildWorkspaceChrome(catalog, '/backend/customers/companies', undefined, undefined, layout)
+    expect(hiddenOwner.groups.map(g => g.id)).toEqual(['home'])
+    // The complete catalogue is untouched, so the hidden entry is still reachable.
+    expect(catalog.groups.map(g => g.id)).toContain('customers')
+  })
+
+})
+
+describe('preset landing resolution', () => {
+  const spaces = buildWorkspaces(buildCrmNavigation({groups: [
+    {id:'customers',items:[{href:'/backend/customers/companies',title:'Companies',order:1}]},
+    {id:'sales',items:[{href:'/backend/sales/orders',title:'Orders',order:1}]},
+  ]}).groups)
+  const preset = {id:'p',name:'P',workspaces:['trade'],landing:'/backend/sales/orders'}
+  it('uses the preset landing when it is inside an authorized workspace', () => {
+    expect(presetLanding(preset, spaces)).toBe('/backend/sales/orders')
+  })
+  it('falls back to the workspace landing when the preset points outside it', () => {
+    const tradeLanding = spaces.find((space) => space.id === 'trade')!.landing
+    expect(presetLanding({...preset, landing:'/backend/secret'}, spaces)).toBe(tradeLanding)
+    expect(presetLanding({...preset, landing:null}, spaces)).toBe(tradeLanding)
+  })
+  it('returns null when the caller cannot see any of its workspaces', () => {
+    expect(presetLanding({...preset, workspaces:['hidden-space']}, spaces)).toBeNull()
+  })
 })

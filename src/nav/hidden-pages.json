@@ -343,5 +343,10 @@
     "reason": "in-page-action",
     "parent": "/backend/communications/inbox",
     "evidence": "src/modules/communications/backend/communications/channels/connect/page.meta.ts:1 (navHidden; reached from the inbox header link)"
+  },
+  "/backend/config/navigation": {
+    "reason": "base-module-hidden",
+    "parent": "/backend",
+    "evidence": "src/modules/workspace_settings/backend/config/navigation/page.meta.ts:13 (settings page; reached from the management hub business category)"
   }
 }
