@@ -151,9 +151,12 @@ export async function GET(req: NextRequest) {
   // The shell renders these groups directly; the catalogue stays attached for
   // the management centre and the contract gate.
   const requestedPath = req.nextUrl.searchParams.get('path') ?? undefined
+  // Projection hint only: buildWorkspaceChrome re-checks it against the
+  // authorized catalogue, so an unknown id cannot add a group.
+  const requestedWorkspace = (req.nextUrl.searchParams.get('workspace') ?? '').slice(0, 100) || undefined
   const shell = process.env.CRM_NAV_WORKSPACES === '0'
     ? buildShellChrome(catalog, translate)
-    : buildWorkspaceChrome(catalog, requestedPath, translate)
+    : buildWorkspaceChrome(catalog, requestedPath, translate, requestedWorkspace)
 
   let navigationPreferenceScope = null
   try { navigationPreferenceScope = await resolveNavigationPreferenceScope(req, auth) } catch { /* Disable persisted preference when scope cannot be verified. */ }

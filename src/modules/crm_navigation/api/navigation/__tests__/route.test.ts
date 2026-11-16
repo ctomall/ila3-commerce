@@ -206,10 +206,21 @@ describe('workspace projection compatibility', () => {
     expect(body.crm.groups.map((group: {id: string}) => group.id)).toContain('customers')
     expect(body.crm.version).toBe(2)
   })
-  it('keeps old chrome output for an unmatched path without inventing destinations', async () => {
-    const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/forbidden'))
+  it('shrinks an unowned path to the fixed entries instead of every group', async () => {
+    const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/manage'))
     const body = await res.json()
-    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','customers','crm_navigation.utility'])
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    // The complete catalogue is untouched, so search and the hub still work.
+    expect(body.crm.groups.map((group: {id: string}) => group.id)).toContain('customers')
+  })
+  it('honours a workspace hint on an unowned path only when it is authorized', async () => {
+    const withHint = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/settings/profile&workspace=customers'))
+    const hinted = await withHint.json()
+    expect(hinted.groups.map((group: {id: string}) => group.id)).toEqual(['home','customers','crm_navigation.utility'])
+    const bogus = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/settings/profile&workspace=module:secret'))
+    const body = await bogus.json()
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    expect(body.crm.authorized).not.toContain('/backend/secret')
   })
   it('can revert the projection without changing directory contracts', async () => {
     const before = process.env.CRM_NAV_WORKSPACES

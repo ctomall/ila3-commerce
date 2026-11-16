@@ -100,6 +100,11 @@ describe('authorized workspace projection', () => {
     expect(catalog.groups).toHaveLength(3)
     expect(buildWorkspaceChrome(catalog, undefined).groups).toHaveLength(3)
     expect(buildWorkspaceChrome(catalog, 'https://evil.test').groups).toHaveLength(3)
+    // Settings/profile/manage have no owning group: fall back to the workspace
+    // the caller came from when it is authorized, otherwise to fixed entries.
+    expect(buildWorkspaceChrome(catalog, '/backend/manage').groups.map(g => g.id)).toEqual(['home'])
+    expect(buildWorkspaceChrome(catalog, '/backend/settings/profile', undefined, 'customers').groups.map(g => g.id)).toEqual(['home','customers'])
+    expect(buildWorkspaceChrome(catalog, '/backend/settings/profile', undefined, 'module:secret').groups.map(g => g.id)).toEqual(['home'])
   })
 
   it('resolves the declared workbench redirect at the real dashboard path', () => {
