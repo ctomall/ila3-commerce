@@ -6,6 +6,8 @@ const mockPath=jest.fn(()=>'/backend/customers/companies')
 jest.mock('next/navigation',()=>({usePathname:mockPath}))
 jest.mock('@open-mercato/ui/backend/AppShell',()=>({AppShell:({adminNavApi,children}:{adminNavApi:string;children:React.ReactNode})=><div data-testid="shell" data-api={adminNavApi}>{children}</div>}))
 import { emitOrganizationScopeChanged } from '@open-mercato/shared/lib/frontend/organizationEvents'
+import { writeVersionedPreference } from '@open-mercato/shared/lib/browser/versionedPreference'
+import { navigationPreferenceKey } from '@/nav/workspace-preferences'
 import { WorkspaceShell } from '../WorkspaceShell'
 describe('public shell adapter',()=>{
   it('keeps children and selects a cache-distinct authorized nav request by actual path',()=>{
@@ -29,6 +31,20 @@ describe('public shell adapter',()=>{
   act(()=>emitOrganizationScopeChanged({tenantId:'same-tenant',organizationId:'same-org'}))
   expect(screen.getByTestId('shell')).toBe(before)
   expect(before.getAttribute('data-api')).toBe(api)
+ })
+
+ it('sends the last workspace as a projection hint for settings paths',()=>{
+  const key = navigationPreferenceKey('user-1','tenant-1','org-1')
+  writeVersionedPreference(key,1,{recentWorkspace:'customers',favorites:[]})
+  mockPath.mockReturnValue('/backend/manage')
+  render(<WorkspaceShell groups={[]} initialScope={{userId:'user-1',tenantId:'tenant-1',organizationId:'org-1'}}>Content</WorkspaceShell>)
+  expect(screen.getByTestId('shell').getAttribute('data-api')).toContain('workspace=customers')
+  expect(screen.getByTestId('shell').getAttribute('data-api')).toContain('path=%2Fbackend%2Fmanage')
+ })
+ it('sends no hint without a resolved identity',()=>{
+  mockPath.mockReturnValue('/backend/manage')
+  render(<WorkspaceShell groups={[]} initialScope={{tenantId:null,organizationId:null}}>Content</WorkspaceShell>)
+  expect(screen.getByTestId('shell').getAttribute('data-api')).not.toContain('workspace=')
  })
 
 })

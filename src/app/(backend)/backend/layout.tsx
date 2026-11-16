@@ -135,7 +135,7 @@ export default async function BackendLayout({
   return (
     <I18nProvider locale={locale} dict={dict} localeLocked={resolveForcedLocale(process.env) !== null} supportedLocales={supportedLocales}>
       <WorkspaceShell
-        initialScope={{tenantId:auth?.tenantId ?? null,organizationId:auth?.orgId ?? null}}
+        initialScope={{userId:auth?.sub ?? null,tenantId:auth?.tenantId ?? null,organizationId:auth?.orgId ?? null}}
         productName={productName}
         email={auth?.email}
         canManageUpgradeActions={canManageUpgradeActions}
