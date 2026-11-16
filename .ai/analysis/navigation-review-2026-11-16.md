@@ -102,3 +102,32 @@ Known, documented gaps carried as follow-ups rather than hidden:
 
 Verdict: shipped for the test site with the gaps above recorded; no production
 data, payment or outbound-message action was taken during this work.
+
+## Follow-up release (f6d56b0)
+
+Items closed after f6036d3:
+
+1. `ModelCatalogPageClient` column arrays are expanded and re-indented with the
+   TypeScript formatter; columns, action predicates, dialogs and the routed
+   test fixture are unchanged (typecheck, lint, ds:check, unit tests and the
+   Playwright fixture all pass).
+2. The inbox list is full width below `md` and the fixed viewport height only
+   applies from `md` up: measured 390px `scrollWidth=390` (was 465) with no
+   horizontal scroll, and 1440px `scrollHeight=981` — identical to the previous
+   release, so desktop geometry did not move.
+3. Settings/profile/manage no longer fall back to every group. The shell sends
+   the last workspace as a projection hint (`recentWorkspace`), the route
+   re-validates it against the caller's authorized catalogue, and without a
+   valid hint only the fixed entries are projected. Verified on the deployed
+   release: `/backend/manage` renders 5 menu entries and `/backend/settings` 4
+   (previously the full 14-group rail); the complete catalogue is still served
+   for search.
+4. The local documentation commit is pushed as part of this history; the tip
+   SHA itself went through CI, so no extra run was needed.
+
+Gate: `generate`, `typecheck`, `lint`, `ds:check` (521 files, 0 findings),
+`test` (141 suites / 1178 tests), `build`; CI run 43893713077 success; deploy
+`deploy-20261116152148-f6d56b0d` `result=deployed`; previous slot is
+`f6036d3`; Playwright 8/8 against the live release; footer `v0.2.2 (f6d56b0)`.
+
+Rollback: `node scripts/crm-rollback.mjs --to f6036d3` (dry run) then `--apply`.
