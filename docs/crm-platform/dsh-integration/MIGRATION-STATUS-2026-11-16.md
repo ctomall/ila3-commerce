@@ -94,3 +94,14 @@ node scripts/crm-rollback.mjs --apply    # 换 symlink + 重启（实测 19.1s �
 切换完成后、carryover 之前，用运维账号登录并依次请求 `/api/ai_assistant/ai/agents`、`/api/ai_assistant/health`，把 AI 模块（约 90 个工具、700+ 条路由清单）的冷启动挪进部署过程，并记录每一步的毫秒数到部署 run 的 `aiWarmup` 字段。预热失败只记录、不回滚（`warmAiModule` 内部吞掉异常）。
 
 单测：`src/lib/dsh/__tests__/access-log.test.ts`（4 例）、`scripts/auto-deploy/warmup.test.mjs`（4 例）；`tsc --noEmit` 通过。
+
+### 上线验证（release `4d7669b1`，2026-11-16T09:02Z）
+
+- 部署 run `deploy-20261116085424-4d7669b1`：`result=deployed`，步骤
+  `… switch:ok, ai-warmup:ok, queue-carryover:ok`。
+- 预热结果：`{"ok":true,"elapsedMs":1279,"checks":[{"warmup-login":"HTTP 200 in 624ms"},{"warmup-agents":"HTTP 200 in 627ms"},{"warmup-health":"HTTP 200 in 28ms"}]}`。
+- 访问日志实测两行（同一 `accessId`，可对上）：
+  - `dsh-chat … status:200 durationMs:3795 runId:86210cc0… outcome:end`
+  - `agentic-chat … status:200 durationMs:3851 runId:null outcome:end`
+- 客户端中断实测：`dsh-chat … durationMs:1498 runId:6714114b… outcome:client_cancel`，
+  对应 run 落 `cancelled` —— 这正是 08:29 那次 502 缺失的那一行。
