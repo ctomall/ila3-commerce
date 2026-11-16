@@ -131,3 +131,36 @@ Gate: `generate`, `typecheck`, `lint`, `ds:check` (521 files, 0 findings),
 `f6036d3`; Playwright 8/8 against the live release; footer `v0.2.2 (f6d56b0)`.
 
 Rollback: `node scripts/crm-rollback.mjs --to f6036d3` (dry run) then `--apply`.
+
+## Correction and final state (aaf38cb)
+
+The f6d56b0 build did **not** actually send the projection hint: `backend/layout.tsx`
+still omitted `userId` from `initialScope`, so `WorkspaceShell` could not derive the
+preference key and every settings surface fell back to the fixed entries. The earlier
+"5 / 4 menu entries" measurement was real but measured the fixed-entry fallback, and it
+counted rendered links rather than sidebar groups — both readings were wrong about what
+was being proven.
+
+`aaf38cb` forwards the signed-in user and adds two component tests (hint sent for a
+resolved identity, no hint otherwise). Deployed via the same pipeline (CI run
+43897055089, deploy `deploy-20261116153644-aaf38cb7`, `result=deployed`, previous slot
+now `f6d56b0`).
+
+Verified on the live release by measuring sidebar **groups**, not expanded links:
+
+| Page | Groups |
+|---|---|
+| `/backend/customers/companies` | 3 — 工作台 / 客户 / 管理中心 |
+| `/backend/manage` | 3 — same workspace kept |
+| `/backend/settings` | 3 — same workspace kept |
+
+Without a valid hint the route still projects only the fixed entries, and the API below
+confirms the hint is validated rather than trusted:
+
+- `path=/backend/manage` → `home, crm_navigation.utility` only
+- `path=/backend/manage&workspace=customers` → `home, customers (6 items), utility`
+- footer on the live site: `v0.2.2 (aaf38cb)`
+- Playwright 8/8 against the deployed release.
+
+Rollback target is `f6d56b0` (`crm-rollback.mjs --to f6d56b0`), with `f6036d3` still on
+disk behind it.
