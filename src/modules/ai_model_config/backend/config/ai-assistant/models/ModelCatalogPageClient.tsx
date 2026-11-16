@@ -646,13 +646,13 @@ export default function ModelCatalogPageClient() {
             <p className="max-w-md text-xs text-muted-foreground">
               {providers.length === 0
                 ? t(
-                    'ai_assistant.models.empty.noProvidersDescription',
-                    'Configure a provider key above — the system will fetch its models automatically. Only models from providers with a saved key are shown here.',
-                  )
+                  'ai_assistant.models.empty.noProvidersDescription',
+                  'Configure a provider key above — the system will fetch its models automatically. Only models from providers with a saved key are shown here.',
+                )
                 : t(
-                    'ai_assistant.models.empty.description',
-                    'Adjust the filters, or add a model id that your provider supports — for example a newly released or self-hosted model.',
-                  )}
+                  'ai_assistant.models.empty.description',
+                  'Adjust the filters, or add a model id that your provider supports — for example a newly released or self-hosted model.',
+                )}
             </p>
             {providers.length === 0 ? null : (
               <Button type="button" size="sm" className="gap-1.5" onClick={() => setEditor({ mode: 'create' })}>
@@ -663,175 +663,243 @@ export default function ModelCatalogPageClient() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <DataTable<MergedModel> entityId="ai_model_config:model" extensionTableId="ai_model_config.models" data={filteredModels} sortable={false} columns={[{id:'column0',header:()=> <>{t('ai_assistant.models.column.model', 'Model')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+            <DataTable<MergedModel> entityId="ai_model_config:model" extensionTableId="ai_model_config.models" data={filteredModels} sortable={false} columns={[
+              {
+                id: 'column0',
+                header: () => <>{t('ai_assistant.models.column.model', 'Model')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div data-ai-models-row={rowKey}>
-                        <div className="flex flex-col">
-                          <span className="flex items-center gap-1.5 font-medium">
-                            {model.name}
-                            {isDefault ? (
-                              <Badge variant="brand" size="sm" className="gap-1">
-                                <Star className="size-2.5" aria-hidden />
-                                {t('ai_assistant.models.defaultBadge', 'Default')}
-                              </Badge>
-                            ) : null}
-                          </span>
-                          <span className="font-mono text-xs text-muted-foreground">{model.modelId}</span>
-                        </div>
-                      </div>}},{id:'column1',header:()=> <>{t('ai_assistant.models.column.provider', 'Provider')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                  return (
+                    <div data-ai-models-row={rowKey}>
+                      <div className="flex flex-col">
+                        <span className="flex items-center gap-1.5 font-medium">
+                          {model.name}
+                          {isDefault ? (
+                            <Badge variant="brand" size="sm" className="gap-1">
+                              <Star className="size-2.5" aria-hidden />
+                              {t('ai_assistant.models.defaultBadge', 'Default')}
+                            </Badge>
+                          ) : null}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">{model.modelId}</span>
+                      </div>
+                    </div>
+                  )
+                },
+              },
+              {
+                id: 'column1',
+                header: () => <>{t('ai_assistant.models.column.provider', 'Provider')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>
-                        <div className="flex flex-col">
-                          <span className="whitespace-nowrap">{provider?.name ?? model.providerId}</span>
-                          <span
-                            className={`flex items-center gap-1 font-mono text-xs ${
-                              provider?.configured ? 'text-muted-foreground' : 'text-status-warning-text'
+                  return (
+                    <div>
+                      <div className="flex flex-col">
+                        <span className="whitespace-nowrap">{provider?.name ?? model.providerId}</span>
+                        <span
+                          className={`flex items-center gap-1 font-mono text-xs ${provider?.configured ? 'text-muted-foreground' : 'text-status-warning-text'
                             }`}
-                            title={
-                              provider?.configured
-                                ? t('ai_assistant.models.credentialsConfigured', 'Credentials configured')
-                                : t('ai_assistant.models.credentialsMissing', 'Set this environment variable to enable the provider')
-                            }
-                          >
-                            <KeyRound className="size-2.5 shrink-0" aria-hidden />
-                            {provider?.envKey ?? t('ai_assistant.models.notConfigured', 'no credentials')}
-                          </span>
-                        </div>
-                      </div>}},{id:'column2',header:()=> <>{t('ai_assistant.models.column.context', 'Context')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                          title={
+                            provider?.configured
+                              ? t('ai_assistant.models.credentialsConfigured', 'Credentials configured')
+                              : t('ai_assistant.models.credentialsMissing', 'Set this environment variable to enable the provider')
+                          }
+                        >
+                          <KeyRound className="size-2.5 shrink-0" aria-hidden />
+                          {provider?.envKey ?? t('ai_assistant.models.notConfigured', 'no credentials')}
+                        </span>
+                      </div>
+                    </div>
+                  )
+                },
+              },
+              {
+                id: 'column2',
+                header: () => <>{t('ai_assistant.models.column.context', 'Context')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>{formatContext(model.contextWindow)}</div>}},{id:'column3',header:()=> <>{t('ai_assistant.models.column.tags', 'Tags')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                  return <div>{formatContext(model.contextWindow)}</div>
+                },
+              },
+              {
+                id: 'column3',
+                header: () => <>{t('ai_assistant.models.column.tags', 'Tags')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>
-                        <div className="flex flex-wrap gap-1">
-                          {model.tags.length === 0 ? (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          ) : (
-                            model.tags.map((tag) => (
-                              <Badge key={tag} variant="muted" size="sm" className="whitespace-nowrap">
-                                {tagLabel(tag, t)}
-                              </Badge>
-                            ))
-                          )}
-                        </div>
-                      </div>}},{id:'column4',header:()=> <>{t('ai_assistant.models.column.status', 'Status')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                  return (
+                    <div>
+                      <div className="flex flex-wrap gap-1">
+                        {model.tags.length === 0 ? (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        ) : (
+                          model.tags.map((tag) => (
+                            <Badge key={tag} variant="muted" size="sm" className="whitespace-nowrap">
+                              {tagLabel(tag, t)}
+                            </Badge>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  )
+                },
+              },
+              {
+                id: 'column4',
+                header: () => <>{t('ai_assistant.models.column.status', 'Status')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>
-                        <Badge variant={model.enabled ? 'success' : 'neutral'} size="sm" dot className="whitespace-nowrap">
-                          {model.enabled
-                            ? t('ai_assistant.models.status.enabled', 'Enabled')
-                            : t('ai_assistant.models.status.disabled', 'Disabled')}
-                        </Badge>
-                      </div>}},{id:'column5',header:()=> <>{t('ai_assistant.models.column.source', 'Source')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                  return (
+                    <div>
+                      <Badge variant={model.enabled ? 'success' : 'neutral'} size="sm" dot className="whitespace-nowrap">
+                        {model.enabled
+                          ? t('ai_assistant.models.status.enabled', 'Enabled')
+                          : t('ai_assistant.models.status.disabled', 'Disabled')}
+                      </Badge>
+                    </div>
+                  )
+                },
+              },
+              {
+                id: 'column5',
+                header: () => <>{t('ai_assistant.models.column.source', 'Source')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>
-                        <Badge variant={model.builtin ? 'outline' : 'info'} size="sm" className="whitespace-nowrap">
-                          {model.overridden
-                            ? t('ai_assistant.models.source.overridden', 'Built-in · edited')
-                            : model.builtin
-                              ? t('ai_assistant.models.source.builtin', 'Built-in')
-                              : t('ai_assistant.models.source.custom', 'Custom')}
-                        </Badge>
-                      </div>}},{id:'column6',header:()=> <>{t('ai_assistant.models.column.actions', 'Actions')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                  return (
+                    <div>
+                      <Badge variant={model.builtin ? 'outline' : 'info'} size="sm" className="whitespace-nowrap">
+                        {model.overridden
+                          ? t('ai_assistant.models.source.overridden', 'Built-in · edited')
+                          : model.builtin
+                            ? t('ai_assistant.models.source.builtin', 'Built-in')
+                            : t('ai_assistant.models.source.custom', 'Custom')}
+                      </Badge>
+                    </div>
+                  )
+                },
+              },
+              {
+                id: 'column6',
+                header: () => <>{t('ai_assistant.models.column.actions', 'Actions')}</>,
+                cell: ({ row }) => {
+                  const model = row.original
+                  const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return <div>
-                        <div className="flex items-center justify-end gap-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 gap-1 px-2 text-xs"
-                            disabled={isBusy}
-                            onClick={() => setEditor({ mode: 'edit', row: model })}
-                            data-ai-models-edit={rowKey}
-                          >
-                            <Pencil className="size-3.5" aria-hidden />
-                            {t('ai_assistant.models.action.edit', 'Edit')}
-                          </Button>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                className="h-7 w-7 p-0"
-                                aria-label={t('ai_assistant.models.action.more', 'More actions')}
-                                data-ai-models-more={rowKey}
-                              >
-                                <MoreHorizontal className="size-4" aria-hidden />
-                              </Button>
-                            </PopoverTrigger>
-                            <PopoverContent align="end" className="w-40 p-1">
-                              <button
-                                type="button"
-                                className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
-                                disabled={isBusy || isDefault || !model.enabled}
-                                onClick={() => void handleSetDefault(model)}
-                              >
-                                <Star className="size-3.5" aria-hidden />
-                                {t('ai_assistant.models.action.setDefault', 'Set as default')}
-                              </button>
-                              <button
-                                type="button"
-                                className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
-                                disabled={isBusy}
-                                onClick={() => void handleToggleEnabled(model)}
-                              >
-                                {isBusy ? (
-                                  <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                                ) : (
-                                  <Power className="size-3.5" aria-hidden />
-                                )}
-                                {model.enabled
-                                  ? t('ai_assistant.models.action.disable', 'Disable')
-                                  : t('ai_assistant.models.action.enable', 'Enable')}
-                              </button>
-                              <button
-                                type="button"
-                                className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted disabled:opacity-50"
-                                disabled={isBusy || (!model.entryId && model.builtin === false)}
-                                onClick={() => setDeleteTarget(model)}
-                              >
-                                {model.builtin && model.overridden ? (
-                                  <RotateCcw className="size-3.5" aria-hidden />
-                                ) : (
-                                  <Trash2 className="size-3.5" aria-hidden />
-                                )}
-                                {model.builtin && model.overridden
-                                  ? t('ai_assistant.models.action.restore', 'Restore')
-                                  : t('ai_assistant.models.action.delete', 'Delete')}
-                              </button>
-                            </PopoverContent>
-                          </Popover>
-                        </div>
-                      </div>}}]} />
+                  return (
+                    <div>
+                      <div className="flex items-center justify-end gap-1">
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 gap-1 px-2 text-xs"
+                          disabled={isBusy}
+                          onClick={() => setEditor({ mode: 'edit', row: model })}
+                          data-ai-models-edit={rowKey}
+                        >
+                          <Pencil className="size-3.5" aria-hidden />
+                          {t('ai_assistant.models.action.edit', 'Edit')}
+                        </Button>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              className="h-7 w-7 p-0"
+                              aria-label={t('ai_assistant.models.action.more', 'More actions')}
+                              data-ai-models-more={rowKey}
+                            >
+                              <MoreHorizontal className="size-4" aria-hidden />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent align="end" className="w-40 p-1">
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
+                              disabled={isBusy || isDefault || !model.enabled}
+                              onClick={() => void handleSetDefault(model)}
+                            >
+                              <Star className="size-3.5" aria-hidden />
+                              {t('ai_assistant.models.action.setDefault', 'Set as default')}
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
+                              disabled={isBusy}
+                              onClick={() => void handleToggleEnabled(model)}
+                            >
+                              {isBusy ? (
+                                <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                              ) : (
+                                <Power className="size-3.5" aria-hidden />
+                              )}
+                              {model.enabled
+                                ? t('ai_assistant.models.action.disable', 'Disable')
+                                : t('ai_assistant.models.action.enable', 'Enable')}
+                            </button>
+                            <button
+                              type="button"
+                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted disabled:opacity-50"
+                              disabled={isBusy || (!model.entryId && model.builtin === false)}
+                              onClick={() => setDeleteTarget(model)}
+                            >
+                              {model.builtin && model.overridden ? (
+                                <RotateCcw className="size-3.5" aria-hidden />
+                              ) : (
+                                <Trash2 className="size-3.5" aria-hidden />
+                              )}
+                              {model.builtin && model.overridden
+                                ? t('ai_assistant.models.action.restore', 'Restore')
+                                : t('ai_assistant.models.action.delete', 'Delete')}
+                            </button>
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    </div>
+                  )
+                },
+              },
+            ]} />
           </div>
         )}
       </div>
@@ -872,13 +940,13 @@ export default function ModelCatalogPageClient() {
             <DialogDescription>
               {deleteTarget?.builtin
                 ? t(
-                    'ai_assistant.models.delete.restoreDescription',
-                    'This removes your edits and makes the model that ships with the provider visible again.',
-                  )
+                  'ai_assistant.models.delete.restoreDescription',
+                  'This removes your edits and makes the model that ships with the provider visible again.',
+                )
                 : t(
-                    'ai_assistant.models.delete.description',
-                    'The model will be removed from this tenant’s catalog and from the assistant model picker. This cannot be undone.',
-                  )}
+                  'ai_assistant.models.delete.description',
+                  'The model will be removed from this tenant’s catalog and from the assistant model picker. This cannot be undone.',
+                )}
             </DialogDescription>
           </DialogHeader>
           {deleteTarget ? (
@@ -1288,126 +1356,165 @@ function ProviderSection({ providers, loading, onChanged, onError }: ProviderSec
 
       {expanded ? (
         <>
-      {loading ? (
-        <div className="flex items-center gap-2 px-5 py-6 text-xs text-muted-foreground" role="status">
-          <Loader2 className="size-3.5 animate-spin" aria-hidden />
-          {t('ai_assistant.models.provider.loading', 'Loading providers…')}
-        </div>
-      ) : (
-        <div className="overflow-x-auto">
-          <DataTable<ProviderRow> entityId="ai_model_config:provider" extensionTableId="ai_model_config.providers" data={visibleProviders} sortable={false} columns={[{id:'column0',header:()=> <>
-                  {t('ai_assistant.models.provider.column.provider', 'Provider')}
-                </>,cell:({row})=>{const provider=row.original;return <div data-ai-provider-row={provider.id}>
-                    <div className="flex flex-col">
-                      <span className="whitespace-nowrap font-medium">{provider.name}</span>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {provider.baseURL ?? provider.envKey ?? provider.id}
-                      </span>
-                    </div>
-                  </div>}},{id:'column1',header:()=> <>
-                  {t('ai_assistant.models.provider.column.type', 'Type')}
-                </>,cell:({row})=>{const provider=row.original;return <div>
-                    <Badge variant={provider.builtin ? 'outline' : 'brand'} size="sm" className="whitespace-nowrap">
-                      {provider.builtin
-                        ? t('ai_assistant.models.provider.typeBuiltin', 'Built-in')
-                        : t('ai_assistant.models.provider.typeCustom', 'Custom')}
-                    </Badge>
-                  </div>}},{id:'column2',header:()=> <>
-                  {t('ai_assistant.models.provider.column.credentials', 'Credentials')}
-                </>,cell:({row})=>{const provider=row.original;return <div>
-                    <div className="flex items-center gap-2">
-                      {credentialBadge(provider)}
-                      <span className="font-mono text-xs text-muted-foreground">{provider.envKey ?? ''}</span>
-                    </div>
-                  </div>}},{id:'column3',header:()=> <>
-                  {t('ai_assistant.models.provider.column.models', 'Models')}
-                </>,cell:({row})=>{const provider=row.original;return <div>{provider.modelCount}</div>}},{id:'column4',header:()=> <>
-                  {t('ai_assistant.models.provider.column.actions', 'Actions')}
-                </>,cell:({row})=>{const provider=row.original;return <div>
-                    <div className="flex items-center justify-end gap-1">
-                      {provider.builtin ? (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="h-7 gap-1 px-2 text-xs"
-                          onClick={() => setEditor({ mode: 'credentials', row: provider })}
-                          data-ai-provider-configure={provider.id}
-                        >
-                          <KeyRound className="size-3.5" aria-hidden />
-                          {t('ai_assistant.models.provider.configure', 'Configure key')}
-                        </Button>
-                      ) : (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          className="h-7 gap-1 px-2 text-xs"
-                          onClick={() => setEditor({ mode: 'edit', row: provider })}
-                          data-ai-provider-edit={provider.id}
-                        >
-                          <Pencil className="size-3.5" aria-hidden />
-                          {t('ai_assistant.models.provider.edit', 'Edit')}
-                        </Button>
-                      )}
-                      <Popover>
-                        <PopoverTrigger asChild>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 w-7 p-0"
-                            aria-label={t('ai_assistant.models.action.more', 'More actions')}
-                            data-ai-provider-more={provider.id}
-                          >
-                            <MoreHorizontal className="size-4" aria-hidden />
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent align="end" className="w-40 p-1">
-                          {provider.configured ? (
-                            <button
+          {loading ? (
+            <div className="flex items-center gap-2 px-5 py-6 text-xs text-muted-foreground" role="status">
+              <Loader2 className="size-3.5 animate-spin" aria-hidden />
+              {t('ai_assistant.models.provider.loading', 'Loading providers…')}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <DataTable<ProviderRow> entityId="ai_model_config:provider" extensionTableId="ai_model_config.providers" data={visibleProviders} sortable={false} columns={[
+                {
+                  id: 'column0',
+                  header: () => <>{t('ai_assistant.models.provider.column.provider', 'Provider')}</>,
+                  cell: ({ row }) => {
+                    const provider = row.original
+                    return (
+                      <div data-ai-provider-row={provider.id}>
+                        <div className="flex flex-col">
+                          <span className="whitespace-nowrap font-medium">{provider.name}</span>
+                          <span className="font-mono text-xs text-muted-foreground">
+                            {provider.baseURL ?? provider.envKey ?? provider.id}
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  },
+                },
+                {
+                  id: 'column1',
+                  header: () => <>{t('ai_assistant.models.provider.column.type', 'Type')}</>,
+                  cell: ({ row }) => {
+                    const provider = row.original
+                    return (
+                      <div>
+                        <Badge variant={provider.builtin ? 'outline' : 'brand'} size="sm" className="whitespace-nowrap">
+                          {provider.builtin
+                            ? t('ai_assistant.models.provider.typeBuiltin', 'Built-in')
+                            : t('ai_assistant.models.provider.typeCustom', 'Custom')}
+                        </Badge>
+                      </div>
+                    )
+                  },
+                },
+                {
+                  id: 'column2',
+                  header: () => <>{t('ai_assistant.models.provider.column.credentials', 'Credentials')}</>,
+                  cell: ({ row }) => {
+                    const provider = row.original
+                    return (
+                      <div>
+                        <div className="flex items-center gap-2">
+                          {credentialBadge(provider)}
+                          <span className="font-mono text-xs text-muted-foreground">{provider.envKey ?? ''}</span>
+                        </div>
+                      </div>
+                    )
+                  },
+                },
+                {
+                  id: 'column3',
+                  header: () => <>{t('ai_assistant.models.provider.column.models', 'Models')}</>,
+                  cell: ({ row }) => {
+                    const provider = row.original
+                    return <div>{provider.modelCount}</div>
+                  },
+                },
+                {
+                  id: 'column4',
+                  header: () => <>{t('ai_assistant.models.provider.column.actions', 'Actions')}</>,
+                  cell: ({ row }) => {
+                    const provider = row.original
+                    return (
+                      <div>
+                        <div className="flex items-center justify-end gap-1">
+                          {provider.builtin ? (
+                            <Button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
-                              disabled={syncingProvider !== null}
-                              onClick={() => void handleRefreshModels(provider)}
-                              data-ai-provider-fetch-models={provider.id}
+                              variant="outline"
+                              size="sm"
+                              className="h-7 gap-1 px-2 text-xs"
+                              onClick={() => setEditor({ mode: 'credentials', row: provider })}
+                              data-ai-provider-configure={provider.id}
                             >
-                              {syncingProvider === provider.id ? (
-                                <Loader2 className="size-3.5 animate-spin" aria-hidden />
-                              ) : (
-                                <RefreshCw className="size-3.5" aria-hidden />
-                              )}
-                              {t('ai_assistant.models.provider.fetchModels', 'Fetch models')}
-                            </button>
-                          ) : null}
-                          {!provider.builtin ? (
-                            <button
+                              <KeyRound className="size-3.5" aria-hidden />
+                              {t('ai_assistant.models.provider.configure', 'Configure key')}
+                            </Button>
+                          ) : (
+                            <Button
                               type="button"
-                              className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
-                              onClick={() => setDeleteTarget(provider)}
+                              variant="outline"
+                              size="sm"
+                              className="h-7 gap-1 px-2 text-xs"
+                              onClick={() => setEditor({ mode: 'edit', row: provider })}
+                              data-ai-provider-edit={provider.id}
                             >
-                              <Trash2 className="size-3.5" aria-hidden />
-                              {t('ai_assistant.models.provider.delete', 'Delete')}
-                            </button>
-                          ) : null}
-                          {!provider.configured && provider.builtin ? (
-                            <p className="px-2 py-1.5 text-xs text-muted-foreground">
-                              {t('ai_assistant.models.provider.noActions', 'Configure a key first')}
-                            </p>
-                          ) : null}
-                        </PopoverContent>
-                      </Popover>
-                    </div>
-                  </div>}}]} />
-        </div>
-      )}
+                              <Pencil className="size-3.5" aria-hidden />
+                              {t('ai_assistant.models.provider.edit', 'Edit')}
+                            </Button>
+                          )}
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 w-7 p-0"
+                                aria-label={t('ai_assistant.models.action.more', 'More actions')}
+                                data-ai-provider-more={provider.id}
+                              >
+                                <MoreHorizontal className="size-4" aria-hidden />
+                              </Button>
+                            </PopoverTrigger>
+                            <PopoverContent align="end" className="w-40 p-1">
+                              {provider.configured ? (
+                                <button
+                                  type="button"
+                                  className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs hover:bg-muted disabled:opacity-50"
+                                  disabled={syncingProvider !== null}
+                                  onClick={() => void handleRefreshModels(provider)}
+                                  data-ai-provider-fetch-models={provider.id}
+                                >
+                                  {syncingProvider === provider.id ? (
+                                    <Loader2 className="size-3.5 animate-spin" aria-hidden />
+                                  ) : (
+                                    <RefreshCw className="size-3.5" aria-hidden />
+                                  )}
+                                  {t('ai_assistant.models.provider.fetchModels', 'Fetch models')}
+                                </button>
+                              ) : null}
+                              {!provider.builtin ? (
+                                <button
+                                  type="button"
+                                  className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-xs text-destructive hover:bg-muted"
+                                  onClick={() => setDeleteTarget(provider)}
+                                >
+                                  <Trash2 className="size-3.5" aria-hidden />
+                                  {t('ai_assistant.models.provider.delete', 'Delete')}
+                                </button>
+                              ) : null}
+                              {!provider.configured && provider.builtin ? (
+                                <p className="px-2 py-1.5 text-xs text-muted-foreground">
+                                  {t('ai_assistant.models.provider.noActions', 'Configure a key first')}
+                                </p>
+                              ) : null}
+                            </PopoverContent>
+                          </Popover>
+                        </div>
+                      </div>
+                    )
+                  },
+                },
+              ]} />
+            </div>
+          )}
 
-      <div className="border-t px-5 py-3 text-xs text-muted-foreground">
-        {t(
-          'ai_assistant.models.provider.footnote',
-          'Provider connections are instance-wide (shared by all tenants); the model catalog above stays tenant-scoped. Custom providers use the OpenAI-compatible protocol.',
-        )}
-      </div>
+          <div className="border-t px-5 py-3 text-xs text-muted-foreground">
+            {t(
+              'ai_assistant.models.provider.footnote',
+              'Provider connections are instance-wide (shared by all tenants); the model catalog above stays tenant-scoped. Custom providers use the OpenAI-compatible protocol.',
+            )}
+          </div>
         </>
       ) : null}
 
@@ -1609,13 +1716,13 @@ function ProviderDialog({ editor, onClose, onSaved, onError, runMutation }: Prov
             <DialogDescription>
               {isCredentials
                 ? t(
-                    'ai_assistant.models.provider.credentialsDescription',
-                    'The key is encrypted at rest and only used server-side. Saving takes effect immediately — no restart.',
-                  )
+                  'ai_assistant.models.provider.credentialsDescription',
+                  'The key is encrypted at rest and only used server-side. Saving takes effect immediately — no restart.',
+                )
                 : t(
-                    'ai_assistant.models.provider.descriptionField',
-                    'OpenAI-compatible endpoint. Examples: DeepSeek https://api.deepseek.com/v1, Ollama http://localhost:11434/v1.',
-                  )}
+                  'ai_assistant.models.provider.descriptionField',
+                  'OpenAI-compatible endpoint. Examples: DeepSeek https://api.deepseek.com/v1, Ollama http://localhost:11434/v1.',
+                )}
             </DialogDescription>
           </DialogHeader>
 

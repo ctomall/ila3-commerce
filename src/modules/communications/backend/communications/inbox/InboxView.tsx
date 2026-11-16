@@ -104,8 +104,8 @@ export async function InboxView({
   return (
     <Page>
       <PageBody>
-        <div className="flex inbox-viewport gap-4">
-          <aside className="flex w-96 shrink-0 flex-col rounded-lg border bg-card">
+        <div className="flex flex-col gap-4 md:inbox-viewport md:flex-row">
+          <aside className="flex w-full shrink-0 flex-col rounded-lg border bg-card md:w-96">
             <div className="flex items-start justify-between gap-2 border-b px-4 py-3">
               <div>
                 <h1 className="text-base font-semibold">全渠道收件箱</h1>
