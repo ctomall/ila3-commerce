@@ -36,6 +36,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { createLogger } from '@open-mercato/shared/lib/logger'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { bootstrap } from '@/bootstrap-api'
+import { beginAiAccess, logAiAccess, noteAiRunId, noteAiUserId, wrapAiAccess } from '@/lib/dsh/access-log'
 import { resolveRunTokenSecret, signRunToken } from '@/lib/dsh/tool-bridge/run-token'
 import type {
   DshEvent,
@@ -1250,6 +1251,7 @@ async function startPersistedRun(
   service: RunService,
   run: RunRecord,
 ): Promise<Response> {
+  noteAiRunId(req, run.id)
   const modelEnv = await resolveDshModelEnv()
   let runtime: DshRuntime
   try {
@@ -1431,6 +1433,7 @@ async function persistedChat(
     try {
       const replay = await service.replay(identity.userId, parsed.runId, cursor)
       if (!replay.resumable) return runInProgressResponse(replay.run)
+      noteAiRunId(req, replay.run.id)
       return replayResponse(replay.run, replay.events)
     } catch (error) {
       return replayErrorResponse(error)
@@ -1489,6 +1492,7 @@ async function persistedChat(
     }
     try {
       const replay = await service.replay(identity.userId, submitted.run.id, cursor)
+      noteAiRunId(req, replay.run.id)
       return replayResponse(replay.run, replay.events)
     } catch (error) {
       return replayErrorResponse(error)
@@ -1498,8 +1502,19 @@ async function persistedChat(
   return startPersistedRun(req, auth, parsed, service, submitted.run)
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
+  beginAiAccess(req, 'dsh-chat', '/api/ai_assistant/chat', req.headers.get('x-ai-access-id'))
+  try {
+    return wrapAiAccess(req, await handleChat(req))
+  } catch (error) {
+    logAiAccess(req, 500, 'throw')
+    throw error
+  }
+}
+
+async function handleChat(req: NextRequest) {
   const auth = await getAuthFromRequest(req)
+  noteAiUserId(req, auth?.sub)
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
@@ -1565,11 +1580,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'DSH runtime unavailable' }, { status: 503 })
   }
 
+  const runId = randomUUID()
+  noteAiRunId(req, runId)
+
   let handle: DshRunHandle
   try {
     handle = await startWithInitializeRetry(
       runtime,
-      buildRunInput(auth, parsed, req.signal, randomUUID(), undefined, modelEnv),
+      buildRunInput(auth, parsed, req.signal, runId, undefined, modelEnv),
     )
   } catch (error) {
     // Fail before opening the SSE stream so the browser gets a real HTTP error

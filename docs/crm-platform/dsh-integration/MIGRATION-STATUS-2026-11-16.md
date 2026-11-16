@@ -69,3 +69,28 @@ node scripts/crm-rollback.mjs --apply    # 换 symlink + 重启（实测 19.1s �
 - 新 release 复验：公开入口探针 `PASS`，run `a0626f27…` 落库并 `completed`；
   证据 `evidence/public-chat-path-2026-11-16T08-26-50-651Z.json`。
 - 外网：`/login` 200（2.7s）、`/start` 200（4.2s）；回滚点 `previous` 指向 `3f109755`。
+
+## 7. 观测与冷启动（2026-11-16 晚）
+
+2026-11-16T08:29:01Z 的一次 502 在 origin 侧没有任何痕迹（无 run、无子进程、无日志），说明请求在建 run 之前就断了。为此补了两件事：
+
+**a. AI 访问日志**（`src/lib/dsh/access-log.ts`，挂在两条内部路由上）
+
+每条 AI 请求一行 `ai.access`：
+
+| 字段 | 含义 |
+| --- | --- |
+| `route` / `path` | `dsh-chat`（`/api/ai_assistant/chat`）或 `agentic-chat`（`/api/ai_assistant/ai/chat`） |
+| `accessId` | 本次请求 id；agentic 会把它转发给 dsh-chat，两次 hop 可对上 |
+| `status` / `durationMs` | HTTP 状态与总耗时（SSE 记到流结束） |
+| `runId` | DSH run id（拿到后回填） |
+| `userId` | 调用者 |
+| `outcome` | `end` / `client_cancel` / `stream_error` / `json` / `throw` |
+
+关键点：客户端断开（Cloudflare 掐断、关标签页）现在记成 `client_cancel`，这正是之前 502 缺失的那一行。
+
+**b. 部署后预热**（`scripts/auto-deploy/warmup.mjs` + deploy 步骤 `ai-warmup`）
+
+切换完成后、carryover 之前，用运维账号登录并依次请求 `/api/ai_assistant/ai/agents`、`/api/ai_assistant/health`，把 AI 模块（约 90 个工具、700+ 条路由清单）的冷启动挪进部署过程，并记录每一步的毫秒数到部署 run 的 `aiWarmup` 字段。预热失败只记录、不回滚（`warmAiModule` 内部吞掉异常）。
+
+单测：`src/lib/dsh/__tests__/access-log.test.ts`（4 例）、`scripts/auto-deploy/warmup.test.mjs`（4 例）；`tsc --noEmit` 通过。

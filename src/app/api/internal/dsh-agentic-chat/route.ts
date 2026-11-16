@@ -14,6 +14,7 @@ import { NextResponse } from 'next/server'
 import { createHash, randomUUID } from 'node:crypto'
 import { rejectUnknownAgent } from './agent-guard'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
+import { aiAccessId, beginAiAccess, logAiAccess, noteAiUserId, wrapAiAccess } from '@/lib/dsh/access-log'
 
 type ChatBody = {
   messages?: Array<{ role?: string; content?: unknown }>
@@ -31,9 +32,21 @@ function promptFrom(body: ChatBody): string {
   return lines.join('\n\n').slice(0, 12_000)
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<Response> {
+  beginAiAccess(req, 'agentic-chat', '/api/ai_assistant/ai/chat')
+  try {
+    return wrapAiAccess(req, await handleAgenticChat(req))
+  } catch (error) {
+    logAiAccess(req, 500, 'throw')
+    throw error
+  }
+}
+
+async function handleAgenticChat(req: NextRequest) {
+  const accessId = aiAccessId(req)
   const auth = await getAuthFromRequest(req)
   if (!auth?.sub) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  noteAiUserId(req, auth.sub)
 
   const unknownAgent = await rejectUnknownAgent(req)
   if (unknownAgent) return unknownAgent
@@ -64,6 +77,8 @@ export async function POST(req: NextRequest) {
         'content-type': 'application/json',
         accept: 'text/event-stream',
         cookie: req.headers.get('cookie') ?? '',
+        // Join this hop with the DSH route's own access line.
+        ...(accessId ? { 'x-ai-access-id': accessId } : {}),
       },
       body: JSON.stringify({
         messages: [{ role: 'user', content: prompt }],

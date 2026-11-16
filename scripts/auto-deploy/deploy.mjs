@@ -21,6 +21,7 @@ import {checkRelease, checkRunning} from './health.mjs'
 import {preflightMigrations} from './migration-preflight.mjs'
 import {waitForDrain} from './worker-drain.mjs'
 import {carryoverQueues} from './queue-carryover.mjs'
+import {warmAiModule} from './warmup.mjs'
 
 const DEFAULT_SERVICE = process.env.ILA3_DEPLOY_SERVICE || 'ila3-auto-deploy-app.service'
 const PRODUCTION_PORT = 3000
@@ -636,6 +637,13 @@ async function main() {
       record.postSwitch = {ok: post.ok, checks: post.checks, waitedMs: post.waitedMs}
       if (!post.ok) throw refusal('post-switch-unhealthy', post)
     })
+
+    // Cold AI start belongs to the deploy, not to the first user turn: warm the
+    // assistant catalogue and health endpoints while nobody is waiting on them.
+    // warmAiModule never throws, so a failed warm-up is recorded, not fatal.
+    record.aiWarmup = await step('ai-warmup', async () =>
+      warmAiModule({base: `http://127.0.0.1:${args.targetPort}`}),
+    )
 
     // Gate 2b — carryover: the new release starts with an empty queue directory
     // (QUEUE_BASE_DIR is cwd-relative), so jobs drained-but-unfinished in the old
