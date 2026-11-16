@@ -19,6 +19,7 @@ import { Alert } from '@open-mercato/ui/primitives/alert'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { ErrorState } from '@/components/states/ErrorState'
 import { Button } from '@open-mercato/ui/primitives/button'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Input } from '@open-mercato/ui/primitives/input'
 import { Label } from '@open-mercato/ui/primitives/label'
 import {
@@ -289,7 +290,7 @@ export default function SystemUpdatePageClient() {
       </div>
 
       {offline ? (
-        <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="flex items-start gap-2 rounded-lg border border-status-warning-border bg-status-warning-bg p-3 text-sm text-status-warning-text">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             {t(
@@ -380,7 +381,7 @@ export default function SystemUpdatePageClient() {
       ) : null}
 
       {deployment && !deployment.stateDirExists ? (
-        <div className="flex items-start gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
+        <div className="flex items-start gap-2 rounded-lg border border-status-warning-border bg-status-warning-bg p-3 text-sm text-status-warning-text">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
             {t(
@@ -432,7 +433,7 @@ export default function SystemUpdatePageClient() {
                       : t('system_update.deploy.location.dev', '非发布槽位')}
                   </Badge>
                   <span
-                    className="max-w-[220px] truncate font-mono text-xs"
+                    className="max-w-56 truncate font-mono text-xs"
                     title={running.cwd ?? ''}
                   >
                     {running.kind === 'release' ? running.releaseDir ?? '—' : running.cwd ?? '—'}
@@ -456,7 +457,7 @@ export default function SystemUpdatePageClient() {
             </p>
           )}
           {running?.source === 'process.cwd' ? (
-            <p className="mt-3 text-xs text-amber-700">
+            <p className="mt-3 text-xs text-status-warning-text">
               {t(
                 'system_update.deploy.running.fallback',
                 '未能从 3000 端口进程解析运行目录，以上位置取自当前服务进程 cwd，可能不是生产发布槽位。',
@@ -488,7 +489,7 @@ export default function SystemUpdatePageClient() {
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-muted-foreground">{t('system_update.deploy.field.source', '来源')}</dt>
-                <dd className="max-w-[62%] truncate text-right font-mono text-xs" title={candidateSourceLabel()}>
+                <dd className="max-w-md truncate text-right font-mono text-xs" title={candidateSourceLabel()}>
                   {candidateSourceLabel()}
                 </dd>
               </div>
@@ -498,14 +499,14 @@ export default function SystemUpdatePageClient() {
               </div>
               <div className="flex justify-between gap-3">
                 <dt className="text-muted-foreground">{t('system_update.deploy.field.subject', '提交说明')}</dt>
-                <dd className="max-w-[62%] truncate text-right text-xs" title={candidate.subject ?? ''}>
+                <dd className="max-w-md truncate text-right text-xs" title={candidate.subject ?? ''}>
                   {candidate.subject ?? '—'}
                 </dd>
               </div>
               {candidate.ciGate ? (
                 <div className="flex justify-between gap-3">
                   <dt className="text-muted-foreground">{t('system_update.deploy.field.gate', '发布门禁')}</dt>
-                  <dd className="max-w-[62%] text-right text-xs">
+                  <dd className="max-w-md text-right text-xs">
                     <Badge
                       variant={
                         candidate.ciGate.allow === true
@@ -524,7 +525,7 @@ export default function SystemUpdatePageClient() {
                           : t('system_update.deploy.gate.unknown', '未知')}
                     </Badge>
                     {candidate.ciGate.reason ? (
-                      <div className="mt-1 truncate font-mono text-[11px] text-muted-foreground" title={candidate.ciGate.reason}>
+                      <div className="mt-1 truncate font-mono text-xs text-muted-foreground" title={candidate.ciGate.reason}>
                         {candidate.ciGate.reason}
                       </div>
                     ) : null}
@@ -538,7 +539,7 @@ export default function SystemUpdatePageClient() {
             </p>
           )}
           {candidate?.error ? (
-            <p className="mt-3 break-words text-xs text-amber-700">{candidate.error}</p>
+            <p className="mt-3 break-words text-xs text-status-warning-text">{candidate.error}</p>
           ) : null}
         </section>
       </div>
@@ -566,43 +567,13 @@ export default function SystemUpdatePageClient() {
         </div>
 
         {tableRuns.length ? (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] text-sm">
-              <thead>
-                <tr className="border-b text-left text-xs text-muted-foreground">
-                  <th className="whitespace-nowrap px-3 py-2 font-medium">{t('system_update.deploy.table.time', '时间')}</th>
-                  <th className="whitespace-nowrap px-3 py-2 font-medium">{t('system_update.deploy.table.result', '结果')}</th>
-                  <th className="whitespace-nowrap px-3 py-2 font-medium">{t('system_update.deploy.table.entry', '入口')}</th>
-                  <th className="whitespace-nowrap px-3 py-2 font-medium">{t('system_update.deploy.table.sha', 'SHA')}</th>
-                  <th className="px-3 py-2 font-medium">{t('system_update.deploy.table.reason', '失败原因')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {tableRuns.map((run) => (
-                  <tr key={run.runId} className="border-b align-top last:border-0">
-                    <td className="whitespace-nowrap px-3 py-2.5 font-mono text-xs">
-                      <div>{when(run.startedAt)}</div>
-                      {run.durationMs !== null ? (
-                        <div className="text-[11px] text-muted-foreground">{formatDuration(run.durationMs)}</div>
-                      ) : null}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5">
-                      <Badge variant={resultVariant(run.result)} size="sm" dot>
-                        {t(`system_update.deploy.result.${run.result}`, RESULT_LABEL[run.result])}
-                      </Badge>
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-2.5 text-xs">{entryLabel(run)}</td>
-                    <td className="whitespace-nowrap px-3 py-2.5 font-mono text-xs" title={run.sha ?? ''}>
-                      {run.shortSha ?? '—'}
-                    </td>
-                    <td className="max-w-[460px] break-words px-3 py-2.5 text-xs text-muted-foreground">
-                      {runReason(run)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <DataTable<DeploymentRun> entityId="system_update:deployment_run" extensionTableId="system_update.deployment_runs" data={tableRuns} sortable={false} columns={[
+            {id:'time',header:t('system_update.deploy.table.time','时间'),cell:({row})=><div className="font-mono text-xs">{when(row.original.startedAt)}{row.original.durationMs!==null?<div className="text-muted-foreground">{formatDuration(row.original.durationMs)}</div>:null}</div>},
+            {id:'result',header:t('system_update.deploy.table.result','结果'),cell:({row})=><Badge variant={resultVariant(row.original.result)} size="sm" dot>{t(`system_update.deploy.result.${row.original.result}`,RESULT_LABEL[row.original.result])}</Badge>},
+            {id:'entry',header:t('system_update.deploy.table.entry','入口'),cell:({row})=>entryLabel(row.original)},
+            {id:'sha',header:t('system_update.deploy.table.sha','SHA'),cell:({row})=><span title={row.original.sha??''} className="font-mono text-xs">{row.original.shortSha??'—'}</span>},
+            {id:'reason',header:t('system_update.deploy.table.reason','失败原因'),cell:({row})=><span className="max-w-lg break-words text-xs text-muted-foreground">{runReason(row.original)}</span>},
+          ]} />
         ) : (
           <p className="text-sm text-muted-foreground">
             {t('system_update.deploy.runs.empty', '无发布记录。')}
@@ -639,7 +610,7 @@ export default function SystemUpdatePageClient() {
               placeholder="origin/main"
               disabled={lockHeld || legacyRunning || busy}
             />
-            <p className="mt-1 text-[11px] text-muted-foreground">
+            <p className="mt-1 text-xs text-muted-foreground">
               {t(
                 'system_update.deploy.action.refHint',
                 '仅支持 main / origin/main 或完整 40 位 SHA；发布标签不再作为升级目标。',
@@ -661,7 +632,7 @@ export default function SystemUpdatePageClient() {
           </Button>
         </div>
         {submittedAt ? (
-          <div className="mt-3 flex items-start gap-2 rounded-md border border-emerald-300 bg-emerald-50 p-2.5 text-xs text-emerald-900">
+          <div className="mt-3 flex items-start gap-2 rounded-md border border-status-success-border bg-status-success-bg p-2.5 text-xs text-status-success-text">
             <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
             <span>
               {t('system_update.deploy.action.submitted', '已提交，进度见发布记录。')}
@@ -671,7 +642,7 @@ export default function SystemUpdatePageClient() {
           </div>
         ) : null}
         {!payload?.enabled ? (
-          <p className="mt-2 text-xs text-amber-700">
+          <p className="mt-2 text-xs text-status-warning-text">
             {t('system_update.disabled', 'Disabled: ENABLE_SELF_UPDATE is not true on the server.')}
           </p>
         ) : null}
@@ -702,7 +673,7 @@ export default function SystemUpdatePageClient() {
             </span>
           </div>
           {payload.stateDerived ? (
-            <p className="text-xs text-amber-700">
+            <p className="text-xs text-status-warning-text">
               {t(
                 'system_update.deploy.legacy.derived',
                 '记录为 running，但对应 unit 已不活跃，按失败展示；state.json 原记录未改写。',
@@ -727,7 +698,7 @@ export default function SystemUpdatePageClient() {
       ) : null}
 
       {deployment ? (
-        <div className="space-y-2 text-[11px] text-muted-foreground">
+        <div className="space-y-2 text-xs text-muted-foreground">
           <p>
             {t(
               'system_update.deploy.footer.source',

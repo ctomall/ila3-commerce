@@ -24,14 +24,14 @@ export function PrototypeShell({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-dashed border-[color:var(--border)] bg-[color:var(--muted)]/40 px-4 py-3">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-dashed border-border bg-muted/40 px-4 py-3">
         <Badge variant="outline" tone="warning">原型演示</Badge>
         <span className="text-sm text-muted-foreground">
           非生产数据 · 不落库 · 不发送 · 路由前缀 <code className="rounded bg-background px-1">/backend/prototype</code>
         </span>
       </div>
 
-      <nav className="flex flex-wrap items-center gap-1 border-b border-[color:var(--border)] pb-2" aria-label="原型页面">
+      <nav className="flex flex-wrap items-center gap-1 border-b border-border pb-2" aria-label="原型页面">
         {PAGES.map((page) => {
           const isActive = page.id === active
           return (
@@ -41,8 +41,8 @@ export function PrototypeShell({
               aria-current={isActive ? 'page' : undefined}
               className={
                 isActive
-                  ? 'rounded-md bg-[color:var(--foreground)] px-3 py-1.5 text-sm font-medium text-[color:var(--background)]'
-                  : 'rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-[color:var(--muted)] hover:text-[color:var(--foreground)]'
+                  ? 'rounded-md bg-foreground px-3 py-1.5 text-sm font-medium text-background'
+                  : 'rounded-md px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground'
               }
             >
               {page.label}
@@ -76,8 +76,8 @@ export function StateSwitcher({
           onClick={() => onChange(option.id)}
           className={
             option.id === value
-              ? 'rounded border border-[color:var(--foreground)] px-2 py-0.5 font-medium'
-              : 'rounded border border-[color:var(--border)] px-2 py-0.5 text-muted-foreground hover:text-[color:var(--foreground)]'
+              ? 'rounded border border-foreground px-2 py-0.5 font-medium'
+              : 'rounded border border-border px-2 py-0.5 text-muted-foreground hover:text-foreground'
           }
         >
           {option.label}
@@ -89,7 +89,7 @@ export function StateSwitcher({
 
 export function PrototypeNotice({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-lg border border-[color:var(--border)] bg-card px-5 py-8 text-center">
+    <div className="rounded-lg border border-border bg-card px-5 py-8 text-center">
       <p className="text-sm font-medium">{children}</p>
       <p className="mt-1 text-xs text-muted-foreground">原型里这是占位；生产实现必须给出可操作入口，而不是只留一句提示。</p>
     </div>

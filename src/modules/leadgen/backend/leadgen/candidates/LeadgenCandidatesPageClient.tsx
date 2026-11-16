@@ -1,9 +1,10 @@
 'use client'
 
 import * as React from 'react'
-import { Loader2, RefreshCw, ShieldCheck, ThumbsDown, ThumbsUp, Upload } from 'lucide-react'
+import { RefreshCw, ShieldCheck, ThumbsDown, ThumbsUp, Upload } from 'lucide-react'
 import { formatDateTime } from '@open-mercato/shared/lib/time'
 import { Alert } from '@open-mercato/ui/primitives/alert'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
 
@@ -166,48 +167,20 @@ export default function LeadgenCandidatesPageClient() {
       {error ? <Alert variant="destructive">{error}</Alert> : null}
       {notice ? <Alert>{notice}</Alert> : null}
 
-      {loading && items.length === 0 ? (
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Loader2 className="h-4 w-4 animate-spin" /> 加载中…
-        </div>
-      ) : items.length === 0 ? (
-        <Alert>没有符合条件的候选。</Alert>
-      ) : (
-        <div className="overflow-x-auto rounded-md border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left">
-              <tr>
-                <th className="px-3 py-2">公司</th>
-                <th className="px-3 py-2">联系人</th>
-                <th className="px-3 py-2">状态</th>
-                <th className="px-3 py-2">更新</th>
-                <th className="px-3 py-2">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((candidate) => (
-                <tr key={candidate.id} className="border-t align-top">
-                  <td className="px-3 py-2">
-                    <div className="font-medium">{candidate.companyName}</div>
-                    <div className="text-xs text-muted-foreground">{candidate.companyDomain ?? '无域名'}</div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <div>{candidate.contactName ?? '—'}</div>
-                    <div className="text-xs text-muted-foreground">{candidate.contactEmail ?? '—'}</div>
-                  </td>
-                  <td className="px-3 py-2">
-                    <Badge variant={candidate.status === 'crm_written' ? 'default' : 'secondary'}>
-                      {statusLabel(candidate.status)}
-                    </Badge>
-                    {candidate.crmEntityId ? (
-                      <div className="mt-1 text-xs text-muted-foreground">CRM {candidate.crmEntityId.slice(0, 8)}…</div>
-                    ) : null}
-                  </td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {candidate.updatedAt ? formatDateTime(candidate.updatedAt) : '—'}
-                  </td>
-                  <td className="px-3 py-2">
-                    <div className="flex flex-wrap gap-2">
+      <DataTable<Candidate>
+        entityId="leadgen:candidate"
+        extensionTableId="leadgen.candidates"
+        data={items}
+        isLoading={loading}
+        error={error}
+        sortable={false}
+        emptyState="没有符合条件的候选。"
+        columns={[
+          {id:'company',header:'公司',cell:({row})=><div><div className="font-medium">{row.original.companyName}</div><div className="text-xs text-muted-foreground">{row.original.companyDomain??'无域名'}</div></div>},
+          {id:'contact',header:'联系人',cell:({row})=><div>{row.original.contactName??'—'}<div className="text-xs text-muted-foreground">{row.original.contactEmail??'—'}</div></div>},
+          {id:'status',header:'状态',cell:({row})=><div><Badge variant={row.original.status==='crm_written'?'default':'secondary'}>{statusLabel(row.original.status)}</Badge>{row.original.crmEntityId?<div className="text-xs text-muted-foreground">CRM {row.original.crmEntityId.slice(0,8)}…</div>:null}</div>},
+          {id:'updated',header:'更新',cell:({row})=>row.original.updatedAt?formatDateTime(row.original.updatedAt):'—'},
+          {id:'actions',header:'操作',cell:({row})=>{const candidate=row.original;return (                    <div className="flex flex-wrap gap-2">
                       <Button
                         variant="outline"
                         size="sm"
@@ -239,14 +212,9 @@ export default function LeadgenCandidatesPageClient() {
                       >
                         <Upload className="h-4 w-4" /> 入库
                       </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                    </div>)}},
+        ]}
+      />
     </div>
   )
 }

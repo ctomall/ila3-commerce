@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@open-mercato/ui/primitives/card'
@@ -45,37 +46,9 @@ const TASK_STATE_OPTIONS = [
 function StateBanner({ state }: { state: string }) {
   if (state === 'ready') return null
   return (
-    <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--muted)]/50 px-4 py-3 text-sm">
+    <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm">
       {STATE_COPY[state] ?? state}
     </div>
-  )
-}
-
-function Th({ children, align, className }: { children: React.ReactNode; align?: 'right'; className?: string }) {
-  return (
-    <th
-      className={[
-        'border-b border-[color:var(--border)] px-3 py-2 text-xs font-medium text-muted-foreground',
-        align === 'right' ? 'text-right' : 'text-left',
-        className ?? '',
-      ].join(' ')}
-    >
-      {children}
-    </th>
-  )
-}
-
-function Td({ children, align, className }: { children: React.ReactNode; align?: 'right'; className?: string }) {
-  return (
-    <td
-      className={[
-        'border-b border-[color:var(--border)] px-3 py-2 text-sm',
-        align === 'right' ? 'text-right tabular-nums' : '',
-        className ?? '',
-      ].join(' ')}
-    >
-      {children}
-    </td>
   )
 }
 
@@ -117,18 +90,15 @@ function HomeSection() {
           </Button>
         </CardHeader>
         <CardContent className="p-0">
-          <table className="w-full">
-            <thead>
-              <tr>
-                <Th>任务</Th><Th>产品 · 市场</Th><Th>状态</Th><Th align="right">候选</Th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr><Td>德国储能渠道</Td><Td>户用储能 · 德国</Td><Td><Badge tone="info">调研中</Badge></Td><Td align="right">12</Td></tr>
-              <tr><Td>越南 LED 工程商</Td><Td>LED 面板灯 · 越南</Td><Td><Badge tone="warning">待审核</Badge></Td><Td align="right">6</Td></tr>
-              <tr><Td>中东 EPC 总包</Td><Td>光伏支架 · 阿联酋</Td><Td><Badge tone="neutral">排队</Badge></Td><Td align="right">0</Td></tr>
-            </tbody>
-          </table>
+          <DataTable entityId="crm_prototype:home_task" extensionTableId="crm_prototype.home_tasks" sortable={false} data={[
+            {id:'de',name:'德国储能渠道',market:'户用储能 · 德国',status:'调研中',count:12},
+            {id:'vn',name:'越南 LED 工程商',market:'LED 面板灯 · 越南',status:'待审核',count:6},
+            {id:'ae',name:'中东 EPC 总包',market:'光伏支架 · 阿联酋',status:'排队',count:0},
+          ]} columns={[
+            {accessorKey:'name',header:'任务'},{accessorKey:'market',header:'产品 · 市场'},
+            {id:'status',header:'状态',cell:({row})=><Badge tone={row.original.status==='待审核'?'warning':row.original.status==='排队'?'neutral':'info'}>{row.original.status}</Badge>},
+            {accessorKey:'count',header:'候选'},
+          ]} />
         </CardContent>
       </Card>
     </div>
@@ -160,31 +130,11 @@ function TasksSection() {
       ) : (
         <Card>
           <CardContent className="p-0">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <Th>任务</Th><Th>产品 · 市场</Th><Th>来源</Th><Th align="right">额度</Th>
-                  <Th align="right">候选</Th><Th>状态</Th><Th>操作</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map(([name, market, source, quota, candidates, status]) => (
-                  <tr key={name}>
-                    <Td>{name}</Td><Td>{market}</Td><Td className="text-muted-foreground">{source}</Td>
-                    <Td align="right">{quota}</Td><Td align="right">{candidates}</Td>
-                    <Td>
-                      <Badge
-                       
-                        tone={status === '已取消' ? 'neutral' : status === '待审核' ? 'warning' : status === '排队' ? 'neutral' : 'info'}
-                      >
-                        {status}
-                      </Badge>
-                    </Td>
-                    <Td><span className="text-xs text-muted-foreground">查看候选 · 取消</span></Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable entityId="crm_prototype:task" extensionTableId="crm_prototype.tasks" sortable={false} data={rows.map(([name,market,source,quota,candidates,status])=>({id:name,name,market,source,quota,candidates,status}))} columns={[
+              {accessorKey:'name',header:'任务'},{accessorKey:'market',header:'产品 · 市场'},{accessorKey:'source',header:'来源'},{accessorKey:'quota',header:'额度'},{accessorKey:'candidates',header:'候选'},
+              {id:'status',header:'状态',cell:({row})=><Badge tone={row.original.status==='待审核'?'warning':row.original.status==='调研中'?'info':'neutral'}>{row.original.status}</Badge>},
+              {id:'actions',header:'操作',cell:()=> <span className="text-xs text-muted-foreground">查看候选 · 取消</span>},
+            ]} />
           </CardContent>
         </Card>
       )}
@@ -212,36 +162,14 @@ function CandidatesSection() {
         {switcher}
       </div>
       <StateBanner state={state} />
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
+      <div className="grid gap-4 xl:grid-cols-3">
         <Card>
           <CardContent className="p-0">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <Th>公司</Th><Th>域名</Th><Th>联系人</Th><Th align="right">证据</Th><Th>验证</Th><Th>去重</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {CANDIDATES.map(([name, domain, contact, evidence, verdict, dedupe], index) => (
-                  <tr
-                    key={name}
-                    onClick={() => setSelected(index)}
-                    className={index === selected ? 'cursor-pointer bg-[color:var(--muted)]/60' : 'cursor-pointer'}
-                  >
-                    <Td>{name}</Td>
-                    <Td className="text-muted-foreground">{domain}</Td>
-                    <Td>{contact}</Td>
-                    <Td align="right">{evidence}</Td>
-                    <Td>
-                      <Badge tone={verdict === 'pass' ? 'success' : verdict === 'fail' ? 'error' : 'warning'}>
-                        {verdict === 'pass' ? '通过' : verdict === 'fail' ? '不通过' : '需复核'}
-                      </Badge>
-                    </Td>
-                    <Td className="text-muted-foreground">{dedupe}</Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable entityId="crm_prototype:candidate" extensionTableId="crm_prototype.candidates" sortable={false} data={CANDIDATES.map(([name,domain,contact,evidence,verdict,dedupe],index)=>({id:String(index),name,domain,contact,evidence,verdict,dedupe,index}))} onRowClick={candidate=>setSelected(candidate.index)} columns={[
+              {accessorKey:'name',header:'公司'},{accessorKey:'domain',header:'域名'},{accessorKey:'contact',header:'联系人'},{accessorKey:'evidence',header:'证据'},
+              {id:'verdict',header:'验证',cell:({row})=><Badge tone={row.original.verdict==='pass'?'success':row.original.verdict==='fail'?'error':'warning'}>{row.original.verdict==='pass'?'通过':row.original.verdict==='fail'?'不通过':'需复核'}</Badge>},
+              {accessorKey:'dedupe',header:'去重'},
+            ]} />
           </CardContent>
         </Card>
 
@@ -298,22 +226,10 @@ function AccountsSection() {
       ) : (
         <Card>
           <CardContent className="p-0">
-            <table className="w-full">
-              <thead>
-                <tr>
-                  <Th>公司</Th><Th>归属</Th><Th>阶段</Th><Th>最后触达</Th><Th>可触达</Th>
-                </tr>
-              </thead>
-              <tbody>
-                {ACCOUNTS.map(([name, owner, stage, last, reachable]) => (
-                  <tr key={name}>
-                    <Td>{name}</Td><Td>{owner}</Td><Td>{stage}</Td>
-                    <Td className="text-muted-foreground">{last}</Td>
-                    <Td>{reachable === '有邮箱' ? <Badge tone="success">有邮箱</Badge> : <Badge tone="neutral">无邮箱</Badge>}</Td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <DataTable entityId="crm_prototype:account" extensionTableId="crm_prototype.accounts" sortable={false} data={ACCOUNTS.map(([name,owner,stage,last,reachable])=>({id:name,name,owner,stage,last,reachable}))} columns={[
+              {accessorKey:'name',header:'公司'},{accessorKey:'owner',header:'归属'},{accessorKey:'stage',header:'阶段'},{accessorKey:'last',header:'最后触达'},
+              {id:'reachable',header:'可触达',cell:({row})=><Badge tone={row.original.reachable==='有邮箱'?'success':'neutral'}>{row.original.reachable}</Badge>},
+            ]} />
           </CardContent>
         </Card>
       )}
@@ -396,19 +312,19 @@ function DraftsSection() {
         <StateSwitcher value={state} onChange={setState} options={options} />
       </div>
       {copy[state] ? (
-        <div className="rounded-lg border border-[color:var(--border)] bg-[color:var(--muted)]/50 px-4 py-3 text-sm">{copy[state]}</div>
+        <div className="rounded-lg border border-border bg-muted/50 px-4 py-3 text-sm">{copy[state]}</div>
       ) : null}
-      <div className="grid gap-4 xl:grid-cols-[320px_minmax(0,1fr)]">
+      <div className="grid gap-4 xl:grid-cols-3">
         <Card className="h-fit">
           <CardContent className="p-0">
-            <table className="w-full">
-              <thead><tr><Th>收件人</Th><Th>状态</Th></tr></thead>
-              <tbody>
-                <tr className="bg-[color:var(--muted)]/60"><Td>marta@nordwind-energie.de</Td><Td><Badge tone="warning">待审批</Badge></Td></tr>
-                <tr><Td>omar@gulf-epc.ae</Td><Td><Badge tone="success">已发送</Badge></Td></tr>
-                <tr><Td>an@sunpeaksolar.vn</Td><Td><Badge tone="neutral">已失效</Badge></Td></tr>
-              </tbody>
-            </table>
+            <DataTable entityId="crm_prototype:draft" extensionTableId="crm_prototype.drafts" sortable={false} data={[
+              {id:'1',recipient:'marta@nordwind-energie.de',status:'待审批'},
+              {id:'2',recipient:'omar@gulf-epc.ae',status:'已发送'},
+              {id:'3',recipient:'an@sunpeaksolar.vn',status:'已失效'},
+            ]} columns={[
+              {accessorKey:'recipient',header:'收件人'},
+              {id:'status',header:'状态',cell:({row})=><Badge tone={row.original.status==='待审批'?'warning':row.original.status==='已发送'?'success':'neutral'}>{row.original.status}</Badge>},
+            ]} />
           </CardContent>
         </Card>
 
@@ -421,8 +337,8 @@ function DraftsSection() {
               收件人 marta@nordwind-energie.de · 模板 v3 · 正文 hash 7f3c…a1 · 由 王倩 发起
             </p>
             <p>您好 Marta，我们提供 3–6kW 户用储能逆变器，交期 25 天，支持德语说明书。若贵司 2027 年有采购计划，我可以先寄样机。</p>
-            <div className="rounded-md border border-[color:var(--border)] bg-[color:var(--muted)]/40 px-3 py-2 text-xs">
-              审批门：批准时绑定正文 hash。<strong className="font-medium text-[color:var(--foreground)]">正文 / 收件人 / 附件任一变化 → 审批失效，必须重批。</strong>
+            <div className="rounded-md border border-border bg-muted/40 px-3 py-2 text-xs">
+              审批门：批准时绑定正文 hash。<strong className="font-medium text-foreground">正文 / 收件人 / 附件任一变化 → 审批失效，必须重批。</strong>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button size="sm" disabled title="原型：不发送">批准</Button>

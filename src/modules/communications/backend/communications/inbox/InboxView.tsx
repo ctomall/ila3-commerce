@@ -104,8 +104,8 @@ export async function InboxView({
   return (
     <Page>
       <PageBody>
-        <div className="flex h-[calc(100vh-9rem)] min-h-[560px] gap-4">
-          <aside className="flex w-[400px] shrink-0 flex-col rounded-lg border bg-card">
+        <div className="flex inbox-viewport gap-4">
+          <aside className="flex w-96 shrink-0 flex-col rounded-lg border bg-card">
             <div className="flex items-start justify-between gap-2 border-b px-4 py-3">
               <div>
                 <h1 className="text-base font-semibold">全渠道收件箱</h1>
@@ -136,7 +136,7 @@ export async function InboxView({
                 </li>
               ))}
               {listError !== null ? (
-                <li className="p-4 text-sm text-red-700 dark:text-red-300">{loadErrorMessage(listError, 'list')}</li>
+                <li className="p-4 text-sm text-status-error-text">{loadErrorMessage(listError, 'list')}</li>
               ) : threads.length === 0 ? (
                 <li className="p-4 text-sm text-muted-foreground">没有可访问的会话。</li>
               ) : null}
@@ -151,7 +151,7 @@ export async function InboxView({
               />
             ) : null}
             {detailError !== null ? (
-              <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-red-700 dark:text-red-300">
+              <div className="flex flex-1 items-center justify-center p-6 text-center text-sm text-status-error-text">
                 {loadErrorMessage(detailError, 'detail')}
               </div>
             ) : !detail ? (
@@ -188,7 +188,7 @@ export async function InboxView({
                   {detail.items.map((item) => (
                     <article
                       key={item.id}
-                      className={`max-w-[85%] rounded-lg border p-3 ${item.direction === 'inbound' ? 'bg-muted/40' : 'ml-auto bg-primary/5'}`}
+                      className={`message-bubble rounded-lg border p-3 ${item.direction === 'inbound' ? 'bg-muted/40' : 'ml-auto bg-primary/5'}`}
                     >
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                         <span className="font-medium text-foreground">
@@ -209,7 +209,7 @@ export async function InboxView({
                       ) : null}
                       <p className="mt-1 break-all text-xs text-muted-foreground">平台消息号：{item.externalMessageId}</p>
                       {item.media ? (
-                        <p className="mt-1 text-xs text-amber-700 dark:text-amber-300">
+                        <p className="mt-1 text-xs text-status-warning-text">
                           {describeMedia(item.media)}
                           {mediaHref(item.media) ? (
                             <>

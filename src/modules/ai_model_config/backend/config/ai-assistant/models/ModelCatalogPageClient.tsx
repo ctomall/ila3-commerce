@@ -24,6 +24,7 @@ import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { apiCall } from '@open-mercato/ui/backend/utils/apiCall'
 import { flash } from '@open-mercato/ui/backend/FlashMessages'
 import { useGuardedMutation } from '@open-mercato/ui/backend/injection/useGuardedMutation'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
 import { Checkbox } from '@open-mercato/ui/primitives/checkbox'
@@ -495,7 +496,7 @@ export default function ModelCatalogPageClient() {
                 }}
                 disabled={savingDefault}
               >
-                <SelectTrigger className="w-[190px]" data-ai-models-default-provider="">
+                <SelectTrigger className="w-48" data-ai-models-default-provider="">
                   <SelectValue placeholder={t('ai_assistant.models.default.selectProvider', 'Select provider')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -504,7 +505,7 @@ export default function ModelCatalogPageClient() {
                       <span className="flex items-center gap-2">
                         {provider.name}
                         {!provider.configured ? (
-                          <span className="text-[10px] text-muted-foreground">
+                          <span className="text-xs text-muted-foreground">
                             {t('ai_assistant.models.notConfigured', 'no credentials')}
                           </span>
                         ) : null}
@@ -523,7 +524,7 @@ export default function ModelCatalogPageClient() {
                 onValueChange={setDefaultModelId}
                 disabled={savingDefault || !defaultProviderId}
               >
-                <SelectTrigger className="w-[240px]" data-ai-models-default-model="">
+                <SelectTrigger className="w-60" data-ai-models-default-model="">
                   <SelectValue placeholder={t('ai_assistant.models.default.selectModel', 'Select model')} />
                 </SelectTrigger>
                 <SelectContent>
@@ -558,7 +559,7 @@ export default function ModelCatalogPageClient() {
           </div>
         </div>
         {defaultProviderId && !providerById.get(defaultProviderId)?.configured ? (
-          <p className="mt-3 flex items-center gap-1.5 rounded-md border border-status-warning-border bg-status-warning-bg/60 px-3 py-1.5 text-[11px] text-status-warning-text">
+          <p className="mt-3 flex items-center gap-1.5 rounded-md border border-status-warning-border bg-status-warning-bg/60 px-3 py-1.5 text-xs text-status-warning-text">
             <AlertTriangle className="size-3.5 shrink-0" aria-hidden />
             {t(
               'ai_assistant.models.default.unconfiguredWarning',
@@ -594,12 +595,12 @@ export default function ModelCatalogPageClient() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={t('ai_assistant.models.searchPlaceholder', 'Search models…')}
-                className="h-8 w-[210px] pl-8 text-xs"
+                className="h-8 w-52 pl-8 text-xs"
                 aria-label={t('ai_assistant.models.searchAria', 'Search models')}
               />
             </div>
             <Select value={providerFilter} onValueChange={setProviderFilter}>
-              <SelectTrigger className="h-8 w-[170px] text-xs" data-ai-models-provider-filter="">
+              <SelectTrigger className="h-8 w-44 text-xs" data-ai-models-provider-filter="">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -662,33 +663,13 @@ export default function ModelCatalogPageClient() {
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[860px] text-sm">
-              <thead>
-                <tr className="border-b text-left text-xs text-muted-foreground">
-                  <th className="whitespace-nowrap px-5 py-2.5 font-medium">{t('ai_assistant.models.column.model', 'Model')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('ai_assistant.models.column.provider', 'Provider')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('ai_assistant.models.column.context', 'Context')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('ai_assistant.models.column.tags', 'Tags')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('ai_assistant.models.column.status', 'Status')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('ai_assistant.models.column.source', 'Source')}</th>
-                  <th className="sticky right-0 z-10 whitespace-nowrap bg-card px-5 py-2.5 text-right font-medium shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">{t('ai_assistant.models.column.actions', 'Actions')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredModels.map((model) => {
-                  const isDefault = model.enabled
+            <DataTable<MergedModel> entityId="ai_model_config:model" extensionTableId="ai_model_config.models" data={filteredModels} sortable={false} columns={[{id:'column0',header:()=> <>{t('ai_assistant.models.column.model', 'Model')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
                     && currentDefault?.providerId === model.providerId
                     && currentDefault.modelId === model.modelId
                   const rowKey = `${model.providerId}:${model.modelId}`
                   const isBusy = busyRow === rowKey
                   const provider = providerById.get(model.providerId)
-                  return (
-                    <tr
-                      key={rowKey}
-                      className="border-b last:border-0 hover:bg-muted/30"
-                      data-ai-models-row={rowKey}
-                    >
-                      <td className="px-5 py-3">
+                  return <div data-ai-models-row={rowKey}>
                         <div className="flex flex-col">
                           <span className="flex items-center gap-1.5 font-medium">
                             {model.name}
@@ -701,12 +682,17 @@ export default function ModelCatalogPageClient() {
                           </span>
                           <span className="font-mono text-xs text-muted-foreground">{model.modelId}</span>
                         </div>
-                      </td>
-                      <td className="px-3 py-3">
+                      </div>}},{id:'column1',header:()=> <>{t('ai_assistant.models.column.provider', 'Provider')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>
                         <div className="flex flex-col">
                           <span className="whitespace-nowrap">{provider?.name ?? model.providerId}</span>
                           <span
-                            className={`flex items-center gap-1 font-mono text-[10px] ${
+                            className={`flex items-center gap-1 font-mono text-xs ${
                               provider?.configured ? 'text-muted-foreground' : 'text-status-warning-text'
                             }`}
                             title={
@@ -719,9 +705,19 @@ export default function ModelCatalogPageClient() {
                             {provider?.envKey ?? t('ai_assistant.models.notConfigured', 'no credentials')}
                           </span>
                         </div>
-                      </td>
-                      <td className="px-3 py-3 text-xs">{formatContext(model.contextWindow)}</td>
-                      <td className="px-3 py-3">
+                      </div>}},{id:'column2',header:()=> <>{t('ai_assistant.models.column.context', 'Context')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>{formatContext(model.contextWindow)}</div>}},{id:'column3',header:()=> <>{t('ai_assistant.models.column.tags', 'Tags')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>
                         <div className="flex flex-wrap gap-1">
                           {model.tags.length === 0 ? (
                             <span className="text-xs text-muted-foreground">—</span>
@@ -733,15 +729,25 @@ export default function ModelCatalogPageClient() {
                             ))
                           )}
                         </div>
-                      </td>
-                      <td className="px-3 py-3">
+                      </div>}},{id:'column4',header:()=> <>{t('ai_assistant.models.column.status', 'Status')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>
                         <Badge variant={model.enabled ? 'success' : 'neutral'} size="sm" dot className="whitespace-nowrap">
                           {model.enabled
                             ? t('ai_assistant.models.status.enabled', 'Enabled')
                             : t('ai_assistant.models.status.disabled', 'Disabled')}
                         </Badge>
-                      </td>
-                      <td className="px-3 py-3">
+                      </div>}},{id:'column5',header:()=> <>{t('ai_assistant.models.column.source', 'Source')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>
                         <Badge variant={model.builtin ? 'outline' : 'info'} size="sm" className="whitespace-nowrap">
                           {model.overridden
                             ? t('ai_assistant.models.source.overridden', 'Built-in · edited')
@@ -749,8 +755,13 @@ export default function ModelCatalogPageClient() {
                               ? t('ai_assistant.models.source.builtin', 'Built-in')
                               : t('ai_assistant.models.source.custom', 'Custom')}
                         </Badge>
-                      </td>
-                      <td className="sticky right-0 z-10 bg-card px-5 py-3 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
+                      </div>}},{id:'column6',header:()=> <>{t('ai_assistant.models.column.actions', 'Actions')}</>,cell:({row})=>{const model=row.original;const isDefault = model.enabled
+                    && currentDefault?.providerId === model.providerId
+                    && currentDefault.modelId === model.modelId
+                  const rowKey = `${model.providerId}:${model.modelId}`
+                  const isBusy = busyRow === rowKey
+                  const provider = providerById.get(model.providerId)
+                  return <div>
                         <div className="flex items-center justify-end gap-1">
                           <Button
                             type="button"
@@ -820,12 +831,7 @@ export default function ModelCatalogPageClient() {
                             </PopoverContent>
                           </Popover>
                         </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
+                      </div>}}]} />
           </div>
         )}
       </div>
@@ -1034,7 +1040,7 @@ function ModelEditorDialog({ editor, providers, onClose, onSaved, onError, runMu
                 data-ai-models-editor-id=""
               />
               {isBuiltinRow ? (
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {t(
                     'ai_assistant.models.editor.builtinHint',
                     'This is a built-in model. Your changes are stored as an override and can be reverted with Restore.',
@@ -1093,7 +1099,7 @@ function ModelEditorDialog({ editor, providers, onClose, onSaved, onError, runMu
             <div className="flex items-center justify-between rounded-md border bg-muted/20 px-3 py-2">
               <div>
                 <p className="text-xs font-medium">{t('ai_assistant.models.editor.enabled', 'Enabled')}</p>
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {t('ai_assistant.models.editor.enabledHint', 'Disabled models are hidden from the assistant picker.')}
                 </p>
               </div>
@@ -1225,7 +1231,7 @@ function ProviderSection({ providers, loading, onChanged, onError }: ProviderSec
               'Store provider API keys here — saved instantly, no restart. Keys are encrypted at rest and never shown again. A key saved here takes precedence over the matching environment variable.',
             )}
           </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
+          <p className="mt-1 text-xs text-muted-foreground">
             {t('ai_assistant.models.provider.summary', '{{configured}} / {{total}} providers have credentials')
               .replace('{{configured}}', String(configuredCount))
               .replace('{{total}}', String(providers.length))}
@@ -1233,7 +1239,7 @@ function ProviderSection({ providers, loading, onChanged, onError }: ProviderSec
         </div>
         <div className="flex items-center gap-2">
           <Select value={providerFilter} onValueChange={(value) => setProviderFilter(value as 'all' | 'configured' | 'unconfigured')}>
-            <SelectTrigger className="h-8 w-[120px]" data-ai-providers-filter="">
+            <SelectTrigger className="h-8 w-32" data-ai-providers-filter="">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1289,56 +1295,35 @@ function ProviderSection({ providers, loading, onChanged, onError }: ProviderSec
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[820px] text-sm">
-            <thead>
-              <tr className="border-b text-left text-xs text-muted-foreground">
-                <th className="whitespace-nowrap px-5 py-2.5 font-medium">
+          <DataTable<ProviderRow> entityId="ai_model_config:provider" extensionTableId="ai_model_config.providers" data={visibleProviders} sortable={false} columns={[{id:'column0',header:()=> <>
                   {t('ai_assistant.models.provider.column.provider', 'Provider')}
-                </th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">
-                  {t('ai_assistant.models.provider.column.type', 'Type')}
-                </th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">
-                  {t('ai_assistant.models.provider.column.credentials', 'Credentials')}
-                </th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">
-                  {t('ai_assistant.models.provider.column.models', 'Models')}
-                </th>
-                <th className="sticky right-0 z-10 whitespace-nowrap bg-card px-5 py-2.5 text-right font-medium shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
-                  {t('ai_assistant.models.provider.column.actions', 'Actions')}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {visibleProviders.map((provider) => (
-                <tr
-                  key={provider.id}
-                  className="border-b last:border-0 hover:bg-muted/30"
-                  data-ai-provider-row={provider.id}
-                >
-                  <td className="px-5 py-2.5">
+                </>,cell:({row})=>{const provider=row.original;return <div data-ai-provider-row={provider.id}>
                     <div className="flex flex-col">
                       <span className="whitespace-nowrap font-medium">{provider.name}</span>
-                      <span className="font-mono text-[10px] text-muted-foreground">
+                      <span className="font-mono text-xs text-muted-foreground">
                         {provider.baseURL ?? provider.envKey ?? provider.id}
                       </span>
                     </div>
-                  </td>
-                  <td className="px-3 py-2.5">
+                  </div>}},{id:'column1',header:()=> <>
+                  {t('ai_assistant.models.provider.column.type', 'Type')}
+                </>,cell:({row})=>{const provider=row.original;return <div>
                     <Badge variant={provider.builtin ? 'outline' : 'brand'} size="sm" className="whitespace-nowrap">
                       {provider.builtin
                         ? t('ai_assistant.models.provider.typeBuiltin', 'Built-in')
                         : t('ai_assistant.models.provider.typeCustom', 'Custom')}
                     </Badge>
-                  </td>
-                  <td className="px-3 py-2.5">
+                  </div>}},{id:'column2',header:()=> <>
+                  {t('ai_assistant.models.provider.column.credentials', 'Credentials')}
+                </>,cell:({row})=>{const provider=row.original;return <div>
                     <div className="flex items-center gap-2">
                       {credentialBadge(provider)}
-                      <span className="font-mono text-[10px] text-muted-foreground">{provider.envKey ?? ''}</span>
+                      <span className="font-mono text-xs text-muted-foreground">{provider.envKey ?? ''}</span>
                     </div>
-                  </td>
-                  <td className="px-3 py-2.5 text-xs">{provider.modelCount}</td>
-                  <td className="sticky right-0 z-10 bg-card px-5 py-2.5 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.12)]">
+                  </div>}},{id:'column3',header:()=> <>
+                  {t('ai_assistant.models.provider.column.models', 'Models')}
+                </>,cell:({row})=>{const provider=row.original;return <div>{provider.modelCount}</div>}},{id:'column4',header:()=> <>
+                  {t('ai_assistant.models.provider.column.actions', 'Actions')}
+                </>,cell:({row})=>{const provider=row.original;return <div>
                     <div className="flex items-center justify-end gap-1">
                       {provider.builtin ? (
                         <Button
@@ -1406,22 +1391,18 @@ function ProviderSection({ providers, loading, onChanged, onError }: ProviderSec
                             </button>
                           ) : null}
                           {!provider.configured && provider.builtin ? (
-                            <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                            <p className="px-2 py-1.5 text-xs text-muted-foreground">
                               {t('ai_assistant.models.provider.noActions', 'Configure a key first')}
                             </p>
                           ) : null}
                         </PopoverContent>
                       </Popover>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>}}]} />
         </div>
       )}
 
-      <div className="border-t px-5 py-3 text-[11px] text-muted-foreground">
+      <div className="border-t px-5 py-3 text-xs text-muted-foreground">
         {t(
           'ai_assistant.models.provider.footnote',
           'Provider connections are instance-wide (shared by all tenants); the model catalog above stays tenant-scoped. Custom providers use the OpenAI-compatible protocol.',
@@ -1665,7 +1646,7 @@ function ProviderDialog({ editor, onClose, onSaved, onError, runMutation }: Prov
                     autoComplete="off"
                     data-ai-provider-id=""
                   />
-                  <p className="text-[11px] text-muted-foreground">
+                  <p className="text-xs text-muted-foreground">
                     {t('ai_assistant.models.provider.idHint', 'Lowercase letters, digits and dashes. Cannot be changed later.')}
                   </p>
                 </div>
@@ -1673,7 +1654,7 @@ function ProviderDialog({ editor, onClose, onSaved, onError, runMutation }: Prov
             ) : (
               <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs">
                 <span className="font-medium">{editing?.name}</span>
-                <span className="ml-2 font-mono text-[11px] text-muted-foreground">{editing?.id}</span>
+                <span className="ml-2 font-mono text-xs text-muted-foreground">{editing?.id}</span>
               </div>
             )}
 
@@ -1722,7 +1703,7 @@ function ProviderDialog({ editor, onClose, onSaved, onError, runMutation }: Prov
                 autoComplete="new-password"
                 data-ai-provider-api-key=""
               />
-              <p className="text-[11px] text-muted-foreground">
+              <p className="text-xs text-muted-foreground">
                 {t(
                   'ai_assistant.models.provider.apiKeyHint',
                   'Encrypted with AES-256-GCM. The plaintext value is never returned by the API.',
@@ -1743,7 +1724,7 @@ function ProviderDialog({ editor, onClose, onSaved, onError, runMutation }: Prov
                   disabled={saving}
                   data-ai-provider-default-model=""
                 />
-                <p className="text-[11px] text-muted-foreground">
+                <p className="text-xs text-muted-foreground">
                   {t('ai_assistant.models.provider.defaultModelHint', 'Adds this model to the catalog automatically.')}
                 </p>
               </div>

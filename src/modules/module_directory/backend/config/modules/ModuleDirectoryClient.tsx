@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@open-mercato/ui/primitives/dialog'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Input } from '@open-mercato/ui/primitives/input'
 
 export type ModuleDirectoryPageEntry = {
@@ -142,113 +143,30 @@ export default function ModuleDirectoryClient({ modules }: { modules: ModuleDire
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={t('modules.directory.search', 'Search modules…')}
-                className="h-8 w-[240px] pl-8 text-xs"
+                className="h-8 w-60 pl-8 text-xs"
                 aria-label={t('modules.directory.search', 'Search modules…')}
               />
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[880px] text-sm">
-            <thead>
-              <tr className="border-b text-left text-xs text-muted-foreground">
-                <th className="whitespace-nowrap px-5 py-2.5 font-medium">{t('modules.directory.column.module', 'Module')}</th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('modules.directory.column.version', 'Version')}</th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('modules.directory.column.description', 'Description')}</th>
-                <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('modules.directory.column.pages', 'Pages')}</th>
-                <th className="whitespace-nowrap px-5 py-2.5 text-right font-medium">{t('modules.directory.column.actions', 'Actions')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((module) => (
-                <tr key={module.id} className="border-b last:border-0 hover:bg-muted/30" data-module-row={module.id}>
-                  <td className="px-5 py-3">
-                    <div className="flex flex-col gap-0.5">
-                      <span className="font-medium">
-                        {t(`modules.directory.module.${module.id}.title`, module.title)}
-                      </span>
-                      <span className="font-mono text-[10px] text-muted-foreground">{module.id}</span>
-                    </div>
-                  </td>
-                  <td className="px-3 py-3">
-                    <Badge variant="outline" size="sm" className="whitespace-nowrap">
-                      {module.version || '—'}
-                    </Badge>
-                  </td>
-                  <td className="max-w-[420px] px-3 py-3">
-                    <p className="line-clamp-2 text-xs text-muted-foreground">
-                      {t(`modules.directory.module.${module.id}.desc`, module.description)
-                        || t('modules.directory.noDescription', 'No description')}
-                    </p>
-                    {module.author ? (
-                      <p className="mt-0.5 text-[10px] text-muted-foreground/70">
-                        {AUTHOR_LABELS[module.author] ?? module.author}
-                      </p>
-                    ) : null}
-                  </td>
-                  <td className="px-3 py-3">
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <span>{module.pageCount}</span>
-                      {module.configCount > 0 ? (
-                        <Badge variant="info" size="sm" className="whitespace-nowrap">
-                          {t('modules.directory.configPages', '{{count}} settings').replace('{{count}}', String(module.configCount))}
-                        </Badge>
-                      ) : null}
-                    </div>
-                  </td>
-                  <td className="px-5 py-3">
-                    <div className="flex items-center justify-end gap-3">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 gap-1 px-2 text-xs"
-                        onClick={() => setDetail(module)}
-                        data-module-detail={module.id}
-                      >
-                        <Info className="size-3.5" aria-hidden />
-                        {t('modules.directory.detail', 'Details')}
-                      </Button>
-                      {module.configPath ? (
-                        <Link
-                          href={module.configPath}
-                          className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                          data-module-config={module.id}
-                        >
-                          <Settings2 className="size-3.5" aria-hidden />
-                          {t('modules.directory.configure', 'Settings')}
-                        </Link>
-                      ) : null}
-                      {module.openPath ? (
-                        <Link
-                          href={module.openPath}
-                          className="inline-flex items-center gap-1 text-xs text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
-                          data-module-open={module.id}
-                        >
-                          <ExternalLink className="size-3.5" aria-hidden />
-                          {t('modules.directory.open', 'Open')}
-                        </Link>
-                      ) : (
-                        <span className="text-xs text-muted-foreground/60">—</span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {filtered.length === 0 ? (
-          <EmptyState
-            title={t('modules.directory.empty', 'No modules match the search.')}
-            description={t('modules.directory.emptyHint', '调整搜索关键词或筛选条件后重试。')}
-          />
-        ) : null}
+        <DataTable<ModuleDirectoryRow>
+          entityId="module_directory:module"
+          extensionTableId="module_directory.modules"
+          data={filtered}
+          sortable={false}
+          emptyState={<EmptyState title={t('modules.directory.empty','No modules match the search.')} description={t('modules.directory.emptyHint','调整搜索关键词或筛选条件后重试。')} />}
+          columns={[
+            {id:'module',header:t('modules.directory.column.module','Module'),cell:({row})=><div data-module-row={row.original.id}><span className="font-medium">{t(`modules.directory.module.${row.original.id}.title`,row.original.title)}</span><p className="font-mono text-xs text-muted-foreground">{row.original.id}</p></div>},
+            {id:'version',header:t('modules.directory.column.version','Version'),cell:({row})=><Badge variant="outline" size="sm">{row.original.version||'—'}</Badge>},
+            {id:'description',header:t('modules.directory.column.description','Description'),cell:({row})=><div className="max-w-md"><p className="line-clamp-2 text-xs text-muted-foreground">{t(`modules.directory.module.${row.original.id}.desc`,row.original.description)||t('modules.directory.noDescription','No description')}</p>{row.original.author?<p className="text-xs text-muted-foreground">{AUTHOR_LABELS[row.original.author]??row.original.author}</p>:null}</div>},
+            {id:'pages',header:t('modules.directory.column.pages','Pages'),cell:({row})=><div className="flex items-center gap-2"><span>{row.original.pageCount}</span>{row.original.configCount>0?<Badge variant="info" size="sm">{t('modules.directory.configPages','{{count}} settings').replace('{{count}}',String(row.original.configCount))}</Badge>:null}</div>},
+            {id:'actions',header:t('modules.directory.column.actions','Actions'),cell:({row})=>{const entry=row.original;return <div className="flex items-center gap-3"><Button type="button" variant="ghost" size="sm" onClick={()=>setDetail(entry)} data-module-detail={entry.id}><Info className="size-3.5" aria-hidden />{t('modules.directory.detail','Details')}</Button>{entry.configPath?<Link href={entry.configPath} data-module-config={entry.id}><Settings2 className="size-3.5" aria-hidden />{t('modules.directory.configure','Settings')}</Link>:null}{entry.openPath?<Link href={entry.openPath} data-module-open={entry.id}><ExternalLink className="size-3.5" aria-hidden />{t('modules.directory.open','Open')}</Link>:null}</div>}},
+          ]}
+        />
       </div>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {t(
           'modules.directory.footnote',
           'Modules are defined in src/modules.ts. This page is read-only; enable or disable a module there and rebuild.',
@@ -277,7 +195,7 @@ export default function ModuleDirectoryClient({ modules }: { modules: ModuleDire
                   {t('modules.directory.detail.pages', '{{count}} pages').replace('{{count}}', String(detail.pageCount))}
                 </span>
               </div>
-              <div className="max-h-[420px] space-y-1 overflow-y-auto pr-1">
+              <div className="max-h-96 space-y-1 overflow-y-auto pr-1">
                 {detail.pages.length === 0 ? (
                   <p className="rounded-md border border-dashed px-3 py-6 text-center text-xs text-muted-foreground">
                     {t('modules.directory.detail.noPages', 'This module has no backend pages.')}
@@ -293,7 +211,7 @@ export default function ModuleDirectoryClient({ modules }: { modules: ModuleDire
                         <p className="truncate text-xs font-medium">
                           {page.titleKey ? t(page.titleKey, page.title) : page.title}
                         </p>
-                        <p className="truncate font-mono text-[10px] text-muted-foreground">{page.path}</p>
+                        <p className="truncate font-mono text-xs text-muted-foreground">{page.path}</p>
                       </div>
                       <div className="flex shrink-0 items-center gap-1">
                         {page.isConfig ? (

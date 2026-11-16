@@ -53,6 +53,19 @@ TODO: Fix that latter to have reference by the package names
   line-height: var(--font-size-overline--line-height, 1rem);
 }
 
+/* Named viewport/geometry utilities: the inbox fills the shell below the
+   header and chrome, so the value lives here instead of an arbitrary class in
+   the page. Keeps the inner lists scrolling rather than the whole page. */
+@utility inbox-viewport {
+  height: calc(100dvh - 9rem);
+  min-height: 35rem;
+}
+
+/* Cap message bubbles without an arbitrary max-width on the page. */
+@utility message-bubble {
+  max-width: 85%;
+}
+
 @theme inline {
   --color-accent-orange: var(--accent-orange);
   --color-accent-orange-text: var(--accent-orange-text);

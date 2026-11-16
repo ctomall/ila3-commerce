@@ -150,7 +150,7 @@ export function ReplyComposer(props: {
   return (
     <form onSubmit={submit} className="mt-3 space-y-2">
       {attempt?.unknown ? (
-        <p className="rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-xs text-amber-700">
+        <p className="rounded border border-status-warning-border bg-status-warning-bg px-2 py-1 text-xs text-status-warning-text">
           上一条发送结果未知：请保持内容不变后重试（复用同一 clientRequestId）；修改内容会被拒绝。
         </p>
       ) : null}
@@ -254,7 +254,7 @@ export function ReplyComposer(props: {
         <span className="text-xs text-muted-foreground">服务端会再次校验归属、渠道能力与发送窗口</span>
       </div>
       {status ? (
-        <p className={`text-xs ${status.ok ? 'text-emerald-700 dark:text-emerald-300' : 'text-red-700 dark:text-red-300'}`}>
+        <p className={`text-xs ${status.ok ? 'text-status-success-text' : 'text-status-error-text'}`}>
           {status.message}
         </p>
       ) : null}

@@ -7,7 +7,7 @@ import { Alert } from '@open-mercato/ui/primitives/alert'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
 import { Input } from '@open-mercato/ui/primitives/input'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@open-mercato/ui/primitives/table'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 
 type Suppression = {
   id: string
@@ -142,7 +142,7 @@ export default function SuppressionsPageClient() {
       </header>
 
       <form onSubmit={submit} className="flex flex-wrap items-end gap-3 rounded-lg border p-4">
-        <label className="flex min-w-[260px] flex-1 flex-col gap-1 text-sm">
+        <label className="flex min-w-64 flex-1 flex-col gap-1 text-sm">
           <span className="font-medium">邮箱地址</span>
           <Input
             type="email"
@@ -176,50 +176,12 @@ export default function SuppressionsPageClient() {
       {notice ? <Alert>{notice}</Alert> : null}
 
       <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>邮箱</TableHead>
-              <TableHead>原因</TableHead>
-              <TableHead>加入时间</TableHead>
-              <TableHead className="text-right">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={4} className="text-center text-sm text-muted-foreground">
-                  {loading ? '加载中…' : '名单为空：没有任何地址被抑制。'}
-                </TableCell>
-              </TableRow>
-            ) : (
-              items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-mono text-sm">{item.email}</TableCell>
-                  <TableCell>
-                    <Badge variant="secondary">{reasonLabel(item.reason)}</Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{formatDateTime(item.createdAt)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => void release(item)}
-                      disabled={releasing === item.id}
-                    >
-                      {releasing === item.id ? (
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      ) : (
-                        <ShieldOff className="mr-2 h-4 w-4" />
-                      )}
-                      解除
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
+        <DataTable<Suppression> entityId="leadgen:suppression" extensionTableId="leadgen.suppressions" data={items} isLoading={loading} error={error} sortable={false} emptyState="名单为空：没有任何地址被抑制。" columns={[
+          {accessorKey:'email',header:'邮箱'},
+          {id:'reason',header:'原因',cell:({row})=><Badge variant="secondary">{reasonLabel(row.original.reason)}</Badge>},
+          {id:'created',header:'加入时间',cell:({row})=>formatDateTime(row.original.createdAt)},
+          {id:'actions',header:'操作',cell:({row})=><Button variant="outline" size="sm" onClick={()=>void release(row.original)} disabled={releasing===row.original.id}>{releasing===row.original.id?<Loader2 className="mr-2 h-4 w-4 animate-spin"/>:<ShieldOff className="mr-2 h-4 w-4"/>}解除</Button>},
+        ]} />
       </div>
     </div>
   )

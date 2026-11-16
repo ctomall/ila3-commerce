@@ -132,7 +132,7 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
               {card.titleKey ? t(card.titleKey, card.title) : card.title}
             </h3>
             {compact ? (
-              <p className="mt-0.5 truncate text-[11px] text-muted-foreground">{groupLabel(card)}</p>
+              <p className="mt-0.5 truncate text-xs text-muted-foreground">{groupLabel(card)}</p>
             ) : null}
           </div>
         </div>
@@ -155,7 +155,7 @@ export default function SettingsHomeClient({ cards }: { cards: SettingsCard[] })
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder={t('settings.home.searchPlaceholder', 'Search settings')}
-            className="h-9 w-[280px] pl-9 text-sm"
+            className="h-9 w-72 pl-9 text-sm"
             aria-label={t('settings.home.searchPlaceholder', 'Search settings')}
             data-settings-search=""
           />

@@ -2,11 +2,12 @@
 
 import * as React from 'react'
 import Link from 'next/link'
-import { Bot, Loader2, Search, Settings2 } from 'lucide-react'
+import { Bot, Search, Settings2 } from 'lucide-react'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { apiCall } from '@open-mercato/ui/backend/utils/apiCall'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { Button } from '@open-mercato/ui/primitives/button'
+import { DataTable } from '@open-mercato/ui/backend/DataTable'
 import { Input } from '@open-mercato/ui/primitives/input'
 
 type AgentTool = {
@@ -183,114 +184,42 @@ export default function AgentDirectoryClient() {
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder={t('agents.directory.search', 'Search agents…')}
-                className="h-8 w-[240px] pl-8 text-xs"
+                className="h-8 w-60 pl-8 text-xs"
                 aria-label={t('agents.directory.search', 'Search agents…')}
               />
             </div>
           </div>
         </div>
 
-        {loading ? (
-          <div className="flex items-center gap-2 px-5 py-10 text-sm text-muted-foreground" role="status">
-            <Loader2 className="size-4 animate-spin" aria-hidden />
-            {t('agents.directory.loading', 'Loading agents…')}
-          </div>
-        ) : error ? (
-          <div className="px-5 py-8 text-sm text-status-error-text">{error}</div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1040px] text-sm">
-              <thead>
-                <tr className="border-b text-left text-xs text-muted-foreground">
-                  <th className="whitespace-nowrap px-5 py-2.5 font-medium">{t('agents.directory.column.agent', 'Agent')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.module', 'Module')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.mode', 'Mode')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.policy', 'Mutation policy')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.steps', 'Max steps')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.tools', 'Tools')}</th>
-                  <th className="whitespace-nowrap px-3 py-2.5 font-medium">{t('agents.directory.column.model', 'Model')}</th>
-                  <th className="whitespace-nowrap px-5 py-2.5 text-right font-medium">{t('agents.directory.column.actions', 'Actions')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((agent) => {
-                  const resolution = resolutions.get(agent.id)
-                  const providerId = resolution?.providerId ?? agent.defaultProvider ?? null
-                  const modelId = resolution?.modelId ?? agent.defaultModel ?? null
-                  const source = resolution?.source ?? (agent.defaultProvider || agent.defaultModel ? 'agent_default' : 'system')
-                  const readOnly = agent.readOnly || agent.mutationPolicy === 'read-only'
-                  return (
-                    <tr key={agent.id} className="border-b last:border-0 hover:bg-muted/30" data-agent-row={agent.id}>
-                      <td className="px-5 py-3">
-                        <div className="flex flex-col gap-0.5">
-                          <span className="whitespace-nowrap font-medium" title={agent.id}>
-                            {t(`agents.directory.agent.${agent.id}.label`, agent.label)}
-                          </span>
-                          {agent.description ? (
-                            <span className="line-clamp-1 max-w-[360px] text-[11px] text-muted-foreground">
-                              {t(`agents.directory.agent.${agent.id}.desc`, agent.description)}
-                            </span>
-                          ) : null}
-                        </div>
-                      </td>
-                      <td className="px-3 py-3">
-                        <Badge variant="neutral" size="sm" className="whitespace-nowrap">{agent.moduleId}</Badge>
-                      </td>
-                      <td className="px-3 py-3">
-                        <Badge variant="outline" size="sm" className="whitespace-nowrap">{agent.executionMode}</Badge>
-                      </td>
-                      <td className="px-3 py-3">
-                        <Badge variant={readOnly ? 'success' : 'warning'} size="sm" className="whitespace-nowrap">
-                          {readOnly ? t('agents.directory.policy.readOnly', 'read-only') : agent.mutationPolicy}
-                        </Badge>
-                      </td>
-                      <td className="px-3 py-3 text-xs">
-                        {agent.maxSteps === null ? t('agents.directory.unlimited', 'Unlimited') : agent.maxSteps}
-                      </td>
-                      <td className="px-3 py-3 text-xs">{agent.tools.length}</td>
-                      <td className="px-3 py-3">
-                        {modelId ? (
-                          <div className="flex flex-col gap-0.5">
-                            <span className="whitespace-nowrap font-mono text-xs">{providerId} / {modelId}</span>
-                            <Badge variant="muted" size="sm" className="w-fit whitespace-nowrap">
-                              {t(`agents.directory.source.${sourceLabel(source)}`, sourceLabel(source))}
-                            </Badge>
-                          </div>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">—</span>
-                        )}
-                      </td>
-                      <td className="px-5 py-3">
-                        <div className="flex items-center justify-end gap-3">
-                          <Button
-                            asChild
-                            variant="outline"
-                            size="sm"
-                            className="h-7 gap-1 px-2 text-xs"
-                          >
-                            <Link href="/backend/config/ai-assistant/agents" data-agent-configure={agent.id}>
-                              <Settings2 className="size-3.5" aria-hidden />
-                              {t('agents.directory.configure', 'Configure')}
-                            </Link>
-                          </Button>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {!loading && !error && filtered.length === 0 ? (
-          <div className="px-5 py-10 text-center text-sm text-muted-foreground">
-            {t('agents.directory.empty', 'No agents match the filters.')}
-          </div>
-        ) : null}
+        <DataTable<Agent>
+          entityId="agent_directory:agent"
+          extensionTableId="agent_directory.agents"
+          data={filtered}
+          isLoading={loading}
+          error={error}
+          sortable={false}
+          emptyState={t('agents.directory.empty', 'No agents match the filters.')}
+          columns={[
+            {id:'agent',header:t('agents.directory.column.agent','Agent'),cell:({row})=><div data-agent-row={row.original.id}><span className="font-medium">{t(`agents.directory.agent.${row.original.id}.label`,row.original.label)}</span><p className="max-w-sm text-xs text-muted-foreground">{t(`agents.directory.agent.${row.original.id}.desc`,row.original.description)}</p></div>},
+            {id:'module',header:t('agents.directory.column.module','Module'),cell:({row})=><Badge variant="neutral" size="sm">{row.original.moduleId}</Badge>},
+            {id:'mode',header:t('agents.directory.column.mode','Mode'),cell:({row})=><Badge variant="outline" size="sm">{row.original.executionMode}</Badge>},
+            {id:'policy',header:t('agents.directory.column.policy','Mutation policy'),cell:({row})=>{const readOnly=row.original.readOnly || row.original.mutationPolicy==='read-only';return <Badge variant={readOnly?'success':'warning'} size="sm">{readOnly?t('agents.directory.policy.readOnly','read-only'):row.original.mutationPolicy}</Badge>}},
+            {id:'steps',header:t('agents.directory.column.steps','Max steps'),cell:({row})=>row.original.maxSteps===null?t('agents.directory.unlimited','Unlimited'):row.original.maxSteps},
+            {id:'tools',header:t('agents.directory.column.tools','Tools'),cell:({row})=>row.original.tools.length},
+            {id:'model',header:t('agents.directory.column.model','Model'),cell:({row})=>{
+              const agent=row.original
+              const resolution=resolutions.get(agent.id)
+              const providerId=resolution?.providerId??agent.defaultProvider
+              const modelId=resolution?.modelId??agent.defaultModel
+              const source=resolution?.source??(agent.defaultProvider||agent.defaultModel?'agent_default':'system')
+              return modelId?<div><span className="font-mono text-xs">{providerId} / {modelId}</span><Badge variant="muted" size="sm">{t(`agents.directory.source.${sourceLabel(source)}`,sourceLabel(source))}</Badge></div>:<span>—</span>
+            }},
+            {id:'actions',header:t('agents.directory.column.actions','Actions'),cell:({row})=><Button asChild variant="outline" size="sm"><Link href="/backend/config/ai-assistant/agents" data-agent-configure={row.original.id}><Settings2 className="size-3.5" aria-hidden />{t('agents.directory.configure','Configure')}</Link></Button>},
+          ]}
+        />
       </div>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-xs text-muted-foreground">
         {t(
           'agents.directory.footnote',
           'Agents are declared by modules (ai-agents.ts) and filtered by your role features. Model overrides are managed on the AI agent settings page.',
