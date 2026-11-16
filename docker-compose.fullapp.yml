@@ -195,6 +195,11 @@ services:
   # `yarn generate` writes the agent + skill files this service mounts, so run
   # it (the app container does on boot) before starting opencode, and restart
   # opencode after regenerating — it reads them once at startup.
+  # DEPRECATED (2026-11-16): production chat runs on DSH (`OM_AI_ENGINE=dsh`).
+  # This service is NOT started in production, and starting it would not restore
+  # the old chat path: `src/proxy.ts` rewrites /api/ai_assistant/chat to the DSH
+  # route. Kept only for legacy local dev; see
+  # docs/crm-platform/dsh-integration/MIGRATION-STATUS-2026-11-16.md.
   opencode:
     profiles:
       - agents

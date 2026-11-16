@@ -10,6 +10,11 @@ services:
   #
   # `container_name` is pinned because scripts/dev.mjs restarts this container by
   # name when it detects an MCP key rotation or a disconnected MCP wiring.
+  # DEPRECATED (2026-11-16): production chat runs on DSH (`OM_AI_ENGINE=dsh`).
+  # This service is NOT started in production, and starting it would not restore
+  # the old chat path: `src/proxy.ts` rewrites /api/ai_assistant/chat to the DSH
+  # route. Kept only for legacy local dev; see
+  # docs/crm-platform/dsh-integration/MIGRATION-STATUS-2026-11-16.md.
   opencode:
     profiles:
       - agents

@@ -1,0 +1,28 @@
+{
+ "probedAt": "2026-11-16T07:45:45.683Z",
+ "base": "http://127.0.0.1:3000",
+ "role": "employee",
+ "path": "/api/ai_assistant/chat",
+ "release": "3f1097553555c298df59989a96b881d6f25af8e6",
+ "status": 200,
+ "contentType": "text/event-stream",
+ "bytes": 7905,
+ "dshFrames": 11,
+ "textFrames": 5,
+ "sessionId": "session-bf262eb96af14e0ab94255ed599b5945",
+ "dshRunId": "c3b4bc83-b648-403b-8ef9-2f93ae4197bc",
+ "dshRunStatus": "completed",
+ "checks": {
+  "status-200": true,
+  "sse-content-type": true,
+  "dsh-frames": true,
+  "text-frame-present": true,
+  "done-frame": true,
+  "run-persisted": true,
+  "run-bound-to-session": true,
+  "run-completed": true
+ },
+ "ok": true,
+ "firstBytes": "id: 1\ndata: {\"type\":\"thinking\"}\n\nid: 2\ndata: {\"type\":\"dsh.event\",\"dshType\":\"session.event\",\"seq\":1,\"payload\":{\"sessionId\":\"session-bf262eb96af14e0ab94255ed599b5945\",\"event\":{\"type\":\"agent/inbox/spliced\",\"seq\":0,\"time\":1794815148876,\"data\":{\"target\":\"next-turn\",\"start\":0,\"inserted\":[{\"content\":[{\"typ",
+ "lastBytes": "nd\",\"seq\":12,\"time\":1794815150374,\"data\":{\"turn\":1,\"step\":1}}},\"dshEventType\":\"step/end\"}\n\nid: 17\ndata: {\"type\":\"debug\",\"partType\":\"status\",\"data\":{\"sessionId\":\"session-bf262eb96af14e0ab94255ed599b5945\",\"status\":\"idle\"}}\n\ndata: {\"type\":\"done\",\"sessionId\":\"session-bf262eb96af14e0ab94255ed599b5945\"}\n\n"
+}
