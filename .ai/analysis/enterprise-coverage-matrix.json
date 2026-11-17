@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T15:36:33.862Z",
+    "generatedAt": "2026-11-17T15:41:48.199Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -14,6 +14,7 @@
       "emptyState": "/home/pro/apps/mercato/.ai/analysis/enterprise-empty-state-audit.json",
       "permission": "/home/pro/apps/mercato/.ai/analysis/enterprise-permission-audit.json",
       "apiAuth": "/home/pro/apps/mercato/.ai/analysis/enterprise-api-auth-probe.json",
+      "breadcrumb": "/home/pro/apps/mercato/.ai/analysis/enterprise-breadcrumb-audit.json",
       "openapi": "/home/pro/apps/mercato/.mercato/generated/openapi.generated.json"
     },
     "totals": {
@@ -37,6 +38,11 @@
       "apiAuthProtectedReachable": 36,
       "apiAuthProtected": 34,
       "apiAuthGetUnsupported": 38,
+      "breadcrumbAudited": 137,
+      "breadcrumbConsistent": 131,
+      "breadcrumbMismatch": 5,
+      "breadcrumbNoCrumb": 1,
+      "breadcrumbUnauthorizedAncestors": 4,
       "permissionAudited": 70,
       "permissionRendered": 65,
       "permissionDenied": 1,
@@ -176,6 +182,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -207,6 +214,15 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "修改密码",
+        "currentCrumb": "修改密码",
+        "heading": null,
+        "unauthorizedAncestors": [
+          "/backend/profile"
+        ]
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -247,6 +263,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -286,6 +303,7 @@
           "/backend/roles"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -317,6 +335,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "角色",
+        "currentCrumb": "角色",
+        "heading": "角色",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -352,6 +377,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -383,6 +409,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "自定义侧边栏",
+        "currentCrumb": "自定义侧边栏",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -426,6 +459,7 @@
           "/backend/users"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -457,6 +491,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "用户",
+        "currentCrumb": "用户",
+        "heading": "用户",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -505,6 +546,7 @@
           "/backend/roles"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -545,6 +587,7 @@
           "/backend/users"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -577,6 +620,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "组织品牌",
+        "currentCrumb": "组织品牌",
+        "heading": "Organization branding",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -620,6 +670,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -651,6 +702,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "组织",
+        "currentCrumb": "组织",
+        "heading": "Organizations",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -694,6 +752,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -725,6 +784,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "租户",
+        "currentCrumb": "租户",
+        "heading": "Tenants",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -768,6 +834,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -808,6 +875,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -840,6 +908,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "日历",
+        "currentCrumb": "日历",
+        "heading": "2026年11月17日",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "transient-failure",
         "status": 200,
@@ -880,6 +955,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "商机设置",
+        "currentCrumb": "商机设置",
+        "heading": "商机设置",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "transient-failure",
         "status": 200,
@@ -920,6 +1002,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "客户",
+        "currentCrumb": "客户",
+        "heading": "客户数据字典",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -955,6 +1044,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "销售漏斗阶段",
+        "currentCrumb": "销售漏斗阶段",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -990,6 +1086,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "客户相关任务",
+        "currentCrumb": "客户相关任务",
+        "heading": "客户相关任务",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1038,6 +1141,7 @@
           "/backend/customers/companies"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1069,6 +1173,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "公司",
+        "currentCrumb": "公司",
+        "heading": "公司",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1117,6 +1228,7 @@
           "/backend/customers/deals"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -1148,6 +1260,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "商机地图",
+        "currentCrumb": "商机地图",
+        "heading": "商机地图",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1188,6 +1307,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "商机",
+        "currentCrumb": "商机",
+        "heading": "商机",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1228,6 +1354,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "销售漏斗",
+        "currentCrumb": "销售漏斗",
+        "heading": "商机",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1276,6 +1409,7 @@
           "/backend/customers/people"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1307,6 +1441,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "联系人",
+        "currentCrumb": "联系人",
+        "heading": "联系人",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -1354,6 +1495,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1393,6 +1535,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1432,6 +1575,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -1471,6 +1615,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1510,6 +1655,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1542,6 +1688,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "加密",
+        "currentCrumb": "加密",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -1577,6 +1730,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "自定义实体设置",
+        "currentCrumb": "自定义实体",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -1612,6 +1772,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "系统实体",
+        "currentCrumb": "系统实体",
+        "heading": "System Entities",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -1655,6 +1822,7 @@
           "/backend/entities/user"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1686,6 +1854,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "自定义实体",
+        "currentCrumb": "自定义实体",
+        "heading": "自定义实体",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -1728,6 +1903,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -1770,6 +1946,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1807,6 +1984,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1843,6 +2021,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1881,6 +2060,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -1913,6 +2093,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "缓存",
+        "currentCrumb": "缓存",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -1948,6 +2135,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "模块遥测",
+        "currentCrumb": "模块遥测",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -1983,6 +2177,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "系统状态",
+        "currentCrumb": "系统状态",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -2018,6 +2219,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "查询索引",
+        "currentCrumb": "查询索引",
+        "heading": "查询索引",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -2053,6 +2261,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "审计日志",
+        "currentCrumb": "审计日志",
+        "heading": "审计日志",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2093,6 +2308,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "存储",
+        "currentCrumb": "存储",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -2128,6 +2350,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "附件",
+        "currentCrumb": "附件",
+        "heading": "附件",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2176,6 +2405,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2207,6 +2437,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "分类",
+        "currentCrumb": "分类",
+        "heading": "分类",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2255,6 +2492,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2286,6 +2524,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "价格规则",
+        "currentCrumb": "价格规则",
+        "heading": "价格规则",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2334,6 +2579,7 @@
           "/backend/catalog/products"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2365,6 +2611,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "产品与服务",
+        "currentCrumb": "产品与服务",
+        "heading": "产品与服务",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2405,6 +2658,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "商品目录",
+        "currentCrumb": "商品目录",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -2448,6 +2708,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2488,6 +2749,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2527,6 +2789,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2566,6 +2829,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2605,6 +2869,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2637,6 +2902,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "销售",
+        "currentCrumb": "销售",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2685,6 +2957,7 @@
           "/backend/sales/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2716,6 +2989,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "渠道报价",
+        "currentCrumb": "渠道报价",
+        "heading": "渠道报价",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2756,6 +3036,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "销售渠道",
+        "currentCrumb": "销售渠道",
+        "heading": "销售渠道按市场或店铺管理商品报价。",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2804,6 +3091,7 @@
           "/backend/sales/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2835,6 +3123,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "订单",
+        "currentCrumb": "订单",
+        "heading": "销售订单查看单据详情，含客户信息、金额合计与渠道。",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2875,6 +3170,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "报价单",
+        "currentCrumb": "报价单",
+        "heading": "销售报价单查看单据详情，含客户信息、金额合计与渠道。",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -2923,6 +3225,7 @@
           "/backend/sales/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -2963,6 +3266,7 @@
           "/backend/sales/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -3003,6 +3307,7 @@
           "/backend/sales/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -3042,6 +3347,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3081,6 +3387,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -3120,6 +3427,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -3152,6 +3460,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "保修工单",
+        "currentCrumb": "保修工单",
+        "heading": "Warranty claims",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3200,6 +3515,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3240,6 +3556,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3271,6 +3588,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "保修登记",
+        "currentCrumb": "保修登记",
+        "heading": "Warranty registrations",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3311,6 +3635,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "保修工单设置",
+        "currentCrumb": "保修工单设置",
+        "heading": "Claim settings",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -3355,6 +3686,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3386,6 +3718,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "排障指南",
+        "currentCrumb": "排障指南",
+        "heading": "Troubleshooting guides",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -3430,6 +3769,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3461,6 +3801,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "供应商政策",
+        "currentCrumb": "供应商政策",
+        "heading": "Vendor policies",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -3504,6 +3851,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3544,6 +3892,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3585,6 +3934,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3626,6 +3976,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3667,6 +4018,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -3699,6 +4051,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "仓储配置",
+        "currentCrumb": "仓储配置",
+        "heading": "WMS 配置",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3739,6 +4098,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "mismatch",
+        "navLabel": "运营看板",
+        "currentCrumb": "仓储管理",
+        "heading": "运营看板",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3779,6 +4145,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "库存",
+        "currentCrumb": "库存",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3819,6 +4192,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "库位",
+        "currentCrumb": "库位",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3859,6 +4239,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "批次",
+        "currentCrumb": "批次",
+        "heading": "库存批次",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3899,6 +4286,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "出入库记录",
+        "currentCrumb": "出入库记录",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3939,6 +4333,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "库存预留",
+        "currentCrumb": "库存预留",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -3979,6 +4380,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "仓库",
+        "currentCrumb": "仓库",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -4019,6 +4427,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "库区",
+        "currentCrumb": "库区",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -4068,6 +4483,7 @@
           "/backend/wms/locations"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -4109,6 +4525,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -4150,6 +4567,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -4190,6 +4608,7 @@
           "/backend/api-keys"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4221,6 +4640,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "API 密钥",
+        "currentCrumb": "API 密钥",
+        "heading": "API Keys",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -4264,6 +4690,7 @@
           "/backend/devices"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4295,6 +4722,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "设备",
+        "currentCrumb": "设备",
+        "heading": "Devices",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4338,6 +4772,7 @@
           "/backend/devices"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4370,6 +4805,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "数据字典",
+        "currentCrumb": "数据字典",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4405,6 +4847,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "API 文档",
+        "currentCrumb": "API 文档",
+        "heading": "API resources",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -4445,6 +4894,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "mismatch",
+        "navLabel": "执行日志",
+        "currentCrumb": "业务规则日志",
+        "heading": "Execution Logs",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4487,6 +4943,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4518,6 +4975,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "业务规则",
+        "currentCrumb": "业务规则",
+        "heading": "业务规则",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4560,6 +5024,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4591,6 +5056,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "规则集",
+        "currentCrumb": "规则集",
+        "heading": "Rule Sets",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4634,6 +5106,7 @@
           "/backend/logs"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4673,6 +5146,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4712,6 +5186,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4752,6 +5227,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4783,6 +5259,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "全局开关",
+        "currentCrumb": "全局开关",
+        "heading": "Feature Toggles",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4818,6 +5301,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "覆盖项",
+        "currentCrumb": "覆盖项",
+        "heading": "功能开关覆盖",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4861,6 +5351,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -4901,6 +5392,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -4933,6 +5425,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工作流命令",
+        "currentCrumb": "工作流命令",
+        "heading": "工作流命令",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -4976,6 +5475,7 @@
           "/backend/definitions"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -5007,6 +5507,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工作流定义",
+        "currentCrumb": "工作流",
+        "heading": "工作流定义",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "denied",
         "status": 200,
@@ -5047,6 +5554,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5078,6 +5586,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工作流事件",
+        "currentCrumb": "事件",
+        "heading": "工作流事件",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -5113,6 +5628,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "失败队列",
+        "currentCrumb": "失败队列",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -5153,6 +5675,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "mismatch",
+        "navLabel": "工作流实例",
+        "currentCrumb": "Automation Runs",
+        "heading": "工作流实例",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -5193,6 +5722,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -5224,6 +5754,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "mismatch",
+        "navLabel": "工作收件箱",
+        "currentCrumb": "Work Inbox",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -5272,6 +5809,7 @@
           "/backend/definitions"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -5313,6 +5851,7 @@
           "/backend/events"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5354,6 +5893,7 @@
           "/backend/instances"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5395,6 +5935,7 @@
           "/backend/tasks"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5427,6 +5968,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "搜索设置",
+        "currentCrumb": "搜索设置",
+        "heading": "搜索设置",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -5462,6 +6010,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "汇率抓取",
+        "currentCrumb": "汇率抓取",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -5505,6 +6060,7 @@
           "/backend/currencies"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5536,6 +6092,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "货币",
+        "currentCrumb": "货币",
+        "heading": "货币",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -5580,6 +6143,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5611,6 +6175,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "汇率",
+        "currentCrumb": "汇率",
+        "heading": "Exchange Rates",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -5654,6 +6225,7 @@
           "/backend/currencies"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5695,6 +6267,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5735,6 +6308,7 @@
           "/backend/planner/availability-rulesets"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5766,6 +6340,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "可用性排班",
+        "currentCrumb": "可用性排班",
+        "heading": "可用性排班",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -5806,6 +6387,7 @@
         "returnHref": "/backend/planner/availability-rulesets",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5845,6 +6427,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5876,6 +6459,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "资源类型",
+        "currentCrumb": "资源类型",
+        "heading": "资源类型",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -5919,6 +6509,7 @@
           "/backend/resources/resources"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -5950,6 +6541,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "资源",
+        "currentCrumb": "资源",
+        "heading": "资源",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -5993,6 +6591,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6033,6 +6632,7 @@
           "/backend/resources/resources"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6072,6 +6672,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6103,6 +6704,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "团队请假",
+        "currentCrumb": "请假申请",
+        "heading": "请假申请",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -6138,6 +6746,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "我的可用性",
+        "currentCrumb": "我的可用性",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6185,6 +6800,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6216,6 +6832,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "我的请假",
+        "currentCrumb": "请假申请",
+        "heading": "请假申请",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6263,6 +6886,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6302,6 +6926,7 @@
           "/backend/staff/team-members"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6333,6 +6958,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "团队成员",
+        "currentCrumb": "团队成员",
+        "heading": "团队成员",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -6376,6 +7008,7 @@
           "/backend/staff/team-roles"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6407,6 +7040,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "团队角色",
+        "currentCrumb": "团队角色",
+        "heading": "团队角色",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -6450,6 +7090,7 @@
           "/backend/staff/teams"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6481,6 +7122,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "团队",
+        "currentCrumb": "团队",
+        "heading": "团队",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -6516,6 +7164,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "任务",
+        "currentCrumb": "任务",
+        "heading": "任务",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6556,6 +7211,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工时记录",
+        "currentCrumb": "工时记录",
+        "heading": "Time entries",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6596,6 +7258,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "我的工作",
+        "currentCrumb": "我的工作",
+        "heading": "我的工作",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6645,6 +7314,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6676,6 +7346,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "项目",
+        "currentCrumb": "项目",
+        "heading": "Projects",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6725,6 +7402,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -6756,6 +7434,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工时报表",
+        "currentCrumb": "工时报表",
+        "heading": "工时报表",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -6791,6 +7476,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工时设置",
+        "currentCrumb": "工时设置",
+        "heading": "Module settings",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -6826,6 +7518,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "工时表",
+        "currentCrumb": "工时表",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -6866,6 +7565,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -6906,6 +7606,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -6937,6 +7638,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -6975,6 +7677,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7014,6 +7717,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7051,6 +7755,7 @@
         "returnHref": "/backend/staff/team-members",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7087,6 +7792,7 @@
         "returnHref": "/backend/staff/team-roles",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7126,6 +7832,7 @@
           "/backend/staff/teams"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7167,6 +7874,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7208,6 +7916,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7249,6 +7958,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7290,6 +8000,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7331,6 +8042,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -7372,6 +8084,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -7404,6 +8117,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "通知投递",
+        "currentCrumb": "通知投递",
+        "heading": "通知投递",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -7439,6 +8159,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "用户通知偏好",
+        "currentCrumb": "用户通知偏好",
+        "heading": "用户通知偏好",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -7474,6 +8201,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "通知偏好",
+        "currentCrumb": "通知偏好",
+        "heading": "通知偏好",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -7514,6 +8248,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "集成",
+        "currentCrumb": "集成",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -7561,6 +8302,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7600,6 +8342,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7634,6 +8377,13 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "数据同步",
+        "currentCrumb": "数据同步",
+        "heading": "同步运行记录",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -7681,6 +8431,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7713,6 +8464,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -7744,6 +8496,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "消息",
+        "currentCrumb": "消息",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -7791,6 +8550,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -7823,6 +8583,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "通信渠道",
+        "currentCrumb": "通信渠道",
+        "heading": "通信渠道",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -7863,6 +8630,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "我的通信渠道",
+        "currentCrumb": "我的通信渠道",
+        "heading": "我的通信渠道",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -7906,6 +8680,7 @@
           "/backend/communication_channels/channels"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -7938,6 +8713,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "推送投递记录",
+        "currentCrumb": "推送投递记录",
+        "heading": "推送投递",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -7973,6 +8755,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "发送推送",
+        "currentCrumb": "发送推送",
+        "heading": "发送推送",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "zero-rows",
@@ -8015,6 +8804,7 @@
           "/backend"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -8047,6 +8837,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "通话记录",
+        "currentCrumb": "通话记录",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -8087,6 +8884,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 智能体",
+        "currentCrumb": "AI 智能体",
+        "heading": "AI 智能体",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8122,6 +8926,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 白名单",
+        "currentCrumb": "AI 白名单",
+        "heading": "AI 提供方与模型白名单",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8157,6 +8968,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 助手（旧版）",
+        "currentCrumb": "AI 助手（旧版）",
+        "heading": "AI 助手设置",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8192,6 +9010,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "审核标记",
+        "currentCrumb": "审核标记",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8227,6 +9052,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8258,6 +9084,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 调试台",
+        "currentCrumb": "AI 调试台",
+        "heading": "AI 调试台",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8293,6 +9126,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 设置",
+        "currentCrumb": "AI 设置",
+        "heading": "AI 助手设置",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8328,6 +9168,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "AI 用量",
+        "currentCrumb": "AI 用量",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8363,6 +9210,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "模型配置",
+        "currentCrumb": "模型配置",
+        "heading": "模型配置",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -8398,6 +9252,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "系统升级",
+        "currentCrumb": "系统升级",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8433,6 +9294,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "Write approvals",
+        "currentCrumb": "Write approvals",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -8473,6 +9341,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "模块应用",
+        "currentCrumb": "模块应用",
+        "heading": "模块应用",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -8508,6 +9383,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8539,6 +9415,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8570,6 +9447,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8601,6 +9479,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8632,6 +9511,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8663,6 +9543,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8694,6 +9575,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8725,6 +9607,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8756,6 +9639,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "渠道账号",
+        "currentCrumb": "渠道账号",
+        "heading": "渠道账号",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "transient-failure",
         "status": 200,
@@ -8796,6 +9686,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "发送结果对账",
+        "currentCrumb": "发送结果对账",
+        "heading": "发送结果对账",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -8831,6 +9728,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "全渠道收件箱",
+        "currentCrumb": "全渠道收件箱",
+        "heading": "全渠道收件箱",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -8876,6 +9780,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8913,6 +9818,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -8945,6 +9851,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "no-breadcrumb",
+        "navLabel": "工作台",
+        "currentCrumb": "",
+        "heading": "工作台",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -8985,6 +9898,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9016,6 +9930,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9055,6 +9970,7 @@
           "/backend/business"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9087,6 +10003,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9118,6 +10035,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "Lead candidates",
+        "currentCrumb": "Lead candidates",
+        "heading": "获客候选",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9158,6 +10082,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "Suppression list",
+        "currentCrumb": "Suppression list",
+        "heading": "抑制名单",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "transient-failure",
         "status": 200,
@@ -9198,6 +10129,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "智能体列表",
+        "currentCrumb": "智能体列表",
+        "heading": "智能体列表",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -9233,6 +10171,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "翻译管理",
+        "currentCrumb": "翻译管理",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9273,6 +10218,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9304,6 +10250,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "定时任务",
+        "currentCrumb": "定时任务",
+        "heading": "定时任务",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9344,6 +10297,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9376,6 +10330,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9408,6 +10363,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "处理日志",
+        "currentCrumb": "处理日志",
+        "heading": "处理日志",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -9443,6 +10405,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "mismatch",
+        "navLabel": "收件箱建议",
+        "currentCrumb": "AI 收件箱处理",
+        "heading": "AI Inbox Actions",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9483,6 +10452,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "收件箱设置",
+        "currentCrumb": "收件箱设置",
+        "heading": "Inbox Settings",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -9526,6 +10502,7 @@
           "/backend/inbox-ops"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9558,6 +10535,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "支付交易",
+        "currentCrumb": "支付交易",
+        "heading": "Payment Transactions",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9603,6 +10587,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9634,6 +10619,15 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "支付链接",
+        "currentCrumb": "支付链接",
+        "heading": "支付链接",
+        "unauthorizedAncestors": [
+          "/backend/checkout"
+        ]
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9679,6 +10673,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9710,6 +10705,15 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "结账模板",
+        "currentCrumb": "结账模板",
+        "heading": "链接模板",
+        "unauthorizedAncestors": [
+          "/backend/checkout"
+        ]
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9750,6 +10754,15 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "交易记录",
+        "currentCrumb": "交易记录",
+        "heading": "交易记录",
+        "unauthorizedAncestors": [
+          "/backend/checkout"
+        ]
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -9790,6 +10803,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9826,6 +10840,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9863,6 +10878,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -9900,6 +10916,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9937,6 +10954,7 @@
         "returnHref": "/backend/checkout/transactions",
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -9969,6 +10987,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "文档",
+        "currentCrumb": "文档",
+        "heading": "文档",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10009,6 +11034,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "文档模板",
+        "currentCrumb": "文档模板",
+        "heading": "Document templates",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -10052,6 +11084,7 @@
           "/backend/documents"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -10089,6 +11122,7 @@
         "returnHref": null,
         "links": []
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -10129,6 +11163,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10160,6 +11195,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "证据提交",
+        "currentCrumb": "证据提交",
+        "heading": "Evidence submissions",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10200,6 +11242,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "EUDR 概览",
+        "currentCrumb": "EUDR 概览",
+        "heading": null,
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10249,6 +11298,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10280,6 +11330,13 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "地块",
+        "currentCrumb": "地块",
+        "heading": "Plots",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10329,6 +11386,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10360,6 +11418,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "产品映射",
+        "currentCrumb": "产品映射",
+        "heading": "Product mappings",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10409,6 +11474,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10440,6 +11506,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "风险评估",
+        "currentCrumb": "风险评估",
+        "heading": "Risk assessments",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10489,6 +11562,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10520,6 +11594,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "声明",
+        "currentCrumb": "声明",
+        "heading": "Statements",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10569,6 +11650,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10610,6 +11692,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10651,6 +11734,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10692,6 +11776,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10733,6 +11818,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10773,6 +11859,7 @@
           "/backend/webhooks"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10804,6 +11891,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "Webhook",
+        "currentCrumb": "Webhook",
+        "heading": "Webhooks",
+        "unauthorizedAncestors": []
+      },
       "permission": {
         "verdict": "rendered",
         "status": 200,
@@ -10852,6 +11946,7 @@
           "/backend/webhooks"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10892,6 +11987,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -10923,6 +12019,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "客户角色",
+        "currentCrumb": "客户角色",
+        "heading": "角色",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -10960,6 +12063,13 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "自定义域名",
+        "currentCrumb": "自定义域名",
+        "heading": "自定义域名",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -10995,6 +12105,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "门户设置",
+        "currentCrumb": "门户设置",
+        "heading": "门户设置",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
@@ -11030,6 +12147,13 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": {
+        "verdict": "consistent",
+        "navLabel": "客户用户",
+        "currentCrumb": "客户用户",
+        "heading": "用户",
+        "unauthorizedAncestors": []
+      },
       "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
@@ -11073,6 +12197,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11113,6 +12238,7 @@
           "/backend/customer_accounts/users"
         ]
       },
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11148,6 +12274,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11179,6 +12306,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11212,6 +12340,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11243,6 +12372,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11274,6 +12404,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11305,6 +12436,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11336,6 +12468,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11367,6 +12500,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11398,6 +12532,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11429,6 +12564,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11460,6 +12596,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11491,6 +12628,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11522,6 +12660,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11553,6 +12692,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11584,6 +12724,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11615,6 +12756,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11646,6 +12788,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11677,6 +12820,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11708,6 +12852,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11739,6 +12884,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11770,6 +12916,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11801,6 +12948,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11834,6 +12982,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11867,6 +13016,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11898,6 +13048,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11929,6 +13080,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
@@ -11962,6 +13114,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -11995,6 +13148,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
@@ -12028,6 +13182,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "breadcrumb": null,
       "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",

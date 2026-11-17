@@ -199,3 +199,12 @@ non-200 employee answer, 38 GET-unsupported (POST-only/parameterized), and **0
 anonymously readable**. The five employee-401 paths are customer-portal endpoints
 (warranty claims portal, workflow portal tasks) that expect a customer identity.
 Details: `enterprise-api-auth-findings.md`.
+
+## Breadcrumb evidence
+
+The header breadcrumb was compared with the sidebar label and page heading for
+all 137 static destinations: 131 consistent, 5 label mismatches (English or
+differing metadata labels such as `Work Inbox` vs `工作收件箱`, `仓储管理` vs
+`运营看板`), 1 dashboard root without a current crumb. The four ancestor links
+outside the CRM catalogue (`/backend/checkout` 307 group redirect, `/backend/profile`
+200) resolve. Details: `enterprise-breadcrumb-findings.md`.

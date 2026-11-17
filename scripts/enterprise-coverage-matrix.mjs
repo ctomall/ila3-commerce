@@ -36,6 +36,7 @@ const sources = {
   emptyState: path.join(repo, '.ai/analysis/enterprise-empty-state-audit.json'),
   permission: path.join(repo, '.ai/analysis/enterprise-permission-audit.json'),
   apiAuth: path.join(repo, '.ai/analysis/enterprise-api-auth-probe.json'),
+  breadcrumb: path.join(repo, '.ai/analysis/enterprise-breadcrumb-audit.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -189,6 +190,14 @@ const returnAudit = read(sources.returnAudit)
 const emptyState = read(sources.emptyState)
 const permissionAudit = read(sources.permission)
 const apiAuth = read(sources.apiAuth)
+const breadcrumbAudit = read(sources.breadcrumb)
+const breadcrumbByRoute = new Map((breadcrumbAudit?.results ?? []).map((entry) => [normalize(entry.route), {
+  verdict: entry.verdict,
+  navLabel: entry.navLabel ?? null,
+  currentCrumb: entry.currentCrumb ?? null,
+  heading: entry.heading ?? null,
+  unauthorizedAncestors: entry.unauthorizedAncestors ?? [],
+}]))
 const permissionByRoute = new Map((permissionAudit?.results ?? []).map((entry) => [
   normalize(entry.route),
   {
@@ -227,6 +236,7 @@ const rows = (baseline.pages ?? []).map((page) => {
     apiReferences: contract.total,
     apiContract: contract,
     returnPath: returnStatusByRoute.get(route) ?? null,
+    breadcrumb: breadcrumbByRoute.get(route) ?? null,
     permission: permissionByRoute.get(route) ?? null,
     emptyState: emptyStateByRoute.get(route)
       ? {
@@ -314,6 +324,11 @@ const summary = {
     apiAuthProtectedReachable: apiAuth?.summary?.['protected-and-reachable'] ?? null,
     apiAuthProtected: apiAuth?.summary?.protected ?? null,
     apiAuthGetUnsupported: apiAuth?.summary?.['route-not-found-by-get'] ?? null,
+    breadcrumbAudited: breadcrumbByRoute.size,
+    breadcrumbConsistent: [...breadcrumbByRoute.values()].filter((entry) => entry.verdict === 'consistent').length,
+    breadcrumbMismatch: [...breadcrumbByRoute.values()].filter((entry) => entry.verdict === 'mismatch').length,
+    breadcrumbNoCrumb: [...breadcrumbByRoute.values()].filter((entry) => entry.verdict === 'no-breadcrumb').length,
+    breadcrumbUnauthorizedAncestors: [...breadcrumbByRoute.values()].reduce((sum, entry) => sum + entry.unauthorizedAncestors.length, 0),
     permissionAudited: permissionAudited.length,
     permissionRendered: permissionAudited.filter((row) => row.permission.verdict === 'rendered').length,
     permissionDenied: permissionDenied.length,
@@ -372,6 +387,11 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | ... anonymous-denied and employee-reachable | ${summary.totals.apiAuthProtectedReachable ?? 'n/a'} |
 | ... anonymous-denied, employee not 200 | ${summary.totals.apiAuthProtected ?? 'n/a'} |
 | ... GET returns 404/405 (POST-only or parameterized) | ${summary.totals.apiAuthGetUnsupported ?? 'n/a'} |
+| Breadcrumb destinations audited | ${summary.totals.breadcrumbAudited ?? 'n/a'} |
+| ... label consistent with navigation/title | ${summary.totals.breadcrumbConsistent ?? 'n/a'} |
+| ... label mismatch | ${summary.totals.breadcrumbMismatch ?? 'n/a'} |
+| ... no current crumb (dashboard root) | ${summary.totals.breadcrumbNoCrumb ?? 'n/a'} |
+| ... ancestor links outside the CRM catalogue | ${summary.totals.breadcrumbUnauthorizedAncestors ?? 'n/a'} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -458,6 +478,22 @@ No page-referenced API answered 200 anonymously. The five paths that answer 401
 to an employee session are customer-portal endpoints (\`warranty_claims/portal/*\`,\n\`workflows/portal/tasks\`) that expect a customer identity, not a staff session —
 recorded as expected, not a defect.
 
+## Breadcrumb evidence
+
+The header breadcrumb's current crumb was compared with the sidebar label from
+the caller's catalogue and with the page heading; every breadcrumb ancestor link
+was checked against authorized catalogue destinations.
+
+| Breadcrumb check | Count |
+| --- | --- |
+| destinations audited | ${summary.totals.breadcrumbAudited ?? 0} |
+| label consistent | ${summary.totals.breadcrumbConsistent ?? 0} |
+| label mismatch | ${summary.totals.breadcrumbMismatch ?? 0} |
+| no current crumb (dashboard root) | ${summary.totals.breadcrumbNoCrumb ?? 0} |
+| unauthorized ancestor links | ${summary.totals.breadcrumbUnauthorizedAncestors ?? 0} |
+
+${[...breadcrumbByRoute.entries()].filter(([, entry]) => entry.verdict === 'mismatch').map(([route, entry]) => '- ' + route + ' — nav "' + (entry.navLabel ?? '?') + '" vs crumb "' + (entry.currentCrumb ?? '?') + '"' + (entry.heading ? ' vs heading "' + entry.heading + '"' : '')).join('\n') || 'No label mismatches.'}
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
@@ -479,6 +515,7 @@ ${gapList || '| - | - | - |'}
 - empty-state audit: \`.ai/analysis/enterprise-empty-state-audit.json\`
 - employee permission sweep: \`.ai/analysis/enterprise-permission-audit.json\`
 - API authorization probe: \`.ai/analysis/enterprise-api-auth-probe.json\`
+- breadcrumb audit: \`.ai/analysis/enterprise-breadcrumb-audit.json\`
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a

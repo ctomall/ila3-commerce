@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T15:36:33.862Z
+Generated: 2026-11-17T15:41:48.199Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -31,6 +31,11 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | ... anonymous-denied and employee-reachable | 36 |
 | ... anonymous-denied, employee not 200 | 34 |
 | ... GET returns 404/405 (POST-only or parameterized) | 38 |
+| Breadcrumb destinations audited | 137 |
+| ... label consistent with navigation/title | 131 |
+| ... label mismatch | 5 |
+| ... no current crumb (dashboard root) | 1 |
+| ... unauthorized ancestor links | 4 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -458,6 +463,26 @@ to an employee session are customer-portal endpoints (`warranty_claims/portal/*`
 `workflows/portal/tasks`) that expect a customer identity, not a staff session —
 recorded as expected, not a defect.
 
+## Breadcrumb evidence
+
+The header breadcrumb's current crumb was compared with the sidebar label from
+the caller's catalogue and with the page heading; every breadcrumb ancestor link
+was checked against authorized catalogue destinations.
+
+| Breadcrumb check | Count |
+| --- | --- |
+| destinations audited | 137 |
+| label consistent | 131 |
+| label mismatch | 5 |
+| no current crumb (dashboard root) | 1 |
+| unauthorized ancestor links | 4 |
+
+- /backend/work-inbox — nav "工作收件箱" vs crumb "Work Inbox"
+- /backend/wms — nav "运营看板" vs crumb "仓储管理" vs heading "运营看板"
+- /backend/inbox-ops — nav "收件箱建议" vs crumb "AI 收件箱处理" vs heading "AI Inbox Actions"
+- /backend/instances — nav "工作流实例" vs crumb "Automation Runs" vs heading "工作流实例"
+- /backend/logs — nav "执行日志" vs crumb "业务规则日志" vs heading "Execution Logs"
+
 ## Observations
 
 - `/docs/api` — navigation-failure (public-audit); access/behaviour to confirm, not a confirmed page defect.
@@ -479,6 +504,7 @@ recorded as expected, not a defect.
 - empty-state audit: `.ai/analysis/enterprise-empty-state-audit.json`
 - employee permission sweep: `.ai/analysis/enterprise-permission-audit.json`
 - API authorization probe: `.ai/analysis/enterprise-api-auth-probe.json`
+- breadcrumb audit: `.ai/analysis/enterprise-breadcrumb-audit.json`
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a
