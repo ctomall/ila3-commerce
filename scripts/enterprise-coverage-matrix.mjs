@@ -35,6 +35,7 @@ const sources = {
   returnAudit: path.join(repo, '.ai/analysis/enterprise-return-path-audit.json'),
   emptyState: path.join(repo, '.ai/analysis/enterprise-empty-state-audit.json'),
   permission: path.join(repo, '.ai/analysis/enterprise-permission-audit.json'),
+  apiAuth: path.join(repo, '.ai/analysis/enterprise-api-auth-probe.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -187,6 +188,7 @@ function evidenceFor(page) {
 const returnAudit = read(sources.returnAudit)
 const emptyState = read(sources.emptyState)
 const permissionAudit = read(sources.permission)
+const apiAuth = read(sources.apiAuth)
 const permissionByRoute = new Map((permissionAudit?.results ?? []).map((entry) => [
   normalize(entry.route),
   {
@@ -307,6 +309,11 @@ const summary = {
     emptyStateEvidenced: emptyAudited.filter((row) => ['empty-state-text', 'zero-rows'].includes(row.emptyState.verdict)).length,
     emptyStateNoSearch: emptyAudited.filter((row) => row.emptyState.verdict === 'no-search-control').length,
     emptyStateNeedsReview: emptyNeedsReview.length,
+    apiAuthReferences: apiAuth?.references ?? null,
+    apiAuthAnonymous200: (apiAuth?.anonymous200 ?? []).length,
+    apiAuthProtectedReachable: apiAuth?.summary?.['protected-and-reachable'] ?? null,
+    apiAuthProtected: apiAuth?.summary?.protected ?? null,
+    apiAuthGetUnsupported: apiAuth?.summary?.['route-not-found-by-get'] ?? null,
     permissionAudited: permissionAudited.length,
     permissionRendered: permissionAudited.filter((row) => row.permission.verdict === 'rendered').length,
     permissionDenied: permissionDenied.length,
@@ -360,6 +367,11 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | Employee-view rendered | ${summary.totals.permissionRendered} |
 | Employee-view denied despite a nav link | ${summary.totals.permissionDenied} |
 | Employee-view transient navigation failures | ${summary.totals.permissionTransient} |
+| Page-referenced APIs probed for auth | ${summary.totals.apiAuthReferences ?? 'n/a'} |
+| ... anonymously readable (should be 0) | ${summary.totals.apiAuthAnonymous200 ?? 'n/a'} |
+| ... anonymous-denied and employee-reachable | ${summary.totals.apiAuthProtectedReachable ?? 'n/a'} |
+| ... anonymous-denied, employee not 200 | ${summary.totals.apiAuthProtected ?? 'n/a'} |
+| ... GET returns 404/405 (POST-only or parameterized) | ${summary.totals.apiAuthGetUnsupported ?? 'n/a'} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -433,6 +445,19 @@ ${Object.entries(permissionByStatus).map(([status, count]) => `| ${status} | ${c
 
 ${permissionDenied.length === 0 ? 'No employee-visible link led to a denial.' : `Employee-visible links that answer with a denial:\n\n${permissionDenied.map((row) => `- \`${row.route}\` — ${row.permission.text ?? ''}`).join('\n')}`}
 
+## API authorization surface
+
+Every unique page-referenced API path (${apiAuth?.references ?? 0}) was requested
+anonymously and with an employee session.
+
+| Authorization result | Paths |
+| --- | --- |
+${Object.entries(apiAuth?.summary ?? {}).map(([key, value]) => `| ${key} | ${value} |`).join('\n')}
+
+No page-referenced API answered 200 anonymously. The five paths that answer 401
+to an employee session are customer-portal endpoints (\`warranty_claims/portal/*\`,\n\`workflows/portal/tasks\`) that expect a customer identity, not a staff session —
+recorded as expected, not a defect.
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
@@ -453,6 +478,7 @@ ${gapList || '| - | - | - |'}
 - return-path audit: \`.ai/analysis/enterprise-return-path-audit.json\`
 - empty-state audit: \`.ai/analysis/enterprise-empty-state-audit.json\`
 - employee permission sweep: \`.ai/analysis/enterprise-permission-audit.json\`
+- API authorization probe: \`.ai/analysis/enterprise-api-auth-probe.json\`
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a
