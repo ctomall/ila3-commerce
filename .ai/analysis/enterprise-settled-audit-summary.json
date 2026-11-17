@@ -1,0 +1,684 @@
+{
+  "scope": "authorized-navigation-static-destinations",
+  "completed": 137,
+  "limitations": [
+    "readonly API writes blocked: errors may be test-induced",
+    "DOM quiet not business-ready",
+    "not all dynamic routes exercised"
+  ],
+  "overflow": [
+    {
+      "route": "/backend/customers/deals/map",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机地图",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "商机地图",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/customers/deals/pipeline",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "运营看板",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 1147,
+          "skeletons": 0,
+          "title": "运营看板",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/inventory",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存余额",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库存余额",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/warehouses",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/zones",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/locations",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/lots",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存批次",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库存批次",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/movements",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存出入库台账",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库存出入库台账",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/wms/reservations",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存预留",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "库存预留",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Vendor policies",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Vendor policies",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/registrations",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Warranty registrations",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Warranty registrations",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Troubleshooting guides",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Troubleshooting guides",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Projects",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Projects",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/board",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "任务",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "任务",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/entries",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Time entries",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Time entries",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工时报表",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "工时报表",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/documents/templates",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Document templates",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Document templates",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/eudr/product-mappings",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Product mappings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Product mappings",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/eudr/plots",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Plots",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Plots",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/eudr/statements",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Statements",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Statements",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Evidence submissions",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Evidence submissions",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/eudr/risk-assessments",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Risk assessments",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Risk assessments",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/config/ai-assistant/settings",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 403,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/config/ai-assistant/legacy",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 403,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/config/customers/pipeline-stages",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "漏斗阶段",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 485,
+          "skeletons": 0,
+          "title": "漏斗阶段",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/config/dictionaries",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "数据字典",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 398,
+          "skeletons": 0,
+          "title": "数据字典",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/config/customers/deals",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "商机设置",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/settings",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Claim settings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Claim settings",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/customer_accounts/settings/domain",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "自定义域名",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "自定义域名",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/push_notifications/send",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "发送推送",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "发送推送",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    },
+    {
+      "route": "/backend/instances/failure-queue",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Grouped by error",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Grouped by error",
+          "denied": false,
+          "crashed": false
+        }
+      ]
+    }
+  ],
+  "errorPages": 131
+}
