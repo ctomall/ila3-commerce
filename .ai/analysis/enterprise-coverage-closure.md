@@ -177,3 +177,16 @@ per-route re-check. Details: `enterprise-permission-audit-findings.md`.
 - The System Update UI renders the running release `v0.2.11 d8831e4c`, the
   kernel version, the deploy lock state and "no update available" — the human
   entry point for the OTA facts already verified at the API/artifact level.
+
+## Management-centre reachability
+
+`scripts/enterprise-manage-center-audit.mjs` opened `/backend/manage` as
+superadmin and employee and checked each caller's own catalogue:
+
+| Role | Personal links visible | Management entries found via centre search |
+| --- | --- | --- |
+| superadmin | 4 / 4 | 70 / 70 |
+| employee | 2 / 2 | 17 / 17 |
+
+Every authorized entry is listed and searchable from the fixed centre; no
+misses. Details: `enterprise-manage-center-findings.md`.

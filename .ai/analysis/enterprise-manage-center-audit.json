@@ -1,0 +1,24 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "manage-center-reachability",
+  "count": 2,
+  "completed": 2,
+  "results": [
+    {
+      "role": "superadmin",
+      "personal": 4,
+      "personalVisible": 4,
+      "manage": 70,
+      "found": 70,
+      "misses": []
+    },
+    {
+      "role": "employee",
+      "personal": 2,
+      "personalVisible": 2,
+      "manage": 17,
+      "found": 17,
+      "misses": []
+    }
+  ]
+}
