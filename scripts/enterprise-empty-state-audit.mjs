@@ -21,7 +21,7 @@ const credentialFile = process.env.CRM_TEST_CREDENTIAL_FILE
 if (!credentialFile) throw Error('Explicit test credential file required')
 const STATIC_AUDIT = process.env.STATIC_AUDIT ?? '.ai/analysis/enterprise-static-page-audit.json'
 const NONSENSE = `zzz-no-match-${Date.now()}`
-const EMPTY_TEXT = /no (results?|matches?|records?|items?)|nothing (found|matches)|empty|没有(找到|匹配|数据|记录)|暂无(数据|记录|内容)?|无匹配|未找到/i
+const EMPTY_TEXT = /no\s+[^.!]{0,48}\b(match|matches|found|results?|records?|items?)\b|nothing (found|matches)|empty|没有(找到|匹配|数据|记录)|暂无(数据|记录|内容)?|无匹配|未找到/i
 const loopbackHost = new URL(base).host
 
 const rows = fs.readFileSync(credentialFile, 'utf8').split('\n').map((line) => line.trim().split(/\s+/))

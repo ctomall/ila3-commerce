@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T14:30:07.607Z",
+    "generatedAt": "2026-11-17T14:44:23.577Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -27,9 +27,9 @@
       "returnPathEvidenced": 128,
       "returnPathMissing": 2,
       "emptyStateAudited": 137,
-      "emptyStateEvidenced": 75,
+      "emptyStateEvidenced": 76,
       "emptyStateNoSearch": 59,
-      "emptyStateNeedsReview": 3,
+      "emptyStateNeedsReview": 2,
       "gap": 0,
       "backendApis": 290,
       "openApiOperations": 1006,
@@ -871,7 +871,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 10,
+        "rowsBefore": 18,
         "rowsAfter": 62
       },
       "apiStatus": "unmapped",
@@ -1011,7 +1011,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 4,
+        "rowsBefore": 1,
         "rowsAfter": 1
       },
       "apiStatus": "source-literals-only",
@@ -1223,7 +1223,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 1,
+        "rowsBefore": 6,
         "rowsAfter": 1
       },
       "apiStatus": "source-literals-only",
@@ -1842,7 +1842,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "no-search-control",
-        "rowsBefore": 90,
+        "rowsBefore": 95,
         "rowsAfter": null
       },
       "apiStatus": "unmapped",
@@ -1910,7 +1910,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 50,
+        "rowsBefore": 1,
         "rowsAfter": 1
       },
       "apiStatus": "unmapped",
@@ -2156,7 +2156,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "no-empty-state",
-        "rowsBefore": 1,
+        "rowsBefore": 12,
         "rowsAfter": 12
       },
       "apiStatus": "unmapped",
@@ -2228,7 +2228,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 1,
+        "rowsBefore": 4,
         "rowsAfter": 1
       },
       "apiStatus": "unmapped",
@@ -5207,7 +5207,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 10,
+        "rowsBefore": 1,
         "rowsAfter": 1
       },
       "apiStatus": "source-literals-only",
@@ -6291,7 +6291,7 @@
       },
       "returnPath": null,
       "emptyState": {
-        "verdict": "no-empty-state",
+        "verdict": "empty-state-text",
         "rowsBefore": 4,
         "rowsAfter": 1
       },
@@ -6365,7 +6365,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "no-search-control",
-        "rowsBefore": 2,
+        "rowsBefore": 1,
         "rowsAfter": null
       },
       "apiStatus": "source-literals-only",
@@ -7024,7 +7024,7 @@
       },
       "returnPath": null,
       "emptyState": {
-        "verdict": "zero-rows",
+        "verdict": "empty-state-text",
         "rowsBefore": 0,
         "rowsAfter": 0
       },
@@ -10384,7 +10384,7 @@
       "returnPath": null,
       "emptyState": {
         "verdict": "empty-state-text",
-        "rowsBefore": 3,
+        "rowsBefore": 1,
         "rowsAfter": 1
       },
       "apiStatus": "unmapped",

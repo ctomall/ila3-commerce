@@ -1,4 +1,4 @@
-# Empty-state audit findings
+# Empty-state audit findings (corrected)
 
 Date: 2026-11-17
 Tool: `scripts/enterprise-empty-state-audit.mjs`
@@ -6,37 +6,43 @@ Scope: the 137 authorized static list destinations, authenticated as superadmin.
 
 ## Method
 
-For each destination the sweep looks for a search input, types a query that
+For each destination the sweep finds a search-shaped input, types a query that
 cannot match (`zzz-no-match-…`) and waits up to 4s for either a readable empty
-message (`没有找到/暂无/无匹配/No results/…`) or zero table rows. Only GETs run;
-every write stays blocked. A page with no search input is recorded as
-`no-search-control` — many settings/form pages simply have no list search, so
-that is not a failure.
+message or zero table rows. Only GETs run; every write stays blocked. Pages with
+no list search are recorded as `no-search-control` — many settings/form pages
+have no list, so that is not a failure.
+
+The empty-message pattern was widened after review: it now accepts messages like
+`No projects match these filters` (the first run only matched `no matches`, which
+produced a false "no empty state" for the projects page).
 
 ## Result (137 destinations)
 
 | Empty state | Routes |
 | --- | --- |
-| readable empty message | 69 |
-| zero rows | 6 |
+| readable empty message | 71 |
+| zero rows | 5 |
 | no search control (not testable this way) | 59 |
-| needs review | 3 |
+| needs review | 2 |
 
-That is 75 destinations with direct empty-state evidence, plus 59 where the
-question does not apply to the current UI.
+That is 76 destinations with direct empty-state evidence.
 
-## Needs review (not claimed as defects)
+## The two review items
 
-- `/backend/catalog/prices` — rows went 1 → 12 after typing; the first input the
-  heuristic fills may be a scope filter rather than the list search.
-- `/backend/staff/time-tracking/projects` — rows went 4 → 1; a client-side
-  filter may have matched the nonsense token differently.
-- `/backend/config/translations` — page did not finish loading within the probe
-  budget (large dictionary page).
+- `/backend/catalog/prices` — typing `zzz-no-match-…` into the page's own
+  `搜索价格规则` box (slower typing, Enter, 5s wait) still shows all 12 rows and
+  the footer "显示第 1 至 12 条，共 12 条结果". Recorded as an observation: either
+  this search binds to a different dataset/view, or it does not filter. Not
+  fixed here.
+- `/backend/config/translations` — the visible search box is a `Search records...`
+  combobox for a different picker; the language list is rendered as cards, not a
+  searchable table. Not applicable to this audit method.
 
-The audit's heuristic picks the first search-shaped input on the page; a page
-with multiple filters can therefore be misread. These three are recorded for a
-targeted per-page check, not fixed or counted as missing empty states.
+## Verified positive example
+
+`/backend/staff/time-tracking/projects` renders the single-row empty state
+"No projects match these filters. + Add first project" after a nonsense query —
+that is the state the widened pattern now recognizes.
 
 ## Limitation
 

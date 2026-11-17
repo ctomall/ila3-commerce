@@ -134,19 +134,20 @@ The first run reported 10 missing returns; that was a classifier false negative
 `/backend/auth/profile` (personal hub, dashboard breadcrumb only) and
 `/backend/staff/profile/create` (no authorized parent in the catalogue).
 
-## Empty-state evidence
+## Empty-state evidence (corrected)
 
-`scripts/enterprise-empty-state-audit.mjs` typed a nonsense query into each of
-the 137 authorized list destinations that has a search control.
+`scripts/enterprise-empty-state-audit.mjs` typed a nonsense query into every
+authorized list destination that has a search control.
 
 | Empty state | Routes |
 | --- | --- |
-| readable empty message | 69 |
-| zero rows | 6 |
+| readable empty message | 71 |
+| zero rows | 5 |
 | no search control (not testable this way) | 59 |
-| needs review (filter heuristics) | 3 |
+| needs review | 2 |
 
-75 destinations have direct empty-state evidence. The three review items
-(`catalog/prices`, `staff/time-tracking/projects`, `config/translations`) are
-recorded, not fixed; the heuristic may fill a scope filter rather than the list
-search. Details: `enterprise-empty-state-findings.md`.
+76 destinations have direct empty-state evidence. The first run missed messages
+like "No projects match these filters" (pattern widened). Review items:
+`catalog/prices` keeps all 12 rows after a nonsense search (recorded as an
+observation), `config/translations` uses a records combobox rather than a
+searchable table (not applicable). Details: `enterprise-empty-state-findings.md`.

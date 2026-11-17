@@ -1,7 +1,7 @@
 {
   "base": "http://127.0.0.1:3000",
   "scope": "empty-state-list-destinations",
-  "nonsense": "zzz-no-match-1794925342673",
+  "nonsense": "zzz-no-match-1794926261512",
   "count": 137,
   "completed": 137,
   "results": [
@@ -33,7 +33,7 @@
     {
       "route": "/backend/customers/companies",
       "verdict": "empty-state-text",
-      "rowsBefore": 4,
+      "rowsBefore": 1,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },
@@ -61,7 +61,7 @@
     {
       "route": "/backend/customers/people",
       "verdict": "empty-state-text",
-      "rowsBefore": 1,
+      "rowsBefore": 6,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },
@@ -103,14 +103,14 @@
     {
       "route": "/backend/catalog/products",
       "verdict": "empty-state-text",
-      "rowsBefore": 1,
+      "rowsBefore": 4,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },
     {
       "route": "/backend/catalog/prices",
       "verdict": "no-empty-state",
-      "rowsBefore": 1,
+      "rowsBefore": 12,
       "rowsAfter": 12,
       "emptyTextVisible": false
     },
@@ -206,10 +206,10 @@
     },
     {
       "route": "/backend/staff/time-tracking/projects",
-      "verdict": "no-empty-state",
+      "verdict": "empty-state-text",
       "rowsBefore": 4,
       "rowsAfter": 1,
-      "emptyTextVisible": false
+      "emptyTextVisible": true
     },
     {
       "route": "/backend/staff/time-tracking/board",
@@ -288,7 +288,7 @@
     {
       "route": "/backend/staff/time-tracking/reports",
       "verdict": "no-search-control",
-      "rowsBefore": 2,
+      "rowsBefore": 1,
       "rowsAfter": null
     },
     {
@@ -573,7 +573,7 @@
     {
       "route": "/backend/config/customers",
       "verdict": "empty-state-text",
-      "rowsBefore": 10,
+      "rowsBefore": 18,
       "rowsAfter": 62,
       "emptyTextVisible": true
     },
@@ -592,7 +592,7 @@
     {
       "route": "/backend/currencies",
       "verdict": "empty-state-text",
-      "rowsBefore": 10,
+      "rowsBefore": 1,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },
@@ -680,7 +680,7 @@
     {
       "route": "/backend/customer_accounts/users",
       "verdict": "empty-state-text",
-      "rowsBefore": 3,
+      "rowsBefore": 1,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },
@@ -711,10 +711,10 @@
     },
     {
       "route": "/backend/notifications/user-preferences",
-      "verdict": "zero-rows",
+      "verdict": "empty-state-text",
       "rowsBefore": 0,
       "rowsAfter": 0,
-      "emptyTextVisible": false
+      "emptyTextVisible": true
     },
     {
       "route": "/backend/config/notifications",
@@ -744,13 +744,13 @@
     {
       "route": "/backend/config/module-telemetry",
       "verdict": "no-search-control",
-      "rowsBefore": 90,
+      "rowsBefore": 95,
       "rowsAfter": null
     },
     {
       "route": "/backend/query-indexes",
       "verdict": "empty-state-text",
-      "rowsBefore": 50,
+      "rowsBefore": 1,
       "rowsAfter": 1,
       "emptyTextVisible": true
     },

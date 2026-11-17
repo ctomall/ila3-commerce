@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T14:30:07.607Z
+Generated: 2026-11-17T14:44:23.577Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -19,9 +19,9 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Return path evidenced | 128 |
 | No contextual return | 2 |
 | Empty state audited (list destinations) | 137 |
-| Empty state evidenced | 75 |
+| Empty state evidenced | 76 |
 | No search control (not testable this way) | 59 |
-| Empty-state observations needing review | 3 |
+| Empty-state observations needing review | 2 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -408,15 +408,14 @@ control; a readable empty state or zero rows counts as evidence.
 | Empty state | Routes |
 | --- | --- |
 | no-search-control | 59 |
-| empty-state-text | 69 |
-| zero-rows | 6 |
-| no-empty-state | 2 |
+| empty-state-text | 71 |
+| zero-rows | 5 |
+| no-empty-state | 1 |
 | error | 1 |
 
 Needs review (audit may have typed into a filter that is not the list search):
 
-- `/backend/catalog/prices` — no-empty-state (rows 1→12)
-- `/backend/staff/time-tracking/projects` — no-empty-state (rows 4→1)
+- `/backend/catalog/prices` — no-empty-state (rows 12→12)
 - `/backend/config/translations` — error (rows 0→null)
 
 ## Observations
