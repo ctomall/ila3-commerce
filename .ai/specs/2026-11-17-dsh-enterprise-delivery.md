@@ -191,3 +191,8 @@ Scope: app header gains shared Button/Link context affordance only on nested dec
 P2Bprogress: parentpure3tests/component2tests; fixturesinitiallymissingreadCrmCatalogrequiredarrays→fixed,thenTSmockbraceerror→fixed,latesttypeexit0. Fullgatespassedbeforecomponentaddition; currentpipeline152886lint/ds/fulltests/buildexplicitexit/tmp/enterprise-p2b-build.exit. Narrowviewiconvisiblewitharialabel; labeldesktoponly. NoAPI/DBwrites. Waitbuildthenbrowserfixturebefore0.2.5release.
 
 P2Bcandidatebuildexit0,12Playwrightpassed incldirectcreatepageparentdesktop/mobile. Browser157707collected,candidate157511stopped. Testbootstrap8.3minbutallcasespass;noextratimeoutalteration. NeedfinalgateafternewtestandCI0.2.5release. NoDBchanges/externalactions.
+
+
+## P2B release — 0.2.5
+
+9d4ad0009d825598a77986993c97c4e2e1bcaa76 CI44022184610success,deploy-20261117051759-9d4ad000deployed. Allgatespassed/buildexit0/candidate12Playwrightpassed/liveparentdesktop+mobile1passed(/tmp/enterprise-p2b-live.log). Sourcegate/browserbootstrap slow(sharedhost),no retriesorrelaxedassertions. Previous93c59c2. Noownedjobsremain;candidate157511stopped. P2Bverified,overallP2remainingfullbreadcrumb/unknownscopecoverage;P3-P6pending. Do notmarkwholegoalcomplete.
