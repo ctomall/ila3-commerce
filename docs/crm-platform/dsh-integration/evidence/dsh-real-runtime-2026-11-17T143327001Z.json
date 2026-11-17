@@ -1,0 +1,33 @@
+{
+  "drill": "dsh-real-runtime-mock-model",
+  "startedAt": "2026-11-17T14:33:27.003Z",
+  "runtime": {
+    "cli": "/home/pro/dsh-src/apps/cli/lib/bin.js",
+    "profile": "sdk-minimal",
+    "patch": "/home/pro/apps/mercato/vendor/dsh/crm-profile.patch.yml",
+    "mockModel": "file:///home/pro/dsh-src/packages/test-support/llm-mock-server/lib/index.js"
+  },
+  "checks": {
+    "modelRequests": 2,
+    "secondRequestContainsToolResult": true,
+    "bridgeHits": [
+      {
+        "path": "/api/internal/dsh-tools/crm.find_companies",
+        "authorizationPrefix": "Bearer fake-",
+        "body": "{\"limit\":2}"
+      }
+    ],
+    "toolEvents": [
+      "tool/call",
+      "tool/result"
+    ],
+    "assistantTexts": [
+      "REAL-TOOL-LOOP-OK"
+    ],
+    "finalText": "REAL-TOOL-LOOP-OK",
+    "stderrTail": ""
+  },
+  "failures": [],
+  "finishedAt": "2026-11-17T14:33:30.029Z",
+  "result": "passed"
+}
