@@ -31,6 +31,8 @@ const sources = {
   dynamic: path.join(repo, '.ai/analysis/enterprise-dynamic-page-audit-after.json'),
   public: path.join(repo, '.ai/analysis/enterprise-public-page-audit.json'),
   direct: path.join(repo, '.ai/analysis/enterprise-direct-page-audit.json'),
+  contractProbe: path.join(repo, '.ai/analysis/enterprise-api-contract-probe.json'),
+  openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
 const read = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null)
@@ -49,11 +51,77 @@ const staticFindings = staticSweep.length > 0 ? staticSweep : (read(sources.stat
 const dynamicResults = read(sources.dynamic)?.results ?? []
 const publicResults = read(sources.public)?.results ?? []
 const directResults = read(sources.direct)?.results ?? []
+const openapi = read(sources.openapi)
+const openapiPaths = Object.keys(openapi?.paths ?? {})
 
 const staticByRoute = new Map(staticFindings.map((entry) => [normalize(entry.route), entry]))
 const dynamicByRoute = new Map(dynamicResults.map((entry) => [normalize(entry.route), entry]))
 const publicByRoute = new Map(publicResults.map((entry) => [normalize(entry.route), entry]))
 const directByRoute = new Map(directResults.map((entry) => [normalize(entry.route), entry]))
+
+const stripQuery = (value) => String(value ?? '').split('?')[0].replace(/\/+$/, '')
+  .replace(/\[([^\]]+)\]/g, '{$1}')
+// Static app routes (login, docs, portal APIs) never appear in the module
+// OpenAPI document, so they are a second, explicit contract source.
+const staticAppApiPaths = [...new Set((baseline.staticAppApis ?? []).map((entry) => stripQuery(entry.route ?? '')))]
+const probedRoutes = new Map(
+  (read(sources.contractProbe)?.results ?? []).map((entry) => [
+    stripQuery(entry.reference ?? ''),
+    ['exists', 'exists-method-mismatch', 'exists-post-only-from-sweep'].includes(entry.verdict) ? 'exists' : entry.verdict,
+  ]),
+)
+
+const contractPatterns = openapiPaths.map((pattern) => ({
+  pattern,
+  regex: new RegExp(`^${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\\{[^/]+\\\}/g, '[^/]+')}$`),
+}))
+
+/** Resolve one static API reference against the generated OpenAPI paths. */
+function resolveReference(reference) {
+  const target = stripQuery(reference)
+  if (!target) return null
+  if (openapiPaths.includes(target)) return { path: target, source: 'openapi' }
+  const match = contractPatterns.find((entry) => entry.regex.test(target))
+  if (match) return { path: match.pattern, source: 'openapi' }
+  if (staticAppApiPaths.includes(target)) return { path: target, source: 'static-app-route' }
+  const staticMatch = staticAppApiPaths.find((pattern) => pattern.includes('{') && patternRegex(pattern).test(target))
+  if (staticMatch) return { path: staticMatch, source: 'static-app-route' }
+  if (probedRoutes.get(target) === 'exists') return { path: target, source: 'runtime-probe' }
+  return null
+}
+
+const patternCache = new Map()
+function patternRegex(pattern) {
+  if (!patternCache.has(pattern)) {
+    patternCache.set(pattern, new RegExp(`^${pattern.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\\{[^/]+\\}/g, '[^/]+')}$`))
+  }
+  return patternCache.get(pattern)
+}
+
+/** Backend contract evidence for one page: do its references exist today? */
+function contractFor(page) {
+  const references = Array.isArray(page.apiMapping?.references) ? page.apiMapping.references : []
+  const unique = [...new Set(references.map((entry) => stripQuery(entry.path ?? '')))]
+  const unresolved = unique.filter((path) => resolveReference(path) === null && probedRoutes.get(path) !== 'not-probed-unsafe')
+  const resolvedBySource = { openapi: 0, 'static-app-route': 0, 'runtime-probe': 0 }
+  for (const path of unique) {
+    const hit = resolveReference(path)
+    if (hit) resolvedBySource[hit.source] += 1
+  }
+  return {
+    total: unique.length,
+    resolved: unique.length - unresolved.length,
+    resolvedBySource,
+    resolved: unique.length - unresolved.length - unique.filter((path) => probedRoutes.get(path) === 'not-probed-unsafe').length,
+    unresolved,
+    unverified: unique.filter((path) => probedRoutes.get(path) === 'not-probed-unsafe'),
+    status: unique.length === 0
+      ? 'no-references'
+      : unresolved.length === 0
+        ? (unique.some((path) => probedRoutes.get(path) === 'not-probed-unsafe') ? 'resolved-with-unverified' : 'resolved')
+        : 'unresolved',
+  }
+}
 
 function classify(route) {
   if (!route.startsWith('/backend')) {
@@ -116,14 +184,15 @@ function evidenceFor(page) {
 const rows = (baseline.pages ?? []).map((page) => {
   const route = normalize(page.route)
   const evidence = evidenceFor(page)
-  const apiRefs = Array.isArray(page.apiMapping?.references) ? page.apiMapping.references : []
+  const contract = contractFor(page)
   return {
     route,
     className: classify(route),
     moduleId: page.moduleId,
     requireAuth: page.declared?.requireAuth ?? null,
     navHidden: page.declared?.navHidden ?? null,
-    apiReferences: apiRefs.length,
+    apiReferences: contract.total,
+    apiContract: contract,
     apiStatus: page.apiMapping?.status ?? null,
     evidence,
     metadataStatus: page.metadataStatus ?? null,
@@ -142,6 +211,15 @@ for (const row of rows) {
 const gaps = rows.filter((row) => row.evidence.status === 'gap')
 const defects = rows.filter((row) => row.evidence.status === 'defect')
 const observations = rows.filter((row) => row.evidence.status === 'observation')
+const contractByStatus = rows.reduce(
+  (acc, row) => {
+    acc[row.apiContract.status] = (acc[row.apiContract.status] ?? 0) + 1
+    return acc
+  },
+  { resolved: 0, 'resolved-with-unverified': 0, unresolved: 0, 'no-references': 0 },
+)
+const unresolvedReferences = [...new Set(rows.flatMap((row) => row.apiContract.unresolved))].sort()
+const pagesWithUnresolvedContract = rows.filter((row) => row.apiContract.status === 'unresolved')
 const summary = {
   generatedAt: new Date().toISOString(),
   sourceCommit: baseline.sourceCommit ?? null,
@@ -151,6 +229,10 @@ const summary = {
     evidenced: rows.filter((row) => row.evidence.status === 'evidenced').length,
     defect: defects.length,
     observation: observations.length,
+    contractReferences: rows.reduce((sum, row) => sum + row.apiContract.total, 0),
+    contractResolved: rows.reduce((sum, row) => sum + row.apiContract.resolved, 0),
+    contractUnresolved: rows.reduce((sum, row) => sum + row.apiContract.unresolved.length, 0),
+    contractUnverified: rows.reduce((sum, row) => sum + row.apiContract.unverified.length, 0),
     gap: gaps.length,
     backendApis: baseline.counts?.backend ?? null,
     openApiOperations: baseline.counts?.operations ?? null,
@@ -185,6 +267,10 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | Render-evidenced | ${summary.totals.evidenced} |
 | Defects | ${summary.totals.defect} |
 | Observations | ${summary.totals.observation} |
+| Page API references (distinct per page) | ${summary.totals.contractReferences} |
+| Resolved against OpenAPI | ${summary.totals.contractResolved} |
+| Unresolved references | ${summary.totals.contractUnresolved} |
+| Not probed safely (POST-only / side effects) | ${summary.totals.contractUnverified} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -198,6 +284,22 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 ${Object.entries(byClass)
   .map(([name, value]) => `| ${name} | ${value.total} | ${value.evidenced} | ${value.defect} | ${value.observation} | ${value.gap} |`)
   .join('\n')}
+
+## Backend contract evidence
+
+Static references are matched against the generated OpenAPI paths
+(${openapiPaths.length} paths); query strings are stripped and {param}
+placeholders are matched as one path segment. A reference is evidence that the
+page names the endpoint, not that the page calls it at runtime.
+
+| Contract status | Pages |
+| --- | --- |
+| all references exist in OpenAPI | ${contractByStatus.resolved} |
+| resolved, but at least one reference not probeable safely (POST-only) | ${contractByStatus['resolved-with-unverified']} |
+| at least one reference is missing | ${contractByStatus.unresolved} |
+| no API reference extracted | ${contractByStatus['no-references']} |
+
+${pagesWithUnresolvedContract.length === 0 ? 'No page references a confirmed-missing endpoint.' : `Pages with missing endpoints:\n\n${pagesWithUnresolvedContract.map((row) => `- \`${row.route}\` — ${row.apiContract.unresolved.map((path) => `\`${path}\``).join(', ')}`).join('\n')}`}
 
 ## Observations
 
@@ -215,6 +317,7 @@ ${gapList || '| - | - | - |'}
 - dynamic placeholder sweep: \`.ai/analysis/enterprise-dynamic-page-audit-after.json\`
 - public/portal/pay sweep: \`.ai/analysis/enterprise-public-page-audit.json\`
 - direct gap sweep: \`.ai/analysis/enterprise-direct-page-audit.json\`
+- contract check: \`.mercato/generated/openapi.generated.json\`
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a

@@ -85,3 +85,31 @@ after `deploy-20261117113400-55f4c486`:
 Matrix regenerated on that evidence: 319 pages, 318 render-evidenced, 0 defects,
 1 observation, 0 gaps. The two prototype list pages and both checkout create
 pages now stay at their viewport width at 1440 and 390.
+
+## Backend contract evidence (per page)
+
+The matrix now resolves every page's static API references against three
+sources: the generated OpenAPI document (595 paths), the static app routes (33
+`src/app/api/**/route.ts`), and a read-only runtime probe for the rest.
+
+| Reference class | Count |
+| --- | --- |
+| distinct page → API references | 169 |
+| resolved (OpenAPI / static app route) | 149 |
+| resolved only by a runtime GET probe | 8 |
+| deliberately not probed (POST-only, may email/invite/run writes) | 12 |
+| confirmed missing (GET 404 on a safe route) | 0 |
+
+Eight endpoints clearly exist (`/api/data_sync/options`, `/api/resources/tags`,
+`/api/staff/team-members`, `/api/entities/entities`, `/api/entities/entity-settings`,
+`/api/dashboards/widgets/catalog`, `/api/communication_channels/me/channels`,
+`/api/customer_accounts/admin/domain-mappings`) but are absent from the generated
+OpenAPI document — an OpenAPI coverage gap, recorded, not patched here.
+
+The 12 unprobed references are `/api/auth/reset{,/confirm,/validate}`,
+`/api/customer_accounts/{login,signup,email/verify,password/reset-confirm,invitations/accept}`,
+`/api/data_sync/run`, `/api/entities/definitions.{batch,restore}`. A GET probe
+returns 404 for POST-only routes and a real POST could send external messages or
+run writes, so they are marked unverified instead of guessed. `/api/auth/feature-check`
+is POST-only but already exercised by the read-only sweeps, so it counts as
+resolved.
