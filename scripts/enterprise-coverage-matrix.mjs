@@ -301,6 +301,15 @@ page names the endpoint, not that the page calls it at runtime.
 
 ${pagesWithUnresolvedContract.length === 0 ? 'No page references a confirmed-missing endpoint.' : `Pages with missing endpoints:\n\n${pagesWithUnresolvedContract.map((row) => `- \`${row.route}\` — ${row.apiContract.unresolved.map((path) => `\`${path}\``).join(', ')}`).join('\n')}`}
 
+## Page evidence (all pages)
+
+| Class | Route | Evidence | Contract |
+| --- | --- | --- | --- |
+${Object.keys(byClass)
+  .flatMap((name) => rows.filter((row) => row.className === name))
+  .map((row) => `| ${row.className} | \`${row.route}\` | ${row.evidence.status}${row.evidence.kind ? ` (${row.evidence.kind})` : ''} | ${row.apiContract.status} |`)
+  .join('\n')}
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
