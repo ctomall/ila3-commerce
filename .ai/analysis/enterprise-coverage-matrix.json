@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T15:11:37.969Z",
+    "generatedAt": "2026-11-17T15:36:33.862Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -13,6 +13,7 @@
       "returnAudit": "/home/pro/apps/mercato/.ai/analysis/enterprise-return-path-audit.json",
       "emptyState": "/home/pro/apps/mercato/.ai/analysis/enterprise-empty-state-audit.json",
       "permission": "/home/pro/apps/mercato/.ai/analysis/enterprise-permission-audit.json",
+      "apiAuth": "/home/pro/apps/mercato/.ai/analysis/enterprise-api-auth-probe.json",
       "openapi": "/home/pro/apps/mercato/.mercato/generated/openapi.generated.json"
     },
     "totals": {
@@ -31,6 +32,11 @@
       "emptyStateEvidenced": 76,
       "emptyStateNoSearch": 59,
       "emptyStateNeedsReview": 2,
+      "apiAuthReferences": 108,
+      "apiAuthAnonymous200": 0,
+      "apiAuthProtectedReachable": 36,
+      "apiAuthProtected": 34,
+      "apiAuthGetUnsupported": 38,
       "permissionAudited": 70,
       "permissionRendered": 65,
       "permissionDenied": 1,

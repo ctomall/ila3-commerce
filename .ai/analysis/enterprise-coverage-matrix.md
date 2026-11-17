@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T15:11:37.969Z
+Generated: 2026-11-17T15:36:33.862Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -26,6 +26,11 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Employee-view rendered | 65 |
 | Employee-view denied despite a nav link | 1 |
 | Employee-view transient navigation failures | 4 |
+| Page-referenced APIs probed for auth | 108 |
+| ... anonymously readable (should be 0) | 0 |
+| ... anonymous-denied and employee-reachable | 36 |
+| ... anonymous-denied, employee not 200 | 34 |
+| ... GET returns 404/405 (POST-only or parameterized) | 38 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -437,6 +442,22 @@ Employee-visible links that answer with a denial:
 
 - `/backend/definitions` — 
 
+## API authorization surface
+
+Every unique page-referenced API path (108) was requested
+anonymously and with an employee session.
+
+| Authorization result | Paths |
+| --- | --- |
+| protected | 34 |
+| route-not-found-by-get | 38 |
+| protected-and-reachable | 36 |
+
+No page-referenced API answered 200 anonymously. The five paths that answer 401
+to an employee session are customer-portal endpoints (`warranty_claims/portal/*`,
+`workflows/portal/tasks`) that expect a customer identity, not a staff session —
+recorded as expected, not a defect.
+
 ## Observations
 
 - `/docs/api` — navigation-failure (public-audit); access/behaviour to confirm, not a confirmed page defect.
@@ -457,6 +478,7 @@ Employee-visible links that answer with a denial:
 - return-path audit: `.ai/analysis/enterprise-return-path-audit.json`
 - empty-state audit: `.ai/analysis/enterprise-empty-state-audit.json`
 - employee permission sweep: `.ai/analysis/enterprise-permission-audit.json`
+- API authorization probe: `.ai/analysis/enterprise-api-auth-probe.json`
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a

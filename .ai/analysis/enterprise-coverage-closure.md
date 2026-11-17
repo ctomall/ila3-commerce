@@ -190,3 +190,12 @@ superadmin and employee and checked each caller's own catalogue:
 
 Every authorized entry is listed and searchable from the fixed centre; no
 misses. Details: `enterprise-manage-center-findings.md`.
+
+## API authorization surface
+
+Every unique page-referenced API path (108) was requested anonymously and with an
+employee session: 36 anonymous-denied + employee 200, 34 anonymous-denied with a
+non-200 employee answer, 38 GET-unsupported (POST-only/parameterized), and **0
+anonymously readable**. The five employee-401 paths are customer-portal endpoints
+(warranty claims portal, workflow portal tasks) that expect a customer identity.
+Details: `enterprise-api-auth-findings.md`.
