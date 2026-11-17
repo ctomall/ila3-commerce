@@ -29,6 +29,7 @@
  *   `answerQuestion` answers 501 instead of silently doing nothing.
  */
 
+import { checkAiAccess } from '@/modules/dsh_runs/lib/ai-access'
 import { createHash, randomUUID } from 'node:crypto'
 import os from 'node:os'
 import path from 'node:path'
@@ -1518,6 +1519,10 @@ async function handleChat(req: NextRequest) {
   if (!auth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
+
+  const aiAccess = await checkAiAccess(auth)
+  if (aiAccess === 'denied') return NextResponse.json({ error: 'Forbidden', code: 'feature_denied' }, { status: 403 })
+  if (aiAccess === 'unavailable') return NextResponse.json({ error: 'AI permission check unavailable', code: 'permission_unavailable' }, { status: 503 })
 
   // Canary: non-listed employees must get the exact packaged OpenCode route,
   // not a degraded DSH one. The proxy only rewrites here when the engine is

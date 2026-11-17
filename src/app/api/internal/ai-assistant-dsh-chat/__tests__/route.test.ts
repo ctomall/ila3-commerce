@@ -16,6 +16,9 @@ import type {
 import { TerminalRunError } from '@/modules/dsh_runs/services/run-store'
 import type { BindingRecord, RunEventRecord, RunRecord } from '@/modules/dsh_runs/services/run-store'
 
+const mockAiAccess = jest.fn(async () => 'allowed')
+jest.mock('@/modules/dsh_runs/lib/ai-access', () => ({checkAiAccess:mockAiAccess}))
+
 const mockStartDshRun = jest.fn<(input: DshRunInput) => Promise<DshRunHandle>>()
 
 jest.mock('@/lib/dsh/runtime', () => ({ startDshRun: mockStartDshRun }))
@@ -224,6 +227,7 @@ function fakeRunService(): FakeRunService {
 const userMessages = [{ role: 'user', content: 'hi' }]
 
 beforeEach(() => {
+  mockAiAccess.mockResolvedValue('allowed')
   jest.clearAllMocks()
   mockCreateRequestRunService.mockReset()
   mockCreateRequestRunService.mockResolvedValue(fakeRunService())
@@ -1114,4 +1118,20 @@ describe('POST /api/internal/ai-assistant-dsh-chat', () => {
 
   })
 
+})
+
+describe('static AI feature parity', () => {
+  it('denies a logged-in caller without the feature before runtime start', async () => {
+    mockAiAccess.mockResolvedValueOnce('denied')
+    const response = await POST(chatRequest({ messages: [{ role: 'user', content: 'hello' }] }))
+    expect(response.status).toBe(403)
+    expect(mockStartDshRun).not.toHaveBeenCalled()
+  })
+
+  it('fails closed on permission service outage without model access', async () => {
+    mockAiAccess.mockResolvedValueOnce('unavailable')
+    const response = await POST(chatRequest({ messages: [{ role: 'user', content: 'hello' }] }))
+    expect(response.status).toBe(503)
+    expect(mockStartDshRun).not.toHaveBeenCalled()
+  })
 })

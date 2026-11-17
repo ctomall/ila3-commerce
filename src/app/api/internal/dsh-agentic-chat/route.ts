@@ -8,6 +8,7 @@
  * an AI-SDK stream. Tool cards/approvals are not translated yet, so the bridge
  * is gated behind OM_DSH_AGENTIC and can be rolled back without a build.
  */
+import { checkAiAccess } from '@/modules/dsh_runs/lib/ai-access'
 import { createUIMessageStream, createUIMessageStreamResponse } from 'ai'
 import type { NextRequest } from 'next/server'
 import { NextResponse } from 'next/server'
@@ -47,6 +48,10 @@ async function handleAgenticChat(req: NextRequest) {
   const auth = await getAuthFromRequest(req)
   if (!auth?.sub) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   noteAiUserId(req, auth.sub)
+
+  const aiAccess = await checkAiAccess(auth)
+  if (aiAccess === 'denied') return NextResponse.json({ error: 'Forbidden', code: 'feature_denied' }, { status: 403 })
+  if (aiAccess === 'unavailable') return NextResponse.json({ error: 'AI permission check unavailable', code: 'permission_unavailable' }, { status: 503 })
 
   const unknownAgent = await rejectUnknownAgent(req)
   if (unknownAgent) return unknownAgent
