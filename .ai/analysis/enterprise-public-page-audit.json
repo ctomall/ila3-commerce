@@ -1,0 +1,1109 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "public-frontend-routes-anonymous",
+  "orgSlug": "acme-corp",
+  "count": 30,
+  "completed": 30,
+  "results": [
+    {
+      "route": "/start",
+      "url": "/start",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/start",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "ILA3 Commerce 面向产品与服务型企业的 AI 友好模块化 ERP 基础框架 欢迎使用 ILA3 Commerce 这是 ILA3 Commerce 的起始页。选择下面的角色即可进入对应的工作区。 默认密码 所有演示账号的默认密码为 secret. 如需修改密码，请使用 CLI 命令： yarn mercato auth set-password --email <email> --password <newPassword> 演示账号邮箱会在执行 yarn ini",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/start",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "ILA3 Commerce 面向产品与服务型企业的 AI 友好模块化 ERP 基础框架 欢迎使用 ILA3 Commerce 这是 ILA3 Commerce 的起始页。选择下面的角色即可进入对应的工作区。 默认密码 所有演示账号的默认密码为 secret. 如需修改密码，请使用 CLI 命令： yarn mercato auth set-password --email <email> --password <newPassword> 演示账号邮箱会在执行 yarn ini",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/login",
+      "url": "/login",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Open Mercato 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Open Mercato 登录你的工作空间 邮件 密码 记住我 登录 忘记密码？ 条款 隐私",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/reset",
+      "url": "/reset",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/reset",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "重置密码 Enter your email to receive reset link 邮件 发送重置链接 Back to login",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/reset",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "重置密码 Enter your email to receive reset link 邮件 发送重置链接 Back to login",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/terms",
+      "url": "/terms",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Terms of Service",
+          "url": "/terms",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Home Terms of Service Terms of Service Effective as of January 1, 2026 These Terms of Service (“Terms”) govern temporary, free-of-charge access to the hosted software platform operated by Open Mercato sp. z o.o., a company duly incorporated",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Terms of Service",
+          "url": "/terms",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Home Terms of Service Terms of Service Effective as of January 1, 2026 These Terms of Service (“Terms”) govern temporary, free-of-charge access to the hosted software platform operated by Open Mercato sp. z o.o., a company duly incorporated",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/privacy",
+      "url": "/privacy",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Privacy Policy",
+          "url": "/privacy",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Home Privacy Policy Privacy Policy Last Updated: January 1, 2026 This Privacy Policy (this “Policy”) describes how Open Mercato sp. z o.o., a company duly incorporated and existing under the laws of the Republic of Poland, with its principa",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Privacy Policy",
+          "url": "/privacy",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Home Privacy Policy Privacy Policy Last Updated: January 1, 2026 This Privacy Policy (this “Policy”) describes how Open Mercato sp. z o.o., a company duly incorporated and existing under the laws of the Republic of Poland, with its principa",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/docs/api",
+      "url": "/docs/api",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "failure": "Error"
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/docs/api",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "OpenAPI Explorer Auto-generated OpenAPI definition for all enabled modules. Default server: https://mercato.ila3.top/api No endpoints match your filters. Try adjusting the method filters or clearing the search query.",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "navigation-failure"
+    },
+    {
+      "route": "/reset/[token]",
+      "url": "/reset/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/reset/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Set a new password 加载中… Checking your reset link...",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/reset/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Set a new password 加载中… Checking your reset link...",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/quote/[token]",
+      "url": "/quote/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "报价单",
+          "url": "/quote/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "报价单 加载报价单失败。",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "报价单",
+          "url": "/quote/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "报价单 加载报价单失败。",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims/[id]",
+      "url": "/acme-corp/portal/claims/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims/new",
+      "url": "/acme-corp/portal/claims/new",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims",
+      "url": "/acme-corp/portal/claims",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/onboarding",
+      "url": "/onboarding",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/onboarding",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Self-service onboarding is currently unavailable Workspace creation is currently handled manually. Contact the ILA3 Commerce team or your administrator to request access before continuing. Go to login Create your ILA3 Commerce workspace Tel",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/onboarding",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Self-service onboarding is currently unavailable Workspace creation is currently handled manually. Contact the ILA3 Commerce team or your administrator to request access before continuing. Go to login Create your ILA3 Commerce workspace Tel",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/onboarding/preparing",
+      "url": "/onboarding/preparing",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/onboarding/preparing",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "加载中… We are preparing your workspace We are finishing your demo environment. We will send you an email with the correct tenant login link as soon as it is ready. You do not need to keep this page open. We will email you when everything is r",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/onboarding/preparing",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "加载中… We are preparing your workspace We are finishing your demo environment. We will send you an email with the correct tenant login link as soon as it is ready. You do not need to keep this page open. We will email you when everything is r",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/checkout-demo",
+      "url": "/checkout-demo",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/checkout-demo",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Checkout Demo with Payment Webhooks Interactive workflow demonstration featuring signal-based payment confirmation (WAIT_FOR_SIGNAL) Select Customer * 加载中… Loading customers... Add Products to Cart 加载中… Loading products... Order Summary You",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/checkout-demo",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Checkout Demo with Payment Webhooks Interactive workflow demonstration featuring signal-based payment confirmation (WAIT_FOR_SIGNAL) Select Customer * 加载中… Loading customers... Add Products to Cart 加载中… Loading products... Order Summary You",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/tasks/[id]",
+      "url": "/acme-corp/portal/tasks/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/tasks",
+      "url": "/acme-corp/portal/tasks",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/time-reports/[id]",
+      "url": "/acme-corp/portal/time-reports/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/time-reports",
+      "url": "/acme-corp/portal/time-reports",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/messages/view/[token]",
+      "url": "/messages/view/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "消息",
+          "url": "/messages/view/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "消息 Invalid or expired link HTTP 404",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "消息",
+          "url": "/messages/view/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "消息 Invalid or expired link HTTP 404",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/pay/[slug]/cancel/[transactionId]",
+      "url": "/pay/public-audit-sentinel-7d1a6/cancel/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6/cancel/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "加载中… Payment cancelled Checking payment status… Back to payment page",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6/cancel/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "加载中… Payment cancelled Checking payment status… Back to payment page",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/pay/[slug]",
+      "url": "/pay/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Unable to load payment link Payment link not found 重试",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Unable to load payment link Payment link not found 重试",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/pay/[slug]/success/[transactionId]",
+      "url": "/pay/public-audit-sentinel-7d1a6/success/public-audit-sentinel-7d1a6",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6/success/public-audit-sentinel-7d1a6",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "加载中… Payment processing Checking payment status… Back to payment page",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "no-main",
+          "status": null,
+          "title": "ILA3 Commerce",
+          "url": "/pay/public-audit-sentinel-7d1a6/success/public-audit-sentinel-7d1a6",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "加载中… Payment processing Checking payment status… Back to payment page",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/dashboard",
+      "url": "/acme-corp/portal/dashboard",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/invite",
+      "url": "/acme-corp/portal/invite",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "接受邀请",
+          "url": "/acme-corp/portal/invite",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Accept Invitation Create your portal account to accept this invitation. Invalid or missing invitation token. DISPLAY NAME 密码 CONFIRM PASSWORD Accept Invitation Already have an account? Sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "接受邀请",
+          "url": "/acme-corp/portal/invite",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Accept Invitation Create your portal account to accept this invitation. Invalid or missing invitation token. DISPLAY NAME 密码 CONFIRM PASSWORD Accept Invitation Already have an account? Sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/login",
+      "url": "/acme-corp/portal/login",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal",
+      "url": "/acme-corp/portal",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Customer Portal",
+          "url": "/acme-corp/portal",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "门户 Welcome to the Customer Portal Manage your account, view orders, and access all your resources in one place. Log In Create Account Orders & Invoices Track your orders, download invoices, and view delivery status in real time. Account Man",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Customer Portal",
+          "url": "/acme-corp/portal",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "门户 Welcome to the Customer Portal Manage your account, view orders, and access all your resources in one place. Log In Create Account Orders & Invoices Track your orders, download invoices, and view delivery status in real time. Account Man",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/profile",
+      "url": "/acme-corp/portal/profile",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "登录",
+          "url": "/acme-corp/portal/login",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Log In Sign in to your customer account. 邮件 密码 Log In Don't have an account? Sign up",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/reset-password",
+      "url": "/acme-corp/portal/reset-password",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "重置密码",
+          "url": "/acme-corp/portal/reset-password",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "重置密码 Enter your new password below. Invalid or missing reset token. NEW PASSWORD CONFIRM NEW PASSWORD 重置密码 Remember your password? Sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "重置密码",
+          "url": "/acme-corp/portal/reset-password",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "重置密码 Enter your new password below. Invalid or missing reset token. NEW PASSWORD CONFIRM NEW PASSWORD 重置密码 Remember your password? Sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/signup",
+      "url": "/acme-corp/portal/signup",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "注册",
+          "url": "/acme-corp/portal/signup",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Create Account Register for a new customer account. DISPLAY NAME 邮件 密码 Create Account Already have an account? Log in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "注册",
+          "url": "/acme-corp/portal/signup",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Create Account Register for a new customer account. DISPLAY NAME 邮件 密码 Create Account Already have an account? Log in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/[orgSlug]/portal/verify",
+      "url": "/acme-corp/portal/verify",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Customer Portal",
+          "url": "/acme-corp/portal/verify",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "text": "Verification token is missing. Back to sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "status": null,
+          "title": "Customer Portal",
+          "url": "/acme-corp/portal/verify",
+          "width": 390,
+          "scrollWidth": 390,
+          "text": "Verification token is missing. Back to sign in",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    }
+  ]
+}
