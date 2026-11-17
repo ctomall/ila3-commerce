@@ -175,3 +175,10 @@ P2Abrowserfixture caught BusinessHome translation fallback crmNav.group.customer
 P2A latestpipeline126066running types/lint/ds/fulltests→boundedbuild;logs/tmp/enterprise-p2a-*3 and build2.exit. No otherownedjobs;candidate125183stopped. Waitingnotblocked;continuecollectandfixturebeforeversion0.2.4release.
 
 P2Abuild2exit0, browser11/11pass inclorganizationlabelhiddenfixture. FirstrawprobeassertionspassedbutcleanupinflightcausedTargetClosedError (possibly verboseheaderdump); replacedcommittedspecwithcontext.unrouteAll(wait) andcleanexit. Noresponse/headerscopiedintorepo. Candidate133200stopped. Needfinaltypes/lintafternewtest,CIversion0.2.4release. RemainingP2-P6notcomplete.
+
+
+## P2A release evidence — 0.2.4
+
+Commit93c59c2684e21f6fbe507a60fc508311e14b0fb7,CI44016777672success,deploy-20261117043244-93c59c26 deployed. Fullgate/buildexit0,candidate11browserpass. Livefooter0.2.4(93c59c2),fixedmanagevisible; deployedorganizationlabel/hiddenfixture1passed(/tmp/enterprise-p2a-live-browser.log). NoDBwriteinthefixture. Previousreleaseebaf2dd. Allownedjobscollected/candidatestopped.
+
+P2Averified; P2overallstillin_progress: pageparents,searchcontext,workbenchshortcuts needtraceableevidence. P3-P6pending. Do notmarkwholegoalcomplete. Next chooseoneconcretenavigationparent/returnpathsliceorverifyexistingflowsbeforemodifying. Testsandversionsmustremainseparate.
