@@ -1,0 +1,29 @@
+{
+  "drill": "optimistic-lock-conflict",
+  "startedAt": "2026-11-17T15:12:18.244Z",
+  "checks": {
+    "scratch": {
+      "entityId": "8104d491-f495-46a0-a098-e6c3b1915555",
+      "companyId": "5b344d6c-b09e-4275-b689-0e8130f014ac"
+    },
+    "originalUpdatedAt": "2026-11-17 15:12:18.943+00",
+    "firstSave": {
+      "status": 200,
+      "updatedAt": "2026-11-17T15:12:19.521Z"
+    },
+    "conflict": {
+      "status": 409,
+      "code": "optimistic_lock_conflict",
+      "expectedUpdatedAt": "2026-11-17T15:12:18.943Z",
+      "currentUpdatedAt": "2026-11-17T15:12:19.521Z"
+    },
+    "afterConflictIndustry": "conflict-drill-saved",
+    "cleanup": {
+      "status": 200,
+      "stillListed": 0
+    }
+  },
+  "failures": [],
+  "finishedAt": "2026-11-17T15:12:20.901Z",
+  "result": "passed"
+}

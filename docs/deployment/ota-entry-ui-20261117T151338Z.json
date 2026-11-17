@@ -1,0 +1,9 @@
+{
+  "checkedAt": "2026-11-17T15:13:47.288Z",
+  "url": "http://127.0.0.1:3000/backend/config/system-update",
+  "runningVersionVisible": true,
+  "runningCommitVisible": true,
+  "hasUpdateHeading": true,
+  "hasRunRecord": true,
+  "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 系统升级 真实发布状态：当前运行版本、最新候选与 ila3-auto-deploy 发布记录（只读）。 刷新 发布锁空闲 读取于 11/17/2026, 3:13:45 PM 锁文件为 flock 遗留，不视为进行中 版本概览 内核（Open Mercato 业务底座）与系统（ILA3 应用）分别展示当前版本、可升级目标与来源。 无可用升级 检查时间: 11/17/2026, 3:13:45 PM 内核版本（Open Mercato） 运行发布槽位实际安装的 @open-mercato/* 包版本，不取自本地源码 package.json。 v0.9.0 29 个包 包版本一致 更新状态 暂不支持检测 可升级目标 — 声明版本 0.9.0 来源 运行发布槽位实际安装的 @open-mercato/* 包 未配置可信内核更新源，暂不支持检测底座可升级目标。 内核更新需按依赖升级流程单独处理（含迁移与权限评估）；本页不提供一键更新内核。 系统版本（ILA3 应用） 运行发布槽位 release.json 的语义版本；构建 SHA 与时间仅用于追踪。 v0.2.11 d8831e4c 构建时间 11/17/2026, 2:47:58 PM 更新状态 无可用更新 可升级目标 v0.2"
+}

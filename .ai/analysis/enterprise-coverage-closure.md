@@ -168,3 +168,12 @@ answers `this area requires the role "admin"` — an employee-visible dead link
 whose page guards by role name instead of a feature id. Recorded for a product
 decision, not patched. The four transient failures re-rendered in under 1s in a
 per-route re-check. Details: `enterprise-permission-audit-findings.md`.
+
+## Conflict and OTA-entry evidence
+
+- Optimistic-lock conflict through the real API on a scratch row: stale save
+  returns `409 optimistic_lock_conflict` with expected/current versions and is
+  not applied; scratch row removed afterwards (`enterprise-conflict-and-ota-findings.md`).
+- The System Update UI renders the running release `v0.2.11 d8831e4c`, the
+  kernel version, the deploy lock state and "no update available" — the human
+  entry point for the OTA facts already verified at the API/artifact level.
