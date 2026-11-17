@@ -1,0 +1,872 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "employee-view-navigation",
+  "count": 70,
+  "completed": 70,
+  "results": [
+    {
+      "route": "/backend/workbench",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "工作台",
+      "finalUrl": "/backend",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作台 排列并个性化管理首页上显示的组件。 自定义 客户任务 查看与客户关联的最新任务，并直接跳转到对应记录。 加载中… 新增客户 显示最近新增的客户。 加载中… 新增商机 显示最近创建的客户商机。 加载中… 即",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/calendar",
+      "verdict": "navigation-failure",
+      "status": 200,
+      "failure": "Error",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/staff/time-tracking",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "我的工作",
+      "finalUrl": "/backend/staff/time-tracking",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 我的工作 Tuesday, November 17 · Priya Nair 工时表 添加记录 今天 0:00 本周 0:00 本月 7:00 非计费 0:00 今日记录 Copy yesterday 全部记录 ",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/work-inbox",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "工作收件箱",
+      "finalUrl": "/backend/work-inbox",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Work Inbox 自定义列 领取下一个 筛选 1 视图 全部视图 查看: My Work × 工作项 来源 优先级 状态 分配 截止日期 创建时间 没有分配给你的工作 This inbox shows wor",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customers/companies",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "公司",
+      "finalUrl": "/backend/customers/companies",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 公司 刷新 自定义列 导出 新建公司 AI 筛选 视图 全部视图 名称 状态 生命周期阶段 操作 加载中… 正在加载表格… 显示第 1 至 4 条，共 4 条结果 1 20 每页",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customers/deals",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "商机",
+      "finalUrl": "/backend/customers/deals",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 看板 列表 地图 漏斗金额 加载中… 进行中的商机 加载中… 本季度成交 加载中… 成交率 加载中… 商机 刷新 自定义列 导出 新建商机 AI 筛选 视图 全部视图 标题 状态 金额 预计成交 操作 加载中… ",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customers/deals/map",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "商机地图",
+      "finalUrl": "/backend/customers/deals/map",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作台 / 商机 / 商机地图 商机地图 看板 列表 地图 筛选: 状态: 全部 漏斗: 全部（1） 负责人: 全部 联系人: 任意 公司: 任意 关闭: 任意 排序: 更新时间（最新优先） 有位置的商机 6 个",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customer-tasks",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "客户相关任务",
+      "finalUrl": "/backend/customer-tasks",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 客户相关任务 自定义列 导出 刷新 视图 全部视图 客户 任务 完成 操作 暂无客户任务。",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customers/people",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "联系人",
+      "finalUrl": "/backend/customers/people",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 联系人 刷新 自定义列 导出 新建联系人 AI 筛选 视图 全部视图 名称 邮件 状态 生命周期阶段 下次互动 来源 称谓偏好 订阅电子报 采购角色 操作 Naomi Harris naomi.harris@co",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/customers/deals/pipeline",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "销售漏斗",
+      "finalUrl": "/backend/customers/deals/pipeline",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 看板 列表 地图 工作台 / 商机 商机 自定义视图 新阶段 新建商机 筛选: 状态: 全部 漏斗: 全部（0） 负责人: 全部 联系人: 任意 公司: 任意 关闭: 任意 排序: 更新时间（最新优先） 加载中…",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/sales/quotes",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "报价单",
+      "finalUrl": "/backend/sales/quotes",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 销售报价单 查看单据详情，含客户信息、金额合计与渠道。 刷新 自定义列 导出 创建销售单据 筛选 视图 全部视图 报价单 客户 渠道 条目 合计（不含税） 合计（含税） 日期 操作 QUOTE-20261108-",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/sales/channels/offers",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "渠道报价",
+      "finalUrl": "/backend/sales/channels/offers",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 渠道报价 查看各销售渠道中的产品覆盖设置。 刷新 筛选 报价 价格 渠道 启用 已更新 操作 Restorative Massage Session · Online Restorative Massage Se",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/sales/orders",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "订单",
+      "finalUrl": "/backend/sales/orders",
+      "text": "销售订单 查看单据详情，含客户信息、金额合计与渠道。 刷新 导出 创建销售单据 筛选 订单 客户 渠道 条目 合计（不含税） 合计（含税） 日期 操作 暂无订单。",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/sales/channels",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "销售渠道",
+      "finalUrl": "/backend/sales/channels",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 销售渠道 按市场或店铺管理商品报价。 刷新 添加渠道 名称 编码 商品报价 启用 已更新 操作 加载中… 正在加载表格… 显示第 1 至 3 条，共 3 条结果 1",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/catalog/products",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "产品与服务",
+      "finalUrl": "/backend/catalog/products",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 产品与服务 刷新 自定义列 导出 创建 AI 筛选 视图 全部视图 删除所选 删除筛选结果 标题 SKU 类型 可配置 启用 价格 渠道 已更新 EUDR 款号 缓震类型 护理备注 面料成分 适用场合 后整理说明",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/catalog/prices",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "价格规则",
+      "finalUrl": "/backend/catalog/prices",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 价格规则 自定义列 创建 视图 全部视图 产品 种类 金额 范围 数量 有效期 操作 Celestial · Large sale 198.0000 USD Mercato Fashion Online 1 及以",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/catalog/categories",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "分类",
+      "finalUrl": "/backend/catalog/categories",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 分类 自定义列 创建 筛选 视图 全部视图 分类 路径 上级 下级 启用 操作 Fashion Fashion — 2 ⋯ 打开操作 ↳ Men Fashion / Men Fashion 1 ⋯ 打开操作 ↳ ",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "运营看板",
+      "finalUrl": "/backend/wms",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 运营看板 今日实时活动 · 每 60 秒自动刷新 · 上次更新 15:09 全部仓库 刷新 初始化仓库 先创建仓库、添加库位，然后首次入库即可开始跟踪库存。 创建仓库 添加库位 库存偏低 低于补货点 0 0 个有",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/inventory",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "库存",
+      "finalUrl": "/backend/wms/inventory",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 范围 库存余额 按库位分组的当前在库、预留、分配与可用数量。 视图 全部视图 自定义列 规格 仓库 位置 批次 可用 已预留 已分配 操作 无余额节点 收货、调整或移库创建库存节点后才会出现余额。 库存预留 由手",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/warehouses",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "仓库",
+      "finalUrl": "/backend/wms/warehouses",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 仓库 管理 WMS 预留与库存移动使用的高层仓库节点。 视图 全部视图 自定义列 仓库 编码 城市 国家/地区 主要 状态 操作 无仓库 创建第一个仓库，以在 WMS 中启用拓扑与库存分配。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/zones",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "库区",
+      "finalUrl": "/backend/wms/zones",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 库区 将库位归入功能库区（如收货区、拣货面、整箱区），用于驱动路线与优先级。 视图 全部视图 自定义列 库区 编码 仓库 优先级 操作 无库区 库区将库位归入功能区域，用于驱动拣货优先级与路线规则。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/locations",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "库位",
+      "finalUrl": "/backend/wms/locations",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 库位 维护存放实际库存的货架/货位/月台级拓扑节点。 视图 全部视图 自定义列 位置 类型 仓库 容量单位 状态 操作 无库位 创建库位以定义余额、预留与出入库台账使用的节点。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/lots",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": true,
+      "fixedEntries": 2,
+      "authorizedLabel": "批次",
+      "finalUrl": "/backend/wms/lots",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 库存批次 按有效期浏览批次与批记录。 库存批次 按有效期浏览批次与批记录。 视图 全部视图 自定义列 批次号 SKU 到期 状态 操作 未找到批次 调整筛选条件，或通过库存操作创建批次。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/movements",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "出入库记录",
+      "finalUrl": "/backend/wms/movements",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 库存出入库台账 收货、转移、调整与循环盘点的不可变出入库历史。 视图 全部视图 自定义列 类型 规格 仓库 从 至 数量 关联类型 执行时间 无库存出入库记录 出入库记录由收货、预留、移动与对账操作产生。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/wms/reservations",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "库存预留",
+      "finalUrl": "/backend/wms/reservations",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 库存预留 由手动 API 调用或销售生命周期自动化创建的有效与历史预留记录。 视图 全部视图 自定义列 显示全部 规格 仓库 数量 来源类型 来源 状态 操作 无预留 预留表示已为订单、调拨或手工占用而承诺的库存",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "保修工单",
+      "finalUrl": "/backend/warranty_claims?sortField=slaDueAt&sortDir=asc",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Warranty claims 未结工单 处理中队列 0 0 项需要关注 SLA 达成率 在目标时限内 100% 0 项逾期 平均处理时长 最近 30 天 未设置 0 claims resolved 批准率 最近",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/registrations",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "保修登记",
+      "finalUrl": "/backend/warranty_claims/registrations",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Warranty registrations Add registration 全部 0 Standard 0 Extended 0 Expiring in 30 days 0 No coverage 0 筛选 ",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "项目",
+      "finalUrl": "/backend/staff/time-tracking/projects",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 我的项目 2 2 启用 MY HOURS THIS WEEK no previous data 0h MY HOURS THIS MONTH 94.3% 7h 全部 启用 已完成 Table Cards Proj",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/board",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "任务",
+      "finalUrl": "/backend/staff/time-tracking/board",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: this area requires the role \"admin\". Contact your administrator. 任务 Apollo — Website Redesi",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/my-availability",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "我的可用性",
+      "finalUrl": "/backend/staff/my-availability",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 可用性 时区 每周工时 设置你通常可用的时间。 S 不可用 添加时间窗口 M 不可用 添加时间窗口 T 不可用 添加时间窗口 W 不可用 添加时间窗口 T 不可用 添加时间窗口 F 不可用 添加时间窗口 S 不可",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/my-leave-requests",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "我的请假",
+      "finalUrl": "/backend/staff/my-leave-requests",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 请假申请 刷新 新建申请 日期 状态 原因 已更新 暂无请假申请。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/entries",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "工时记录",
+      "finalUrl": "/backend/staff/time-tracking/entries",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: you are missing the required permission \"staff.view\". Contact your administrator. Time entr",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/timesheet",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "工时表",
+      "finalUrl": "/backend/staff/time-tracking/timesheet",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Project 0:00:00 Year Quarter 月 周 Nov 16 – Nov 22, 2026 · W47 今天 添加记录 All projects Me 日历 列表 Grid Projects P",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/payment-gateways",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "支付交易",
+      "finalUrl": "/backend/payment-gateways",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Payment Transactions Track all payment-gateway transactions, inspect webhook activity, and review provider",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/checkout/pay-links",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "支付链接",
+      "finalUrl": "/backend/checkout/pay-links",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 支付链接 自定义列 创建链接 筛选 视图 全部视图 名称 标识 定价 状态 使用次数 已创建 操作 Spring Gala 2026 /pay/spring-gala-2026-f27fa168 价格表 草稿 0",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/checkout/templates",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "结账模板",
+      "finalUrl": "/backend/checkout/templates",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 链接模板 自定义列 Create Template 筛选 视图 全部视图 名称 定价方式 支付网关 最大使用次数 已创建 操作 Event Ticket 价格表 — 100 11/3/2026 ⋯ 打开操作 Do",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/checkout/transactions",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "交易记录",
+      "finalUrl": "/backend/checkout/transactions",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 交易记录 自定义列 筛选 视图 全部视图 链接 金额 状态 支付状态 日期 操作 暂无结果。 添加后项目将显示在此处。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/storage/attachments",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "附件",
+      "finalUrl": "/backend/storage/attachments",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 附件 刷新 筛选 文件 标签 分配 分区 已创建 下载 操作 massage-service.png 2.5 MB • image/png 未提取文本 — SERV-MASSAGE-90-MASTER Priva",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/documents",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": true,
+      "fixedEntries": 2,
+      "authorizedLabel": "文档",
+      "finalUrl": "/backend/documents",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 文件夹 新建文件夹 全部文档 暂无文件夹。 文档 刷新 收藏 启用 从模板新建 创建文档 标题 文件夹 负责人 共享给 已更新 操作 未找到文档。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/phone_calls",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "通话记录",
+      "finalUrl": "/backend/phone_calls",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 通话记录 筛选 通话编号 方向 状态 服务商 已开始 时长 接入状态 暂无通话记录。从服务商接入后将显示在此处。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/inbox-ops",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "收件箱建议",
+      "finalUrl": "/backend/inbox-ops",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: you are missing the required permission \"inbox_ops.settings.manage\". Contact your administr",
+      "pageErrors": [
+        "ForbiddenError",
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/messages",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "消息",
+      "finalUrl": "/backend/messages",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 筛选 文件夹: 收件箱 撰写消息 消息 服务商 暂无消息 你添加的项目将显示在此处。 撰写消息",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/communications/inbox",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "全渠道收件箱",
+      "finalUrl": "/backend/communications/inbox",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全渠道收件箱 客户 · 渠道 · 来源账号 没有可访问的会话。 选择左侧会话查看消息",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/communications/channels",
+      "verdict": "navigation-failure",
+      "status": 200,
+      "failure": "Error",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/instances",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "工作流实例",
+      "finalUrl": "/backend/instances",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作流实例 自定义列 顶层 全部（扁平） 筛选 视图 全部视图 工作流 ID 状态 当前步骤 时间信息 重试次数 暂无结果。 添加后项目将显示在此处。",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "EUDR 概览",
+      "finalUrl": "/backend/eudr",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie EUDR 合规概览 43 days to EUDR deadline (2026/12/30) 范围内产品映射 0 有效地块 0 0 with warnings 证据完整度 -- 0 incomplete Sta",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr/product-mappings",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "产品映射",
+      "finalUrl": "/backend/eudr/product-mappings",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Product mappings 自定义列 建议 Create mapping 筛选 视图 全部视图 产品 商品 HS code In scope 已更新 操作 暂无product mappings 你添加的项目",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr/plots",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "地块",
+      "finalUrl": "/backend/eudr/plots",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Plots 自定义列 Import Create plot 筛选 视图 全部视图 Supplier 名称 Origin country 类型 Area (ha) Warnings 已更新 操作 暂无plots 你",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr/statements",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "声明",
+      "finalUrl": "/backend/eudr/statements",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Statements 自定义列 Create statement 筛选 视图 全部视图 标题 商品 状态 Activity type Risk conclusion Risk tier Reference # Q",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "证据提交",
+      "finalUrl": "/backend/eudr/evidence-submissions",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Evidence submissions 自定义列 筛选 视图 全部视图 Supplier 商品 状态 Completeness Origin Quantity kg 已更新 操作 暂无evidence subm",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/eudr/risk-assessments",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "风险评估",
+      "finalUrl": "/backend/eudr/risk-assessments",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Risk assessments 自定义列 Create risk assessment 筛选 视图 全部视图 Statement Conclusion Overall tier Assessed at Revi",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/users",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "用户",
+      "finalUrl": "/backend/users",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: you are missing the required permission \"directory.organizations.view\". Contact your admini",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/webhooks",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "Webhook",
+      "finalUrl": "/backend/webhooks",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 管理用于接收平台事件的 Webhook 端点。 Use exact events for narrow automations, or wildcard patterns when one consumer ha",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/config/scheduled-jobs",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "定时任务",
+      "finalUrl": "/backend/config/scheduled-jobs",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 定时任务 刷新 新建定时任务 名称 类型 排班 目标 下次执行 启用 来源 操作 Payment-session initialization prune Interval 24h Queue payment-g",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/integrations",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "集成",
+      "finalUrl": "/backend/integrations",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 集成 连接外部服务、管理凭据并监控集成健康度。 排序依据 标题 分类 启用日期 健康度 升序 降序 全部 付款 收货 数据同步 通信 通知 存储 网络钩子 加载中… Akeneo PIM 未配置 Import A",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/data-sync",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "数据同步",
+      "finalUrl": "/backend/data-sync",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: you are missing the required permission \"data_sync.configure\". Contact your administrator. ",
+      "pageErrors": [
+        "ForbiddenError",
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/communication_channels/channels",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "通信渠道",
+      "finalUrl": "/backend/communication_channels/channels",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 通信渠道 渠道 服务商 类型 外部 ID 状态 No shared channels yet. This page lists shared, tenant-wide channels. Your persona",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/config/ai-write-approvals",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "Write approvals",
+      "finalUrl": "/backend/config/ai-write-approvals",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 写入审批 DSH 助手请求的 CRM 写入必须由你逐条批准；批准后的请求只能使用一次，并在有效期内执行。 刷新 暂无待审批的写入 DSH 助手发起的 CRM 写入请求会显示在这里。批准或拒绝后，该请求会从列表中移",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/config/sales",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 0,
+      "authorizedLabel": "销售",
+      "finalUrl": "/backend/config/sales",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 订单状态 配置销售订单可用的状态值。 刷新 添加状态 值 标签 外观 操作 approved 已批准 ⋯ 打开操作 canceled 已取消 ⋯ 打开操作 confirmed 已确认 ⋯ 打开操作 draft 草",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/leadgen/candidates",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "Lead candidates",
+      "finalUrl": "/backend/leadgen/candidates",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 获客候选 调研候选的人工审核队列：验证结论是确定性的，入库前必须由人通过。 状态 全部 待验证 需人工复核 已通过 已入库 已拒绝 已合并 入库中 失败 刷新 公司 联系人 状态 更新 操作 M5 Accepta",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/leadgen/suppressions",
+      "verdict": "navigation-failure",
+      "status": 200,
+      "failure": "Error",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/config/wms",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "仓储配置",
+      "finalUrl": "/backend/config/wms",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie WMS 配置 仓库、库位与库存跟踪策略的第一阶段运营配置。 仓库 管理 WMS 预留与库存移动使用的高层仓库节点。 查看全部 → 视图 全部视图 自定义列 仓库 编码 城市 国家/地区 主要 状态 操作 无仓库 ",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/config/customers/deals",
+      "verdict": "navigation-failure",
+      "status": 200,
+      "failure": "Error",
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/definitions",
+      "verdict": "denied",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "工作流定义",
+      "finalUrl": "/backend/definitions",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Access denied: this area requires the role \"admin\". Contact your administrator. Failed to load workflows 无",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/config/translations",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "翻译管理",
+      "finalUrl": "/backend/config/translations",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 支持的语言 内容可翻译成的语言。应用自带界面的语言也会出现在管理后台的语言切换器中；其余语言仅用于内容翻译。 EN — English PL — Polish ES — Spanish DE — German K",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/instances/failure-queue",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "失败队列",
+      "finalUrl": "/backend/instances/failure-queue",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie GROUPED BY ERROR Nothing is waiting for triage. 失败队列 刷新 工作流 ID 状态 原因 重试次数 Age Nothing is waiting for triag",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/audit-logs",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "审计日志",
+      "finalUrl": "/backend/audit-logs",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 审计日志 操作日志 访问日志 Showing only your own changes. Contact an administrator for broader access. 操作日志 自定义列 刷新 仅可",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/docs",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "API 文档",
+      "finalUrl": "/backend/docs",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie API resources Use the links below to explore the Open Mercato platform APIs. The OpenAPI exports are gener",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/profile/change-password",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 3,
+      "authorizedLabel": "修改密码",
+      "finalUrl": "/backend/profile/change-password",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 修改密码 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+      "pageErrors": [
+        "TypeError"
+      ]
+    },
+    {
+      "route": "/backend/profile/notification-preferences",
+      "verdict": "rendered",
+      "status": 200,
+      "notFoundText": false,
+      "fixedEntries": 2,
+      "authorizedLabel": "通知偏好",
+      "finalUrl": "/backend/profile/notification-preferences",
+      "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 通知偏好 Choose which channels deliver each notification type. Unset choices stay enabled by default. 筛选 通知类型 ",
+      "pageErrors": [
+        "TypeError"
+      ]
+    }
+  ]
+}

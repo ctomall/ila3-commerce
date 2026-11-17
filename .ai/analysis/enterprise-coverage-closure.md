@@ -151,3 +151,20 @@ like "No projects match these filters" (pattern widened). Review items:
 `catalog/prices` keeps all 12 rows after a nonsense search (recorded as an
 observation), `config/translations` uses a records combobox rather than a
 searchable table (not applicable). Details: `enterprise-empty-state-findings.md`.
+
+## Employee-view permission evidence
+
+The 70 destinations in the employee's own authorized catalogue were opened one by
+one (`scripts/enterprise-permission-audit.mjs`).
+
+| Employee view | Routes |
+| --- | --- |
+| rendered | 65 |
+| denied despite a nav link | 1 |
+| transient audit-level failure | 4 |
+
+One real mismatch: `/backend/definitions` is in the employee catalogue and then
+answers `this area requires the role "admin"` — an employee-visible dead link
+whose page guards by role name instead of a feature id. Recorded for a product
+decision, not patched. The four transient failures re-rendered in under 1s in a
+per-route re-check. Details: `enterprise-permission-audit-findings.md`.

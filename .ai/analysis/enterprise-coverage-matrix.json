@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T14:44:23.577Z",
+    "generatedAt": "2026-11-17T15:11:37.969Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -12,6 +12,7 @@
       "contractProbe": "/home/pro/apps/mercato/.ai/analysis/enterprise-api-contract-probe.json",
       "returnAudit": "/home/pro/apps/mercato/.ai/analysis/enterprise-return-path-audit.json",
       "emptyState": "/home/pro/apps/mercato/.ai/analysis/enterprise-empty-state-audit.json",
+      "permission": "/home/pro/apps/mercato/.ai/analysis/enterprise-permission-audit.json",
       "openapi": "/home/pro/apps/mercato/.mercato/generated/openapi.generated.json"
     },
     "totals": {
@@ -30,6 +31,10 @@
       "emptyStateEvidenced": 76,
       "emptyStateNoSearch": 59,
       "emptyStateNeedsReview": 2,
+      "permissionAudited": 70,
+      "permissionRendered": 65,
+      "permissionDenied": 1,
+      "permissionTransient": 4,
       "gap": 0,
       "backendApis": 290,
       "openApiOperations": 1006,
@@ -165,6 +170,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -195,6 +201,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 3,
+        "authorizedLabel": "修改密码"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -229,6 +241,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -267,6 +280,7 @@
           "/backend/roles"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -297,6 +311,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 5,
@@ -331,6 +346,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -361,6 +377,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -403,6 +420,7 @@
           "/backend/users"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -433,6 +451,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "用户"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 5,
@@ -475,6 +499,7 @@
           "/backend/roles"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -514,6 +539,7 @@
           "/backend/users"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -545,6 +571,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -587,6 +614,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -617,6 +645,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -659,6 +688,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -689,6 +719,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -731,6 +762,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -770,6 +802,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -801,6 +834,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "transient-failure",
+        "status": 200,
+        "fixedEntries": null,
+        "authorizedLabel": null
+      },
       "emptyState": {
         "verdict": "zero-rows",
         "rowsBefore": 0,
@@ -835,6 +874,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "transient-failure",
+        "status": 200,
+        "fixedEntries": null,
+        "authorizedLabel": null
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -869,6 +914,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 18,
@@ -903,6 +949,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -937,6 +984,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "客户相关任务"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -979,6 +1032,7 @@
           "/backend/customers/companies"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1009,6 +1063,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "公司"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -1051,6 +1111,7 @@
           "/backend/customers/deals"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -1081,6 +1142,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "商机地图"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 0,
@@ -1115,6 +1182,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "商机"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 6,
@@ -1149,6 +1222,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "销售漏斗"
+      },
       "emptyState": {
         "verdict": "zero-rows",
         "rowsBefore": 0,
@@ -1191,6 +1270,7 @@
           "/backend/customers/people"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1221,6 +1301,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "联系人"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 6,
@@ -1262,6 +1348,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1300,6 +1387,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1338,6 +1426,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -1376,6 +1465,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1414,6 +1504,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1445,6 +1536,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -1479,6 +1571,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -1513,6 +1606,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 281,
@@ -1555,6 +1649,7 @@
           "/backend/entities/user"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1585,6 +1680,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -1626,6 +1722,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -1667,6 +1764,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1703,6 +1801,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1738,6 +1837,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1775,6 +1875,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -1806,6 +1907,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -1840,6 +1942,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 95,
@@ -1874,6 +1977,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -1908,6 +2012,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -1942,6 +2047,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "审计日志"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 50,
@@ -1976,6 +2087,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 2,
@@ -2010,6 +2122,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "附件"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 12,
@@ -2052,6 +2170,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2082,6 +2201,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "分类"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 8,
@@ -2124,6 +2249,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2154,6 +2280,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "价格规则"
+      },
       "emptyState": {
         "verdict": "no-empty-state",
         "rowsBefore": 12,
@@ -2196,6 +2328,7 @@
           "/backend/catalog/products"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2226,6 +2359,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "产品与服务"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 4,
@@ -2260,6 +2399,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 2,
@@ -2302,6 +2442,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2341,6 +2482,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2379,6 +2521,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2417,6 +2560,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2455,6 +2599,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2486,6 +2631,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "销售"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 8,
@@ -2528,6 +2679,7 @@
           "/backend/sales/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2558,6 +2710,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "渠道报价"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -2592,6 +2750,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "销售渠道"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -2634,6 +2798,7 @@
           "/backend/sales/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2664,6 +2829,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "订单"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -2698,6 +2869,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "报价单"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -2740,6 +2917,7 @@
           "/backend/sales/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2779,6 +2957,7 @@
           "/backend/sales/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -2818,6 +2997,7 @@
           "/backend/sales/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -2856,6 +3036,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -2894,6 +3075,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -2932,6 +3114,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -2963,6 +3146,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "保修工单"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3005,6 +3194,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3044,6 +3234,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3074,6 +3265,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "保修登记"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3108,6 +3305,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -3151,6 +3349,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3181,6 +3380,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3224,6 +3424,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3254,6 +3455,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3296,6 +3498,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3335,6 +3538,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3375,6 +3579,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3415,6 +3620,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3455,6 +3661,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3486,6 +3693,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "仓储配置"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 4,
@@ -3520,6 +3733,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "运营看板"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -3554,6 +3773,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "库存"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -3588,6 +3813,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "库位"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3622,6 +3853,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "批次"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3656,6 +3893,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "出入库记录"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3690,6 +3933,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "库存预留"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3724,6 +3973,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "仓库"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3758,6 +4013,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "库区"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -3801,6 +4062,7 @@
           "/backend/wms/locations"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -3841,6 +4103,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -3881,6 +4144,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -3920,6 +4184,7 @@
           "/backend/api-keys"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -3950,6 +4215,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 5,
@@ -3992,6 +4258,7 @@
           "/backend/devices"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4022,6 +4289,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4064,6 +4332,7 @@
           "/backend/devices"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4095,6 +4364,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 4,
@@ -4129,6 +4399,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "API 文档"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -4163,6 +4439,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4204,6 +4481,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4234,6 +4512,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 8,
@@ -4275,6 +4554,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4305,6 +4585,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4347,6 +4628,7 @@
           "/backend/logs"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4385,6 +4667,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4423,6 +4706,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4462,6 +4746,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4492,6 +4777,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 12,
@@ -4526,6 +4812,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 12,
@@ -4568,6 +4855,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4607,6 +4895,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -4638,6 +4927,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -4680,6 +4970,7 @@
           "/backend/definitions"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -4710,6 +5001,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "denied",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "工作流定义"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 4,
@@ -4744,6 +5041,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -4774,6 +5072,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4808,6 +5107,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "失败队列"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4842,6 +5147,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "工作流实例"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4876,6 +5187,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -4906,6 +5218,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "工作收件箱"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -4948,6 +5266,7 @@
           "/backend/definitions"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -4988,6 +5307,7 @@
           "/backend/events"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5028,6 +5348,7 @@
           "/backend/instances"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5068,6 +5389,7 @@
           "/backend/tasks"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5099,6 +5421,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -5133,6 +5456,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -5175,6 +5499,7 @@
           "/backend/currencies"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5205,6 +5530,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -5248,6 +5574,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5278,6 +5605,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -5320,6 +5648,7 @@
           "/backend/currencies"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5360,6 +5689,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5399,6 +5729,7 @@
           "/backend/planner/availability-rulesets"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5429,6 +5760,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 2,
@@ -5468,6 +5800,7 @@
         "returnHref": "/backend/planner/availability-rulesets",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5506,6 +5839,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5536,6 +5870,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 4,
@@ -5578,6 +5913,7 @@
           "/backend/resources/resources"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5608,6 +5944,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -5650,6 +5987,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5689,6 +6027,7 @@
           "/backend/resources/resources"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5727,6 +6066,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5757,6 +6097,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -5791,6 +6132,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "我的可用性"
+      },
       "emptyState": {
         "verdict": "zero-rows",
         "rowsBefore": 0,
@@ -5832,6 +6179,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5862,6 +6210,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "我的请假"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -5903,6 +6257,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5941,6 +6296,7 @@
           "/backend/staff/team-members"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -5971,6 +6327,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 8,
@@ -6013,6 +6370,7 @@
           "/backend/staff/team-roles"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6043,6 +6401,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 8,
@@ -6085,6 +6444,7 @@
           "/backend/staff/teams"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6115,6 +6475,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -6149,6 +6510,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "任务"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -6183,6 +6550,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "工时记录"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -6217,6 +6590,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "我的工作"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -6260,6 +6639,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6290,6 +6670,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "项目"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 4,
@@ -6333,6 +6719,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6363,6 +6750,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -6397,6 +6785,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -6431,6 +6820,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "工时表"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 2,
@@ -6465,6 +6860,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -6504,6 +6900,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -6534,6 +6931,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -6571,6 +6969,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6609,6 +7008,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6645,6 +7045,7 @@
         "returnHref": "/backend/staff/team-members",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6680,6 +7081,7 @@
         "returnHref": "/backend/staff/team-roles",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6718,6 +7120,7 @@
           "/backend/staff/teams"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6758,6 +7161,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6798,6 +7202,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6838,6 +7243,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6878,6 +7284,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -6918,6 +7325,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -6958,6 +7366,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -6989,6 +7398,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 74,
@@ -7023,6 +7433,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 0,
@@ -7057,6 +7468,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "通知偏好"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 56,
@@ -7091,6 +7508,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "集成"
+      },
       "emptyState": {
         "verdict": "zero-rows",
         "rowsBefore": 0,
@@ -7132,6 +7555,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -7170,6 +7594,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -7203,6 +7628,12 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "数据同步"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -7244,6 +7675,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -7275,6 +7707,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -7305,6 +7738,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "消息"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -7346,6 +7785,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -7377,6 +7817,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "通信渠道"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -7411,6 +7857,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -7453,6 +7900,7 @@
           "/backend/communication_channels/channels"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -7484,6 +7932,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -7518,6 +7967,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "zero-rows",
         "rowsBefore": 0,
@@ -7559,6 +8009,7 @@
           "/backend"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -7590,6 +8041,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "通话记录"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -7624,6 +8081,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -7658,6 +8116,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -7692,6 +8151,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 9,
@@ -7726,6 +8186,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -7760,6 +8221,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -7790,6 +8252,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -7824,6 +8287,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 9,
@@ -7858,6 +8322,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 6,
@@ -7892,6 +8357,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 2,
@@ -7926,6 +8392,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 5,
@@ -7960,6 +8427,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "Write approvals"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -7994,6 +8467,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 80,
@@ -8028,6 +8502,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8058,6 +8533,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8088,6 +8564,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8118,6 +8595,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8148,6 +8626,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8178,6 +8657,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8208,6 +8688,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8238,6 +8719,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8268,6 +8750,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "transient-failure",
+        "status": 200,
+        "fixedEntries": null,
+        "authorizedLabel": null
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -8302,6 +8790,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -8336,6 +8825,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "全渠道收件箱"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -8375,6 +8870,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8411,6 +8907,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8442,6 +8939,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 0,
+        "authorizedLabel": "工作台"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -8476,6 +8979,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8506,6 +9010,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8544,6 +9049,7 @@
           "/backend/business"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8575,6 +9081,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -8605,6 +9112,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "Lead candidates"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 2,
@@ -8639,6 +9152,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "transient-failure",
+        "status": 200,
+        "fixedEntries": null,
+        "authorizedLabel": null
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -8673,6 +9192,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 9,
@@ -8707,6 +9227,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "翻译管理"
+      },
       "emptyState": {
         "verdict": "error",
         "rowsBefore": 0,
@@ -8741,6 +9267,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -8771,6 +9298,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "定时任务"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 12,
@@ -8805,6 +9338,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -8836,6 +9370,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -8867,6 +9402,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 1,
@@ -8901,6 +9437,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "收件箱建议"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -8935,6 +9477,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -8977,6 +9520,7 @@
           "/backend/inbox-ops"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9008,6 +9552,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "支付交易"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9047,6 +9597,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9077,6 +9628,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "支付链接"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -9116,6 +9673,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9146,6 +9704,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "结账模板"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -9180,6 +9744,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "交易记录"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9214,6 +9784,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9249,6 +9820,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9285,6 +9857,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9321,6 +9894,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9357,6 +9931,7 @@
         "returnHref": "/backend/checkout/transactions",
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9388,6 +9963,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "文档"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9422,6 +10003,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 8,
@@ -9464,6 +10046,7 @@
           "/backend/documents"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9500,6 +10083,7 @@
         "returnHref": null,
         "links": []
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -9539,6 +10123,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9569,6 +10154,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "证据提交"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9603,6 +10194,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "EUDR 概览"
+      },
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -9646,6 +10243,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9676,6 +10274,12 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "地块"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9719,6 +10323,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9749,6 +10354,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "产品映射"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9792,6 +10403,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9822,6 +10434,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "风险评估"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9865,6 +10483,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9895,6 +10514,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "声明"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -9938,6 +10563,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -9978,6 +10604,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10018,6 +10645,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10058,6 +10686,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10098,6 +10727,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10137,6 +10767,7 @@
           "/backend/webhooks"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10167,6 +10798,12 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": {
+        "verdict": "rendered",
+        "status": 200,
+        "fixedEntries": 2,
+        "authorizedLabel": "Webhook"
+      },
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -10209,6 +10846,7 @@
           "/backend/webhooks"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10248,6 +10886,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10278,6 +10917,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 3,
@@ -10314,6 +10954,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 0,
@@ -10348,6 +10989,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "no-search-control",
         "rowsBefore": 3,
@@ -10382,6 +11024,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": {
         "verdict": "empty-state-text",
         "rowsBefore": 1,
@@ -10424,6 +11067,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10463,6 +11107,7 @@
           "/backend/customer_accounts/users"
         ]
       },
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -10497,6 +11142,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10527,6 +11173,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10559,6 +11206,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10589,6 +11237,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10619,6 +11268,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10649,6 +11299,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10679,6 +11330,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10709,6 +11361,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -10739,6 +11392,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -10769,6 +11423,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -10799,6 +11454,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -10829,6 +11485,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10859,6 +11516,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10889,6 +11547,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10919,6 +11578,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10949,6 +11609,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -10979,6 +11640,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11009,6 +11671,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11039,6 +11702,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -11069,6 +11733,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11099,6 +11764,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -11129,6 +11795,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -11161,6 +11828,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11193,6 +11861,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11223,6 +11892,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -11253,6 +11923,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
@@ -11285,6 +11956,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11317,6 +11989,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
@@ -11349,6 +12022,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "permission": null,
       "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {

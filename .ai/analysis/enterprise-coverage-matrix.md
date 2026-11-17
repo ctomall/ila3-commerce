@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T14:44:23.577Z
+Generated: 2026-11-17T15:11:37.969Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -22,6 +22,10 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Empty state evidenced | 76 |
 | No search control (not testable this way) | 59 |
 | Empty-state observations needing review | 2 |
+| Employee-view destinations audited | 70 |
+| Employee-view rendered | 65 |
+| Employee-view denied despite a nav link | 1 |
+| Employee-view transient navigation failures | 4 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -418,6 +422,21 @@ Needs review (audit may have typed into a filter that is not the list search):
 - `/backend/catalog/prices` — no-empty-state (rows 12→12)
 - `/backend/config/translations` — error (rows 0→null)
 
+## Employee-view permission evidence
+
+The employee's own authorized catalogue was opened link by link (not the
+superadmin sweep list), so this reports what an employee is actually shown.
+
+| Employee view | Routes |
+| --- | --- |
+| rendered | 65 |
+| transient-failure | 4 |
+| denied | 1 |
+
+Employee-visible links that answer with a denial:
+
+- `/backend/definitions` — 
+
 ## Observations
 
 - `/docs/api` — navigation-failure (public-audit); access/behaviour to confirm, not a confirmed page defect.
@@ -437,6 +456,7 @@ Needs review (audit may have typed into a filter that is not the list search):
 - contract check: `.mercato/generated/openapi.generated.json`
 - return-path audit: `.ai/analysis/enterprise-return-path-audit.json`
 - empty-state audit: `.ai/analysis/enterprise-empty-state-audit.json`
+- employee permission sweep: `.ai/analysis/enterprise-permission-audit.json`
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a
