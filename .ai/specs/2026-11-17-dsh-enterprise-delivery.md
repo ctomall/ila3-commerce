@@ -237,3 +237,6 @@ ReadroutehandleChat: authentication enforced; directinternal route featuregate n
 P3audit artifacts are not fullfeatureproof. Remainingmisattributed errors/flows need isolatedfixtures. Goalactive, no0.2.7scopechosenyet.
 
 P4baselinefixturejob218945exit0; noexternalmodelcalls. See/tmp/enterprise-dsh-baseline-tests.log. Auditjob214600collectedexit0. Noownedbackgroundjobsremain. Next inspectfeaturegateatdirectDSHroute and realproxycontractbeforecoding, then0.2.7minimalfixifconfirmed. No runtimeedits/migrations/releases thisround.
+
+
+P4confirmedcontractgap: packagedai_assistant/chat metadata requiresai_assistant.view, but staticDSHchat/agentic rewrites onlychecklogin; middlewarecatch-all featuregatenotguaranteedafterstaticrewrite. Existingdsh-healthdoesexplicitRBAC,thereforeUIhealthcannotsecurechat. Next0.2.7addsharedexplicitRBACbeforebody/modelenv/spawn,deny403,failclosed503,deriveexistingtrustedcontextwithoutrolechecks;addanonymous/denied/error/allowedfixturesandrate-limitparityreview. NeedfullBC/securitycontractspec beforecode. Do notinvokeactualunprivilegedmodelprobe orchangeACLtoverify.
