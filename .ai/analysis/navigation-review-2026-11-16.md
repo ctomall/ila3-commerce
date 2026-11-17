@@ -227,3 +227,25 @@ authorized landing (`/backend/sales/orders`), and the footer confirmed the SHA.
 The verification rows were then deleted, so the organization is back on the code
 defaults. This is interactive evidence on the live release, not a Playwright
 spec — the preset path still deserves a committed spec.
+
+## Pinned management hub (aeac83a)
+
+"管理中心" was the last scrolling group, so it left the viewport with the
+workspace list. It is now a fixed entry in the shell's sticky sidebar footer:
+
+- `SidebarFixedLinks` renders into `backend:sidebar:footer` (priority 90, above
+  the settings-home account widget at 100), reading the hub from the authorized
+  catalogue — no catalogue entry, no shortcut
+- the shell no longer appends a `crm_navigation.utility` group at all, so the
+  hub is not part of the scrolling list; it remains in `crm.utility` for search
+- the mobile drawer skips sidebar injection spots, so the same component is
+  mounted through `mobileSidebarSlot`
+- compact rail keeps an icon plus `aria-label`/`title`
+
+Verified on the deployed build (`aeac83a`, previous `e1b1c17`): the entry sits
+next to the account link, does not move when the nav list is scrolled to the
+end (offset 0px), is absent from the scrolling groups, navigates to
+`/backend/manage`, appears in the mobile drawer, and the footer shows
+`v0.2.2 (aeac83a)`. Gates before release: generate, typecheck, lint, ds:check
+(539 files), jest 1203 passed, CI run 44002657251, deploy
+`deploy-20261117023225-aeac83a0`; Playwright 10/10 against the candidate.
