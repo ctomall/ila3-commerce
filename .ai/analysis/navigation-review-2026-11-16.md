@@ -164,3 +164,58 @@ confirms the hint is validated rather than trusted:
 
 Rollback target is `f6d56b0` (`crm-rollback.mjs --to f6d56b0`), with `f6036d3` still on
 disk behind it.
+
+## Navigation governance release (e1b1c17)
+
+Three capabilities shipped, all reversible:
+
+**A. Organization workspace layout** — new module `workspace_settings` with two
+additive tables (`workspace_layouts`, `navigation_preferences`), one migration
+`Migration20261117070000`. The editor at `/backend/config/navigation` reorders,
+hides and relabels workspaces, and defines presets; group membership stays in
+`src/nav/workspaces.json` so no entry can be orphaned. Hiding only affects the
+rail: hidden ids remain in the catalogue, in search, and reachable by URL.
+
+**B. Presets** — a preset is an ordered workspace list plus optional landing.
+Administrators assign presets to employees; an employee sees only assigned
+presets in the switcher. Landing resolution (`presetLanding`) refuses to leave
+the caller's authorized workspaces and falls back to the first visible one.
+
+**C. Cross-session preferences** — favorites/recent/selected preset are stored
+per (tenant, organization, user). The API returns `updatedAt`; the browser keeps
+a `savedAt` cache and the newer copy wins, so a favorite toggled during the first
+hydration is no longer overwritten by the older server row. With no usable
+storage the client still falls back to local state.
+
+Verification on the live site (`e1b1c17`, previous slot `40c3e9e`):
+
+| Check | Result |
+|---|---|
+| `generate/typecheck/lint/ds:check` | pass (537 files scanned, 0 findings) |
+| `jest` | 1200 passed, 14 conditionally skipped |
+| CI run | 43992907018 success |
+| deploy | `deploy-20261117011628-e1b1c174`, result=deployed |
+| Playwright (nav) | 6/6, including editor permission gate and cross-browser favorite |
+| editor as superadmin | 9 workspace rows, preset row, save round-trip |
+| editor as employee | Access Denied (feature-gated) |
+| layout API as employee | 403 |
+| preset in switcher | listed, navigates to its authorized landing |
+| hidden workspace | absent from switcher, still in catalogue |
+| rollback | `crm-rollback.mjs` dry run targets `40c3e9e`, no problems |
+
+Operational notes that matter:
+
+- The deploy pipeline does not run migrations. This migration was applied as
+  additive DDL in one transaction and recorded in
+  `mikro_orm_migrations_workspace_settings`; the broader pending-migration
+  backlog was deliberately left untouched. Rollback is `drop table` for the two
+  new tables.
+- `workspace_settings.manage`/`view` were granted to the existing `admin` role
+  through `role_acls` (126 → 128 features). New tenants get them from
+  `setup.ts`; removing the two ids from that JSON reverses the grant.
+- The editor requires a single selected organization: both layout and
+  preference writes return `organization_required` otherwise. Superadmin must
+  pick an organization in the switcher first.
+- Presets were exercised interactively on `db569b7` and are covered by unit and
+  routing tests, but not yet by a Playwright spec; the demo rows were cleared so
+  the live organization is back on code defaults.
