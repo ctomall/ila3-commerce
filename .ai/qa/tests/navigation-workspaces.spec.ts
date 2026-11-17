@@ -68,3 +68,67 @@ test('model catalog preserves nonempty columns and edit dialog without writes',a
  await expect(page.getByRole('dialog')).toBeVisible()
  await page.keyboard.press('Escape')
 })
+
+async function loginAs(playwright: import('@playwright/test').PlaywrightWorkerArgs['playwright'], baseURL: string | undefined, role: string) {
+  const line = fs.readFileSync(path.join(os.homedir(), '.ila3-admin-credentials'), 'utf8')
+    .split('\n').map((x) => x.trim().split(/\s+/)).find((x) => x.includes(role))
+  if (!line) throw new Error(`Test credential unavailable: ${role}`)
+  const api = await playwright.request.newContext({ baseURL })
+  expect((await api.post('/api/auth/login', { form: { email: line[1], password: line[2] } })).status()).toBe(200)
+  const state = await api.storageState()
+  await api.dispose()
+  return state.cookies
+}
+
+function orgIdOf(cookies: Awaited<ReturnType<typeof loginAs>>): string {
+  const cookie = cookies.find((entry) => entry.name === 'om_selected_org')?.value
+  return cookie ?? ''
+}
+
+test('workspace editor is gated by its feature, not by a role name', async ({ browser, playwright, baseURL }) => {
+  const admin = await loginAs(playwright, baseURL, 'superadmin@acme.com')
+  const employee = await loginAs(playwright, baseURL, 'employee@acme.com')
+
+  const probe = await playwright.request.newContext({ baseURL, storageState: { cookies: employee, origins: [] } })
+  const nav = await (await probe.get('/api/crm_navigation/navigation?chrome=1&path=/backend')).json()
+  const organizationId = nav.navigationPreferenceScope?.organizationId as string | undefined
+  await probe.dispose()
+  expect(Boolean(organizationId)).toBe(true)
+
+  const employeeContext = await browser.newContext()
+  await employeeContext.addCookies(employee)
+  const employeePage = await employeeContext.newPage()
+  await employeePage.goto('/backend/config/navigation')
+  await expect(employeePage.getByText(/Access Denied|无权访问/)).toBeVisible()
+  await employeeContext.close()
+
+  const adminContext = await browser.newContext()
+  await adminContext.addCookies([
+    ...admin,
+    { name: 'om_selected_org', value: String(organizationId), url: baseURL!, sameSite: 'Lax' },
+  ])
+  const adminPage = await adminContext.newPage()
+  await adminPage.goto('/backend/config/navigation')
+  await expect(adminPage.locator('[data-layout-row]').first()).toBeVisible()
+  expect(await adminPage.locator('[data-layout-row]').count()).toBeGreaterThan(3)
+  await adminContext.close()
+})
+
+test('a stored preference is read back by a browser without local state', async ({ page, context, playwright, baseURL }) => {
+  const employee = await loginAs(playwright, baseURL, 'employee@acme.com')
+  const api = await playwright.request.newContext({ baseURL, storageState: { cookies: employee, origins: [] } })
+  const put = await api.put('/api/workspace_settings/preferences', {
+    data: { favorites: ['/backend/customers/companies'], recentWorkspace: 'customers', selectedPreset: null },
+  })
+  expect(put.status()).toBe(200)
+  await api.dispose()
+
+  await context.clearCookies()
+  await context.addCookies(employee)
+  await page.goto('/backend/manage')
+  await expect(page.locator('[data-manage-search]')).toBeVisible()
+  await page.getByRole('button', { name: '查找功能入口', exact: true }).click()
+  await page.getByRole('textbox', { name: '查找功能入口', exact: true }).fill('客户')
+  await expect(page.locator('[data-nav-search-entry]').first()).toBeVisible()
+  await expect(page.getByRole('button', { name: '取消收藏', exact: true }).first()).toBeVisible()
+})
