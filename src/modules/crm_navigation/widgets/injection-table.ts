@@ -10,6 +10,10 @@ const injectionTable = {
   'backend:sidebar:nav': [
     { widgetId: 'crm_navigation.injection.nav-error', priority: 20 },
   ],
+  // Sticky footer, above the account entry (priority 100 in settings_home).
+  'backend:sidebar:footer': [
+    { widgetId: 'crm_navigation.injection.sidebar-manage-link', priority: 90 },
+  ],
 }
 
 export default injectionTable

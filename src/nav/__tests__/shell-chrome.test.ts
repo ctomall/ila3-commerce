@@ -2,7 +2,6 @@ import { describe, expect, it } from '@jest/globals'
 import {
   buildShellChrome,
   SHELL_HREF_ALIASES,
-  SHELL_MANAGE_GROUP_ID,
   shellHref,
   shellHrefs,
 } from '../shell-chrome'
@@ -67,7 +66,7 @@ describe('AppShell chrome mapping', () => {
   it('feeds the shell one group per declared catalogue group, in catalogue order', () => {
     const shell = buildShellChrome(catalog(), translate)
 
-    expect(shell.groups.map((entry) => entry.id)).toEqual(['home', 'customers', SHELL_MANAGE_GROUP_ID])
+    expect(shell.groups.map((entry) => entry.id)).toEqual(['home', 'customers'])
     expect(shell.groups[0].name).toBe('Workbench')
     expect(shell.groups[1].name).toBe('Customers')
     // The shell reads `name`; the untranslated declaration stays inspectable.
@@ -134,40 +133,24 @@ describe('AppShell chrome mapping', () => {
     const shell = buildShellChrome(catalog(), translate)
     const hrefs = shellHrefs(shell)
 
+    // The hub is a fixed footer entry now, not part of the scrolling groups.
     expect(hrefs).toEqual([
       '/backend',
       '/backend/customers/companies',
       '/backend/customers/people',
-      '/backend/manage',
     ])
     expect(new Set(hrefs).size).toBe(hrefs.length)
   })
 
-  it('renders the management hub as its own translated entry', () => {
+  it('keeps the management hub out of the scrolling groups', () => {
     const shell = buildShellChrome(catalog(), translate)
-    const manage = shell.groups.find((entry) => entry.id === SHELL_MANAGE_GROUP_ID)!
-
-    expect(manage.name).toBe('Management centre')
-    expect(manage.items).toEqual([
-      {
-        id: '/backend/manage',
-        href: '/backend/manage',
-        title: 'Management centre',
-        defaultTitle: '管理中心',
-        iconName: 'Settings',
-        order: 0,
-      },
-    ])
-  })
-
-  it('does not invent a management entry when the catalogue denies it', () => {
-    const shell = buildShellChrome(catalog({ utility: [] }), translate)
 
     expect(shellHrefs(shell)).not.toContain('/backend/manage')
-    expect(shell.groups.some((entry) => entry.id === SHELL_MANAGE_GROUP_ID)).toBe(false)
+    // It stays in the catalogue so search and the fixed footer entry can use it.
+    expect(catalog().utility.map((entry) => entry.id)).toContain('manage')
   })
 
-  it('does not duplicate the management hub when a declaration already renders it', () => {
+  it('renders a declared hub entry exactly where the catalogue puts it', () => {
     const shell = buildShellChrome(
       catalog({
         groups: [
@@ -180,9 +163,9 @@ describe('AppShell chrome mapping', () => {
       translate,
     )
 
-    const matches = shellHrefs(shell).filter((href) => href === '/backend/manage')
-    expect(matches).toHaveLength(1)
-    expect(shell.groups.some((entry) => entry.id === SHELL_MANAGE_GROUP_ID)).toBe(false)
+    // A module that declares the hub as a page keeps it in its own group; the
+    // footer shortcut is additive and never duplicates the href.
+    expect(shellHrefs(shell).filter((href) => href === '/backend/manage')).toHaveLength(1)
   })
 
   it('keeps the sidebar constant by leaving the section panels empty', () => {

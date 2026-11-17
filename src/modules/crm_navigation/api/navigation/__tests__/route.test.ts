@@ -95,7 +95,6 @@ describe('CRM navigation chrome route', () => {
     expect(body.groups.map((group: { id: string }) => group.id)).toEqual([
       'home',
       'customers',
-      'crm_navigation.utility',
     ])
     expect(body.groups[0].items[0]).toMatchObject({
       id: '/backend/workbench',
@@ -112,11 +111,11 @@ describe('CRM navigation chrome route', () => {
       title: '联系人',
       order: 100,
     })
-    // The management hub is the only shell-only entry, so the hidden
-    // `/backend/manage` page cannot be orphaned.
-    expect(body.groups[2].items).toEqual([
-      expect.objectContaining({ href: '/backend/manage', title: '管理中心' }),
-    ])
+    // The hub is not part of the scrolling groups; it lives in the sticky
+    // footer (see SidebarFixedLinks) and in the catalogue for search.
+    expect(body.crm.utility).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'manage', href: '/backend/manage' })]),
+    )
   })
 
   it('keeps the sidebar constant: no settings/profile section panel or prefixes', async () => {
@@ -145,7 +144,7 @@ describe('CRM navigation chrome route', () => {
     )
 
     expect(new Set(shellHrefs).size).toBe(shellHrefs.length)
-    expect(shellHrefs).toEqual([...dailyHrefs.map((href: string) => shellHref(href)), '/backend/manage'])
+    expect(shellHrefs).toEqual(dailyHrefs.map((href: string) => shellHref(href)))
   })
 
   it('serves the typed empty chrome fallback when the core navigation is unavailable', async () => {
@@ -203,24 +202,24 @@ describe('workspace projection compatibility', () => {
   it('projects home while keeping all authorized catalogue entries', async () => {
     const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?chrome=1&path=/backend/workbench'))
     const body = await res.json()
-    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home'])
     expect(body.crm.groups.map((group: {id: string}) => group.id)).toContain('customers')
     expect(body.crm.version).toBe(2)
   })
   it('shrinks an unowned path to the fixed entries instead of every group', async () => {
     const res = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/manage'))
     const body = await res.json()
-    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home'])
     // The complete catalogue is untouched, so search and the hub still work.
     expect(body.crm.groups.map((group: {id: string}) => group.id)).toContain('customers')
   })
   it('honours a workspace hint on an unowned path only when it is authorized', async () => {
     const withHint = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/settings/profile&workspace=customers'))
     const hinted = await withHint.json()
-    expect(hinted.groups.map((group: {id: string}) => group.id)).toEqual(['home','customers','crm_navigation.utility'])
+    expect(hinted.groups.map((group: {id: string}) => group.id)).toEqual(['home','customers'])
     const bogus = await GET(request('http://127.0.0.1:3000/api/crm_navigation/navigation?path=/backend/settings/profile&workspace=module:secret'))
     const body = await bogus.json()
-    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home','crm_navigation.utility'])
+    expect(body.groups.map((group: {id: string}) => group.id)).toEqual(['home'])
     expect(body.crm.authorized).not.toContain('/backend/secret')
   })
   it('can revert the projection without changing directory contracts', async () => {

@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { subscribeOrganizationScopeChanged, getCurrentOrganizationScopeVersion } from '@open-mercato/shared/lib/frontend/organizationEvents'
 import { readVersionedPreference } from '@open-mercato/shared/lib/browser/versionedPreference'
 import { AppShell, type AppShellProps } from '@open-mercato/ui/backend/AppShell'
+import { SidebarFixedLinks } from './SidebarFixedLinks'
 import { isNavigationPreference, navigationPreferenceKey } from '@/nav/workspace-preferences'
 
 type ShellScope = { userId?: string | null; tenantId: string | null; organizationId: string | null }
@@ -46,5 +47,14 @@ export function WorkspaceShell({ initialScope, ...props }: AppShellProps & { ini
   })
   const recent = readRecentWorkspace(initialScope)
   if (recent) query.set('workspace', recent)
-  return <AppShell key={scopeVersion} {...props} adminNavApi={`/api/crm_navigation/navigation?${query.toString()}`} />
+  return (
+    <AppShell
+      key={scopeVersion}
+      {...props}
+      adminNavApi={`/api/crm_navigation/navigation?${query.toString()}`}
+      // The mobile drawer skips sidebar injection spots, so the same fixed
+      // entry is mounted explicitly there.
+      mobileSidebarSlot={<SidebarFixedLinks variant="mobile" />}
+    />
+  )
 }

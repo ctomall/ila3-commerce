@@ -47,9 +47,6 @@ export type ShellChrome = {
   profilePathPrefixes: string[]
 }
 
-/** Stable id for the shell-only group that carries the management hub link. */
-export const SHELL_MANAGE_GROUP_ID = 'crm_navigation.utility'
-
 /**
  * Documented shell-href aliases: the few declared destinations whose route is a
  * redirect, so the shell must link to the real destination instead.
@@ -109,28 +106,10 @@ export function buildShellChrome(
     items: group.items.map(toShellItem),
   }))
 
-  const manage = catalog.utility.find((entry) => entry.id === 'manage')
-  // Never duplicate a page the catalogue already renders as a daily entry (the
-  // hub is `navHidden` today, but that declaration can change).
-  const alreadyRendered = new Set(groups.flatMap((group) => group.items.map((item) => item.href)))
-  if (manage && !alreadyRendered.has(manage.href)) {
-    const label = translate('crmNav.utility.manage', manage.label)
-    groups.push({
-      id: SHELL_MANAGE_GROUP_ID,
-      name: label,
-      defaultName: manage.label,
-      items: [
-        {
-          id: manage.href,
-          href: manage.href,
-          title: label,
-          defaultTitle: manage.label,
-          iconName: manage.icon,
-          order: 0,
-        },
-      ],
-    })
-  }
+  // The management hub is not part of this list: it is a fixed entry in the
+  // sidebar footer (`SidebarFixedLinks`), pinned next to the account entry so it
+  // does not scroll away with the workspace groups. It stays in `catalog.utility`
+  // for search and remains an ordinary authorized href.
 
   return {
     groups,
