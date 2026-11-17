@@ -93,7 +93,12 @@ try {
     for (const viewport of [1440, 390]) {
       await page.setViewportSize({ width: viewport, height: 900 })
       try {
-        const response = await page.goto(base + url, { waitUntil: 'domcontentloaded', timeout: 20_000 })
+        // Some public pages (notably /docs/api) can start a client redirect that
+        // never settles. A hard race keeps the sweep moving instead of hanging.
+        const response = await Promise.race([
+          page.goto(base + url, { waitUntil: 'domcontentloaded', timeout: 20_000 }),
+          new Promise((resolve) => setTimeout(() => resolve(null), 25_000)),
+        ])
         const readiness = await page.evaluate((budget) => new Promise((resolve) => {
           const main = document.querySelector('main')
           if (!main) return resolve('no-main')

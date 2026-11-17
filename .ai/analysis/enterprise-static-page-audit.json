@@ -3212,7 +3212,7 @@
         },
         {
           "width": 390,
-          "scrollWidth": 398,
+          "scrollWidth": 390,
           "skeletons": 0,
           "title": "数据字典",
           "denied": false,
@@ -3867,19 +3867,9 @@
       ],
       "status": 200,
       "readiness": "dom-quiet-not-business-ready",
-      "pageErrors": [
-        {
-          "name": "TypeError",
-          "category": "network-or-blocked-request"
-        }
-      ],
-      "blockedWrites": [
-        {
-          "method": "PUT",
-          "path": "/api/workspace_settings/preferences"
-        }
-      ],
-      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
     },
     {
       "route": "/backend/customer_accounts/settings/domain",
@@ -4285,19 +4275,14 @@
       ],
       "status": 200,
       "readiness": "dom-quiet-not-business-ready",
-      "pageErrors": [
-        {
-          "name": "TypeError",
-          "category": "network-or-blocked-request"
-        }
-      ],
+      "pageErrors": [],
       "blockedWrites": [
         {
           "method": "PUT",
           "path": "/api/workspace_settings/preferences"
         }
       ],
-      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+      "errorAttribution": "not-determined"
     },
     {
       "route": "/backend/config/translations",
@@ -4741,19 +4726,9 @@
       ],
       "status": 200,
       "readiness": "dom-quiet-not-business-ready",
-      "pageErrors": [
-        {
-          "name": "TypeError",
-          "category": "network-or-blocked-request"
-        }
-      ],
-      "blockedWrites": [
-        {
-          "method": "PUT",
-          "path": "/api/workspace_settings/preferences"
-        }
-      ],
-      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
     },
     {
       "route": "/backend/entities/user",
@@ -4969,9 +4944,19 @@
       ],
       "status": 200,
       "readiness": "dom-quiet-not-business-ready",
-      "pageErrors": [],
-      "blockedWrites": [],
-      "errorAttribution": "not-determined"
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
     },
     {
       "route": "/backend/profile/change-password",
@@ -5019,25 +5004,35 @@
         {
           "width": 1440,
           "scrollWidth": 1440,
-          "skeletons": 3,
-          "title": null,
+          "skeletons": 0,
+          "title": "侧边栏自定义",
           "denied": false,
           "crashed": false
         },
         {
           "width": 390,
-          "scrollWidth": 400,
-          "skeletons": 3,
-          "title": null,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "侧边栏自定义",
           "denied": false,
           "crashed": false
         }
       ],
       "status": 200,
       "readiness": "dom-quiet-not-business-ready",
-      "pageErrors": [],
-      "blockedWrites": [],
-      "errorAttribution": "not-determined"
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
     },
     {
       "route": "/backend/profile/communication-channels",

@@ -15,8 +15,8 @@
           "width": 1440,
           "scrollWidth": 1440,
           "skeletons": 0,
-          "title": "个人资料",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 个人资料 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Loading profile...",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -86,7 +86,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create Role",
-          "text": "← 返回 Create Role 取消 创建 详情 名称 * 尚未定义自定义属性。 添加第一个 取消 创建",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Role 取消 创建 详情 名称 * 租户 * — Acme Corp 尚未定义自定义属性。 添加第一个 取消 创建",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -134,7 +134,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "设置",
-          "text": "设置 系统配置与管理 从菜单中选择一项以配置系统设置。",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 设置 系统配置与管理 从菜单中选择一项以配置系统设置。",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -191,7 +191,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建组织",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建组织 取消 创建 详情 租户 * Select tenant Acme Corp 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, und",
+          "text": "← 返回 创建组织 取消 创建 详情 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, underscores). 上级 — Root level — 下级 No direct children assigned. 启用 尚未定义自定义属性。 添加第一个 取消",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -204,7 +204,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "创建组织",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建组织 取消 创建 详情 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, underscores). 上级 — Root level — ",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建组织 取消 创建 详情 租户 * Select tenant Acme Corp 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, und",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -239,7 +239,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "Create Tenant",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Tenant 取消 Create Details Name * Active 加载中… 正在加载数据… 取消 Create",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Tenant 取消 Create Details Name * Active 尚未定义自定义属性。 添加第一个 取消 Create",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -296,7 +296,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": null,
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回商机列表 创建商机 商机核心信息 取消 创建商机 商机标题 * 显示在漏斗卡片上的简短描述性名称 状态 选择商机状态 已关闭 未关闭 赢单 输单 进行中 漏斗 选择漏斗阶段 Default Pipeline 漏斗阶段 选择销售漏斗阶段 阶段取决于所选漏斗 商机金额 该商机可能带来的收",
+          "text": "← 返回商机列表 创建商机 商机核心信息 取消 创建商机 商机标题 * 显示在漏斗卡片上的简短描述性名称 状态 选择商机状态 正在加载选项… 漏斗 选择漏斗阶段 漏斗阶段 选择销售漏斗阶段 阶段取决于所选漏斗 商机金额 该商机可能带来的收入 币种 选择币种… 管理货币字典 正在加载币种… 成交概率 % 0–100%，用于计算加权漏斗金额 预计成交日期 选择日期 负责人 开始输入以搜索。 描述 关联",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -545,7 +545,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建产品",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品 取消 创建产品 基本信息 归类 计量单位 合规与商务 规格 标题 * 描述 使用 Markdown 媒体 将图片拖拽到此处或点击上传。 选择文件 尚未上传媒体。 尺寸与重量 宽度 高度 深度 尺寸单位 重量 重量单位 上一个 继续 产品元数据 管理店铺的子标题、Handl",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品 取消 创建产品 基本信息 归类 计量单位 合规与商务 规格 标题 * 描述 * 使用 Markdown 媒体 将图片拖拽到此处或点击上传。 选择文件 尚未上传媒体。 尺寸与重量 宽度 高度 深度 尺寸单位 重量 重量单位 上一个 继续 产品元数据 管理店铺的子标题、Han",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -706,7 +706,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "新建登记",
-          "text": "← 返回 新建登记 取消 Create registration 产品 Catalog product 开始输入以搜索。 序列号 * Product name SKU Ownership 客户 订单 Coverage Purchase date 选择日期 Warranty months Coverage type Standard 来源 手动 备注 备注 取消 Create registratio",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建登记 取消 Create registration 产品 Catalog product 开始输入以搜索。 序列号 * Product name SKU Ownership 客户 订单 Coverage Purchase date 选择日期 Warranty months Co",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -730,7 +730,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "新建排障指南",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建排障指南 取消 Create guide Guide match 标题 * Claim type Any claim type — 清除 — Any claim type Warranty 退货 Core return Vendor recovery Reason code L",
+          "text": "← 返回 新建排障指南 取消 Create guide Guide match 标题 * Claim type Any claim type Reason code Leave empty to match any reason. 启用 Guide active Decision tree Decision tree Visual decision tree Connect questions t",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -817,7 +817,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "Create API Key",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create API Key 取消 创建 详情 名称 * 描述 Optional note to help teammates understand where this key is used. 组织 Inherit from selected scope Acme Corp 角",
+          "text": "← 返回 Create API Key 取消 创建 详情 名称 * 描述 Optional note to help teammates understand where this key is used. 组织 Inherit from selected scope 角色 Requests authenticated with this key impersonate these roles. ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -891,15 +891,13 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "创建业务规则",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建业务规则 取消 创建规则 Basic Information 规则 ID * Unique identifier (uppercase with underscores) 规则名称 * 描述 Rule Type * — Guard Validation Calculation ",
+          "text": "← 返回 创建业务规则 取消 创建规则 Basic Information 规则 ID * Unique identifier (uppercase with underscores) 规则名称 * 描述 Rule Type * — 分类 实体类型 * The entity this rule applies to (e.g., WorkOrder, Order, Customer). Start",
           "crashed": false,
           "denied": false,
           "notFound": false
         }
       ],
-      "pageErrors": [
-        "TypeError"
-      ],
+      "pageErrors": [],
       "overflow": false,
       "verdict": "rendered"
     },
@@ -952,7 +950,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create Feature Toggle",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Feature Toggle 保存 Basic Information Identifier * 名称 * 描述 分类 Type Configuration 类型 * — 布尔值 字符串 编号 JSON Default Value Please select a ty",
+          "text": "← 返回 Create Feature Toggle 保存 Basic Information Identifier * 名称 * 描述 分类 Type Configuration 类型 * — Default Value Please select a type above to configure the default value Set the default value for this",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1001,8 +999,8 @@
           "width": 390,
           "scrollWidth": 390,
           "skeletons": 0,
-          "title": "工作流可视化编辑器",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作流可视化编辑器 保存 START USER TASK AUTOMATED INVOKE AGENT WAIT FOR SIGNAL SUB-WORKFLOW END Start Building Tap a step type above to add it Load an exampl",
+          "title": null,
+          "text": "加载中… Opening the workflow studio…",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1039,7 +1037,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "工作流可视化编辑器",
-          "text": "← Back to definitions 工作流可视化编辑器 Create workflow summary 校验 更多 保存 STEP PALETTE Click a step type to add it to the canvas START USER TASK AUTOMATED INVOKE AGENT IF / ELSE SWITCH WAIT FOR SIGNAL WAIT FOR",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作流可视化编辑器 保存 START USER TASK AUTOMATED INVOKE AGENT WAIT FOR SIGNAL SUB-WORKFLOW END Start Building Tap a step type above to add it Load an exampl",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1075,8 +1073,8 @@
           "width": 390,
           "scrollWidth": 390,
           "skeletons": 0,
-          "title": null,
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Opening the work inbox…",
+          "title": "Work Inbox",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Work Inbox 自定义列 领取下一个 筛选 1 视图 全部视图 查看: My Work × 工作项 来源 优先级 状态 分配 截止日期 创建时间 没有分配给你的工作 This inbox shows work assigned to you or waiting in a queue ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1174,7 +1172,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建排班",
-          "text": "← 返回 创建排班 取消 创建 名称 * 描述 尚未定义自定义属性。 添加第一个",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建排班 取消 创建 名称 * 描述 加载中… 正在加载数据…",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1210,11 +1208,11 @@
           "width": 1440,
           "scrollWidth": 1440,
           "skeletons": 0,
-          "title": null,
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Schedule not found. Back to schedules",
+          "title": "Edit schedule",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 详情 可用性 ← 返回 Edit schedule 取消 保存 加载中… 正在加载排班…",
           "crashed": false,
           "denied": false,
-          "notFound": true
+          "notFound": false
         },
         {
           "viewport": 390,
@@ -1223,11 +1221,11 @@
           "width": 390,
           "scrollWidth": 390,
           "skeletons": 0,
-          "title": "Edit schedule",
-          "text": "详情 可用性 ← 返回 Edit schedule 取消 保存 加载中… 正在加载排班…",
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Schedule not found. Back to schedules",
           "crashed": false,
           "denied": false,
-          "notFound": false
+          "notFound": true
         }
       ],
       "pageErrors": [
@@ -1261,7 +1259,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "添加资源类型",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加资源类型 取消 保存 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 外观 颜色 Pick a color for this resou",
+          "text": "← 返回 添加资源类型 取消 保存 名称 * 描述 外观 颜色 Pick a color for this resource type. #000000 清除颜色 图标 Preview 未选择外观 尚未定义自定义属性。 添加第一个 取消 保存",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1285,7 +1283,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建资源",
-          "text": "← 返回 创建资源 取消 创建 名称 * 描述 资源类型 — 容量 Depends on the resource and can mean spots, units, quantity, or another type of capacity. Capacity unit Capacity unit dictionary is not configured. 外观 颜色 Pick a color",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建资源 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 资源类型 — Meeting room Engineering lap",
           "crashed": false,
           "denied": false,
           "notFound": true
@@ -1335,7 +1333,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "新建请假申请",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 开始输入以搜索。 Start date * 选择日期 End date * 选择日期 原因 Select a reason 加载中… 备注 取消 创建",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 开始输入以搜索。 Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1358,8 +1356,8 @@
           "width": 1440,
           "scrollWidth": 1440,
           "skeletons": 0,
-          "title": "新建请假申请",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 Marta Lopez Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Loading leave request...",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1433,7 +1431,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "添加团队成员",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — Engineering Product Operations 显示名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — 显示名称 * 描述 角色 Define new role 无匹配项 启用 Attachments Save the record before uploading files. No att",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1446,7 +1444,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "添加团队成员",
-          "text": "← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — 显示名称 * 描述 角色 Define new role 无匹配项 启用 Attachments Save the record before uploading files. No attachments found. 标签 entities.customFields.empty entitie",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — Engineering Product Operations 显示名称 * 描述 角色 Define new role 无匹配项 启用 Attachments Save the record",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1507,7 +1505,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建团队",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 启用 entities.customFields.empty enti",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 启用 entities.customFields.empty entities.customFields.addFirst 取消 创建",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1520,7 +1518,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "创建团队",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 启用 加载中… 正在加载数据… 取消 创建",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 启用 entities.customFields.empty enti",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1618,7 +1616,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": null,
-          "text": "加载中… Loading timesheets...",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Loading timesheets...",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1668,7 +1666,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "New project",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code — Edit code Derived from the project name; it prefixes every task reference. 客户 * New cu",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code 客户 * New customer 开始输入以搜索。 Time is organised per customer — a project cannot be saved wi",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1690,9 +1688,9 @@
           "readiness": "dom-quiet",
           "width": 1440,
           "scrollWidth": 1440,
-          "skeletons": 5,
+          "skeletons": 0,
           "title": "Projects",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 全部 启用 已完成 Table Cards Projects 刷新 筛选 名称 客户 状态 My role Hours Budget My hours / week 类型 已更新 操作 加载中… 正在加载表格…",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie TOTAL PROJECTS 4 3 启用 · 1 on hold HOURS THIS WEEK no previous data 0h vs previous week HOURS THIS MONTH 91.6% 61.5h vs previous month ASSIGNED TO ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1741,11 +1739,11 @@
           "width": 390,
           "scrollWidth": 390,
           "skeletons": 0,
-          "title": null,
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Team member not found. Back to team members",
+          "title": "Unnamed team member",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← Back to team members Unnamed team member Team member profile and activity 详情 可用性 Job history 摘要 团队 Unassigned team 角色 No roles assigned 用户 No us",
           "crashed": false,
           "denied": false,
-          "notFound": true
+          "notFound": false
         }
       ],
       "pageErrors": [
@@ -1839,8 +1837,8 @@
           "width": 1440,
           "scrollWidth": 1440,
           "skeletons": 0,
-          "title": "AI 智能体",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie AI 智能体 查看所有已注册智能体，并管理按租户的附加提示词片段覆盖。 智能体 Catalog Assistant (catalog.catalog_assistant) Catalog Assistant Read-only assistant for exploring catalog ",
+          "title": null,
+          "text": "正在加载 AI 智能体…",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1852,8 +1850,8 @@
           "width": 390,
           "scrollWidth": 390,
           "skeletons": 0,
-          "title": null,
-          "text": "正在加载 AI 智能体…",
+          "title": "AI 智能体",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie AI 智能体 查看所有已注册智能体，并管理按租户的附加提示词片段覆盖。 智能体 Catalog Assistant (catalog.catalog_assistant) Catalog Assistant Read-only assistant for exploring catalog ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1951,7 +1949,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "客户列表",
-          "text": "原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 客户列表 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 归属 阶段 最后触达 可触达 Nordwind Energie GmbH 王倩 客户 3 天前 有邮箱 SunPeak Solar Trading 李强 潜在客户 ",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 客户列表 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 归属 阶段 最后触达 可触达 Nordwind Ener",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -1998,10 +1996,10 @@
           "httpStatus": 200,
           "readiness": "dom-quiet",
           "width": 390,
-          "scrollWidth": 843,
+          "scrollWidth": 390,
           "skeletons": 0,
           "title": "候选审核",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 候选审核 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 域名 联系人 证据 验证 去重 Nordwind Ene",
+          "text": "原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 候选审核 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 域名 联系人 证据 验证 去重 Nordwind Energie GmbH nordwind-energie.de Marta Klein · 采购 3 通过 新公",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2010,7 +2008,7 @@
       "pageErrors": [
         "TypeError"
       ],
-      "overflow": true,
+      "overflow": false,
       "verdict": "rendered"
     },
     {
@@ -2035,7 +2033,7 @@
           "httpStatus": 200,
           "readiness": "dom-quiet",
           "width": 390,
-          "scrollWidth": 668,
+          "scrollWidth": 390,
           "skeletons": 0,
           "title": "邮件草稿审批",
           "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 邮件草稿审批 状态 待审批 已批准 已发送 发送未知 已失效 错误 收件人 状态 marta@nordwind-energie.",
@@ -2047,7 +2045,7 @@
       "pageErrors": [
         "TypeError"
       ],
-      "overflow": true,
+      "overflow": false,
       "verdict": "rendered"
     },
     {
@@ -2062,7 +2060,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "我的本周",
-          "text": "原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 我的本周 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 本周候选 18 较上周 +6 待我审核 5 最早 2 小时前 已入库 9 重复 2 · 拒绝 2 额度余量 3 / 12 周额度 今日任务 让助手继续调研 任务 产品 ·",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 我的本周 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 本周候选 18 较上周 +6 待我审核 5 最早 2 小时前 ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2171,9 +2169,9 @@
           "readiness": "dom-quiet",
           "width": 1440,
           "scrollWidth": 1440,
-          "skeletons": 1,
-          "title": null,
-          "text": "",
+          "skeletons": 0,
+          "title": "业务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 业务 按当前账号可访问的模块分区浏览；导航入口由模块声明生成。 63 项功能 工作台 4 工作台 日历 我的工作 工作收件箱 客户与获客 6 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 沟通协作 9 附件 文档 文档模板 通话记录 收件箱建议 消息 全渠道收件箱 渠道账号 发送结果",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2221,9 +2219,9 @@
           "readiness": "dom-quiet",
           "width": 390,
           "scrollWidth": 390,
-          "skeletons": 0,
-          "title": "管理中心",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 管理中心 管理员设置与员工日常分开。这里只列出你的账号有权打开的功能，按分类浏览或直接搜索。 70 个入口 我的账户 修改密码 自定义侧边栏 我的通信渠道 通知偏好 全部 组织与业务设置 平台维护 全部 用户组织 渠道集成 AI管理 业务设置 规则流程 客户门户 通知设备 系统维护 诊断 高",
+          "skeletons": 1,
+          "title": null,
+          "text": "",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2245,9 +2243,9 @@
           "readiness": "dom-quiet",
           "width": 1440,
           "scrollWidth": 1440,
-          "skeletons": 1,
-          "title": null,
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie",
+          "skeletons": 0,
+          "title": "Workspace layout",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Workspace layout Order, hide or rename the workspaces this organization sees. Hidden workspaces stay reachable by URL and in search; membership is",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2258,9 +2256,9 @@
           "readiness": "dom-quiet",
           "width": 390,
           "scrollWidth": 390,
-          "skeletons": 0,
-          "title": "Workspace layout",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Workspace layout Order, hide or rename the workspaces this organization sees. Hidden workspaces stay reachable by URL and in search; membership is",
+          "skeletons": 1,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2318,7 +2316,7 @@
           "httpStatus": 200,
           "readiness": "dom-quiet",
           "width": 1440,
-          "scrollWidth": 1497,
+          "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create Pay Link",
           "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Pay Link 取消 保存 常规 Template Optional starting point. Applying a template replaces the current form values. Start blank Pick a template ",
@@ -2343,7 +2341,7 @@
       "pageErrors": [
         "TypeError"
       ],
-      "overflow": true,
+      "overflow": false,
       "verdict": "rendered"
     },
     {
@@ -2355,7 +2353,7 @@
           "httpStatus": 200,
           "readiness": "dom-quiet",
           "width": 1440,
-          "scrollWidth": 1497,
+          "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create Template",
           "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Template 取消 保存 常规 名称 * 标题 子标题 描述 Markdown is supported on the public page preview. Block type Paragraph Quote Heading 1 Heading 2 Head",
@@ -2380,7 +2378,7 @@
       "pageErrors": [
         "TypeError"
       ],
-      "overflow": true,
+      "overflow": false,
       "verdict": "rendered"
     },
     {
@@ -2395,7 +2393,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "支付链接",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 支付链接 自定义列 创建链接 筛选 视图 全部视图 名称 标识 定价 状态 使用次数 已创建 操作 Spring Gala 2026 /pay/spring-gala-2026-f27fa168 价格表 草稿 0 / 100 11/3/2026 ⋯ 打开操作 Community Donati",
+          "text": "支付链接 创建链接 筛选 名称 标识 定价 状态 使用次数 已创建 操作 加载中… 正在加载表格…",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2432,7 +2430,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create carrier shipment",
-          "text": "← 返回 Create carrier shipment 1. Select carrier › 2. Configure shipment › 3. Select service & confirm 加载中…",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create carrier shipment 1. Select carrier › 2. Configure shipment › 3. Select service & confirm No shipping providers are configured. Enable ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2469,7 +2467,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建证据提交",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建证据提交 取消 Create submission Submission details Supplier * 开始输入以搜索。 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Product mapping 开始输入以",
+          "text": "← 返回 创建证据提交 取消 Create submission Submission details Supplier * 开始输入以搜索。 商品 * — Product mapping 开始输入以搜索。 Statement 开始输入以搜索。 Plots Choose a supplier before selecting plots. Evidence Origin country Searc",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2519,7 +2517,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "创建地块",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建地块 取消 Create plot Plot details Supplier * 开始输入以搜索。 名称 * 外部 ID Origin country * Geometry Geometry * Upload GeoJSON Paste JSON Upload or past",
+          "text": "← 返回 创建地块 取消 Create plot Plot details Supplier * 开始输入以搜索。 名称 * 外部 ID Origin country * Geometry Geometry * Upload GeoJSON Paste JSON Upload or paste a GeoJSON Point, Polygon, MultiPolygon, or Feature. ",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2580,7 +2578,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "创建风险评估",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建风险评估 取消 Create risk assessment Risk assessment details Statement * 开始输入以搜索。 Conclusion * — Negligible Non-negligible Assessed at * Nov 17, ",
+          "text": "← 返回 创建风险评估 取消 Create risk assessment Risk assessment details Statement * 开始输入以搜索。 Conclusion * — Assessed at * Nov 17, 2026 11:59 Review due at Nov 17, 2027 Optional date for the next risk review. Cr",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2630,7 +2628,7 @@
           "scrollWidth": 390,
           "skeletons": 0,
           "title": "创建声明",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建声明 取消 Create statement Statement details 标题 * 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Activity type — Import Export Domestic p",
+          "text": "← 返回 创建声明 取消 Create statement Statement details 标题 * 商品 * — Activity type — Actor role — Quantities Quantity kg Supplementary unit Supplementary quantity Referenced statements Referenced statements No",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -2691,7 +2689,7 @@
           "scrollWidth": 1440,
           "skeletons": 0,
           "title": "Create Customer Role",
-          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Customer Role 取消 Create Role Role Details 名称 * 标识 * Lowercase letters, numbers, hyphens, and underscores only. 描述 选项 Default role (aut",
+          "text": "← 返回 Create Customer Role 取消 Create Role Role Details 名称 * 标识 * Lowercase letters, numbers, hyphens, and underscores only. 描述 选项 Default role (auto-assigned to new users) Customers can self-assign 取消 ",
           "crashed": false,
           "denied": false,
           "notFound": false

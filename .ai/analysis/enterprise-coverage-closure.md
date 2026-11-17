@@ -69,3 +69,19 @@ as an observation, not silently patched.
 - `/quote/[token]` with a non-UUID token logs a server-side ZodError before the
   page shows its failure state; the non-UUID `ids` list filter still answers 500
   instead of 400. Both are recorded, not fixed.
+
+## Post-release live re-sweep (0.2.9, commit 55f4c48)
+
+All four sweeps were re-run against the deployed release on `127.0.0.1:3000`
+after `deploy-20261117113400-55f4c486`:
+
+| Sweep | Routes | Result |
+| --- | --- | --- |
+| authorized navigation (static) | 137 | 137 ok, 0 failures |
+| dynamic placeholder | 79 | 26 rendered, 51 not-found, 2 denied, 0 crash, **0 overflow** |
+| direct gaps (create/edit/settings/profile) | 74 | 69 rendered, 5 not-found, 0 crash, **0 overflow** |
+| public/portal/pay | 30 | 28 rendered, 1 pay not-found, 1 observation (`/docs/api`) |
+
+Matrix regenerated on that evidence: 319 pages, 318 render-evidenced, 0 defects,
+1 observation, 0 gaps. The two prototype list pages and both checkout create
+pages now stay at their viewport width at 1440 and 390.
