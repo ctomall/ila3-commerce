@@ -34,6 +34,7 @@ const sources = {
   contractProbe: path.join(repo, '.ai/analysis/enterprise-api-contract-probe.json'),
   returnAudit: path.join(repo, '.ai/analysis/enterprise-return-path-audit.json'),
   emptyState: path.join(repo, '.ai/analysis/enterprise-empty-state-audit.json'),
+  permission: path.join(repo, '.ai/analysis/enterprise-permission-audit.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -185,6 +186,16 @@ function evidenceFor(page) {
 
 const returnAudit = read(sources.returnAudit)
 const emptyState = read(sources.emptyState)
+const permissionAudit = read(sources.permission)
+const permissionByRoute = new Map((permissionAudit?.results ?? []).map((entry) => [
+  normalize(entry.route),
+  {
+    verdict: entry.verdict === 'navigation-failure' ? 'transient-failure' : entry.verdict,
+    status: entry.status ?? null,
+    fixedEntries: entry.fixedEntries ?? null,
+    authorizedLabel: entry.authorizedLabel ?? null,
+  },
+]))
 const emptyStateByRoute = new Map((emptyState?.results ?? []).map((entry) => [normalize(entry.route), entry]))
 const returnStatusByRoute = new Map(
   (returnAudit?.results ?? []).map((entry) => {
@@ -214,6 +225,7 @@ const rows = (baseline.pages ?? []).map((page) => {
     apiReferences: contract.total,
     apiContract: contract,
     returnPath: returnStatusByRoute.get(route) ?? null,
+    permission: permissionByRoute.get(route) ?? null,
     emptyState: emptyStateByRoute.get(route)
       ? {
           verdict: emptyStateByRoute.get(route).verdict,
@@ -265,6 +277,15 @@ const emptyByStatus = emptyAudited.reduce(
   {},
 )
 const emptyNeedsReview = emptyAudited.filter((row) => !['empty-state-text', 'zero-rows', 'no-search-control'].includes(row.emptyState.verdict))
+const permissionAudited = rows.filter((row) => row.permission)
+const permissionByStatus = permissionAudited.reduce(
+  (acc, row) => {
+    acc[row.permission.verdict] = (acc[row.permission.verdict] ?? 0) + 1
+    return acc
+  },
+  {},
+)
+const permissionDenied = permissionAudited.filter((row) => row.permission.verdict === 'denied')
 const pagesWithUnresolvedContract = rows.filter((row) => row.apiContract.status === 'unresolved')
 const summary = {
   generatedAt: new Date().toISOString(),
@@ -286,6 +307,10 @@ const summary = {
     emptyStateEvidenced: emptyAudited.filter((row) => ['empty-state-text', 'zero-rows'].includes(row.emptyState.verdict)).length,
     emptyStateNoSearch: emptyAudited.filter((row) => row.emptyState.verdict === 'no-search-control').length,
     emptyStateNeedsReview: emptyNeedsReview.length,
+    permissionAudited: permissionAudited.length,
+    permissionRendered: permissionAudited.filter((row) => row.permission.verdict === 'rendered').length,
+    permissionDenied: permissionDenied.length,
+    permissionTransient: permissionAudited.filter((row) => row.permission.verdict === 'transient-failure').length,
     gap: gaps.length,
     backendApis: baseline.counts?.backend ?? null,
     openApiOperations: baseline.counts?.operations ?? null,
@@ -331,6 +356,10 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | Empty state evidenced | ${summary.totals.emptyStateEvidenced} |
 | No search control (not testable this way) | ${summary.totals.emptyStateNoSearch} |
 | Empty-state observations needing review | ${summary.totals.emptyStateNeedsReview} |
+| Employee-view destinations audited | ${summary.totals.permissionAudited} |
+| Employee-view rendered | ${summary.totals.permissionRendered} |
+| Employee-view denied despite a nav link | ${summary.totals.permissionDenied} |
+| Employee-view transient navigation failures | ${summary.totals.permissionTransient} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -393,6 +422,17 @@ ${Object.entries(emptyByStatus).map(([status, count]) => `| ${status} | ${count}
 
 ${emptyNeedsReview.length === 0 ? 'No list destination kept rows after a nonsense search.' : `Needs review (audit may have typed into a filter that is not the list search):\n\n${emptyNeedsReview.map((row) => `- \`${row.route}\` — ${row.emptyState.verdict} (rows ${row.emptyState.rowsBefore}→${row.emptyState.rowsAfter})`).join('\n')}`}
 
+## Employee-view permission evidence
+
+The employee's own authorized catalogue was opened link by link (not the
+superadmin sweep list), so this reports what an employee is actually shown.
+
+| Employee view | Routes |
+| --- | --- |
+${Object.entries(permissionByStatus).map(([status, count]) => `| ${status} | ${count} |`).join('\n')}
+
+${permissionDenied.length === 0 ? 'No employee-visible link led to a denial.' : `Employee-visible links that answer with a denial:\n\n${permissionDenied.map((row) => `- \`${row.route}\` — ${row.permission.text ?? ''}`).join('\n')}`}
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
@@ -412,6 +452,7 @@ ${gapList || '| - | - | - |'}
 - contract check: \`.mercato/generated/openapi.generated.json\`
 - return-path audit: \`.ai/analysis/enterprise-return-path-audit.json\`
 - empty-state audit: \`.ai/analysis/enterprise-empty-state-audit.json\`
+- employee permission sweep: \`.ai/analysis/enterprise-permission-audit.json\`
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a
