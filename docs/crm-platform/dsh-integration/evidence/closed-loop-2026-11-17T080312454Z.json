@@ -1,0 +1,68 @@
+{
+  "drill": "dsh-closed-loop",
+  "startedAt": "2026-11-17T08:03:12.458Z",
+  "port": 3907,
+  "dist": ".mercato/enterprise-p4a",
+  "engine": "scripts/fixtures/fake-dsh-closed-loop.mjs",
+  "idempotencyKey": "drill-closed-loop-2026-11-17T080312454Z",
+  "engineRecord": "/home/pro/apps/mercato/.mercato/dsh-closed-loop/engine-2026-11-17T080312454Z.jsonl",
+  "serverLog": "/home/pro/apps/mercato/.mercato/dsh-closed-loop/server-2026-11-17T080312454Z.log",
+  "checks": {
+    "httpStatus": 200,
+    "frames": [
+      "thinking",
+      "tool-call",
+      "tool-result",
+      "text",
+      "done"
+    ],
+    "toolCalls": [
+      "crm.find_companies"
+    ],
+    "toolResults": 1,
+    "text": "read-only loop ok: 2 companies, first=Harborview Analytics, write=403/tool_not_allowed",
+    "done": true,
+    "unparsed": 0,
+    "bridgeRead": {
+      "kind": "bridge-read",
+      "status": 200,
+      "ok": true,
+      "tool": "crm.find_companies",
+      "companies": 2,
+      "scope": {
+        "mode": "organization",
+        "tenantId": "f27fa168-796c-4532-b9a4-1491a2e8c65e",
+        "organizationId": "328bc848-d4cd-41ae-bcc3-0bcb4b215e55"
+      },
+      "error": null
+    },
+    "bridgeWriteAttempt": {
+      "kind": "bridge-write-attempt",
+      "status": 403,
+      "code": "tool_not_allowed",
+      "error": "Tool is not allowed for this run"
+    },
+    "engineRecords": [
+      "initialize",
+      "query",
+      "bridge-read",
+      "bridge-write-attempt",
+      "completed"
+    ],
+    "runId": "f636efd7-7996-4594-a0ef-bb6e6ab5895c",
+    "runStatus": "completed",
+    "runCursor": 4,
+    "runResultMatches": true,
+    "eventSeqs": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "eventSeqContiguous": true,
+    "eventCount": 4
+  },
+  "failures": [],
+  "finishedAt": "2026-11-17T08:03:22.301Z",
+  "result": "passed"
+}
