@@ -200,15 +200,18 @@ async function main() {
     evidence.company = {
       id: targetId,
       originalIndustry,
-      displayName: targetCompany.display_name ?? targetCompany.displayName ?? null,
+      displayName: targetCompany.display_name ?? null,
       organizationId: claims.orgId ?? null,
+      // Compare decrypted values through the API: an unchanged field gets a new
+      // ciphertext on every write, so ciphertext equality would be misleading.
+      plaintextBefore: {
+        displayName: targetCompany.display_name ?? null,
+        legalName: targetCompany.legal_name ?? null,
+        brandName: targetCompany.brand_name ?? null,
+        domain: targetCompany.domain ?? null,
+        websiteUrl: targetCompany.website_url ?? null,
+      },
     }
-    // Snapshot untouched columns through their at-rest representation: only
-    // `industry` may change, and C must restore it exactly.
-    const untouchedBefore = psql(
-      `select coalesce(legal_name,'') || '|' || coalesce(brand_name,'') || '|' || coalesce(domain,'') from customer_companies where id = '${targetId}'`,
-    )
-    evidence.company.untouchedBefore = untouchedBefore
     restoreTarget = { id: targetId, industry: originalIndustry }
     fs.writeFileSync(TARGET_FILE, JSON.stringify({ id: targetId, industry: originalIndustry }))
 
@@ -276,9 +279,15 @@ async function main() {
     evidence.checks.companyAfter = afterCompany
       ? { industry: afterCompany.industry, displayName: afterCompany.display_name ?? afterCompany.displayName ?? null }
       : null
-    evidence.checks.untouchedAfter = psql(
-      `select coalesce(legal_name,'') || '|' || coalesce(brand_name,'') || '|' || coalesce(domain,'') from customer_companies where id = '${targetId}'`,
-    )
+    evidence.checks.plaintextAfter = afterCompany
+      ? {
+          displayName: afterCompany.display_name ?? null,
+          legalName: afterCompany.legal_name ?? null,
+          brandName: afterCompany.brand_name ?? null,
+          domain: afterCompany.domain ?? null,
+          websiteUrl: afterCompany.website_url ?? null,
+        }
+      : null
 
     const byLabel = (label) => engine.find((entry) => entry.kind === 'settled' && entry.label === label)?.last ?? null
     const singleUse = engine.find((entry) => entry.kind === 'single-use') ?? null
@@ -319,7 +328,11 @@ async function main() {
     // Data restoration: the drill must leave the target exactly as it found it.
     if (evidence.checks.restoreStatus !== 200) failures.push(`restore PUT status ${evidence.checks.restoreStatus}`)
     if (!afterCompany || afterCompany.industry !== originalIndustry) failures.push('industry was not restored (API read)')
-    if (evidence.checks.untouchedAfter !== untouchedBefore) failures.push('other company columns changed')
+    const beforeFields = evidence.company?.plaintextBefore ?? {}
+    const afterFields = evidence.checks.plaintextAfter ?? {}
+    if (Object.keys(beforeFields).some((key) => beforeFields[key] !== afterFields[key])) {
+      failures.push('other company fields changed (decrypted compare)')
+    }
 
     evidence.failures = failures
     if (failures.length > 0) failure = new Error(`approval drill checks failed: ${failures.join('; ')}`)

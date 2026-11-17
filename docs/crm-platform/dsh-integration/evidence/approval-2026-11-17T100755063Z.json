@@ -1,17 +1,23 @@
 {
   "drill": "dsh-approval-loop",
-  "startedAt": "2026-11-17T09:43:59.649Z",
+  "startedAt": "2026-11-17T10:07:55.132Z",
   "port": 3908,
   "dist": ".mercato/enterprise-p3b",
-  "idempotencyKey": "drill-approval-2026-11-17T094359581Z",
-  "engineRecord": "/home/pro/apps/mercato/.mercato/dsh-approval-drill/engine-2026-11-17T094359581Z.jsonl",
-  "serverLog": "/home/pro/apps/mercato/.mercato/dsh-approval-drill/server-2026-11-17T094359581Z.log",
+  "idempotencyKey": "drill-approval-2026-11-17T100755063Z",
+  "engineRecord": "/home/pro/apps/mercato/.mercato/dsh-approval-drill/engine-2026-11-17T100755063Z.jsonl",
+  "serverLog": "/home/pro/apps/mercato/.mercato/dsh-approval-drill/server-2026-11-17T100755063Z.log",
   "company": {
     "id": "b026cb18-bf9c-45c6-8b14-805eede4ff4c",
     "originalIndustry": "Renewable Energy",
     "displayName": "Brightside Solar",
     "organizationId": "328bc848-d4cd-41ae-bcc3-0bcb4b215e55",
-    "untouchedBefore": ""
+    "plaintextBefore": {
+      "displayName": "Brightside Solar",
+      "legalName": "Brightside Solar LLC",
+      "brandName": "Brightside Solar",
+      "domain": "brightsidesolar.com",
+      "websiteUrl": "https://brightsidesolar.com"
+    }
   },
   "checks": {
     "httpStatus": 200,
@@ -30,27 +36,27 @@
     "decisions": [
       {
         "label": "A",
-        "approvalId": "20368cf0-fe88-4bd4-960b-91a0c512f6b2",
+        "approvalId": "be062e1a-677c-4dec-9a1c-98b2a14d5ae7",
         "decision": "approve",
         "status": 200,
-        "body": "{\"approval\":{\"id\":\"20368cf0-fe88-4bd4-960b-91a0c512f6b2\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-missing-1794908649246\"},\"co"
+        "body": "{\"approval\":{\"id\":\"be062e1a-677c-4dec-9a1c-98b2a14d5ae7\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-missing-1794910084469\"},\"co"
       },
       {
         "label": "B",
-        "approvalId": "e31854c5-a30f-4ff2-af8e-aa4ab1dc5910",
+        "approvalId": "ac743e77-7997-4257-8ff3-9f73f6817d87",
         "decision": "approve",
         "status": 200,
-        "body": "{\"approval\":{\"id\":\"e31854c5-a30f-4ff2-af8e-aa4ab1dc5910\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-written-1794908650422\"},\"co"
+        "body": "{\"approval\":{\"id\":\"ac743e77-7997-4257-8ff3-9f73f6817d87\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-written-1794910085677\"},\"co"
       },
       {
         "label": "D",
-        "approvalId": "0ffcf4ab-3d29-4cec-8a0b-a119d29b3665",
+        "approvalId": "0c591f81-8651-4731-8dfe-a9f391951b13",
         "decision": "reject",
         "status": 200,
-        "body": "{\"approval\":{\"id\":\"0ffcf4ab-3d29-4cec-8a0b-a119d29b3665\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-rejected-1794908651762\"},\"c"
+        "body": "{\"approval\":{\"id\":\"0c591f81-8651-4731-8dfe-a9f391951b13\",\"tool\":\"crm.update_company\",\"summary\":{\"fields\":{\"industry\":\"approval-drill-rejected-1794910087023\"},\"c"
       }
     ],
-    "text": "Approve the missing-record attempt: approval-required:A:20368cf0-fe88-4bd4-960b-91a0c512f6b2 | Approve the real record change: approval-required:B:e31854c5-a30f-4ff2-af8e-aa4ab1dc5910 | Reject this record change: approval-required:D:0ffcf4ab-3d29-4cec-8a0b-a119d29b3665 | approval loop A=404/not_found A-retry=404/not_found B=200/n/a B-retry=409/approval_consumed D=403/approval_rejected",
+    "text": "Approve the missing-record attempt: approval-required:A:be062e1a-677c-4dec-9a1c-98b2a14d5ae7 | Approve the real record change: approval-required:B:ac743e77-7997-4257-8ff3-9f73f6817d87 | Reject this record change: approval-required:D:0c591f81-8651-4731-8dfe-a9f391951b13 | approval loop A=404/not_found A-retry=404/not_found B=200/n/a B-retry=409/approval_consumed D=403/approval_rejected",
     "done": true,
     "body": null,
     "engine": [
@@ -123,13 +129,13 @@
         "finalResponse": "approval loop A=404/not_found A-retry=404/not_found B=200/n/a B-retry=409/approval_consumed D=403/approval_rejected"
       }
     ],
-    "runId": "d9252011-5e43-42c4-95d3-c390f10b7984",
+    "runId": "07cbd4c4-b6b5-48ed-aa67-b48aba092498",
     "runStatus": "completed",
     "runResult": "{\"finishReason\": \"completed\", \"finalResponse\": \"approval loop A=404/not_found A-retry=404/not_found B=200/n/a B-retry=409/approval_consumed D=403/approval_rejected\"}",
     "bindingId": "d8dffc01-6a4b-42c4-836a-8fa3a428dcf7",
     "approvals": [
       "approved:-",
-      "consumed:2026-11-17 09:44:11.727+00",
+      "consumed:2026-11-17 10:08:06.987+00",
       "rejected:-"
     ],
     "approvalCount": 3,
@@ -140,7 +146,13 @@
       "industry": "Renewable Energy",
       "displayName": "Brightside Solar"
     },
-    "untouchedAfter": "",
+    "plaintextAfter": {
+      "displayName": "Brightside Solar",
+      "legalName": "Brightside Solar LLC",
+      "brandName": "Brightside Solar",
+      "domain": "brightsidesolar.com",
+      "websiteUrl": "https://brightsidesolar.com"
+    },
     "settledA": {
       "status": 404,
       "code": "not_found"
@@ -182,8 +194,8 @@
       }
     ]
   },
-  "restoredAt": "2026-11-17T09:44:13.229Z",
+  "restoredAt": "2026-11-17T10:08:08.470Z",
   "failures": [],
-  "finishedAt": "2026-11-17T09:44:13.695Z",
+  "finishedAt": "2026-11-17T10:08:08.856Z",
   "result": "passed"
 }
