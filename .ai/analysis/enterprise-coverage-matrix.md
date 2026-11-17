@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T12:17:37.964Z
+Generated: 2026-11-17T13:24:33.676Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -15,6 +15,9 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Resolved against OpenAPI | 157 |
 | Unresolved references | 0 |
 | Not probed safely (POST-only / side effects) | 12 |
+| Return path audited (create/edit/detail/profile) | 130 |
+| Return path evidenced | 120 |
+| No contextual return | 10 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -375,6 +378,32 @@ No page references a confirmed-missing endpoint.
 | frontend-pay | `/pay/[slug]` | evidenced (not-found-state) | no-references |
 | frontend-pay | `/pay/[slug]/success/[transactionId]` | evidenced (rendered) | no-references |
 
+## Return path evidence
+
+Detail/create/edit pages were opened (real record ids where a list API exists)
+and checked for a contextual return control, an ancestor breadcrumb or an
+in-page back control.
+
+| Return path | Routes |
+| --- | --- |
+| no-return | 10 |
+| contextual-return | 88 |
+| breadcrumb-ancestor | 18 |
+| in-page-back | 14 |
+
+Routes with no contextual return (dashboard breadcrumb only):
+
+- `/backend/auth/profile`
+- `/backend/entities/system/[entityId]`
+- `/backend/sales/documents/create`
+- `/backend/sales/documents/[id]`
+- `/backend/rules/[id]`
+- `/backend/sets/[id]`
+- `/backend/staff/profile/create`
+- `/backend/communications/inbox/[thread]`
+- `/backend/checkout/templates/[id]/preview`
+- `/backend/shipping-carriers/create`
+
 ## Observations
 
 - `/docs/api` — navigation-failure (public-audit); access/behaviour to confirm, not a confirmed page defect.
@@ -392,6 +421,7 @@ No page references a confirmed-missing endpoint.
 - public/portal/pay sweep: `.ai/analysis/enterprise-public-page-audit.json`
 - direct gap sweep: `.ai/analysis/enterprise-direct-page-audit.json`
 - contract check: `.mercato/generated/openapi.generated.json`
+- return-path audit: `.ai/analysis/enterprise-return-path-audit.json` + supplement
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a

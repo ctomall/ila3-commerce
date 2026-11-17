@@ -1,0 +1,1597 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "return-path-create-edit-detail",
+  "count": 130,
+  "completed": 130,
+  "results": [
+    {
+      "route": "/backend/auth/profile",
+      "url": "/backend/auth/profile",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/roles/create",
+      "url": "/backend/roles/create",
+      "links": [
+        "/backend",
+        "/backend/roles"
+      ],
+      "returnHref": "/backend/roles",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/roles"
+      ]
+    },
+    {
+      "route": "/backend/users/create",
+      "url": "/backend/users/create",
+      "links": [
+        "/backend",
+        "/backend/users"
+      ],
+      "returnHref": "/backend/users",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/users"
+      ]
+    },
+    {
+      "route": "/backend/roles/[id]/edit",
+      "url": "/backend/roles/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/roles"
+      ],
+      "returnHref": "/backend/roles",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/roles"
+      ]
+    },
+    {
+      "route": "/backend/users/[id]/edit",
+      "url": "/backend/users/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/users"
+      ],
+      "returnHref": "/backend/users",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/users"
+      ]
+    },
+    {
+      "route": "/backend/directory/organizations/create",
+      "url": "/backend/directory/organizations/create",
+      "links": [
+        "/backend",
+        "/backend/directory/organizations"
+      ],
+      "returnHref": "/backend/directory/organizations",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/directory/organizations"
+      ]
+    },
+    {
+      "route": "/backend/directory/tenants/create",
+      "url": "/backend/directory/tenants/create",
+      "links": [
+        "/backend",
+        "/backend/directory/tenants"
+      ],
+      "returnHref": "/backend/directory/tenants",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/directory/tenants"
+      ]
+    },
+    {
+      "route": "/backend/directory/organizations/[id]/edit",
+      "url": "/backend/directory/organizations/328bc848-d4cd-41ae-bcc3-0bcb4b215e55/edit",
+      "links": [
+        "/backend",
+        "/backend/directory/organizations"
+      ],
+      "returnHref": "/backend/directory/organizations",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/directory/organizations"
+      ]
+    },
+    {
+      "route": "/backend/directory/tenants/[id]/edit",
+      "url": "/backend/directory/tenants/f27fa168-796c-4532-b9a4-1491a2e8c65e/edit",
+      "links": [
+        "/backend",
+        "/backend/directory/tenants"
+      ],
+      "returnHref": "/backend/directory/tenants",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/directory/tenants"
+      ]
+    },
+    {
+      "route": "/backend/customers/companies/create",
+      "url": "/backend/customers/companies/create",
+      "links": [
+        "/backend",
+        "/backend/customers/companies"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customers/companies"
+      ]
+    },
+    {
+      "route": "/backend/customers/deals/create",
+      "url": "/backend/customers/deals/create",
+      "links": [
+        "/backend",
+        "/backend/customers/deals"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customers/deals"
+      ]
+    },
+    {
+      "route": "/backend/customers/people/create",
+      "url": "/backend/customers/people/create",
+      "links": [
+        "/backend",
+        "/backend/customers/people"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customers/people"
+      ]
+    },
+    {
+      "route": "/backend/customers/companies-v2/[id]",
+      "url": "/backend/customers/companies-v2/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/customers/companies/[id]",
+      "url": "/backend/customers/companies/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/customers/deals/[id]",
+      "url": "/backend/customers/deals/3bce52e8-f38f-4cad-9d66-7f1dafbd5282",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/customers/deals",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/customers/people-v2/[id]",
+      "url": "/backend/customers/people-v2/1a961045-8606-4341-b8c1-dcd5de97c9f8",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/customers/people",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/customers/people/[id]",
+      "url": "/backend/customers/people/1a961045-8606-4341-b8c1-dcd5de97c9f8",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/entities/user/create",
+      "url": "/backend/entities/user/create",
+      "links": [
+        "/backend",
+        "/backend/entities/user"
+      ],
+      "returnHref": "/backend/entities/user",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/entities/user"
+      ]
+    },
+    {
+      "route": "/backend/entities/system/[entityId]",
+      "url": "/backend/entities/system/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/entities/user/[entityId]",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/entities/user",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/[recordId]",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": "/backend/entities/user",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/create",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records/create",
+      "links": [],
+      "returnHref": "/backend/entities/user",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/entities/user",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/catalog/categories/create",
+      "url": "/backend/catalog/categories/create",
+      "links": [
+        "/backend",
+        "/backend/catalog/categories"
+      ],
+      "returnHref": "/backend/catalog/categories",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/catalog/categories"
+      ]
+    },
+    {
+      "route": "/backend/catalog/prices/create",
+      "url": "/backend/catalog/prices/create",
+      "links": [
+        "/backend",
+        "/backend/catalog/prices"
+      ],
+      "returnHref": "/backend/catalog/prices",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/catalog/prices"
+      ]
+    },
+    {
+      "route": "/backend/catalog/products/create",
+      "url": "/backend/catalog/products/create",
+      "links": [
+        "/backend",
+        "/backend/catalog/products"
+      ],
+      "returnHref": "/backend/catalog/products",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/catalog/products"
+      ]
+    },
+    {
+      "route": "/backend/catalog/categories/[id]/edit",
+      "url": "/backend/catalog/categories/a51069d2-75f9-41b5-9c36-f286edb71e53/edit",
+      "links": [
+        "/backend",
+        "/backend/catalog/categories"
+      ],
+      "returnHref": "/backend/catalog/categories",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/catalog/categories"
+      ]
+    },
+    {
+      "route": "/backend/catalog/prices/[id]/edit",
+      "url": "/backend/catalog/prices/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/catalog/prices"
+      ],
+      "returnHref": "/backend/catalog/prices",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/catalog/prices"
+      ]
+    },
+    {
+      "route": "/backend/catalog/products/[id]",
+      "url": "/backend/catalog/products/1af21642-0772-4cbc-b517-89cb10619ade",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/catalog/products",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/[variantId]",
+      "url": "/backend/catalog/products/11111111-1111-4111-8111-111111111111/variants/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/catalog/products",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/create",
+      "url": "/backend/catalog/products/11111111-1111-4111-8111-111111111111/variants/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/catalog/products",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sales/channels/create",
+      "url": "/backend/sales/channels/create",
+      "links": [
+        "/backend",
+        "/backend/sales/channels"
+      ],
+      "returnHref": "/backend/sales/channels",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/sales/channels"
+      ]
+    },
+    {
+      "route": "/backend/sales/documents/create",
+      "url": "/backend/sales/documents/create",
+      "links": [
+        "/backend",
+        "/backend/sales/channels"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/edit",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/sales/channels"
+      ],
+      "returnHref": "/backend/sales/channels",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/sales/channels"
+      ]
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/[offerId]/edit",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/offers/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/sales/channels"
+      ],
+      "returnHref": "/backend/sales/channels",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/sales/channels"
+      ]
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/create",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/offers/create",
+      "links": [
+        "/backend",
+        "/backend/sales/channels"
+      ],
+      "returnHref": "/backend/sales/channels",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/sales/channels"
+      ]
+    },
+    {
+      "route": "/backend/sales/documents/[id]",
+      "url": "/backend/sales/documents/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sales/orders/[id]",
+      "url": "/backend/sales/orders/06708c7d-e6d9-47ed-844c-d51cc6819404",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sales/quotes/[id]",
+      "url": "/backend/sales/quotes/ce2cba82-4834-4896-9094-46b7f081f04a",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/sales/quotes",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/warranty_claims/create",
+      "url": "/backend/warranty_claims/create",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/warranty_claims"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/create",
+      "url": "/backend/warranty_claims/registrations/create",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/registrations"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/registrations"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/create",
+      "url": "/backend/warranty_claims/troubleshooting-guides/create",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/troubleshooting-guides"
+      ],
+      "returnHref": "/backend/warranty_claims/troubleshooting-guides",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/troubleshooting-guides"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/create",
+      "url": "/backend/warranty_claims/vendor-policies/create",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/vendor-policies"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/vendor-policies"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/[id]/edit",
+      "url": "/backend/warranty_claims/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims"
+      ],
+      "returnHref": "/backend/warranty_claims",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/warranty_claims"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/[id]",
+      "url": "/backend/warranty_claims/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/warranty_claims"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/[id]/edit",
+      "url": "/backend/warranty_claims/registrations/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/registrations"
+      ],
+      "returnHref": "/backend/warranty_claims/registrations",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/registrations"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/[id]/edit",
+      "url": "/backend/warranty_claims/troubleshooting-guides/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/troubleshooting-guides"
+      ],
+      "returnHref": "/backend/warranty_claims/troubleshooting-guides",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/troubleshooting-guides"
+      ]
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/[id]/edit",
+      "url": "/backend/warranty_claims/vendor-policies/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/vendor-policies"
+      ],
+      "returnHref": "/backend/warranty_claims/vendor-policies",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/warranty_claims",
+        "/backend/warranty_claims/vendor-policies"
+      ]
+    },
+    {
+      "route": "/backend/wms/location/[id]",
+      "url": "/backend/wms/location/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/wms",
+        "/backend/wms/locations"
+      ],
+      "returnHref": "/backend/wms",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/wms"
+      ]
+    },
+    {
+      "route": "/backend/wms/lot/[id]",
+      "url": "/backend/wms/lot/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/wms",
+        "/backend/wms/inventory"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/wms"
+      ]
+    },
+    {
+      "route": "/backend/wms/sku/[id]",
+      "url": "/backend/wms/sku/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/wms",
+        "/backend/wms/inventory"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/wms"
+      ]
+    },
+    {
+      "route": "/backend/api-keys/create",
+      "url": "/backend/api-keys/create",
+      "links": [
+        "/backend",
+        "/backend/api-keys"
+      ],
+      "returnHref": "/backend/api-keys",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/api-keys"
+      ]
+    },
+    {
+      "route": "/backend/devices/create",
+      "url": "/backend/devices/create",
+      "links": [
+        "/backend",
+        "/backend/devices"
+      ],
+      "returnHref": "/backend/devices",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/devices"
+      ]
+    },
+    {
+      "route": "/backend/devices/[id]",
+      "url": "/backend/devices/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/devices"
+      ],
+      "returnHref": "/backend/devices",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/devices"
+      ]
+    },
+    {
+      "route": "/backend/rules/create",
+      "url": "/backend/rules/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/rules",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sets/create",
+      "url": "/backend/sets/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/sets",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/logs/[id]",
+      "url": "/backend/logs/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/logs"
+      ],
+      "returnHref": "/backend/logs",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/logs"
+      ]
+    },
+    {
+      "route": "/backend/rules/[id]",
+      "url": "/backend/rules/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/sets/[id]",
+      "url": "/backend/sets/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/feature-toggles/global/create",
+      "url": "/backend/feature-toggles/global/create",
+      "links": [
+        "/backend",
+        "/backend/feature-toggles/global"
+      ],
+      "returnHref": "/backend/feature-toggles/global",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/feature-toggles/global"
+      ]
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]/edit",
+      "url": "/backend/feature-toggles/global/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/feature-toggles/global"
+      ],
+      "returnHref": "/backend/feature-toggles/global",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/feature-toggles/global"
+      ]
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]",
+      "url": "/backend/feature-toggles/global/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/feature-toggles/global"
+      ],
+      "returnHref": "/backend/feature-toggles/global",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/feature-toggles/global"
+      ]
+    },
+    {
+      "route": "/backend/definitions/create",
+      "url": "/backend/definitions/create",
+      "links": [
+        "/backend",
+        "/backend/definitions"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/definitions"
+      ]
+    },
+    {
+      "route": "/backend/definitions/[id]",
+      "url": "/backend/definitions/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/definitions"
+      ],
+      "returnHref": "/backend/definitions",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/definitions"
+      ]
+    },
+    {
+      "route": "/backend/events/[id]",
+      "url": "/backend/events/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/definitions",
+        "/backend/events"
+      ],
+      "returnHref": "/backend/events",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/events"
+      ]
+    },
+    {
+      "route": "/backend/instances/[id]",
+      "url": "/backend/instances/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/definitions",
+        "/backend/instances"
+      ],
+      "returnHref": "/backend/instances",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/instances"
+      ]
+    },
+    {
+      "route": "/backend/tasks/[id]",
+      "url": "/backend/tasks/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/definitions",
+        "/backend/tasks"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/tasks"
+      ]
+    },
+    {
+      "route": "/backend/currencies/create",
+      "url": "/backend/currencies/create",
+      "links": [
+        "/backend",
+        "/backend/currencies"
+      ],
+      "returnHref": "/backend/currencies",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/currencies"
+      ]
+    },
+    {
+      "route": "/backend/exchange-rates/create",
+      "url": "/backend/exchange-rates/create",
+      "links": [
+        "/backend",
+        "/backend/currencies",
+        "/backend/exchange-rates"
+      ],
+      "returnHref": "/backend/exchange-rates",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/exchange-rates"
+      ]
+    },
+    {
+      "route": "/backend/currencies/[id]",
+      "url": "/backend/currencies/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/currencies"
+      ],
+      "returnHref": "/backend/currencies",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/currencies"
+      ]
+    },
+    {
+      "route": "/backend/exchange-rates/[id]",
+      "url": "/backend/exchange-rates/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/currencies",
+        "/backend/exchange-rates"
+      ],
+      "returnHref": "/backend/exchange-rates",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/exchange-rates"
+      ]
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/create",
+      "url": "/backend/planner/availability-rulesets/create",
+      "links": [
+        "/backend",
+        "/backend/planner/availability-rulesets"
+      ],
+      "returnHref": "/backend/planner/availability-rulesets",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/planner/availability-rulesets"
+      ]
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/[id]",
+      "url": "/backend/planner/availability-rulesets/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/resources/resource-types/create",
+      "url": "/backend/resources/resource-types/create",
+      "links": [
+        "/backend",
+        "/backend/resources/resource-types"
+      ],
+      "returnHref": "/backend/resources/resource-types",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/resources/resource-types"
+      ]
+    },
+    {
+      "route": "/backend/resources/resources/create",
+      "url": "/backend/resources/resources/create",
+      "links": [
+        "/backend",
+        "/backend/resources/resources"
+      ],
+      "returnHref": "/backend/resources/resources",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/resources/resources"
+      ]
+    },
+    {
+      "route": "/backend/resources/resource-types/[id]/edit",
+      "url": "/backend/resources/resource-types/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/resources/resource-types"
+      ],
+      "returnHref": "/backend/resources/resource-types",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/resources/resource-types"
+      ]
+    },
+    {
+      "route": "/backend/resources/resources/[id]",
+      "url": "/backend/resources/resources/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/resources/resources"
+      ],
+      "returnHref": "/backend/resources/resources",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/resources/resources"
+      ]
+    },
+    {
+      "route": "/backend/staff/leave-requests/create",
+      "url": "/backend/staff/leave-requests/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/create",
+      "url": "/backend/staff/my-leave-requests/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/staff/my-leave-requests",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/profile/create",
+      "url": "/backend/staff/profile/create",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/team-members/create",
+      "url": "/backend/staff/team-members/create",
+      "links": [
+        "/backend",
+        "/backend/staff/team-members"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/staff/team-members"
+      ]
+    },
+    {
+      "route": "/backend/staff/team-roles/create",
+      "url": "/backend/staff/team-roles/create",
+      "links": [
+        "/backend",
+        "/backend/staff/team-roles"
+      ],
+      "returnHref": "/backend/staff/team-roles",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/team-roles"
+      ]
+    },
+    {
+      "route": "/backend/staff/teams/create",
+      "url": "/backend/staff/teams/create",
+      "links": [
+        "/backend",
+        "/backend/staff/teams"
+      ],
+      "returnHref": "/backend/staff/teams",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/teams"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/create",
+      "url": "/backend/staff/time-tracking/projects/create",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/create",
+      "url": "/backend/staff/time-tracking/reports/create",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/reports"
+      ],
+      "returnHref": "/backend/staff/time-tracking/reports",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/reports"
+      ]
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/create",
+      "url": "/backend/staff/timesheets/projects/create",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/leave-requests/[id]",
+      "url": "/backend/staff/leave-requests/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/[id]",
+      "url": "/backend/staff/my-leave-requests/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/staff/my-leave-requests",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/team-members/[id]",
+      "url": "/backend/staff/team-members/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/team-roles/[id]/edit",
+      "url": "/backend/staff/team-roles/11111111-1111-4111-8111-111111111111/edit",
+      "links": [],
+      "returnHref": "/backend/staff/team-roles",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/staff/teams/[id]/edit",
+      "url": "/backend/staff/teams/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/staff/teams"
+      ],
+      "returnHref": "/backend/staff/teams",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/teams"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/board",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111/board",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/edit",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/[id]",
+      "url": "/backend/staff/time-tracking/reports/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/reports"
+      ],
+      "returnHref": "/backend/staff/time-tracking/reports",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/reports"
+      ]
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]/edit",
+      "url": "/backend/staff/timesheets/projects/11111111-1111-4111-8111-111111111111/edit",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]",
+      "url": "/backend/staff/timesheets/projects/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ],
+      "returnHref": "/backend/staff/time-tracking/projects",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/staff/time-tracking",
+        "/backend/staff/time-tracking/projects"
+      ]
+    },
+    {
+      "route": "/backend/integrations/[id]",
+      "url": "/backend/integrations/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/integrations",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/integrations/bundle/[id]",
+      "url": "/backend/integrations/bundle/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/integrations",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/data-sync/runs/[id]",
+      "url": "/backend/data-sync/runs/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/data-sync",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/messages/[id]",
+      "url": "/backend/messages/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": "/backend/messages",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/communication_channels/channels/[id]",
+      "url": "/backend/communication_channels/channels/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/communication_channels/channels"
+      ],
+      "returnHref": "/backend/communication_channels/channels",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/communication_channels/channels"
+      ]
+    },
+    {
+      "route": "/backend/push_notifications/[id]",
+      "url": "/backend/push_notifications/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend"
+      ],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]/before/[cursor]",
+      "url": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111/before/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": "/backend/communications/inbox",
+      "verdict": "return-control",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]",
+      "url": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/business/[category]",
+      "url": "/backend/business/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/business"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/business"
+      ]
+    },
+    {
+      "route": "/backend/inbox-ops/proposals/[id]",
+      "url": "/backend/inbox-ops/proposals/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/inbox-ops"
+      ],
+      "returnHref": "/backend/inbox-ops",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/inbox-ops"
+      ]
+    },
+    {
+      "route": "/backend/checkout/pay-links/create",
+      "url": "/backend/checkout/pay-links/create",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/checkout/templates/create",
+      "url": "/backend/checkout/templates/create",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/checkout/pay-links/[id]",
+      "url": "/backend/checkout/pay-links/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/checkout/templates/[id]",
+      "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/checkout/templates/[id]/preview",
+      "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111/preview",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/checkout/transactions/[id]",
+      "url": "/backend/checkout/transactions/11111111-1111-4111-8111-111111111111",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/documents/[id]",
+      "url": "/backend/documents/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/documents"
+      ],
+      "returnHref": "/backend/documents",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/documents"
+      ]
+    },
+    {
+      "route": "/backend/shipping-carriers/create",
+      "url": "/backend/shipping-carriers/create",
+      "links": [],
+      "returnHref": null,
+      "verdict": "dashboard-only",
+      "ancestors": []
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/create",
+      "url": "/backend/eudr/evidence-submissions/create",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/evidence-submissions"
+      ],
+      "returnHref": "/backend/eudr/evidence-submissions",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/evidence-submissions"
+      ]
+    },
+    {
+      "route": "/backend/eudr/plots/create",
+      "url": "/backend/eudr/plots/create",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/plots"
+      ],
+      "returnHref": "/backend/eudr/plots",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/plots"
+      ]
+    },
+    {
+      "route": "/backend/eudr/product-mappings/create",
+      "url": "/backend/eudr/product-mappings/create",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/product-mappings"
+      ],
+      "returnHref": "/backend/eudr/product-mappings",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/product-mappings"
+      ]
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/create",
+      "url": "/backend/eudr/risk-assessments/create",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/risk-assessments"
+      ],
+      "returnHref": "/backend/eudr/risk-assessments",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/risk-assessments"
+      ]
+    },
+    {
+      "route": "/backend/eudr/statements/create",
+      "url": "/backend/eudr/statements/create",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/statements"
+      ],
+      "returnHref": "/backend/eudr/statements",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/statements"
+      ]
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/[id]",
+      "url": "/backend/eudr/evidence-submissions/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/evidence-submissions"
+      ],
+      "returnHref": "/backend/eudr/evidence-submissions",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/evidence-submissions"
+      ]
+    },
+    {
+      "route": "/backend/eudr/plots/[id]",
+      "url": "/backend/eudr/plots/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/plots"
+      ],
+      "returnHref": "/backend/eudr/plots",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/plots"
+      ]
+    },
+    {
+      "route": "/backend/eudr/product-mappings/[id]",
+      "url": "/backend/eudr/product-mappings/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/product-mappings"
+      ],
+      "returnHref": "/backend/eudr/product-mappings",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/product-mappings"
+      ]
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/[id]",
+      "url": "/backend/eudr/risk-assessments/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/risk-assessments"
+      ],
+      "returnHref": "/backend/eudr/risk-assessments",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/risk-assessments"
+      ]
+    },
+    {
+      "route": "/backend/eudr/statements/[id]",
+      "url": "/backend/eudr/statements/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/eudr",
+        "/backend/eudr/statements"
+      ],
+      "returnHref": "/backend/eudr/statements",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/eudr",
+        "/backend/eudr/statements"
+      ]
+    },
+    {
+      "route": "/backend/webhooks/create",
+      "url": "/backend/webhooks/create",
+      "links": [
+        "/backend",
+        "/backend/webhooks"
+      ],
+      "returnHref": "/backend/webhooks",
+      "verdict": "return-control",
+      "ancestors": [
+        "/backend/webhooks"
+      ]
+    },
+    {
+      "route": "/backend/webhooks/[id]",
+      "url": "/backend/webhooks/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/webhooks"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/webhooks"
+      ]
+    },
+    {
+      "route": "/backend/customer_accounts/roles/create",
+      "url": "/backend/customer_accounts/roles/create",
+      "links": [
+        "/backend",
+        "/backend/customer_accounts/roles"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customer_accounts/roles"
+      ]
+    },
+    {
+      "route": "/backend/customer_accounts/roles/[id]",
+      "url": "/backend/customer_accounts/roles/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/customer_accounts/roles"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customer_accounts/roles"
+      ]
+    },
+    {
+      "route": "/backend/customer_accounts/users/[id]",
+      "url": "/backend/customer_accounts/users/11111111-1111-4111-8111-111111111111",
+      "links": [
+        "/backend",
+        "/backend/customer_accounts/users"
+      ],
+      "returnHref": null,
+      "verdict": "ancestor-breadcrumb",
+      "ancestors": [
+        "/backend/customer_accounts/users"
+      ]
+    }
+  ]
+}

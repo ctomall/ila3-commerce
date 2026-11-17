@@ -32,10 +32,13 @@ const sources = {
   public: path.join(repo, '.ai/analysis/enterprise-public-page-audit.json'),
   direct: path.join(repo, '.ai/analysis/enterprise-direct-page-audit.json'),
   contractProbe: path.join(repo, '.ai/analysis/enterprise-api-contract-probe.json'),
+  returnAudit: path.join(repo, '.ai/analysis/enterprise-return-path-audit.json'),
+  returnSupplement: path.join(repo, '.ai/analysis/enterprise-return-path-supplement.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
 const read = (file) => (fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : null)
+const stripQuery = (value) => String(value ?? '').split('?')[0].replace(/\/+$/, '').replace(/\[([^\]]+)\]/g, '{$1}')
 const normalize = (route) =>
   String(route ?? '')
     .split('?')[0]
@@ -59,8 +62,7 @@ const dynamicByRoute = new Map(dynamicResults.map((entry) => [normalize(entry.ro
 const publicByRoute = new Map(publicResults.map((entry) => [normalize(entry.route), entry]))
 const directByRoute = new Map(directResults.map((entry) => [normalize(entry.route), entry]))
 
-const stripQuery = (value) => String(value ?? '').split('?')[0].replace(/\/+$/, '')
-  .replace(/\[([^\]]+)\]/g, '{$1}')
+
 // Static app routes (login, docs, portal APIs) never appear in the module
 // OpenAPI document, so they are a second, explicit contract source.
 const staticAppApiPaths = [...new Set((baseline.staticAppApis ?? []).map((entry) => stripQuery(entry.route ?? '')))]
@@ -181,6 +183,22 @@ function evidenceFor(page) {
   return { status: 'gap', reason: 'not an authorized navigation destination (navHidden/create/edit/profile detail)' }
 }
 
+const returnAudit = read(sources.returnAudit)
+const returnSupplement = read(sources.returnSupplement) ?? []
+const supplementByUrl = new Map(returnSupplement.map((entry) => [stripQuery(entry.route), entry]))
+const returnStatusByRoute = new Map(
+  (returnAudit?.results ?? []).map((entry) => {
+    const status = entry.verdict === 'return-control'
+      ? 'contextual-return'
+      : entry.verdict === 'ancestor-breadcrumb'
+        ? 'breadcrumb-ancestor'
+        : entry.verdict === 'dashboard-only'
+          ? (supplementByUrl.get(stripQuery(entry.url))?.hasBack ? 'in-page-back' : 'no-return')
+          : entry.verdict
+    return [normalize(entry.route), { status, url: entry.url, returnHref: entry.returnHref ?? null, links: (entry.links ?? []).slice(0, 4) }]
+  }),
+)
+
 const rows = (baseline.pages ?? []).map((page) => {
   const route = normalize(page.route)
   const evidence = evidenceFor(page)
@@ -193,6 +211,7 @@ const rows = (baseline.pages ?? []).map((page) => {
     navHidden: page.declared?.navHidden ?? null,
     apiReferences: contract.total,
     apiContract: contract,
+    returnPath: returnStatusByRoute.get(route) ?? null,
     apiStatus: page.apiMapping?.status ?? null,
     evidence,
     metadataStatus: page.metadataStatus ?? null,
@@ -219,6 +238,15 @@ const contractByStatus = rows.reduce(
   { resolved: 0, 'resolved-with-unverified': 0, unresolved: 0, 'no-references': 0 },
 )
 const unresolvedReferences = [...new Set(rows.flatMap((row) => row.apiContract.unresolved))].sort()
+const returnAudited = rows.filter((row) => row.returnPath)
+const returnByStatus = returnAudited.reduce(
+  (acc, row) => {
+    acc[row.returnPath.status] = (acc[row.returnPath.status] ?? 0) + 1
+    return acc
+  },
+  {},
+)
+const noReturnRoutes = returnAudited.filter((row) => row.returnPath.status === 'no-return')
 const pagesWithUnresolvedContract = rows.filter((row) => row.apiContract.status === 'unresolved')
 const summary = {
   generatedAt: new Date().toISOString(),
@@ -233,6 +261,9 @@ const summary = {
     contractResolved: rows.reduce((sum, row) => sum + row.apiContract.resolved, 0),
     contractUnresolved: rows.reduce((sum, row) => sum + row.apiContract.unresolved.length, 0),
     contractUnverified: rows.reduce((sum, row) => sum + row.apiContract.unverified.length, 0),
+    returnPathAudited: returnAudited.length,
+    returnPathEvidenced: returnAudited.filter((row) => row.returnPath.status !== 'no-return').length,
+    returnPathMissing: noReturnRoutes.length,
     gap: gaps.length,
     backendApis: baseline.counts?.backend ?? null,
     openApiOperations: baseline.counts?.operations ?? null,
@@ -271,6 +302,9 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | Resolved against OpenAPI | ${summary.totals.contractResolved} |
 | Unresolved references | ${summary.totals.contractUnresolved} |
 | Not probed safely (POST-only / side effects) | ${summary.totals.contractUnverified} |
+| Return path audited (create/edit/detail/profile) | ${summary.totals.returnPathAudited} |
+| Return path evidenced | ${summary.totals.returnPathEvidenced} |
+| No contextual return | ${summary.totals.returnPathMissing} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -310,6 +344,18 @@ ${Object.keys(byClass)
   .map((row) => `| ${row.className} | \`${row.route}\` | ${row.evidence.status}${row.evidence.kind ? ` (${row.evidence.kind})` : ''} | ${row.apiContract.status} |`)
   .join('\n')}
 
+## Return path evidence
+
+Detail/create/edit pages were opened (real record ids where a list API exists)
+and checked for a contextual return control, an ancestor breadcrumb or an
+in-page back control.
+
+| Return path | Routes |
+| --- | --- |
+${Object.entries(returnByStatus).map(([status, count]) => `| ${status} | ${count} |`).join('\n')}
+
+${noReturnRoutes.length === 0 ? 'Every audited route offers a way back.' : `Routes with no contextual return (dashboard breadcrumb only):\n\n${noReturnRoutes.map((row) => `- \`${row.route}\``).join('\n')}`}
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
@@ -327,6 +373,7 @@ ${gapList || '| - | - | - |'}
 - public/portal/pay sweep: \`.ai/analysis/enterprise-public-page-audit.json\`
 - direct gap sweep: \`.ai/analysis/enterprise-direct-page-audit.json\`
 - contract check: \`.mercato/generated/openapi.generated.json\`
+- return-path audit: \`.ai/analysis/enterprise-return-path-audit.json\` + supplement
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a

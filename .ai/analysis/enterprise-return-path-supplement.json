@@ -1,0 +1,231 @@
+[
+ {
+  "route": "/backend/auth/profile",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/customers/companies-v2/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/customers/companies"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/customers/companies/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/customers/companies"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/customers/people/1a961045-8606-4341-b8c1-dcd5de97c9f8",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/customers/people"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/entities/system/11111111-1111-4111-8111-111111111111",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/sales/documents/create",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend",
+   "/backend/sales/channels"
+  ]
+ },
+ {
+  "route": "/backend/sales/documents/11111111-1111-4111-8111-111111111111",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/sales/orders/06708c7d-e6d9-47ed-844c-d51cc6819404",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/sales/orders"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/rules/11111111-1111-4111-8111-111111111111",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/sets/11111111-1111-4111-8111-111111111111",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/planner/availability-rulesets/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/planner/availability-rulesets"
+  ],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/staff/leave-requests/create",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/staff/leave-requests"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/staff/profile/create",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/staff/leave-requests/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/staff/leave-requests"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/staff/team-members/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/staff/team-members"
+  ],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/push_notifications/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/push_notifications"
+  ],
+  "backButtons": [],
+  "headerLinks": [
+   "/backend"
+  ]
+ },
+ {
+  "route": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/pay-links/create",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/checkout/pay-links"
+  ],
+  "backButtons": [
+   "取消"
+  ],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/templates/create",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/checkout/templates"
+  ],
+  "backButtons": [
+   "取消"
+  ],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/pay-links/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/checkout/pay-links"
+  ],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/checkout/templates"
+  ],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111/preview",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/checkout/transactions/11111111-1111-4111-8111-111111111111",
+  "hasBack": true,
+  "mainAncestors": [
+   "/backend/checkout/transactions"
+  ],
+  "backButtons": [],
+  "headerLinks": []
+ },
+ {
+  "route": "/backend/shipping-carriers/create",
+  "hasBack": false,
+  "mainAncestors": [],
+  "backButtons": [],
+  "headerLinks": []
+ }
+]
