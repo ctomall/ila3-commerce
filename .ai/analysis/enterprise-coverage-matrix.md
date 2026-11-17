@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T14:21:43.315Z
+Generated: 2026-11-17T14:30:07.607Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -18,6 +18,10 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Return path audited (create/edit/detail/profile) | 130 |
 | Return path evidenced | 128 |
 | No contextual return | 2 |
+| Empty state audited (list destinations) | 137 |
+| Empty state evidenced | 75 |
+| No search control (not testable this way) | 59 |
+| Empty-state observations needing review | 3 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -396,6 +400,25 @@ Routes with no contextual return (dashboard breadcrumb only):
 - `/backend/auth/profile`
 - `/backend/staff/profile/create`
 
+## Empty-state evidence
+
+A nonsense search was typed into each list destination that has a search
+control; a readable empty state or zero rows counts as evidence.
+
+| Empty state | Routes |
+| --- | --- |
+| no-search-control | 59 |
+| empty-state-text | 69 |
+| zero-rows | 6 |
+| no-empty-state | 2 |
+| error | 1 |
+
+Needs review (audit may have typed into a filter that is not the list search):
+
+- `/backend/catalog/prices` — no-empty-state (rows 1→12)
+- `/backend/staff/time-tracking/projects` — no-empty-state (rows 4→1)
+- `/backend/config/translations` — error (rows 0→null)
+
 ## Observations
 
 - `/docs/api` — navigation-failure (public-audit); access/behaviour to confirm, not a confirmed page defect.
@@ -413,7 +436,8 @@ Routes with no contextual return (dashboard breadcrumb only):
 - public/portal/pay sweep: `.ai/analysis/enterprise-public-page-audit.json`
 - direct gap sweep: `.ai/analysis/enterprise-direct-page-audit.json`
 - contract check: `.mercato/generated/openapi.generated.json`
-- return-path audit: `.ai/analysis/enterprise-return-path-audit.json` + supplement
+- return-path audit: `.ai/analysis/enterprise-return-path-audit.json`
+- empty-state audit: `.ai/analysis/enterprise-empty-state-audit.json`
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a

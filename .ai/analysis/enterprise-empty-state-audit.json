@@ -1,0 +1,909 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "empty-state-list-destinations",
+  "nonsense": "zzz-no-match-1794925342673",
+  "count": 137,
+  "completed": 137,
+  "results": [
+    {
+      "route": "/backend/workbench",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/calendar",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/staff/time-tracking",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/work-inbox",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/customers/companies",
+      "verdict": "empty-state-text",
+      "rowsBefore": 4,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customers/deals",
+      "verdict": "empty-state-text",
+      "rowsBefore": 6,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customers/deals/map",
+      "verdict": "empty-state-text",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customer-tasks",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customers/people",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customers/deals/pipeline",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/sales/quotes",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/sales/channels/offers",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/sales/orders",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/sales/channels",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/catalog/products",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/catalog/prices",
+      "verdict": "no-empty-state",
+      "rowsBefore": 1,
+      "rowsAfter": 12,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/catalog/categories",
+      "verdict": "empty-state-text",
+      "rowsBefore": 8,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/wms/inventory",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 3,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/warehouses",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/zones",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/locations",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/lots",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/movements",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/wms/reservations",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/warranty_claims",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/warranty_claims/registrations",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects",
+      "verdict": "no-empty-state",
+      "rowsBefore": 4,
+      "rowsAfter": 1,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/staff/time-tracking/board",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/resources/resource-types",
+      "verdict": "empty-state-text",
+      "rowsBefore": 4,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/resources/resources",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/teams",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/team-members",
+      "verdict": "empty-state-text",
+      "rowsBefore": 8,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/team-roles",
+      "verdict": "empty-state-text",
+      "rowsBefore": 8,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/my-availability",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/staff/my-leave-requests",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/leave-requests",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/entries",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/staff/time-tracking/timesheet",
+      "verdict": "no-search-control",
+      "rowsBefore": 2,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports",
+      "verdict": "no-search-control",
+      "rowsBefore": 2,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/planner/availability-rulesets",
+      "verdict": "empty-state-text",
+      "rowsBefore": 2,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/payment-gateways",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/checkout/pay-links",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/checkout/templates",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/checkout/transactions",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/storage/attachments",
+      "verdict": "empty-state-text",
+      "rowsBefore": 12,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/documents",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/documents/templates",
+      "verdict": "empty-state-text",
+      "rowsBefore": 8,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/phone_calls",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/inbox-ops",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/messages",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/communications/inbox",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/communications/channels",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/communications/exceptions",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/instances",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/eudr",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/eudr/product-mappings",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/eudr/plots",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/eudr/statements",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/eudr/risk-assessments",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/directory/branding",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/users",
+      "verdict": "empty-state-text",
+      "rowsBefore": 5,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/directory/organizations",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/roles",
+      "verdict": "empty-state-text",
+      "rowsBefore": 5,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/webhooks",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/scheduled-jobs",
+      "verdict": "empty-state-text",
+      "rowsBefore": 12,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/integrations",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/data-sync",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/communication_channels/channels",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/models",
+      "verdict": "empty-state-text",
+      "rowsBefore": 2,
+      "rowsAfter": 0,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/ai-agents",
+      "verdict": "empty-state-text",
+      "rowsBefore": 9,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/ai-write-approvals",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/agents",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/settings",
+      "verdict": "no-search-control",
+      "rowsBefore": 9,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/usage",
+      "verdict": "no-search-control",
+      "rowsBefore": 6,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/playground",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/legacy",
+      "verdict": "no-search-control",
+      "rowsBefore": 9,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/allowlist",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/ai-assistant/moderation-flags",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/sales",
+      "verdict": "empty-state-text",
+      "rowsBefore": 8,
+      "rowsAfter": 37,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/catalog",
+      "verdict": "empty-state-text",
+      "rowsBefore": 2,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/customers",
+      "verdict": "empty-state-text",
+      "rowsBefore": 10,
+      "rowsAfter": 62,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/customers/pipeline-stages",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/dictionaries",
+      "verdict": "no-search-control",
+      "rowsBefore": 4,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/currencies",
+      "verdict": "empty-state-text",
+      "rowsBefore": 10,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/leadgen/candidates",
+      "verdict": "no-search-control",
+      "rowsBefore": 2,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/exchange-rates",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/leadgen/suppressions",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/currency-fetching",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/wms",
+      "verdict": "empty-state-text",
+      "rowsBefore": 4,
+      "rowsAfter": 4,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/inbox-ops/settings",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/customers/deals",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/warranty_claims/settings",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 15,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/settings",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/workflows",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/definitions",
+      "verdict": "no-search-control",
+      "rowsBefore": 4,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/rules",
+      "verdict": "no-search-control",
+      "rowsBefore": 8,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/sets",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/customer_accounts/users",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customer_accounts/roles",
+      "verdict": "empty-state-text",
+      "rowsBefore": 3,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/customer_accounts/settings",
+      "verdict": "no-search-control",
+      "rowsBefore": 3,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/customer_accounts/settings/domain",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/devices",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/notifications/user-preferences",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/config/notifications",
+      "verdict": "no-search-control",
+      "rowsBefore": 74,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/push_notifications",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/push_notifications/send",
+      "verdict": "zero-rows",
+      "rowsBefore": 0,
+      "rowsAfter": 0,
+      "emptyTextVisible": false
+    },
+    {
+      "route": "/backend/config/system-status",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/module-telemetry",
+      "verdict": "no-search-control",
+      "rowsBefore": 90,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/query-indexes",
+      "verdict": "empty-state-text",
+      "rowsBefore": 50,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/cache",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/modules",
+      "verdict": "empty-state-text",
+      "rowsBefore": 80,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/translations",
+      "verdict": "error",
+      "rowsBefore": 0,
+      "rowsAfter": null,
+      "failure": "TimeoutError"
+    },
+    {
+      "route": "/backend/config/attachments",
+      "verdict": "empty-state-text",
+      "rowsBefore": 2,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/system-update",
+      "verdict": "no-search-control",
+      "rowsBefore": 5,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/search",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/instances/failure-queue",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/events",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/logs",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/audit-logs",
+      "verdict": "no-search-control",
+      "rowsBefore": 50,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/inbox-ops/log",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/feature-toggles/global",
+      "verdict": "no-search-control",
+      "rowsBefore": 12,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/entities/system",
+      "verdict": "empty-state-text",
+      "rowsBefore": 281,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/directory/tenants",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/entities/user",
+      "verdict": "empty-state-text",
+      "rowsBefore": 1,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/feature-toggles/overrides",
+      "verdict": "no-search-control",
+      "rowsBefore": 12,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/api-keys",
+      "verdict": "empty-state-text",
+      "rowsBefore": 5,
+      "rowsAfter": 1,
+      "emptyTextVisible": true
+    },
+    {
+      "route": "/backend/config/settings",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/config/encryption",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/docs",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/profile/change-password",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/sidebar-customization",
+      "verdict": "no-search-control",
+      "rowsBefore": 0,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/profile/communication-channels",
+      "verdict": "no-search-control",
+      "rowsBefore": 1,
+      "rowsAfter": null
+    },
+    {
+      "route": "/backend/profile/notification-preferences",
+      "verdict": "no-search-control",
+      "rowsBefore": 56,
+      "rowsAfter": null
+    }
+  ]
+}

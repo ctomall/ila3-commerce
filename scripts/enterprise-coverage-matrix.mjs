@@ -33,6 +33,7 @@ const sources = {
   direct: path.join(repo, '.ai/analysis/enterprise-direct-page-audit.json'),
   contractProbe: path.join(repo, '.ai/analysis/enterprise-api-contract-probe.json'),
   returnAudit: path.join(repo, '.ai/analysis/enterprise-return-path-audit.json'),
+  emptyState: path.join(repo, '.ai/analysis/enterprise-empty-state-audit.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -183,6 +184,8 @@ function evidenceFor(page) {
 }
 
 const returnAudit = read(sources.returnAudit)
+const emptyState = read(sources.emptyState)
+const emptyStateByRoute = new Map((emptyState?.results ?? []).map((entry) => [normalize(entry.route), entry]))
 const returnStatusByRoute = new Map(
   (returnAudit?.results ?? []).map((entry) => {
     const status = entry.verdict === 'return-control'
@@ -211,6 +214,13 @@ const rows = (baseline.pages ?? []).map((page) => {
     apiReferences: contract.total,
     apiContract: contract,
     returnPath: returnStatusByRoute.get(route) ?? null,
+    emptyState: emptyStateByRoute.get(route)
+      ? {
+          verdict: emptyStateByRoute.get(route).verdict,
+          rowsBefore: emptyStateByRoute.get(route).rowsBefore ?? null,
+          rowsAfter: emptyStateByRoute.get(route).rowsAfter ?? null,
+        }
+      : null,
     apiStatus: page.apiMapping?.status ?? null,
     evidence,
     metadataStatus: page.metadataStatus ?? null,
@@ -246,6 +256,15 @@ const returnByStatus = returnAudited.reduce(
   {},
 )
 const noReturnRoutes = returnAudited.filter((row) => row.returnPath.status === 'no-return')
+const emptyAudited = rows.filter((row) => row.emptyState)
+const emptyByStatus = emptyAudited.reduce(
+  (acc, row) => {
+    acc[row.emptyState.verdict] = (acc[row.emptyState.verdict] ?? 0) + 1
+    return acc
+  },
+  {},
+)
+const emptyNeedsReview = emptyAudited.filter((row) => !['empty-state-text', 'zero-rows', 'no-search-control'].includes(row.emptyState.verdict))
 const pagesWithUnresolvedContract = rows.filter((row) => row.apiContract.status === 'unresolved')
 const summary = {
   generatedAt: new Date().toISOString(),
@@ -263,6 +282,10 @@ const summary = {
     returnPathAudited: returnAudited.length,
     returnPathEvidenced: returnAudited.filter((row) => row.returnPath.status !== 'no-return').length,
     returnPathMissing: noReturnRoutes.length,
+    emptyStateAudited: emptyAudited.length,
+    emptyStateEvidenced: emptyAudited.filter((row) => ['empty-state-text', 'zero-rows'].includes(row.emptyState.verdict)).length,
+    emptyStateNoSearch: emptyAudited.filter((row) => row.emptyState.verdict === 'no-search-control').length,
+    emptyStateNeedsReview: emptyNeedsReview.length,
     gap: gaps.length,
     backendApis: baseline.counts?.backend ?? null,
     openApiOperations: baseline.counts?.operations ?? null,
@@ -304,6 +327,10 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | Return path audited (create/edit/detail/profile) | ${summary.totals.returnPathAudited} |
 | Return path evidenced | ${summary.totals.returnPathEvidenced} |
 | No contextual return | ${summary.totals.returnPathMissing} |
+| Empty state audited (list destinations) | ${summary.totals.emptyStateAudited} |
+| Empty state evidenced | ${summary.totals.emptyStateEvidenced} |
+| No search control (not testable this way) | ${summary.totals.emptyStateNoSearch} |
+| Empty-state observations needing review | ${summary.totals.emptyStateNeedsReview} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |
@@ -355,6 +382,17 @@ ${Object.entries(returnByStatus).map(([status, count]) => `| ${status} | ${count
 
 ${noReturnRoutes.length === 0 ? 'Every audited route offers a way back.' : `Routes with no contextual return (dashboard breadcrumb only):\n\n${noReturnRoutes.map((row) => `- \`${row.route}\``).join('\n')}`}
 
+## Empty-state evidence
+
+A nonsense search was typed into each list destination that has a search
+control; a readable empty state or zero rows counts as evidence.
+
+| Empty state | Routes |
+| --- | --- |
+${Object.entries(emptyByStatus).map(([status, count]) => `| ${status} | ${count} |`).join('\n')}
+
+${emptyNeedsReview.length === 0 ? 'No list destination kept rows after a nonsense search.' : `Needs review (audit may have typed into a filter that is not the list search):\n\n${emptyNeedsReview.map((row) => `- \`${row.route}\` — ${row.emptyState.verdict} (rows ${row.emptyState.rowsBefore}→${row.emptyState.rowsAfter})`).join('\n')}`}
+
 ## Observations
 
 ${observations.map((row) => `- \`${row.route}\` — ${row.evidence.kind} (${row.evidence.source}); access/behaviour to confirm, not a confirmed page defect.`).join('\n') || '- none'}
@@ -372,7 +410,8 @@ ${gapList || '| - | - | - |'}
 - public/portal/pay sweep: \`.ai/analysis/enterprise-public-page-audit.json\`
 - direct gap sweep: \`.ai/analysis/enterprise-direct-page-audit.json\`
 - contract check: \`.mercato/generated/openapi.generated.json\`
-- return-path audit: \`.ai/analysis/enterprise-return-path-audit.json\` + supplement
+- return-path audit: \`.ai/analysis/enterprise-return-path-audit.json\`
+- empty-state audit: \`.ai/analysis/enterprise-empty-state-audit.json\`
 - inventory contract: \`.ai/analysis/enterprise-inventory-baseline.json\`
 
 Render evidence is not business acceptance: a page that renders may still reject a

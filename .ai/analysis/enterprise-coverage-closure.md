@@ -133,3 +133,20 @@ The first run reported 10 missing returns; that was a classifier false negative
 `enterprise-return-path-findings.md`. The remaining two are
 `/backend/auth/profile` (personal hub, dashboard breadcrumb only) and
 `/backend/staff/profile/create` (no authorized parent in the catalogue).
+
+## Empty-state evidence
+
+`scripts/enterprise-empty-state-audit.mjs` typed a nonsense query into each of
+the 137 authorized list destinations that has a search control.
+
+| Empty state | Routes |
+| --- | --- |
+| readable empty message | 69 |
+| zero rows | 6 |
+| no search control (not testable this way) | 59 |
+| needs review (filter heuristics) | 3 |
+
+75 destinations have direct empty-state evidence. The three review items
+(`catalog/prices`, `staff/time-tracking/projects`, `config/translations`) are
+recorded, not fixed; the heuristic may fill a scope filter rather than the list
+search. Details: `enterprise-empty-state-findings.md`.

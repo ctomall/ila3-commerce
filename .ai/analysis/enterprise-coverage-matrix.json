@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T14:21:43.315Z",
+    "generatedAt": "2026-11-17T14:30:07.607Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -11,6 +11,7 @@
       "direct": "/home/pro/apps/mercato/.ai/analysis/enterprise-direct-page-audit.json",
       "contractProbe": "/home/pro/apps/mercato/.ai/analysis/enterprise-api-contract-probe.json",
       "returnAudit": "/home/pro/apps/mercato/.ai/analysis/enterprise-return-path-audit.json",
+      "emptyState": "/home/pro/apps/mercato/.ai/analysis/enterprise-empty-state-audit.json",
       "openapi": "/home/pro/apps/mercato/.mercato/generated/openapi.generated.json"
     },
     "totals": {
@@ -25,6 +26,10 @@
       "returnPathAudited": 130,
       "returnPathEvidenced": 128,
       "returnPathMissing": 2,
+      "emptyStateAudited": 137,
+      "emptyStateEvidenced": 75,
+      "emptyStateNoSearch": 59,
+      "emptyStateNeedsReview": 3,
       "gap": 0,
       "backendApis": 290,
       "openApiOperations": 1006,
@@ -160,6 +165,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -189,6 +195,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -218,6 +229,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -255,6 +267,7 @@
           "/backend/roles"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -284,6 +297,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 5,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -313,6 +331,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -342,6 +361,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -379,6 +403,7 @@
           "/backend/users"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -408,6 +433,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 5,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -445,6 +475,7 @@
           "/backend/roles"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -483,6 +514,7 @@
           "/backend/users"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -513,6 +545,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -550,6 +587,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -579,6 +617,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -616,6 +659,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -645,6 +689,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -682,6 +731,7 @@
           "/backend/directory/organizations"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -720,6 +770,7 @@
           "/backend/directory/tenants"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -750,6 +801,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -779,6 +835,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -808,6 +869,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 10,
+        "rowsAfter": 62
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -837,6 +903,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -866,6 +937,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -903,6 +979,7 @@
           "/backend/customers/companies"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -932,6 +1009,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 4,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -969,6 +1051,7 @@
           "/backend/customers/deals"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -998,6 +1081,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1027,6 +1115,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 6,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1056,6 +1149,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1093,6 +1191,7 @@
           "/backend/customers/people"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1122,6 +1221,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1158,6 +1262,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1195,6 +1300,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1232,6 +1338,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1269,6 +1376,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1306,6 +1414,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1336,6 +1445,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1365,6 +1479,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1394,6 +1513,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 281,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1431,6 +1555,7 @@
           "/backend/entities/user"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1460,6 +1585,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1496,6 +1626,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1536,6 +1667,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1571,6 +1703,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1605,6 +1738,7 @@
         "returnHref": "/backend/entities/user",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1641,6 +1775,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1671,6 +1806,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1700,6 +1840,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 90,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1729,6 +1874,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1758,6 +1908,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 50,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1787,6 +1942,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 50,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1816,6 +1976,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 2,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1845,6 +2010,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 12,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1882,6 +2052,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1911,6 +2082,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 8,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -1948,6 +2124,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -1977,6 +2154,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-empty-state",
+        "rowsBefore": 1,
+        "rowsAfter": 12
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2014,6 +2196,7 @@
           "/backend/catalog/products"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2043,6 +2226,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2072,6 +2260,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 2,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2109,6 +2302,7 @@
           "/backend/catalog/categories"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2147,6 +2341,7 @@
           "/backend/catalog/prices"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2184,6 +2379,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2221,6 +2417,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2258,6 +2455,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2288,6 +2486,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 8,
+        "rowsAfter": 37
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2325,6 +2528,7 @@
           "/backend/sales/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2354,6 +2558,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2383,6 +2592,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2420,6 +2634,7 @@
           "/backend/sales/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2449,6 +2664,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2478,6 +2698,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2515,6 +2740,7 @@
           "/backend/sales/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2553,6 +2779,7 @@
           "/backend/sales/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2591,6 +2818,7 @@
           "/backend/sales/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2628,6 +2856,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2665,6 +2894,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2702,6 +2932,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -2732,6 +2963,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2769,6 +3005,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2807,6 +3044,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2836,6 +3074,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2865,6 +3108,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 15
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2903,6 +3151,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2932,6 +3181,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2970,6 +3224,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -2999,6 +3254,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3036,6 +3296,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3074,6 +3335,7 @@
           "/backend/warranty_claims"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3113,6 +3375,7 @@
           "/backend/warranty_claims/registrations"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3152,6 +3415,7 @@
           "/backend/warranty_claims/troubleshooting-guides"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3191,6 +3455,7 @@
           "/backend/warranty_claims/vendor-policies"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3221,6 +3486,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 4,
+        "rowsAfter": 4
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3250,6 +3520,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3279,6 +3554,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 3
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3308,6 +3588,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3337,6 +3622,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3366,6 +3656,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3395,6 +3690,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3424,6 +3724,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3453,6 +3758,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3491,6 +3801,7 @@
           "/backend/wms/locations"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3530,6 +3841,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3569,6 +3881,7 @@
           "/backend/wms/inventory"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3607,6 +3920,7 @@
           "/backend/api-keys"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3636,6 +3950,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 5,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3673,6 +3992,7 @@
           "/backend/devices"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3702,6 +4022,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3739,6 +4064,7 @@
           "/backend/devices"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3769,6 +4095,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 4,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3798,6 +4129,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -3827,6 +4163,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3863,6 +4204,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3892,6 +4234,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 8,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3928,6 +4275,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3957,6 +4305,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -3994,6 +4347,7 @@
           "/backend/logs"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4031,6 +4385,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4068,6 +4423,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4106,6 +4462,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4135,6 +4492,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 12,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4164,6 +4526,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 12,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4201,6 +4568,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4239,6 +4607,7 @@
           "/backend/feature-toggles/global"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4269,6 +4638,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4306,6 +4680,7 @@
           "/backend/definitions"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4335,6 +4710,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 4,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4364,6 +4744,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4393,6 +4774,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4422,6 +4808,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4451,6 +4842,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4480,6 +4876,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4509,6 +4906,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4546,6 +4948,7 @@
           "/backend/definitions"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4585,6 +4988,7 @@
           "/backend/events"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4624,6 +5028,7 @@
           "/backend/instances"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4663,6 +5068,7 @@
           "/backend/tasks"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4693,6 +5099,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4722,6 +5133,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -4759,6 +5175,7 @@
           "/backend/currencies"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4788,6 +5205,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 10,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4826,6 +5248,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4855,6 +5278,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4892,6 +5320,7 @@
           "/backend/currencies"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4931,6 +5360,7 @@
           "/backend/exchange-rates"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4969,6 +5399,7 @@
           "/backend/planner/availability-rulesets"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -4998,6 +5429,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 2,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5032,6 +5468,7 @@
         "returnHref": "/backend/planner/availability-rulesets",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5069,6 +5506,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5098,6 +5536,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 4,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5135,6 +5578,7 @@
           "/backend/resources/resources"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5164,6 +5608,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5201,6 +5650,7 @@
           "/backend/resources/resource-types"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5239,6 +5689,7 @@
           "/backend/resources/resources"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5276,6 +5727,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5305,6 +5757,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5334,6 +5791,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5370,6 +5832,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5399,6 +5862,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5435,6 +5903,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5472,6 +5941,7 @@
           "/backend/staff/team-members"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5501,6 +5971,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 8,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5538,6 +6013,7 @@
           "/backend/staff/team-roles"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5567,6 +6043,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 8,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5604,6 +6085,7 @@
           "/backend/staff/teams"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5633,6 +6115,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5662,6 +6149,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5691,6 +6183,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5720,6 +6217,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5758,6 +6260,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5787,6 +6290,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-empty-state",
+        "rowsBefore": 4,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5825,6 +6333,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5854,6 +6363,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 2,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5883,6 +6397,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5912,6 +6431,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 2,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -5941,6 +6465,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -5979,6 +6504,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6008,6 +6534,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6044,6 +6571,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6081,6 +6609,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6116,6 +6645,7 @@
         "returnHref": "/backend/staff/team-members",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6150,6 +6680,7 @@
         "returnHref": "/backend/staff/team-roles",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6187,6 +6718,7 @@
           "/backend/staff/teams"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6226,6 +6758,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6265,6 +6798,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6304,6 +6838,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6343,6 +6878,7 @@
           "/backend/staff/time-tracking/reports"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6382,6 +6918,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6421,6 +6958,7 @@
           "/backend/staff/time-tracking/projects"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6451,6 +6989,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 74,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6480,6 +7023,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6509,6 +7057,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 56,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6538,6 +7091,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6574,6 +7132,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6611,6 +7170,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6643,6 +7203,11 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6679,6 +7244,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6709,6 +7275,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6738,6 +7305,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6774,6 +7346,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -6804,6 +7377,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6833,6 +7411,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6870,6 +7453,7 @@
           "/backend/communication_channels/channels"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6900,6 +7484,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6929,6 +7518,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "zero-rows",
+        "rowsBefore": 0,
+        "rowsAfter": 0
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6965,6 +7559,7 @@
           "/backend"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -6995,6 +7590,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -7024,6 +7624,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7053,6 +7658,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7082,6 +7692,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 9,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7111,6 +7726,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7140,6 +7760,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7169,6 +7790,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7198,6 +7824,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 9,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7227,6 +7858,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 6,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7256,6 +7892,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 2,
+        "rowsAfter": 0
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7285,6 +7926,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 5,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7314,6 +7960,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7343,6 +7994,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 80,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7372,6 +8028,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7401,6 +8058,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7430,6 +8088,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7459,6 +8118,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7488,6 +8148,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7517,6 +8178,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7546,6 +8208,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7575,6 +8238,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7604,6 +8268,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7633,6 +8302,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7662,6 +8336,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7696,6 +8375,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7731,6 +8411,7 @@
         "returnHref": "/backend/communications/inbox",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7761,6 +8442,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7790,6 +8476,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7819,6 +8506,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7856,6 +8544,7 @@
           "/backend/business"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7886,6 +8575,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7915,6 +8605,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 2,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7944,6 +8639,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -7973,6 +8673,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 9,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8002,6 +8707,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "error",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8031,6 +8741,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8060,6 +8771,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 12,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8089,6 +8805,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8119,6 +8836,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8149,6 +8867,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 1,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8178,6 +8901,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8207,6 +8935,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8244,6 +8977,7 @@
           "/backend/inbox-ops"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8274,6 +9008,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8308,6 +9047,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8337,6 +9077,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8371,6 +9116,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8400,6 +9146,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8429,6 +9180,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8458,6 +9214,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8492,6 +9249,7 @@
         "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8527,6 +9285,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8562,6 +9321,7 @@
         "returnHref": "/backend/checkout/templates",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8597,6 +9357,7 @@
         "returnHref": "/backend/checkout/transactions",
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8627,6 +9388,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8656,6 +9422,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 8,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8693,6 +9464,7 @@
           "/backend/documents"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8728,6 +9500,7 @@
         "returnHref": null,
         "links": []
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -8766,6 +9539,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8795,6 +9569,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8824,6 +9603,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8862,6 +9646,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8891,6 +9676,11 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8929,6 +9719,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8958,6 +9749,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -8996,6 +9792,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9025,6 +9822,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9063,6 +9865,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9092,6 +9895,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9130,6 +9938,7 @@
           "/backend/eudr/evidence-submissions"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9169,6 +9978,7 @@
           "/backend/eudr/plots"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9208,6 +10018,7 @@
           "/backend/eudr/product-mappings"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9247,6 +10058,7 @@
           "/backend/eudr/risk-assessments"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9286,6 +10098,7 @@
           "/backend/eudr/statements"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9324,6 +10137,7 @@
           "/backend/webhooks"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9353,6 +10167,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 1,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9390,6 +10209,7 @@
           "/backend/webhooks"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9428,6 +10248,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9457,6 +10278,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9488,6 +10314,11 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 0,
+        "rowsAfter": null
+      },
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9517,6 +10348,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "no-search-control",
+        "rowsBefore": 3,
+        "rowsAfter": null
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9546,6 +10382,11 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": {
+        "verdict": "empty-state-text",
+        "rowsBefore": 3,
+        "rowsAfter": 1
+      },
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9583,6 +10424,7 @@
           "/backend/customer_accounts/roles"
         ]
       },
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9621,6 +10463,7 @@
           "/backend/customer_accounts/users"
         ]
       },
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9654,6 +10497,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9683,6 +10527,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9714,6 +10559,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9743,6 +10589,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9772,6 +10619,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9801,6 +10649,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9830,6 +10679,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -9859,6 +10709,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9888,6 +10739,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9917,6 +10769,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9946,6 +10799,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -9975,6 +10829,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "observation",
@@ -10004,6 +10859,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10033,6 +10889,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10062,6 +10919,7 @@
         "status": "resolved"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10091,6 +10949,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10120,6 +10979,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10149,6 +11009,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10178,6 +11039,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -10207,6 +11069,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10236,6 +11099,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -10265,6 +11129,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -10296,6 +11161,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10327,6 +11193,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10356,6 +11223,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -10385,6 +11253,7 @@
         "status": "no-references"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "unmapped",
       "evidence": {
         "status": "evidenced",
@@ -10416,6 +11285,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10447,6 +11317,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
@@ -10478,6 +11349,7 @@
         "status": "resolved-with-unverified"
       },
       "returnPath": null,
+      "emptyState": null,
       "apiStatus": "source-literals-only",
       "evidence": {
         "status": "evidenced",
