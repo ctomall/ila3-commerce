@@ -219,3 +219,11 @@ Operational notes that matter:
 - Presets were exercised interactively on `db569b7` and are covered by unit and
   routing tests, but not yet by a Playwright spec; the demo rows were cleared so
   the live organization is back on code defaults.
+
+Preset behaviour re-checked on the deployed `e1b1c17` after the release: with a
+preset assigned to the employee, the switcher listed it first, the hidden
+workspace was absent from the list, selecting the preset navigated to its
+authorized landing (`/backend/sales/orders`), and the footer confirmed the SHA.
+The verification rows were then deleted, so the organization is back on the code
+defaults. This is interactive evidence on the live release, not a Playwright
+spec — the preset path still deserves a committed spec.
