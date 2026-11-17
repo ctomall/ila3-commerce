@@ -65,8 +65,11 @@ function notifySessionEvent(event) {
   send({ jsonrpc: '2.0', method: 'session.event', params: { sessionId, event } })
 }
 
+const QUERY_DELAY_MS = Number(process.env.DSH_DRILL_QUERY_DELAY_MS ?? 0)
+
 async function runQuery(commandId) {
-  record({ kind: 'query', hasCommandId: commandId !== undefined, writesEnabled: process.env.OM_DSH_WRITES ?? null })
+  record({ kind: 'query', hasCommandId: commandId !== undefined, writesEnabled: process.env.OM_DSH_WRITES ?? null, delayMs: QUERY_DELAY_MS })
+  if (QUERY_DELAY_MS > 0) await new Promise((resolve) => setTimeout(resolve, QUERY_DELAY_MS))
 
   const callId = `call-${Date.now()}`
   notifySessionEvent({

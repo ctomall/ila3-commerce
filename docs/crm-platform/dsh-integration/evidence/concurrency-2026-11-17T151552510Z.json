@@ -1,0 +1,37 @@
+{
+  "drill": "dsh-concurrency",
+  "startedAt": "2026-11-17T15:15:52.514Z",
+  "keys": {
+    "a": "drill-concurrency-2026-11-17T151552510Z",
+    "b": "drill-concurrency-2026-11-17T151552510Z-b"
+  },
+  "checks": {
+    "firstStatus": 200,
+    "runWhileRunning": "running",
+    "second": {
+      "status": 409,
+      "body": "{\"error\":\"Run is already in progress\",\"code\":\"run_in_progress\"}"
+    },
+    "firstFrames": [
+      "thinking",
+      "tool-call",
+      "tool-result",
+      "text",
+      "done"
+    ],
+    "firstDone": true,
+    "replay": {
+      "status": 200,
+      "done": true,
+      "frames": 5
+    },
+    "runs": {
+      "a": "1",
+      "b": "0",
+      "aStatus": "completed"
+    }
+  },
+  "failures": [],
+  "finishedAt": "2026-11-17T15:16:08.359Z",
+  "result": "passed"
+}
