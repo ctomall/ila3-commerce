@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T15:42:13.123Z
+Generated: 2026-11-17T15:43:01.848Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -505,6 +505,7 @@ was checked against authorized catalogue destinations.
 - employee permission sweep: `.ai/analysis/enterprise-permission-audit.json`
 - API authorization probe: `.ai/analysis/enterprise-api-auth-probe.json`
 - breadcrumb audit: `.ai/analysis/enterprise-breadcrumb-audit.json`
+- unresolved metadata (verified per route): `.ai/analysis/enterprise-unresolved-metadata.md`
 - inventory contract: `.ai/analysis/enterprise-inventory-baseline.json`
 
 Render evidence is not business acceptance: a page that renders may still reject a
