@@ -180,3 +180,31 @@ test('embedded table scrolls locally without overflowing the narrow document',as
  expect(view.scroll).toBeLessThanOrEqual(view.width+1)
  expect(view.local).toBe(true)
 })
+
+test('detail pages keep a 390px document and wide record tables scroll locally',async({page,context,playwright,baseURL})=>{
+ const admin=await loginAs(playwright,baseURL,'superadmin@acme.com')
+ await context.clearCookies();await context.addCookies(admin)
+ const detailPages=[
+  {list:'/api/customers/companies?limit=1',href:(id:string)=>`/backend/customers/companies/${id}`,hasTable:false},
+  {list:'/api/sales/orders?limit=1',href:(id:string)=>`/backend/sales/orders/${id}`,hasTable:true},
+ ]
+ for(const entry of detailPages){
+  const response=await page.request.get(entry.list)
+  expect(response.status()).toBe(200)
+  const data=await response.json()
+  const id=data.items?.[0]?.id
+  expect(id).toBeTruthy()
+  await page.setViewportSize({width:390,height:900})
+  await page.goto(entry.href(id))
+  await expect(page.locator('main')).toBeVisible()
+  await expect(page.locator('header')).toBeVisible()
+  if(entry.hasTable){
+   // The record table arrives with its own fetch; measure after it is painted.
+   await expect(page.locator('main table').first()).toBeVisible()
+   await page.waitForTimeout(300)
+  }
+  const view=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,local:Array.from(document.querySelectorAll('main div.overflow-hidden')).some(e=>e.scrollWidth>e.clientWidth&&getComputedStyle(e).overflowX==='auto')}))
+  expect(view.scroll).toBeLessThanOrEqual(view.width+1)
+  if(entry.hasTable) expect(view.local).toBe(true)
+ }
+})

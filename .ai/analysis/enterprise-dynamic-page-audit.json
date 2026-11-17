@@ -1,0 +1,2984 @@
+{
+  "base": "http://127.0.0.1:3387",
+  "scope": "dynamic-placeholder-routes",
+  "count": 79,
+  "completed": 79,
+  "results": [
+    {
+      "route": "/backend/roles/[id]/edit",
+      "url": "/backend/roles/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1857,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑角色",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1996,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "编辑角色",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/users/[id]/edit",
+      "url": "/backend/users/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1463,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1504,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/directory/organizations/[id]/edit",
+      "url": "/backend/directory/organizations/328bc848-d4cd-41ae-bcc3-0bcb4b215e55/edit",
+      "idSource": "list-api:/api/directory/organizations?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2171,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑组织",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2083,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "编辑组织",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/directory/tenants/[id]/edit",
+      "url": "/backend/directory/tenants/f27fa168-796c-4532-b9a4-1491a2e8c65e/edit",
+      "idSource": "list-api:/api/directory/tenants?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1548,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑租户",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2013,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "编辑租户",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/customers/companies-v2/[id]",
+      "url": "/backend/customers/companies-v2/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+      "idSource": "list-api:/api/customers/companies?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2626,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "公司详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2426,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "公司详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/customers/companies/[id]",
+      "url": "/backend/customers/companies/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
+      "idSource": "list-api:/api/customers/companies?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2714,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "公司详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2458,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "公司详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/customers/deals/[id]",
+      "url": "/backend/customers/deals/3bce52e8-f38f-4cad-9d66-7f1dafbd5282",
+      "idSource": "list-api:/api/customers/deals?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2728,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Sunset Lofts Battery Upgrade",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 3070,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Sunset Lofts Battery Upgrade",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/customers/people-v2/[id]",
+      "url": "/backend/customers/people-v2/1a961045-8606-4341-b8c1-dcd5de97c9f8",
+      "idSource": "list-api:/api/customers/people?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2590,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2425,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/customers/people/[id]",
+      "url": "/backend/customers/people/1a961045-8606-4341-b8c1-dcd5de97c9f8",
+      "idSource": "list-api:/api/customers/people?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2633,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2456,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/entities/system/[entityId]",
+      "url": "/backend/entities/system/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2117,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Edit Entity: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1999,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Edit Entity: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/entities/user/[entityId]",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2182,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Edit Entity: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1983,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Edit Entity: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1702,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Records: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1702,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Records: 11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/catalog/categories/[id]/edit",
+      "url": "/backend/catalog/categories/a51069d2-75f9-41b5-9c36-f286edb71e53/edit",
+      "idSource": "list-api:/api/catalog/categories?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2037,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑分类",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1966,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "编辑分类",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/catalog/prices/[id]/edit",
+      "url": "/backend/catalog/prices/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1384,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1488,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/catalog/products/[id]",
+      "url": "/backend/catalog/products/1af21642-0772-4cbc-b517-89cb10619ade",
+      "idSource": "list-api:/api/catalog/products?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1310,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑产品",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1333,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "编辑产品",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/[variantId]",
+      "url": "/backend/catalog/products/1af21642-0772-4cbc-b517-89cb10619ade/variants/1af21642-0772-4cbc-b517-89cb10619ade",
+      "idSource": "list-api:/api/catalog/products?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1679,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1640,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/create",
+      "url": "/backend/catalog/products/1af21642-0772-4cbc-b517-89cb10619ade/variants/create",
+      "idSource": "list-api:/api/catalog/products?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 3116,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "为 Signature Haircut & Finish 创建规格",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1083,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建规格",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/edit",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1908,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1565,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/[offerId]/edit",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/offers/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1001,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑渠道报价",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 922,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "编辑渠道报价",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/create",
+      "url": "/backend/sales/channels/11111111-1111-4111-8111-111111111111/offers/create",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2493,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建渠道报价",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2083,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "创建渠道报价",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/sales/documents/[id]",
+      "url": "/backend/sales/documents/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1341,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1368,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/sales/orders/[id]",
+      "url": "/backend/sales/orders/06708c7d-e6d9-47ed-844c-d51cc6819404",
+      "idSource": "list-api:/api/sales/orders?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 3338,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "自定义数据",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 3167,
+          "width": 390,
+          "scrollWidth": 863,
+          "skeletons": 0,
+          "title": "自定义数据",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/sales/quotes/[id]",
+      "url": "/backend/sales/quotes/ce2cba82-4834-4896-9094-46b7f081f04a",
+      "idSource": "list-api:/api/sales/quotes?limit=1",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2940,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "自定义数据",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2791,
+          "width": 390,
+          "scrollWidth": 641,
+          "skeletons": 0,
+          "title": "自定义数据",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/warranty_claims/[id]/edit",
+      "url": "/backend/warranty_claims/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1503,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1355,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/warranty_claims/[id]",
+      "url": "/backend/warranty_claims/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1549,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2382,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/[id]/edit",
+      "url": "/backend/warranty_claims/registrations/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1435,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1372,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/[id]/edit",
+      "url": "/backend/warranty_claims/troubleshooting-guides/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1518,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1454,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/[id]/edit",
+      "url": "/backend/warranty_claims/vendor-policies/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1420,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1352,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/wms/location/[id]",
+      "url": "/backend/wms/location/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1435,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1404,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/wms/lot/[id]",
+      "url": "/backend/wms/lot/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1498,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1600,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/wms/sku/[id]",
+      "url": "/backend/wms/sku/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1681,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1602,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/devices/[id]",
+      "url": "/backend/devices/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1499,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1353,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/logs/[id]",
+      "url": "/backend/logs/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1416,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1355,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/rules/[id]",
+      "url": "/backend/rules/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1316,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1389,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/sets/[id]",
+      "url": "/backend/sets/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1317,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1288,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]/edit",
+      "url": "/backend/feature-toggles/global/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1504,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1369,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]",
+      "url": "/backend/feature-toggles/global/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1550,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1387,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "详情",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/definitions/[id]",
+      "url": "/backend/definitions/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2415,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Workflow Definition",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1977,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Workflow Definition",
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/events/[id]",
+      "url": "/backend/events/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1301,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1338,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/instances/[id]",
+      "url": "/backend/instances/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1469,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1337,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/tasks/[id]",
+      "url": "/backend/tasks/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1416,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1373,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/currencies/[id]",
+      "url": "/backend/currencies/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1467,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1370,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/exchange-rates/[id]",
+      "url": "/backend/exchange-rates/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1483,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1405,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/resources/resource-types/[id]/edit",
+      "url": "/backend/resources/resource-types/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1582,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1552,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/resources/resources/[id]",
+      "url": "/backend/resources/resources/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1766,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1623,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": "Unnamed resource",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/leave-requests/[id]",
+      "url": "/backend/staff/leave-requests/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1483,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1386,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/[id]",
+      "url": "/backend/staff/my-leave-requests/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1335,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1371,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/staff/teams/[id]/edit",
+      "url": "/backend/staff/teams/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1433,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1538,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/board",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111/board",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1983,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2021,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/edit",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2034,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1905,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]",
+      "url": "/backend/staff/time-tracking/projects/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2218,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1971,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/[id]",
+      "url": "/backend/staff/time-tracking/reports/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1384,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1404,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]/edit",
+      "url": "/backend/staff/timesheets/projects/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2252,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2022,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]",
+      "url": "/backend/staff/timesheets/projects/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2348,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 2138,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/integrations/[id]",
+      "url": "/backend/integrations/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1351,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1473,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/integrations/bundle/[id]",
+      "url": "/backend/integrations/bundle/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1367,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1355,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/data-sync/runs/[id]",
+      "url": "/backend/data-sync/runs/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1368,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1456,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/messages/[id]",
+      "url": "/backend/messages/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1901,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1805,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": true
+    },
+    {
+      "route": "/backend/communication_channels/channels/[id]",
+      "url": "/backend/communication_channels/channels/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1498,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1616,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/push_notifications/[id]",
+      "url": "/backend/push_notifications/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1380,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1355,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]/before/[cursor]",
+      "url": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111/before/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1336,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1438,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]",
+      "url": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1416,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": true,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1422,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": true,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "denied",
+      "overflow": false
+    },
+    {
+      "route": "/backend/business/[category]",
+      "url": "/backend/business/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1400,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1372,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "11111111-1111-4111-8111-111111111111",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/[id]/edit",
+      "url": "/backend/config/scheduled-jobs/11111111-1111-4111-8111-111111111111/edit",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1426,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1372,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/[id]",
+      "url": "/backend/config/scheduled-jobs/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1523,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1422,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/inbox-ops/proposals/[id]",
+      "url": "/backend/inbox-ops/proposals/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1468,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1384,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/checkout/pay-links/[id]",
+      "url": "/backend/checkout/pay-links/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1383,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1388,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/checkout/templates/[id]",
+      "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1333,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1406,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/checkout/templates/[id]/preview",
+      "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111/preview",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1336,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1321,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/checkout/transactions/[id]",
+      "url": "/backend/checkout/transactions/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1203,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Transaction Detail",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1282,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Transaction Detail",
+          "denied": false,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "rendered",
+      "overflow": false
+    },
+    {
+      "route": "/backend/documents/[id]",
+      "url": "/backend/documents/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1684,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": true,
+          "crashed": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1386,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": true,
+          "crashed": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "denied",
+      "overflow": false
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/[id]",
+      "url": "/backend/eudr/evidence-submissions/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1467,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1555,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/eudr/plots/[id]",
+      "url": "/backend/eudr/plots/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1433,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1406,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/eudr/product-mappings/[id]",
+      "url": "/backend/eudr/product-mappings/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1568,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1362,
+          "width": 390,
+          "scrollWidth": 406,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": true
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/[id]",
+      "url": "/backend/eudr/risk-assessments/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1457,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1422,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/eudr/statements/[id]",
+      "url": "/backend/eudr/statements/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1498,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1471,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/webhooks/[id]",
+      "url": "/backend/webhooks/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1616,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1385,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/customer_accounts/roles/[id]",
+      "url": "/backend/customer_accounts/roles/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1386,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1471,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    },
+    {
+      "route": "/backend/customer_accounts/users/[id]",
+      "url": "/backend/customer_accounts/users/11111111-1111-4111-8111-111111111111",
+      "idSource": "sentinel",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1401,
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "status": 200,
+          "readiness": "dom-quiet",
+          "elapsedMs": 1435,
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "verdict": "not-found-state",
+      "overflow": false
+    }
+  ]
+}

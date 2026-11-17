@@ -1291,3 +1291,37 @@ header [data-ai-launcher-trigger-mobile] {
     overflow-x: auto;
   }
 }
+
+/* Narrow topbar: the action cluster (status badges, assistant launcher, account
+   label) is a `shrink-0` row, so its max-content width beats the viewport and
+   widens the 390px document by a scrollbar. Let it take the header row width
+   and wrap onto a second line instead of overflowing. */
+@media (width < 48rem) {
+  /* The header wraps the cluster onto its own line instead of letting it push
+     the breadcrumb and menu button off-screen: a full-width, non-shrinking row
+     here would starve the left column. */
+  header {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+
+  header > .shrink-0 {
+    flex: 1 1 100%;
+    flex-wrap: wrap;
+    min-width: 0;
+    justify-content: flex-end;
+  }
+}
+
+/* Narrow record tables that skip the data-table wrapper: the `sr-only` corner
+   header cell is absolutely positioned, so without a positioned scroll
+   container it resolves against the page and stretches the document (a wide
+   order table made a 390px page scroll to 863px). Make the existing wrapper a
+   local, positioned scroll port: columns keep their widths, the page stays
+   390px. */
+@media (width < 48rem) {
+  #main-content div.overflow-hidden:has(> table) {
+    position: relative;
+    overflow-x: auto;
+  }
+}
