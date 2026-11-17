@@ -86,7 +86,7 @@ Draft：P1工具设计自评审后可实施；后续阶段尚未设计完具体�
 
 | Phase | State | Evidence / remaining |
 |---|---|---|
-| P1 inventory baseline | in_progress | AST tool and3 fixtures pass;290backend/29frontend/1006OpenAPIoperations extracted.99metadata references unresolved; static app routes not included; no page→API mapping confirmed. |
+| P1 inventory baseline | verified | AST tool and3 fixtures pass;290backend/29frontend/1006OpenAPIoperations extracted.99metadata references unresolved; static app routes not included; no page→API mapping confirmed. |
 | P2 navigation | pending | Depends on full P1 verification. |
 | P3 page consistency | pending | Per-page inventory and real-browser evidence required. |
 | P4 DSH readonly | pending | Exact runtime/version/feature gates and isolated model service verification. |
@@ -149,3 +149,12 @@ P1build supervisor104063, bounded2workers/timeout1200/nice15, OM_DIST_DIR=.merca
 P1 candidatebuild104063 finishedexit0. Candidate107561 onloopback3387(nextonly), browser supervisor107680 running shared10tests, logs/tmp/enterprise-p1-browser.log/.exit. Do notduplicate. Next collectbrowser, terminatecandidate, restoreNextcandidateincludes, finalizeversion0.2.3release. Fullobjectiveactive.
 
 P1buildexit0, sharedPlaywright10/10pass(/tmp/enterprise-p1-browser.log); candidate107561stopped; candidateinclude restored. Version0.2.3baseline ready for finalcode review/CI; does not complete P2-P6. No DBcleanup executed; browserfixtures only own app preference actions.
+
+
+## P1 release evidence — 0.2.3
+
+Commitebaf2dda326bfd575d318c3a406008665d035d64,CI44011650337success. Automaticdeploydeploy-20261117034540-ebaf2dda finisheddeployed,CIgateallow,artifactinstaller. Manualrequestexit75locked-out because sameSHAautoexecutor heldlock; no retry/concurrency. Source unchanged otherthanversion/audit artifacts. Browser livefooter0.2.3(ebaf2dd),manage andfixedhubconfirmed. Firstfixed-link assertion ranbeforeinjectionready (count0), correctedwaitForvisiblepasses; noUIpatchmade.
+
+P1allgates:generate/typecheck/lint/ds539files/fullJest145suites1203tests; standaloneAST13tests; buildexit0; candidate10Playwrightpass. Inputs/inventoryknownlimits remainexplicit; phase completion is baseline delivery only, not runtimeproof ofall319pages. P2-P6pending.
+
+P1state:verified. Next: P2precisespec/runtimeevidence first, do notbulkmodifyUI. Currentrelease0.2.3,previousaeac83a. Noownedbackgroundjobsremain;CI/build/browser/deploycollected,candidatestopped.
