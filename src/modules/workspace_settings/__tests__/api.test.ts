@@ -5,8 +5,8 @@ const mockAuth = jest.fn(async () => ({ sub: 'user-1', tenantId: 'tenant-1', org
 const mockScope = jest.fn(async () => ({ userId: 'user-1', tenantId: 'tenant-1', organizationId: 'org-1' }))
 const mockLoadLayout = jest.fn(async () => ({ config: { version: 1, order: [], hidden: [], labels: {}, presets: [], assignments: {} }, revision: null }))
 const mockSaveLayout = jest.fn(async (_em: unknown, _scope: unknown, config: unknown) => ({ config, revision: 3 }))
-const mockLoadPreference = jest.fn(async () => ({ favorites: [], recentWorkspace: null, selectedPreset: null }))
-const mockSavePreference = jest.fn(async (_em: unknown, _scope: unknown, value: unknown) => value)
+const mockLoadPreference = jest.fn(async () => ({ value: { favorites: [], recentWorkspace: null, selectedPreset: null }, updatedAt: null }))
+const mockSavePreference = jest.fn(async (_em: unknown, _scope: unknown, value: unknown) => ({ value, updatedAt: new Date().toISOString() }))
 
 jest.mock('@open-mercato/shared/lib/auth/server', () => ({ getAuthFromRequest: mockAuth }))
 jest.mock('@open-mercato/shared/lib/di/container', () => ({

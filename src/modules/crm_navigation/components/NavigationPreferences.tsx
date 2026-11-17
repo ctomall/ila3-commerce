@@ -14,6 +14,7 @@ export function useNavigationPreferences() { return React.useContext(Context) }
 
 type Scope = { userId: string; tenantId: string | null; organizationId: string | null }
 type ServerPreference = { favorites: string[]; recentWorkspace: string | null; selectedPreset?: string | null }
+type LocalPreference = NavigationPreference & { savedAt?: number }
 
 function isServerPreference(value: unknown): value is ServerPreference {
   if (!value || typeof value !== 'object') return false
@@ -50,22 +51,27 @@ export function NavigationPreferences({ userId, tenantId, organizationId, childr
       setRemoteChecked(true)
       return
     }
-    const local = readVersionedPreference(key, 1, isNavigationPreference, EMPTY_NAVIGATION_PREFERENCE)
+    const local = readVersionedPreference(key, 1, isNavigationPreference, EMPTY_NAVIGATION_PREFERENCE) as LocalPreference
     setSaved({ key, value: local })
-    void apiCall<{ preference: unknown }>('/api/workspace_settings/preferences', { method: 'GET' })
+    void apiCall<{ preference: unknown; updatedAt: string | null }>('/api/workspace_settings/preferences', { method: 'GET' })
       .then((result) => {
         if (cancelled) return
         const remote = result.ok ? result.result?.preference : null
-        if (isServerPreference(remote) && (remote.favorites.length > 0 || remote.recentWorkspace)) {
-          const value = { favorites: remote.favorites, recentWorkspace: remote.recentWorkspace }
+        const remoteAt = result.ok ? result.result?.updatedAt ?? null : null
+        const serverKnown = isServerPreference(remote) && remoteAt !== null
+        // Whichever copy was written last wins: without this, a favorite toggled
+        // just before the read finished was overwritten by the older server row.
+        const localNewer = Boolean(local.savedAt && remoteAt && local.savedAt > Date.parse(remoteAt))
+        if (serverKnown && !localNewer) {
+          const value = { favorites: remote!.favorites, recentWorkspace: remote!.recentWorkspace }
           setSaved({ key, value })
-          writeVersionedPreference(key, 1, value)
+          writeVersionedPreference(key, 1, { ...value, savedAt: Date.parse(remoteAt!) })
         } else if (local.favorites.length > 0 || local.recentWorkspace) {
-          // First signed-in browser: seed the server with what this browser had.
+          // No server copy yet (or this browser is newer): publish what we have.
           void apiCall('/api/workspace_settings/preferences', {
             method: 'PUT',
             headers: { 'content-type': 'application/json' },
-            body: JSON.stringify(local),
+            body: JSON.stringify({ favorites: local.favorites, recentWorkspace: local.recentWorkspace }),
           })
         }
       })
@@ -83,7 +89,7 @@ export function NavigationPreferences({ userId, tenantId, organizationId, childr
     const next = sanitizeNavigationPreference(value, spaces, other)
     setSaved({ key, value: next })
     if (!scopeVerified) return
-    writeVersionedPreference(key, 1, next)
+    writeVersionedPreference(key, 1, { ...next, savedAt: Date.now() })
     // Best effort: the local copy stays authoritative for this browser.
     void apiCall('/api/workspace_settings/preferences', {
       method: 'PUT',

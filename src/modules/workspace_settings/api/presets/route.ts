@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
   const container = await createRequestContainer()
   const em = container.resolve<EntityManager>('em').fork()
   const { config } = await loadLayout(em, scope)
-  const preference = await loadPreference(em, scope)
+  const { value: preference } = await loadPreference(em, scope)
   const known = new Set(config.presets.map((preset) => preset.id))
   const presets = assignedPresets(config, scope.userId, known)
   const selectedPreset = preference.selectedPreset && presets.some((preset) => preset.id === preference.selectedPreset)

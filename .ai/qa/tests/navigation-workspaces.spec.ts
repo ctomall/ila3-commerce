@@ -28,7 +28,12 @@ test('authorized directory projects sidebar without removing searchable entries'
  const anonymous=await request.get('/api/crm_navigation/navigation?path=/backend/customers/companies')
  expect(anonymous.status()).toBe(401)
 })
-test('favorite survives refresh and settings hierarchy remains accessible',async({page})=>{
+test('favorite survives refresh and settings hierarchy remains accessible',async({page,playwright,baseURL})=>{
+ // Start from an empty server preference so a previous run cannot turn the
+ // "favorite" button into "unfavorite" and make this test state-dependent.
+ const api=await playwright.request.newContext({baseURL,storageState:{cookies,origins:[]}})
+ expect((await api.put('/api/workspace_settings/preferences',{data:{favorites:[],recentWorkspace:null,selectedPreset:null}})).status()).toBe(200)
+ await api.dispose()
  await page.goto('/backend/manage')
  await expect(page.locator('[data-manage-search]')).toBeVisible()
  await expect(page.getByRole('button',{name:'组织与业务设置',exact:true})).toBeVisible()

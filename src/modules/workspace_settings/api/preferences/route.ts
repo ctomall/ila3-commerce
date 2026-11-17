@@ -19,7 +19,7 @@ const preferenceSchema = z.object({
   selectedPreset: z.string().nullable().optional(),
 })
 
-const responseSchema = z.object({ preference: preferenceSchema })
+const responseSchema = z.object({ preference: preferenceSchema, updatedAt: z.string().nullable() })
 
 export const openApi: OpenApiRouteDoc = {
   tag: 'Workspace settings',
@@ -69,8 +69,8 @@ async function context(req: NextRequest): Promise<RouteContext> {
 export async function GET(req: NextRequest) {
   const ctx = await context(req)
   if (ctx.error) return ctx.error
-  const preference = await loadPreference(ctx.em, ctx.scope)
-  return NextResponse.json({ preference }, { headers: { 'Cache-Control': 'no-store' } })
+  const stored = await loadPreference(ctx.em, ctx.scope)
+  return NextResponse.json({ preference: stored.value, updatedAt: stored.updatedAt }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
 export async function PUT(req: NextRequest) {
@@ -86,6 +86,6 @@ export async function PUT(req: NextRequest) {
   if (!parsed.ok) {
     return NextResponse.json({ error: parsed.error, code: 'invalid_preference' }, { status: 400 })
   }
-  const preference = await savePreference(ctx.em, ctx.scope, parsed.value)
-  return NextResponse.json({ preference }, { headers: { 'Cache-Control': 'no-store' } })
+  const stored = await savePreference(ctx.em, ctx.scope, parsed.value)
+  return NextResponse.json({ preference: stored.value, updatedAt: stored.updatedAt }, { headers: { 'Cache-Control': 'no-store' } })
 }

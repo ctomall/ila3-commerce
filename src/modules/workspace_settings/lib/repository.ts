@@ -46,26 +46,28 @@ export async function saveLayout(
   return { config, revision: created.revision }
 }
 
-export async function loadPreference(em: EntityManager, scope: WorkspaceScope): Promise<NavigationPreferenceValue> {
+export type StoredPreference = { value: NavigationPreferenceValue; updatedAt: string | null }
+
+export async function loadPreference(em: EntityManager, scope: WorkspaceScope): Promise<StoredPreference> {
   const row = await em.findOne(NavigationPreference, {
     tenantId: scope.tenantId,
     organizationId: scope.organizationId,
     userId: scope.userId,
   })
-  if (!row) return EMPTY_PREFERENCE
+  if (!row) return { value: EMPTY_PREFERENCE, updatedAt: null }
   const parsed = normalizePreference({
     favorites: row.favorites,
     recentWorkspace: row.recentWorkspace,
     selectedPreset: row.selectedPreset,
   })
-  return parsed.ok ? parsed.value : EMPTY_PREFERENCE
+  return { value: parsed.ok ? parsed.value : EMPTY_PREFERENCE, updatedAt: row.updatedAt.toISOString() }
 }
 
 export async function savePreference(
   em: EntityManager,
   scope: WorkspaceScope,
   value: NavigationPreferenceValue,
-): Promise<NavigationPreferenceValue> {
+): Promise<StoredPreference> {
   const existing = await em.findOne(NavigationPreference, {
     tenantId: scope.tenantId,
     organizationId: scope.organizationId,
@@ -77,7 +79,7 @@ export async function savePreference(
     existing.selectedPreset = value.selectedPreset
     existing.revision += 1
     await em.flush()
-    return value
+    return { value, updatedAt: existing.updatedAt.toISOString() }
   }
   const created = em.create(NavigationPreference, {
     tenantId: scope.tenantId,
@@ -90,5 +92,5 @@ export async function savePreference(
   })
   em.persist(created)
   await em.flush()
-  return value
+  return { value, updatedAt: created.updatedAt.toISOString() }
 }
