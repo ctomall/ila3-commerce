@@ -208,3 +208,34 @@ test('detail pages keep a 390px document and wide record tables scroll locally',
   if(entry.hasTable) expect(view.local).toBe(true)
  }
 })
+
+test('wide grid cards keep the narrow document and scroll their table locally',async({page,context,playwright,baseURL})=>{
+ const admin=await loginAs(playwright,baseURL,'superadmin@acme.com')
+ await context.clearCookies();await context.addCookies(admin)
+ await page.setViewportSize({width:390,height:900})
+ for(const route of ['/backend/prototype/candidates','/backend/prototype/drafts']){
+  await page.goto(route)
+  await expect(page.locator('main table').first()).toBeVisible()
+  await page.waitForTimeout(300)
+  const view=await page.evaluate(()=>({
+   width:innerWidth,
+   scroll:document.documentElement.scrollWidth,
+   local:Array.from(document.querySelectorAll('main div')).some(e=>e.scrollWidth>e.clientWidth&&getComputedStyle(e).overflowX==='auto'),
+  }))
+  expect(view.scroll).toBeLessThanOrEqual(view.width+1)
+  expect(view.local).toBe(true)
+ }
+})
+
+test('create pages with a settings column keep the desktop and narrow documents',async({page,context,playwright,baseURL})=>{
+ const admin=await loginAs(playwright,baseURL,'superadmin@acme.com')
+ await context.clearCookies();await context.addCookies(admin)
+ for(const width of [1440,390]){
+  await page.setViewportSize({width,height:900})
+  await page.goto('/backend/checkout/pay-links/create')
+  await expect(page.locator('main')).toBeVisible()
+  await page.waitForTimeout(500)
+  const view=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth}))
+  expect(view.scroll).toBeLessThanOrEqual(view.width+1)
+ }
+})

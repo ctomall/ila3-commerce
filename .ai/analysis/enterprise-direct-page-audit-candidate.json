@@ -1,0 +1,2720 @@
+{
+  "base": "http://127.0.0.1:3387",
+  "scope": "direct-gap-routes",
+  "count": 74,
+  "completed": 74,
+  "results": [
+    {
+      "route": "/backend/auth/profile",
+      "url": "/backend/auth/profile",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "个人资料",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 个人资料 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "个人资料",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 个人资料 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/profile",
+      "url": "/backend/profile",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "修改密码",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 修改密码 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "修改密码",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 修改密码 修改密码 保存更改 邮件 * 当前密码 新密码 密码要求：至少 6 个字符, 包含一个数字, 包含一个大写字母, 包含一个特殊字符 确认新密码",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/roles/create",
+      "url": "/backend/roles/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create Role",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Role 取消 创建 详情 名称 * 租户 * — Acme Corp 尚未定义自定义属性。 添加第一个 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Role",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Role 取消 创建 详情 名称 * 租户 * — Acme Corp 尚未定义自定义属性。 添加第一个 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/settings",
+      "url": "/backend/settings",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "设置",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 设置 系统配置与管理 从菜单中选择一项以配置系统设置。",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "设置",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 设置 系统配置与管理 从菜单中选择一项以配置系统设置。",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/users/create",
+      "url": "/backend/users/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create User",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create User 取消 创建 详情 邮件 * 显示名称 Send password setup link via email Invite user to set their own password via a secure email link 密码 * 密码要求：至少 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create User",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create User 取消 创建 详情 邮件 * 显示名称 Send password setup link via email Invite user to set their own password via a secure email link 密码 * 密码要求：至少 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/directory/organizations/create",
+      "url": "/backend/directory/organizations/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建组织",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建组织 取消 创建 详情 租户 * Select tenant Acme Corp 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, und",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建组织",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建组织 取消 创建 详情 租户 * Select tenant Acme Corp 名称 * 标识 URL-safe identifier used for the customer portal (lowercase letters, numbers, hyphens, und",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/directory/tenants/create",
+      "url": "/backend/directory/tenants/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create Tenant",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Tenant 取消 Create Details Name * Active 尚未定义自定义属性。 添加第一个 取消 Create",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Tenant",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Tenant 取消 Create Details Name * Active 尚未定义自定义属性。 添加第一个 取消 Create",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/customers/companies/create",
+      "url": "/backend/customers/companies/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建公司",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建公司 取消 创建公司 详情 显示名称 * 主要邮箱 主要电话 🇺🇸 +1 🇦🇱阿尔巴尼亚+355 🇩🇿阿尔及利亚+213 🇦🇫阿富汗+93 🇦🇷阿根廷+54 🇦🇪阿拉伯联合酋长国+971 🇦🇼阿鲁巴+297 🇴🇲阿曼+968 🇦🇿阿塞拜疆+9",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建公司",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建公司 取消 创建公司 详情 显示名称 * 主要邮箱 主要电话 🇺🇸 +1 🇦🇱阿尔巴尼亚+355 🇩🇿阿尔及利亚+213 🇦🇫阿富汗+93 🇦🇷阿根廷+54 🇦🇪阿拉伯联合酋长国+971 🇦🇼阿鲁巴+297 🇴🇲阿曼+968 🇦🇿阿塞拜疆+9",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/customers/deals/create",
+      "url": "/backend/customers/deals/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回商机列表 创建商机 商机核心信息 取消 创建商机 商机标题 * 显示在漏斗卡片上的简短描述性名称 状态 选择商机状态 已关闭 未关闭 赢单 输单 进行中 漏斗 选择漏斗阶段 Default Pipeline 漏斗阶段 选择销售漏斗阶段 阶段取决于所选漏斗 商机金额 该商机可能带来的收",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回商机列表 创建商机 商机核心信息 取消 创建商机 商机标题 * 显示在漏斗卡片上的简短描述性名称 状态 选择商机状态 已关闭 未关闭 赢单 输单 进行中 漏斗 选择漏斗阶段 Default Pipeline 漏斗阶段 选择销售漏斗阶段 阶段取决于所选漏斗 商机金额 该商机可能带来的收",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/customers/people/create",
+      "url": "/backend/customers/people/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建联系人",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建联系人 取消 创建联系人 详情 显示名称预览 名称将显示在此处 编辑名称 名 * 姓 * 联系方式 主要邮箱 主要电话 🇺🇸 +1 🇦🇱阿尔巴尼亚+355 🇩🇿阿尔及利亚+213 🇦🇫阿富汗+93 🇦🇷阿根廷+54 🇦🇪阿拉伯联合酋长国+971 🇦🇼",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建联系人",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建联系人 取消 创建联系人 详情 显示名称预览 名称将显示在此处 编辑名称 名 * 姓 * 联系方式 主要邮箱 主要电话 🇺🇸 +1 🇦🇱阿尔巴尼亚+355 🇩🇿阿尔及利亚+213 🇦🇫阿富汗+93 🇦🇷阿根廷+54 🇦🇪阿拉伯联合酋长国+971 🇦🇼",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/entities/user/create",
+      "url": "/backend/entities/user/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create Entity",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Entity 取消 创建 Entity ID * 标签 * 描述 Default Editor (multiline) — Markdown (UIW) Simple Markdown HTML Rich Text Plain textarea Show in sid",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Entity",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Entity 取消 创建 Entity ID * 标签 * 描述 Default Editor (multiline) — Markdown (UIW) Simple Markdown HTML Rich Text Plain textarea Show in sid",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/[recordId]",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records/11111111-1111-4111-8111-111111111111",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "编辑记录",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 编辑记录 取消 保存 取消 保存",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "编辑记录",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 编辑记录 取消 保存 取消 保存",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/create",
+      "url": "/backend/entities/user/11111111-1111-4111-8111-111111111111/records/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建记录",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建记录 取消 创建 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建记录",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建记录 取消 创建 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/catalog/categories/create",
+      "url": "/backend/catalog/categories/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建分类",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建分类 取消 创建 详情 名称 * 标识 用于 URL 或导入的小写标识。 描述 上级 根级 Fashion ↳ Fashion / Men ↳ Fashion / Men / Footwear ↳ Fashion / Women ↳ Fashion / Women / Dres",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建分类",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建分类 取消 创建 详情 名称 * 标识 用于 URL 或导入的小写标识。 描述 上级 根级 Fashion ↳ Fashion / Men ↳ Fashion / Men / Footwear ↳ Fashion / Women ↳ Fashion / Women / Dres",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/catalog/prices/create",
+      "url": "/backend/catalog/prices/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建价格规则",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建价格规则 取消 保存 产品 · 2 个字段 产品 规格 定价 · 5 个字段 价格类型 * 币种 * 不含税单价 含税单价 税率 数量阶梯 · 2 个字段 最小数量 最大数量 留空表示“及以上” 有效期窗口 · 2 个字段 开始于 选择日期 结束于 选择日期 范围 · 3 个字",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建价格规则",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建价格规则 取消 保存 产品 · 2 个字段 产品 规格 定价 · 5 个字段 价格类型 * 币种 * 不含税单价 含税单价 税率 数量阶梯 · 2 个字段 最小数量 最大数量 留空表示“及以上” 有效期窗口 · 2 个字段 开始于 选择日期 结束于 选择日期 范围 · 3 个字",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/catalog/products/create",
+      "url": "/backend/catalog/products/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建产品",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品 取消 创建产品 基本信息 归类 计量单位 合规与商务 规格 标题 * 描述 * 使用 Markdown 媒体 将图片拖拽到此处或点击上传。 选择文件 尚未上传媒体。 尺寸与重量 宽度 高度 深度 尺寸单位 重量 重量单位 上一个 继续 产品元数据 管理店铺的子标题、Han",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建产品",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品 取消 创建产品 基本信息 归类 计量单位 合规与商务 规格 标题 * 描述 * 使用 Markdown 媒体 将图片拖拽到此处或点击上传。 选择文件 尚未上传媒体。 尺寸与重量 宽度 高度 深度 尺寸单位 重量 重量单位 上一个 继续 产品元数据 管理店铺的子标题、Han",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/sales/channels/create",
+      "url": "/backend/sales/channels/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建渠道",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 创建渠道 取消 创建渠道 常规 渠道名称 * 编码 * Lowercase letters, numbers, and dashes. 描述 启用 联系人 网站 URL 联系人邮箱 联系人电话 位置 地址第 1 行 地址第 2 行 城市 省 / 地区 邮政编码 国家/地区 纬度 经度 尚未定",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建渠道",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 创建渠道 取消 创建渠道 常规 渠道名称 * 编码 * Lowercase letters, numbers, and dashes. 描述 启用 联系人 网站 URL 联系人邮箱 联系人电话 位置 地址第 1 行 地址第 2 行 城市 省 / 地区 邮政编码 国家/地区 纬度 经度 尚未定",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/sales/documents/create",
+      "url": "/backend/sales/documents/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建销售单据",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建销售单据 取消 创建 单据类型 报价单 订单 请选择要创建的销售单据类型。报价单相当于购物车或议价请求，之后可转换为正式订单。 单据编号 * 生成 格式适用于报价单，并沿用已配置的编号规则。 无法生成单据编号。 创建客户 开始输入以搜索。 销售渠道 开始输入以搜索。 评论 币种",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建销售单据",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建销售单据 取消 创建 单据类型 报价单 订单 请选择要创建的销售单据类型。报价单相当于购物车或议价请求，之后可转换为正式订单。 单据编号 * 生成 格式适用于报价单，并沿用已配置的编号规则。 无法生成单据编号。 创建客户 开始输入以搜索。 销售渠道 开始输入以搜索。 评论 币种",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/warranty_claims/create",
+      "url": "/backend/warranty_claims/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建工单",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建工单 取消 Create claim Claim basics Claim type * Warranty 退货 Core return 优先级 * 普通 低 普通 高 紧急 客户 订单 原因 — 以旧换新 供应商召回 保修缺陷 客户改变主意 订单错误 备注 Resolutio",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建工单",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建工单 取消 Create claim Claim basics Claim type * Warranty 退货 Core return 优先级 * 普通 低 普通 高 紧急 客户 订单 原因 — 以旧换新 供应商召回 保修缺陷 客户改变主意 订单错误 备注 Resolutio",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/create",
+      "url": "/backend/warranty_claims/registrations/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建登记",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建登记 取消 Create registration 产品 Catalog product 开始输入以搜索。 序列号 * Product name SKU Ownership 客户 订单 Coverage Purchase date 选择日期 Warranty months Co",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建登记",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建登记 取消 Create registration 产品 Catalog product 开始输入以搜索。 序列号 * Product name SKU Ownership 客户 订单 Coverage Purchase date 选择日期 Warranty months Co",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/create",
+      "url": "/backend/warranty_claims/troubleshooting-guides/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建排障指南",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建排障指南 取消 Create guide Guide match 标题 * Claim type Any claim type — 清除 — Any claim type Warranty 退货 Core return Vendor recovery Reason code L",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建排障指南",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建排障指南 取消 Create guide Guide match 标题 * Claim type Any claim type — 清除 — Any claim type Warranty 退货 Core return Vendor recovery Reason code L",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/create",
+      "url": "/backend/warranty_claims/vendor-policies/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建供应商政策",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建供应商政策 取消 Create vendor policy Vendor Vendor name * Vendor reference 联系人邮箱 Coverage Coverage months Claimable reason codes 以旧换新 供应商召回 保修缺陷 客",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建供应商政策",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建供应商政策 取消 Create vendor policy Vendor Vendor name * Vendor reference 联系人邮箱 Coverage Coverage months Claimable reason codes 以旧换新 供应商召回 保修缺陷 客",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/api-keys/create",
+      "url": "/backend/api-keys/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create API Key",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create API Key 取消 创建 详情 名称 * 描述 Optional note to help teammates understand where this key is used. 组织 Inherit from selected scope Acme Corp 角",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create API Key",
+          "text": "← 返回 Create API Key 取消 创建 详情 名称 * 描述 Optional note to help teammates understand where this key is used. 组织 Inherit from selected scope 角色 Requests authenticated with this key impersonate these roles. ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/devices/create",
+      "url": "/backend/devices/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "注册设备",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 注册设备 取消 创建 Device 用户 * Start typing a name or email, then pick the owner from the list. 设备 ID * 平台 * iOS iOS Android Web 应用版本 系统版本 Push token",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "注册设备",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 注册设备 取消 创建 Device 用户 * Start typing a name or email, then pick the owner from the list. 设备 ID * 平台 * iOS iOS Android Web 应用版本 系统版本 Push token",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/rules/create",
+      "url": "/backend/rules/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建业务规则",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建业务规则 取消 创建规则 Basic Information 规则 ID * Unique identifier (uppercase with underscores) 规则名称 * 描述 Rule Type * — Guard Validation Calculation ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建业务规则",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建业务规则 取消 创建规则 Basic Information 规则 ID * Unique identifier (uppercase with underscores) 规则名称 * 描述 Rule Type * — Guard Validation Calculation ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/sets/create",
+      "url": "/backend/sets/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建规则集",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建规则集 取消 Create Rule Set 规则集 ID * Unique identifier for the rule set 规则集名称 * 描述 已启用 Only enabled rule sets will be used 取消 Create Rule Set",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建规则集",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建规则集 取消 Create Rule Set 规则集 ID * Unique identifier for the rule set 规则集名称 * 描述 已启用 Only enabled rule sets will be used 取消 Create Rule Set",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/feature-toggles/global/create",
+      "url": "/backend/feature-toggles/global/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create Feature Toggle",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Feature Toggle 保存 Basic Information Identifier * 名称 * 描述 分类 Type Configuration 类型 * — 布尔值 字符串 编号 JSON Default Value Please select a ty",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Feature Toggle",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Feature Toggle 保存 Basic Information Identifier * 名称 * 描述 分类 Type Configuration 类型 * — 布尔值 字符串 编号 JSON Default Value Please select a ty",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/definitions/create",
+      "url": "/backend/definitions/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流可视化编辑器",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← Back to definitions 工作流可视化编辑器 Create workflow summary 校验 更多 保存 STEP PALETTE Click a step type to add it to the canvas START USER TASK AUTOMATED ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流可视化编辑器",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作流可视化编辑器 保存 START USER TASK AUTOMATED INVOKE AGENT WAIT FOR SIGNAL SUB-WORKFLOW END Start Building Tap a step type above to add it Load an exampl",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/definitions/visual-editor",
+      "url": "/backend/definitions/visual-editor",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流可视化编辑器",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← Back to definitions 工作流可视化编辑器 Create workflow summary 校验 更多 保存 STEP PALETTE Click a step type to add it to the canvas START USER TASK AUTOMATED ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流可视化编辑器",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 工作流可视化编辑器 保存 START USER TASK AUTOMATED INVOKE AGENT WAIT FOR SIGNAL SUB-WORKFLOW END Start Building Tap a step type above to add it Load an exampl",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/tasks",
+      "url": "/backend/tasks",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Work Inbox",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Work Inbox 自定义列 领取下一个 筛选 1 视图 全部视图 查看: My Work × 工作项 来源 优先级 状态 分配 截止日期 创建时间 没有分配给你的工作 This inbox shows work assigned to you or waiting in a queue ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Work Inbox",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Work Inbox 自定义列 领取下一个 筛选 1 视图 全部视图 查看: My Work × 工作项 来源 优先级 状态 分配 截止日期 创建时间 没有分配给你的工作 This inbox shows work assigned to you or waiting in a queue ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/currencies/create",
+      "url": "/backend/currencies/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建货币",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建货币 取消 Create Currency Currency Details Currency Code * Currency Name * 符号 Formatting & Settings Decimal Places Thousands Separator Decimal ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建货币",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建货币 取消 Create Currency Currency Details Currency Code * Currency Name * 符号 Formatting & Settings Decimal Places Thousands Separator Decimal ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/exchange-rates/create",
+      "url": "/backend/exchange-rates/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建汇率",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建汇率 取消 Create Exchange Rate From Currency * Source currency for conversion To Currency * Target currency for conversion Exchange Rate * How ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建汇率",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建汇率 取消 Create Exchange Rate From Currency * Source currency for conversion To Currency * Target currency for conversion Exchange Rate * How ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/create",
+      "url": "/backend/planner/availability-rulesets/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建排班",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建排班 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 尚未定义自定义属性。 添加第一个",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建排班",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建排班 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 尚未定义自定义属性。 添加第一个",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/[id]",
+      "url": "/backend/planner/availability-rulesets/11111111-1111-4111-8111-111111111111",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Schedule not found. Back to schedules",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Schedule not found. Back to schedules",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/backend/resources/resource-types/create",
+      "url": "/backend/resources/resource-types/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "添加资源类型",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加资源类型 取消 保存 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 外观 颜色 Pick a color for this resou",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "添加资源类型",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加资源类型 取消 保存 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 外观 颜色 Pick a color for this resou",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/resources/resources/create",
+      "url": "/backend/resources/resources/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建资源",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建资源 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 资源类型 — Meeting room Engineering lap",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建资源",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建资源 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 资源类型 — Meeting room Engineering lap",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/backend/staff/leave-requests/create",
+      "url": "/backend/staff/leave-requests/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建请假申请",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 开始输入以搜索。 Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建请假申请",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 开始输入以搜索。 Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/create",
+      "url": "/backend/staff/my-leave-requests/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建请假申请",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 Marta Lopez Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建请假申请",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建请假申请 取消 创建 团队成员 Marta Lopez Start date * 选择日期 End date * 选择日期 原因 Select a reason 休假 居家办公 未指定 病假 Manage reasons 备注 取消 创建",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/profile/create",
+      "url": "/backend/staff/profile/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "可用性",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 可用性 时区 每周工时 设置你通常可用的时间。 S 不可用 添加时间窗口 M 不可用 添加时间窗口 T 不可用 添加时间窗口 W 不可用 添加时间窗口 T 不可用 添加时间窗口 F 不可用 添加时间窗口 S 不可用 添加时间窗口 特定日期工时 为特定日期调整工时。 添加工时",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "可用性",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 可用性 时区 每周工时 设置你通常可用的时间。 S 不可用 添加时间窗口 M 不可用 添加时间窗口 T 不可用 添加时间窗口 W 不可用 添加时间窗口 T 不可用 添加时间窗口 F 不可用 添加时间窗口 S 不可用 添加时间窗口 特定日期工时 为特定日期调整工时。 添加工时",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/team-members/create",
+      "url": "/backend/staff/team-members/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "添加团队成员",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — Engineering Product Operations 显示名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "添加团队成员",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队成员 取消 创建 用户 开始输入以搜索。 团队 Create new team — Engineering Product Operations 显示名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/team-roles/create",
+      "url": "/backend/staff/team-roles/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "添加团队角色",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队角色 取消 创建 团队 — Engineering Product Operations 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "添加团队角色",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 添加团队角色 取消 创建 团队 — Engineering Product Operations 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/teams/create",
+      "url": "/backend/staff/teams/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建团队",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 启用 entities.customFields.empty enti",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建团队",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建团队 取消 创建 名称 * 描述 Block type Paragraph Quote Heading 1 Heading 2 Heading 3 Heading 4 Heading 5 Heading 6 启用 entities.customFields.empty enti",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/create",
+      "url": "/backend/staff/time-tracking/projects/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "New project",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code — Edit code Derived from the project name; it prefixes every task reference. 客户 * New cu",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "New project",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code — Edit code Derived from the project name; it prefixes every task reference. 客户 * New cu",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/create",
+      "url": "/backend/staff/time-tracking/reports/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "新建报表",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建报表 A report always covers one customer. 客户 New customer 开始输入以搜索。 Report title Period 周 月 Year 从 至 Customer projects Tick the projects this ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "新建报表",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 新建报表 A report always covers one customer. 客户 New customer 开始输入以搜索。 Report title Period 周 月 Year 从 至 Customer projects Tick the projects this ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/timesheets",
+      "url": "/backend/staff/timesheets",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Loading timesheets...",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 加载中… Loading timesheets...",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/create",
+      "url": "/backend/staff/timesheets/projects/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "New project",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code — Edit code Derived from the project name; it prefixes every task reference. 客户 * New cu",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "New project",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 New project 取消 创建 Basics Project name * Project code — Edit code Derived from the project name; it prefixes every task reference. 客户 * New cu",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects",
+      "url": "/backend/staff/timesheets/projects",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Projects",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie TOTAL PROJECTS 4 3 启用 · 1 on hold HOURS THIS WEEK no previous data 0h vs previous week HOURS THIS MONTH 91.6% 61.5h vs previous month ASSIGNED TO ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Projects",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie TOTAL PROJECTS 4 3 启用 · 1 on hold HOURS THIS WEEK no previous data 0h vs previous week HOURS THIS MONTH 91.6% 61.5h vs previous month ASSIGNED TO ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/staff/team-members/[id]",
+      "url": "/backend/staff/team-members/11111111-1111-4111-8111-111111111111",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Team member not found. Back to team members",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Team member not found. Back to team members",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/backend/staff/team-roles/[id]/edit",
+      "url": "/backend/staff/team-roles/11111111-1111-4111-8111-111111111111/edit",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Team role not found. Back to team roles",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Team role not found. Back to team roles",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/backend/messages/compose",
+      "url": "/backend/messages/compose",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "撰写消息",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 撰写消息 保存草稿 发送 至 可见性 内部消息将发送给选定的系统用户。 主题 优先级 低 普通 高 紧急 普通 消息 附件 将文件拖拽到此处或点击上传。 选择文件 未找到附件。 同时通过邮件发送 收件人将收到带安全链接的邮件副本。",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "撰写消息",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 撰写消息 保存草稿 发送 至 可见性 内部消息将发送给选定的系统用户。 主题 优先级 低 普通 高 紧急 普通 消息 附件 将文件拖拽到此处或点击上传。 选择文件 未找到附件。 同时通过邮件发送 收件人将收到带安全链接的邮件副本。",
+          "crashed": false,
+          "denied": false,
+          "notFound": true
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "not-found-state"
+    },
+    {
+      "route": "/backend/config/ai-assistant",
+      "url": "/backend/config/ai-assistant",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 智能体",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie AI 智能体 查看所有已注册智能体，并管理按租户的附加提示词片段覆盖。 智能体 Catalog Assistant (catalog.catalog_assistant) Catalog Assistant Read-only assistant for exploring catalog ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "AI 智能体",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie AI 智能体 查看所有已注册智能体，并管理按租户的附加提示词片段覆盖。 智能体 Catalog Assistant (catalog.catalog_assistant) Catalog Assistant Read-only assistant for exploring catalog ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/config/home",
+      "url": "/backend/config/home",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "设置",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 设置 搜索设置，或从左侧菜单浏览。最近访问和 AI 设置会出现在这里。 其他设置可从左侧菜单进入，也可以用上方搜索。 AI 9 模型配置 智能体列表 AI 智能体 AI 设置 AI 调试台 AI 用量 AI 白名单 AI 助手（旧版） 审核标记",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "设置",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 设置 搜索设置，或从左侧菜单浏览。最近访问和 AI 设置会出现在这里。 其他设置可从左侧菜单进入，也可以用上方搜索。 AI 9 模型配置 智能体列表 AI 智能体 AI 设置 AI 调试台 AI 用量 AI 白名单 AI 助手（旧版） 审核标记",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype/accounts/detail",
+      "url": "/backend/prototype/accounts/detail",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Nordwind Energie GmbH",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 Nordwind Energie GmbH nordwind-energie.de · 德国 · 归属 王倩 · 客户 · 来源",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Nordwind Energie GmbH",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 Nordwind Energie GmbH nordwind-energie.de · 德国 · 归属 王倩 · 客户 · 来源",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype/accounts",
+      "url": "/backend/prototype/accounts",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "客户列表",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 客户列表 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 归属 阶段 最后触达 可触达 Nordwind Ener",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "客户列表",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 客户列表 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 归属 阶段 最后触达 可触达 Nordwind Ener",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype/candidates",
+      "url": "/backend/prototype/candidates",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "候选审核",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 候选审核 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 域名 联系人 证据 验证 去重 Nordwind Ene",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "候选审核",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 候选审核 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 公司 域名 联系人 证据 验证 去重 Nordwind Ene",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype/drafts",
+      "url": "/backend/prototype/drafts",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "邮件草稿审批",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 邮件草稿审批 状态 待审批 已批准 已发送 发送未知 已失效 错误 收件人 状态 marta@nordwind-energie.",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "邮件草稿审批",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 邮件草稿审批 状态 待审批 已批准 已发送 发送未知 已失效 错误 收件人 状态 marta@nordwind-energie.",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype",
+      "url": "/backend/prototype",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "我的本周",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 我的本周 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 本周候选 18 较上周 +6 待我审核 5 最早 2 小时前 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "我的本周",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 我的本周 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 本周候选 18 较上周 +6 待我审核 5 最早 2 小时前 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/prototype/tasks",
+      "url": "/backend/prototype/tasks",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "开发任务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 开发任务 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 已取消 连接中断 新建任务 任务 产品 · 市场 来源 额度 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "开发任务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 原型演示 非生产数据 · 不落库 · 不发送 · 路由前缀 /backend/prototype 业务员首页 开发任务 候选审核 客户列表 客户详情 邮件草稿审批 开发任务 状态 正常 空 错误 无权限 额度耗尽 重复 并发冲突 已取消 连接中断 新建任务 任务 产品 · 市场 来源 额度 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/communications/channels/connect",
+      "url": "/backend/communications/channels/connect",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "连接渠道",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 连接渠道 为整个组织创建 WhatsApp 或 Messenger 渠道。凭据只提交给服务端，不写入日志。邮件渠道在「我的资料 → 连接渠道」按个人范围连接，这里只给出入口与所需字段。 渠道类型 * WhatsApp Business (Cloud API) WhatsApp Busines",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "连接渠道",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 连接渠道 为整个组织创建 WhatsApp 或 Messenger 渠道。凭据只提交给服务端，不写入日志。邮件渠道在「我的资料 → 连接渠道」按个人范围连接，这里只给出入口与所需字段。 渠道类型 * WhatsApp Business (Cloud API) WhatsApp Busines",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/business",
+      "url": "/backend/business",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "业务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 业务 按当前账号可访问的模块分区浏览；导航入口由模块声明生成。 63 项功能 工作台 4 工作台 日历 我的工作 工作收件箱 客户与获客 6 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 沟通协作 9 附件 文档 文档模板 通话记录 收件箱建议 消息 全渠道收件箱 渠道账号 发送结果",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "业务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 业务 按当前账号可访问的模块分区浏览；导航入口由模块声明生成。 63 项功能 工作台 4 工作台 日历 我的工作 工作收件箱 客户与获客 6 公司 商机 商机地图 客户相关任务 联系人 销售漏斗 沟通协作 9 附件 文档 文档模板 通话记录 收件箱建议 消息 全渠道收件箱 渠道账号 发送结果",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/manage",
+      "url": "/backend/manage",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "管理中心",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 管理中心 管理员设置与员工日常分开。这里只列出你的账号有权打开的功能，按分类浏览或直接搜索。 70 个入口 我的账户 修改密码 自定义侧边栏 我的通信渠道 通知偏好 全部 组织与业务设置 平台维护 全部 用户组织 渠道集成 AI管理 业务设置 规则流程 客户门户 通知设备 系统维护 诊断 高",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "管理中心",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 管理中心 管理员设置与员工日常分开。这里只列出你的账号有权打开的功能，按分类浏览或直接搜索。 70 个入口 我的账户 修改密码 自定义侧边栏 我的通信渠道 通知偏好 全部 组织与业务设置 平台维护 全部 用户组织 渠道集成 AI管理 业务设置 规则流程 客户门户 通知设备 系统维护 诊断 高",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/config/navigation",
+      "url": "/backend/config/navigation",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Workspace layout",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Workspace layout Order, hide or rename the workspaces this organization sees. Hidden workspaces stay reachable by URL and in search; membership is",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Workspace layout",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie Workspace layout Order, hide or rename the workspaces this organization sees. Hidden workspaces stay reachable by URL and in search; membership is",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/new",
+      "url": "/backend/config/scheduled-jobs/new",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建定时任务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建定时任务 已启用 取消 Create Schedule Basic Information 名称 * 描述 范围 * 租户 系统 组织 租户 Schedule Configuration Schedule Type * Cron Expression Cron Expressi",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建定时任务",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建定时任务 已启用 取消 Create Schedule Basic Information 名称 * 描述 范围 * 租户 系统 组织 租户 Schedule Configuration Schedule Type * Cron Expression Cron Expressi",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/checkout/pay-links/create",
+      "url": "/backend/checkout/pay-links/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1497,
+          "skeletons": 0,
+          "title": "Create Pay Link",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Pay Link 取消 保存 常规 Template Optional starting point. Applying a template replaces the current form values. Start blank Pick a template ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Pay Link",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Pay Link 取消 保存 常规 Template Optional starting point. Applying a template replaces the current form values. Start blank Pick a template ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": true,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/checkout/templates/create",
+      "url": "/backend/checkout/templates/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1497,
+          "skeletons": 0,
+          "title": "Create Template",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Template 取消 保存 常规 名称 * 标题 子标题 描述 Markdown is supported on the public page preview. Block type Paragraph Quote Heading 1 Heading 2 Head",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Template",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Template 取消 保存 常规 名称 * 标题 子标题 描述 Markdown is supported on the public page preview. Block type Paragraph Quote Heading 1 Heading 2 Head",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": true,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/checkout",
+      "url": "/backend/checkout",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "支付链接",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 支付链接 自定义列 创建链接 筛选 视图 全部视图 名称 标识 定价 状态 使用次数 已创建 操作 Spring Gala 2026 /pay/spring-gala-2026-f27fa168 价格表 草稿 0 / 100 11/3/2026 ⋯ 打开操作 Community Donati",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "支付链接",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie 支付链接 自定义列 创建链接 筛选 视图 全部视图 名称 标识 定价 状态 使用次数 已创建 操作 Spring Gala 2026 /pay/spring-gala-2026-f27fa168 价格表 草稿 0 / 100 11/3/2026 ⋯ 打开操作 Community Donati",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/shipping-carriers/create",
+      "url": "/backend/shipping-carriers/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create carrier shipment",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create carrier shipment 1. Select carrier › 2. Configure shipment › 3. Select service & confirm No shipping providers are configured. Enable ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create carrier shipment",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create carrier shipment 1. Select carrier › 2. Configure shipment › 3. Select service & confirm No shipping providers are configured. Enable ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/create",
+      "url": "/backend/eudr/evidence-submissions/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建证据提交",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建证据提交 取消 Create submission Submission details Supplier * 开始输入以搜索。 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Product mapping 开始输入以",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建证据提交",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建证据提交 取消 Create submission Submission details Supplier * 开始输入以搜索。 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Product mapping 开始输入以",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/eudr/plots/create",
+      "url": "/backend/eudr/plots/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建地块",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建地块 取消 Create plot Plot details Supplier * 开始输入以搜索。 名称 * 外部 ID Origin country * Geometry Geometry * Upload GeoJSON Paste JSON Upload or past",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建地块",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建地块 取消 Create plot Plot details Supplier * 开始输入以搜索。 名称 * 外部 ID Origin country * Geometry Geometry * Upload GeoJSON Paste JSON Upload or past",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/eudr/product-mappings/create",
+      "url": "/backend/eudr/product-mappings/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建产品映射",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品映射 取消 Create mapping Mapping details 产品 * 开始输入以搜索。 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood HS code 分类 In scope 备注 备注 取消 Crea",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建产品映射",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建产品映射 取消 Create mapping Mapping details 产品 * 开始输入以搜索。 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood HS code 分类 In scope 备注 备注 取消 Crea",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/create",
+      "url": "/backend/eudr/risk-assessments/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建风险评估",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建风险评估 取消 Create risk assessment Risk assessment details Statement * 开始输入以搜索。 Conclusion * — Negligible Non-negligible Assessed at * Nov 17, ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建风险评估",
+          "text": "← 返回 创建风险评估 取消 Create risk assessment Risk assessment details Statement * 开始输入以搜索。 Conclusion * — Assessed at * Nov 17, 2026 11:06 Review due at Nov 17, 2027 Optional date for the next risk review. Cr",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/eudr/statements/create",
+      "url": "/backend/eudr/statements/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建声明",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建声明 取消 Create statement Statement details 标题 * 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Activity type — Import Export Domestic p",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建声明",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建声明 取消 Create statement Statement details 标题 * 商品 * — Cattle Cocoa Coffee Oil palm Rubber Soya Wood Activity type — Import Export Domestic p",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/webhooks/create",
+      "url": "/backend/webhooks/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "创建 Webhook",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 创建 Webhook 取消 创建 Setup Guide Configure where events should be delivered, choose the event patterns you need, then use Send Test to validate t",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "创建 Webhook",
+          "text": "← 返回 创建 Webhook 取消 创建 Setup Guide Configure where events should be delivered, choose the event patterns you need, then use Send Test to validate the consumer before going live. Security Checklist A si",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    },
+    {
+      "route": "/backend/customer_accounts/roles/create",
+      "url": "/backend/customer_accounts/roles/create",
+      "viewports": [
+        {
+          "viewport": 1440,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Create Customer Role",
+          "text": "我们使用必要的 Cookie 记住你的偏好。了解我们如何管理数据，请参阅 隐私. 关闭 接受 Cookie ← 返回 Create Customer Role 取消 Create Role Role Details 名称 * 标识 * Lowercase letters, numbers, hyphens, and underscores only. 描述 选项 Default role (aut",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        },
+        {
+          "viewport": 390,
+          "httpStatus": 200,
+          "readiness": "dom-quiet",
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Create Customer Role",
+          "text": "← 返回 Create Customer Role 取消 Create Role Role Details 名称 * 标识 * Lowercase letters, numbers, hyphens, and underscores only. 描述 选项 Default role (auto-assigned to new users) Customers can self-assign 取消 ",
+          "crashed": false,
+          "denied": false,
+          "notFound": false
+        }
+      ],
+      "pageErrors": [
+        "TypeError"
+      ],
+      "overflow": false,
+      "verdict": "rendered"
+    }
+  ]
+}

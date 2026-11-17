@@ -1,0 +1,5310 @@
+{
+  "summary": {
+    "generatedAt": "2026-11-17T10:28:25.518Z",
+    "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
+    "sources": {
+      "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
+      "static": "/home/pro/apps/mercato/.ai/analysis/enterprise-static-page-audit.json",
+      "staticFindings": "/home/pro/apps/mercato/.ai/analysis/enterprise-page-render-findings.json",
+      "dynamic": "/home/pro/apps/mercato/.ai/analysis/enterprise-dynamic-page-audit-after.json",
+      "public": "/home/pro/apps/mercato/.ai/analysis/enterprise-public-page-audit.json",
+      "direct": "/home/pro/apps/mercato/.ai/analysis/enterprise-direct-page-audit.json"
+    },
+    "totals": {
+      "pages": 319,
+      "evidenced": 318,
+      "defect": 0,
+      "observation": 1,
+      "gap": 0,
+      "backendApis": 290,
+      "openApiOperations": 1006,
+      "frontendRoutes": 29,
+      "unresolvedMetadata": 12
+    },
+    "byClass": {
+      "backend-profile": {
+        "total": 1,
+        "evidenced": 1,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 1
+        }
+      },
+      "backend-business": {
+        "total": 123,
+        "evidenced": 123,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 122,
+          "not-found-state": 1
+        }
+      },
+      "backend-create-edit": {
+        "total": 68,
+        "evidenced": 68,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 53,
+          "not-found-state": 15
+        }
+      },
+      "backend-settings": {
+        "total": 37,
+        "evidenced": 37,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 35,
+          "not-found-state": 2
+        }
+      },
+      "backend-detail-dynamic": {
+        "total": 61,
+        "evidenced": 61,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 21,
+          "not-found-state": 38,
+          "denied": 2
+        }
+      },
+      "frontend-public": {
+        "total": 9,
+        "evidenced": 8,
+        "defect": 0,
+        "observation": 1,
+        "gap": 0,
+        "kinds": {
+          "rendered": 8,
+          "navigation-failure": 1
+        }
+      },
+      "frontend-other": {
+        "total": 2,
+        "evidenced": 2,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 2
+        }
+      },
+      "frontend-portal": {
+        "total": 15,
+        "evidenced": 15,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 15
+        }
+      },
+      "frontend-pay": {
+        "total": 3,
+        "evidenced": 3,
+        "defect": 0,
+        "observation": 0,
+        "gap": 0,
+        "kinds": {
+          "rendered": 2,
+          "not-found-state": 1
+        }
+      }
+    },
+    "gapsByClass": {}
+  },
+  "rows": [
+    {
+      "route": "/backend/auth/profile",
+      "className": "backend-profile",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/profile/change-password",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/profile",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/roles/create",
+      "className": "backend-create-edit",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/roles",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/settings",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sidebar-customization",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/users/create",
+      "className": "backend-create-edit",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/users",
+      "className": "backend-business",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/roles/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/users/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "auth",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/branding",
+      "className": "backend-business",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/organizations/create",
+      "className": "backend-create-edit",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/organizations",
+      "className": "backend-business",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/tenants/create",
+      "className": "backend-create-edit",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/tenants",
+      "className": "backend-business",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/organizations/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/directory/organizations?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/directory/tenants/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "directory",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/directory/tenants?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/calendar",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/customers/deals",
+      "className": "backend-settings",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/customers",
+      "className": "backend-settings",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/customers/pipeline-stages",
+      "className": "backend-settings",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 8,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer-tasks",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customers/companies/create",
+      "className": "backend-create-edit",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/companies",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/deals/create",
+      "className": "backend-create-edit",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customers/deals/map",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customers/deals",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/deals/pipeline",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 8,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/people/create",
+      "className": "backend-create-edit",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/people",
+      "className": "backend-business",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/companies-v2/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/customers/companies?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/companies/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/customers/companies?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/deals/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/customers/deals?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customers/people-v2/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/customers/people?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customers/people/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/customers/people?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/encryption",
+      "className": "backend-settings",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/settings",
+      "className": "backend-settings",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/entities/system",
+      "className": "backend-business",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/entities/user/create",
+      "className": "backend-create-edit",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/entities/user",
+      "className": "backend-business",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/entities/system/[entityId]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 8,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/[recordId]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "entities",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records/create",
+      "className": "backend-create-edit",
+      "moduleId": "entities",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/entities/user/[entityId]/records",
+      "className": "backend-detail-dynamic",
+      "moduleId": "entities",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/cache",
+      "className": "backend-settings",
+      "moduleId": "configs",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/module-telemetry",
+      "className": "backend-settings",
+      "moduleId": "configs",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/system-status",
+      "className": "backend-settings",
+      "moduleId": "configs",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/query-indexes",
+      "className": "backend-business",
+      "moduleId": "query_index",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/audit-logs",
+      "className": "backend-business",
+      "moduleId": "audit_logs",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/attachments",
+      "className": "backend-settings",
+      "moduleId": "attachments",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/storage/attachments",
+      "className": "backend-business",
+      "moduleId": "attachments",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/catalog/categories/create",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/categories",
+      "className": "backend-business",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/catalog/prices/create",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/prices",
+      "className": "backend-business",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/catalog/products/create",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/products",
+      "className": "backend-business",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/catalog",
+      "className": "backend-settings",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/catalog/categories/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/catalog/categories?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/prices/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/products/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 4,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/catalog/products?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/[variantId]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "list-api:/api/catalog/products?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/catalog/products/[productId]/variants/create",
+      "className": "backend-create-edit",
+      "moduleId": "catalog",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/catalog/products?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/sales",
+      "className": "backend-settings",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/channels/create",
+      "className": "backend-create-edit",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/channels/offers",
+      "className": "backend-business",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/channels",
+      "className": "backend-business",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/documents/create",
+      "className": "backend-create-edit",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/orders",
+      "className": "backend-business",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/quotes",
+      "className": "backend-business",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/[offerId]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/channels/[channelId]/offers/create",
+      "className": "backend-create-edit",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/documents/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 20,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sales/orders/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/sales/orders?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/sales/quotes/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "sales",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "list-api:/api/sales/quotes?limit=1",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/warranty_claims",
+      "className": "backend-business",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 8,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/create",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/create",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/registrations",
+      "className": "backend-business",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/settings",
+      "className": "backend-business",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/create",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides",
+      "className": "backend-business",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/create",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies",
+      "className": "backend-business",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 14,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/registrations/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "warranty_claims",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/wms",
+      "className": "backend-settings",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/inventory",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/locations",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/lots",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/movements",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/reservations",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/warehouses",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/zones",
+      "className": "backend-business",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/location/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/lot/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/wms/sku/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "wms",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/api-keys/create",
+      "className": "backend-create-edit",
+      "moduleId": "api_keys",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/api-keys",
+      "className": "backend-business",
+      "moduleId": "api_keys",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/devices/create",
+      "className": "backend-create-edit",
+      "moduleId": "devices",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/devices",
+      "className": "backend-business",
+      "moduleId": "devices",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/devices/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "devices",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/dictionaries",
+      "className": "backend-settings",
+      "moduleId": "dictionaries",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/docs",
+      "className": "backend-business",
+      "moduleId": "api_docs",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/logs",
+      "className": "backend-business",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/rules/create",
+      "className": "backend-create-edit",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/rules",
+      "className": "backend-business",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sets/create",
+      "className": "backend-create-edit",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sets",
+      "className": "backend-business",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/logs/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/rules/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/sets/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "business_rules",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/feature-toggles/global/create",
+      "className": "backend-create-edit",
+      "moduleId": "feature_toggles",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/feature-toggles/global",
+      "className": "backend-business",
+      "moduleId": "feature_toggles",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/feature-toggles/overrides",
+      "className": "backend-business",
+      "moduleId": "feature_toggles",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "feature_toggles",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/feature-toggles/global/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "feature_toggles",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/workflows",
+      "className": "backend-settings",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/definitions/create",
+      "className": "backend-create-edit",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/definitions",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/definitions/visual-editor",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/events",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/instances/failure-queue",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/instances",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/tasks",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/work-inbox",
+      "className": "backend-business",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/definitions/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/events/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/instances/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/tasks/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "workflows",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/search",
+      "className": "backend-settings",
+      "moduleId": "search",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/currency-fetching",
+      "className": "backend-settings",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/currencies/create",
+      "className": "backend-create-edit",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/currencies",
+      "className": "backend-business",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/exchange-rates/create",
+      "className": "backend-create-edit",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/exchange-rates",
+      "className": "backend-business",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/currencies/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/exchange-rates/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "currencies",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/create",
+      "className": "backend-create-edit",
+      "moduleId": "planner",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets",
+      "className": "backend-business",
+      "moduleId": "planner",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "planner",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resource-types/create",
+      "className": "backend-create-edit",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resource-types",
+      "className": "backend-business",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resources/create",
+      "className": "backend-create-edit",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resources",
+      "className": "backend-business",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resource-types/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/resources/resources/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "resources",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/leave-requests/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/leave-requests",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/my-availability",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/my-leave-requests",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/profile/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-members/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-members",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-roles/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-roles",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/teams/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/teams",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/board",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/entries",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 4,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": false,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/settings",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/timesheet",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/timesheets",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/create",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects",
+      "className": "backend-business",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/staff/leave-requests/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/my-leave-requests/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-members/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/team-roles/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/teams/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/board",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]/edit",
+      "className": "backend-create-edit",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/staff/timesheets/projects/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "staff",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/notifications",
+      "className": "backend-settings",
+      "moduleId": "notifications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/notifications/user-preferences",
+      "className": "backend-business",
+      "moduleId": "notifications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/profile/notification-preferences",
+      "className": "backend-business",
+      "moduleId": "notifications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/integrations",
+      "className": "backend-business",
+      "moduleId": "integrations",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/integrations/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "integrations",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/integrations/bundle/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "integrations",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/data-sync",
+      "className": "backend-business",
+      "moduleId": "data_sync",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/data-sync/runs/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "data_sync",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/messages/compose",
+      "className": "backend-business",
+      "moduleId": "messages",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/messages",
+      "className": "backend-business",
+      "moduleId": "messages",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/messages/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "messages",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communication_channels/channels",
+      "className": "backend-business",
+      "moduleId": "communication_channels",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/profile/communication-channels",
+      "className": "backend-business",
+      "moduleId": "communication_channels",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/communication_channels/channels/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "communication_channels",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/push_notifications",
+      "className": "backend-business",
+      "moduleId": "push_notifications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/push_notifications/send",
+      "className": "backend-business",
+      "moduleId": "push_notifications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/push_notifications/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "push_notifications",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/phone_calls",
+      "className": "backend-business",
+      "moduleId": "phone_calls",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/ai-assistant/agents",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/allowlist",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/legacy",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/moderation-flags",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/playground",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/settings",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/usage",
+      "className": "backend-settings",
+      "moduleId": "ai_assistant",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-assistant/models",
+      "className": "backend-settings",
+      "moduleId": "ai_model_config",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/system-update",
+      "className": "backend-settings",
+      "moduleId": "system_update",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-write-approvals",
+      "className": "backend-settings",
+      "moduleId": "dsh_approvals",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/modules",
+      "className": "backend-settings",
+      "moduleId": "module_directory",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/home",
+      "className": "backend-settings",
+      "moduleId": "settings_home",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype/accounts/detail",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype/accounts",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype/candidates",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype/drafts",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/prototype/tasks",
+      "className": "backend-business",
+      "moduleId": "crm_prototype",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/channels/connect",
+      "className": "backend-business",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/channels",
+      "className": "backend-business",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/exceptions",
+      "className": "backend-business",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/inbox",
+      "className": "backend-business",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]/before/[cursor]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/communications/inbox/[thread]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "communications",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "denied",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/workbench",
+      "className": "backend-business",
+      "moduleId": "workbench",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/business",
+      "className": "backend-business",
+      "moduleId": "crm_navigation",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/manage",
+      "className": "backend-business",
+      "moduleId": "crm_navigation",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/business/[category]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "crm_navigation",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/navigation",
+      "className": "backend-settings",
+      "moduleId": "workspace_settings",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/leadgen/candidates",
+      "className": "backend-business",
+      "moduleId": "leadgen",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/leadgen/suppressions",
+      "className": "backend-business",
+      "moduleId": "leadgen",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/ai-agents",
+      "className": "backend-settings",
+      "moduleId": "agent_directory",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/translations",
+      "className": "backend-settings",
+      "moduleId": "translations",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/new",
+      "className": "backend-settings",
+      "moduleId": "scheduler",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs",
+      "className": "backend-settings",
+      "moduleId": "scheduler",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/[id]/edit",
+      "className": "backend-settings",
+      "moduleId": "scheduler",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs/[id]",
+      "className": "backend-settings",
+      "moduleId": "scheduler",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/inbox-ops/log",
+      "className": "backend-business",
+      "moduleId": "inbox_ops",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/inbox-ops",
+      "className": "backend-business",
+      "moduleId": "inbox_ops",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/inbox-ops/settings",
+      "className": "backend-business",
+      "moduleId": "inbox_ops",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/inbox-ops/proposals/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "inbox_ops",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/payment-gateways",
+      "className": "backend-business",
+      "moduleId": "payment_gateways",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/checkout/pay-links/create",
+      "className": "backend-create-edit",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/checkout/pay-links",
+      "className": "backend-business",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/checkout/templates/create",
+      "className": "backend-create-edit",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/checkout/templates",
+      "className": "backend-business",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/checkout/transactions",
+      "className": "backend-business",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/checkout",
+      "className": "backend-business",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/checkout/pay-links/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/checkout/templates/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/checkout/templates/[id]/preview",
+      "className": "backend-detail-dynamic",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/checkout/transactions/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "checkout",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/documents",
+      "className": "backend-business",
+      "moduleId": "documents",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/documents/templates",
+      "className": "backend-business",
+      "moduleId": "documents",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/documents/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "documents",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "denied",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/shipping-carriers/create",
+      "className": "backend-create-edit",
+      "moduleId": "shipping_carriers",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/create",
+      "className": "backend-create-edit",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/plots/create",
+      "className": "backend-create-edit",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/plots",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/product-mappings/create",
+      "className": "backend-create-edit",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/product-mappings",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/create",
+      "className": "backend-create-edit",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/risk-assessments",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/statements/create",
+      "className": "backend-create-edit",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/statements",
+      "className": "backend-business",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/plots/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/product-mappings/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/risk-assessments/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/eudr/statements/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "eudr",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/webhooks/create",
+      "className": "backend-create-edit",
+      "moduleId": "webhooks",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/webhooks",
+      "className": "backend-business",
+      "moduleId": "webhooks",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/webhooks/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "webhooks",
+      "requireAuth": true,
+      "navHidden": false,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer_accounts/roles/create",
+      "className": "backend-create-edit",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "direct-sweep"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer_accounts/roles",
+      "className": "backend-business",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer_accounts/settings/domain",
+      "className": "backend-business",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer_accounts/settings",
+      "className": "backend-business",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customer_accounts/users",
+      "className": "backend-business",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "nav-sweep"
+      },
+      "metadataStatus": "reference-partially-resolved",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/backend/customer_accounts/roles/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/backend/customer_accounts/users/[id]",
+      "className": "backend-detail-dynamic",
+      "moduleId": "customer_accounts",
+      "requireAuth": true,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "idSource": "sentinel",
+        "source": "dynamic-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/reset/[token]",
+      "className": "frontend-public",
+      "moduleId": "auth",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/login",
+      "className": "frontend-public",
+      "moduleId": "auth",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/reset",
+      "className": "frontend-public",
+      "moduleId": "auth",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/quote/[token]",
+      "className": "frontend-other",
+      "moduleId": "sales",
+      "requireAuth": false,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims/[id]",
+      "className": "frontend-portal",
+      "moduleId": "warranty_claims",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims/new",
+      "className": "frontend-portal",
+      "moduleId": "warranty_claims",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 3,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/claims",
+      "className": "frontend-portal",
+      "moduleId": "warranty_claims",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/privacy",
+      "className": "frontend-public",
+      "moduleId": "content",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/terms",
+      "className": "frontend-public",
+      "moduleId": "content",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/onboarding",
+      "className": "frontend-public",
+      "moduleId": "onboarding",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/onboarding/preparing",
+      "className": "frontend-public",
+      "moduleId": "onboarding",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/docs/api",
+      "className": "frontend-public",
+      "moduleId": "api_docs",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 2,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "observation",
+        "kind": "navigation-failure",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/checkout-demo",
+      "className": "frontend-public",
+      "moduleId": "workflows",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 5,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "unresolved-reference",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/tasks/[id]",
+      "className": "frontend-portal",
+      "moduleId": "workflows",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/tasks",
+      "className": "frontend-portal",
+      "moduleId": "workflows",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/time-reports/[id]",
+      "className": "frontend-portal",
+      "moduleId": "staff",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/time-reports",
+      "className": "frontend-portal",
+      "moduleId": "staff",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/messages/view/[token]",
+      "className": "frontend-other",
+      "moduleId": "messages",
+      "requireAuth": false,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/pay/[slug]/cancel/[transactionId]",
+      "className": "frontend-pay",
+      "moduleId": "checkout",
+      "requireAuth": false,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/pay/[slug]",
+      "className": "frontend-pay",
+      "moduleId": "checkout",
+      "requireAuth": false,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "not-found-state",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/pay/[slug]/success/[transactionId]",
+      "className": "frontend-pay",
+      "moduleId": "checkout",
+      "requireAuth": false,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/[orgSlug]/portal/dashboard",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/[orgSlug]/portal/invite",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/login",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/[orgSlug]/portal/profile",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": null,
+      "apiReferences": 0,
+      "apiStatus": "unmapped",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "unmapped"
+    },
+    {
+      "route": "/[orgSlug]/portal/reset-password",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/signup",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    },
+    {
+      "route": "/[orgSlug]/portal/verify",
+      "className": "frontend-portal",
+      "moduleId": "portal",
+      "requireAuth": null,
+      "navHidden": true,
+      "apiReferences": 1,
+      "apiStatus": "source-literals-only",
+      "evidence": {
+        "status": "evidenced",
+        "kind": "rendered",
+        "source": "public-audit"
+      },
+      "metadataStatus": "inline-declared",
+      "apiMappingStatus": "source-literals-only"
+    }
+  ]
+}

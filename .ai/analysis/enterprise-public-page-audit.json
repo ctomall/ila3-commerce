@@ -281,7 +281,7 @@
           "url": "/quote/public-audit-sentinel-7d1a6",
           "width": 390,
           "scrollWidth": 390,
-          "text": "报价单 加载报价单失败。",
+          "text": "加载中… 正在加载报价单…",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -674,7 +674,7 @@
           "url": "/messages/view/public-audit-sentinel-7d1a6",
           "width": 1440,
           "scrollWidth": 1440,
-          "text": "消息 Invalid or expired link HTTP 404",
+          "text": "加载中… Loading message...",
           "crashed": false,
           "denied": false,
           "notFound": false
@@ -873,7 +873,7 @@
           "url": "/acme-corp/portal/invite",
           "width": 390,
           "scrollWidth": 390,
-          "text": "Accept Invitation Create your portal account to accept this invitation. Invalid or missing invitation token. DISPLAY NAME 密码 CONFIRM PASSWORD Accept Invitation Already have an account? Sign in",
+          "text": "Accept Invitation Create your portal account to accept this invitation. DISPLAY NAME 密码 CONFIRM PASSWORD Accept Invitation Already have an account? Sign in",
           "crashed": false,
           "denied": false,
           "notFound": false

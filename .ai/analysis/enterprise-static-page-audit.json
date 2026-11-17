@@ -1,0 +1,5119 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "authorized-navigation-static-destinations",
+  "count": 137,
+  "completed": 137,
+  "results": [
+    {
+      "route": "/backend/workbench",
+      "label": "工作台",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/calendar",
+      "label": "日历",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "2026年11月17日",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "2026年11月17日",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/staff/time-tracking",
+      "label": "我的工作",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "我的工作",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "我的工作",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/work-inbox",
+      "label": "工作收件箱",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Work Inbox",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Work Inbox",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customers/companies",
+      "label": "公司",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "公司",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "公司",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customers/deals",
+      "label": "商机",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customers/deals/map",
+      "label": "商机地图",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机地图",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "商机地图",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customer-tasks",
+      "label": "客户相关任务",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "客户相关任务",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "客户相关任务",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customers/people",
+      "label": "联系人",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "联系人",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "联系人",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/customers/deals/pipeline",
+      "label": "销售漏斗",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "商机",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/sales/quotes",
+      "label": "报价单",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "销售报价单查看单据详情，含客户信息、金额合计与渠道。",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "销售报价单查看单据详情，含客户信息、金额合计与渠道。",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/sales/channels/offers",
+      "label": "渠道报价",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "渠道报价",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "渠道报价",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/sales/orders",
+      "label": "订单",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "销售订单查看单据详情，含客户信息、金额合计与渠道。",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "销售订单查看单据详情，含客户信息、金额合计与渠道。",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/sales/channels",
+      "label": "销售渠道",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "销售渠道按市场或店铺管理商品报价。",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "销售渠道按市场或店铺管理商品报价。",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/catalog/products",
+      "label": "产品与服务",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "产品与服务",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "产品与服务",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/catalog/prices",
+      "label": "价格规则",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "价格规则",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "价格规则",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/catalog/categories",
+      "label": "分类",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "分类",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "分类",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms",
+      "label": "运营看板",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "运营看板",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "运营看板",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/inventory",
+      "label": "库存",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存操作",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库存操作",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/warehouses",
+      "label": "仓库",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/zones",
+      "label": "库区",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/locations",
+      "label": "库位",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/lots",
+      "label": "批次",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存批次",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库存批次",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/movements",
+      "label": "出入库记录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存出入库台账",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库存出入库台账",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/wms/reservations",
+      "label": "库存预留",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "库存预留",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "库存预留",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/warranty_claims/vendor-policies",
+      "label": "供应商政策",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Vendor policies",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Vendor policies",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/warranty_claims",
+      "label": "保修工单",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Warranty claims",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Warranty claims",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/warranty_claims/registrations",
+      "label": "保修登记",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Warranty registrations",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Warranty registrations",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/warranty_claims/troubleshooting-guides",
+      "label": "排障指南",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Troubleshooting guides",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Troubleshooting guides",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/projects",
+      "label": "项目",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Projects",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Projects",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/board",
+      "label": "任务",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "任务",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "任务",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/resources/resource-types",
+      "label": "资源类型",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "资源类型",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "资源类型",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/resources/resources",
+      "label": "资源",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "资源",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "资源",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/teams",
+      "label": "团队",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "团队",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "团队",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/team-members",
+      "label": "团队成员",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "团队成员",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "团队成员",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/team-roles",
+      "label": "团队角色",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "团队角色",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "团队角色",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/my-availability",
+      "label": "我的可用性",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "可用性",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "可用性",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/my-leave-requests",
+      "label": "我的请假",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "请假申请",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "请假申请",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/leave-requests",
+      "label": "团队请假",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "请假申请",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "请假申请",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/entries",
+      "label": "工时记录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Time entries",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Time entries",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/timesheet",
+      "label": "工时表",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/reports",
+      "label": "工时报表",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工时报表",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工时报表",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/planner/availability-rulesets",
+      "label": "可用性排班",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "可用性排班",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "可用性排班",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/payment-gateways",
+      "label": "支付交易",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Payment Transactions",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Payment Transactions",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/checkout/pay-links",
+      "label": "支付链接",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "支付链接",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "支付链接",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/checkout/templates",
+      "label": "结账模板",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "链接模板",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "链接模板",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/checkout/transactions",
+      "label": "交易记录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "交易记录",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "交易记录",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/storage/attachments",
+      "label": "附件",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "附件",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "附件",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/documents",
+      "label": "文档",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "文件夹",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "文件夹",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/documents/templates",
+      "label": "文档模板",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Document templates",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Document templates",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/phone_calls",
+      "label": "通话记录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "通话记录",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "通话记录",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/inbox-ops",
+      "label": "收件箱建议",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI Inbox Actions",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "AI Inbox Actions",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/messages",
+      "label": "消息",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/communications/inbox",
+      "label": "全渠道收件箱",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "全渠道收件箱",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/communications/channels",
+      "label": "渠道账号",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "渠道账号",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "渠道账号",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/communications/exceptions",
+      "label": "发送结果对账",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "发送结果对账",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "发送结果对账",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/instances",
+      "label": "工作流实例",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流实例",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流实例",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr",
+      "label": "EUDR 概览",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "EUDR 合规概览",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "EUDR 合规概览",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr/product-mappings",
+      "label": "产品映射",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Product mappings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Product mappings",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr/plots",
+      "label": "地块",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Plots",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Plots",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr/statements",
+      "label": "声明",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Statements",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Statements",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr/evidence-submissions",
+      "label": "证据提交",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Evidence submissions",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Evidence submissions",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/eudr/risk-assessments",
+      "label": "风险评估",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Risk assessments",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Risk assessments",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/directory/branding",
+      "label": "组织品牌",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Organization branding",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Organization branding",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/users",
+      "label": "用户",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "用户",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "用户",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/directory/organizations",
+      "label": "组织",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Organizations",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Organizations",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/roles",
+      "label": "角色",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "角色",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "角色",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/webhooks",
+      "label": "Webhook",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Webhooks",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Webhooks",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/scheduled-jobs",
+      "label": "定时任务",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "定时任务",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "定时任务",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/integrations",
+      "label": "集成",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "集成",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "集成",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/data-sync",
+      "label": "数据同步",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "同步运行记录",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "同步运行记录",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/communication_channels/channels",
+      "label": "通信渠道",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "通信渠道",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "通信渠道",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/models",
+      "label": "模型配置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "模型配置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "模型配置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-agents",
+      "label": "智能体列表",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "智能体列表",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "智能体列表",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-write-approvals",
+      "label": "Write approvals",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "写入审批",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "写入审批",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/agents",
+      "label": "AI 智能体",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 智能体",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "AI 智能体",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/settings",
+      "label": "AI 设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 403,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/usage",
+      "label": "AI 用量",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Token 用量统计",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Token 用量统计",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/playground",
+      "label": "AI 调试台",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 调试台",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "AI 调试台",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/legacy",
+      "label": "AI 助手（旧版）",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 403,
+          "skeletons": 0,
+          "title": "AI 助手设置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/allowlist",
+      "label": "AI 白名单",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "AI 提供方与模型白名单",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "AI 提供方与模型白名单",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/ai-assistant/moderation-flags",
+      "label": "审核标记",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "审核标记",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "审核标记",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/sales",
+      "label": "销售",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "订单状态",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "订单状态",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/catalog",
+      "label": "商品目录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "价格类型",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "价格类型",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/customers",
+      "label": "客户",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "客户地址格式",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "客户地址格式",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/customers/pipeline-stages",
+      "label": "销售漏斗阶段",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "漏斗阶段",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 485,
+          "skeletons": 0,
+          "title": "漏斗阶段",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/dictionaries",
+      "label": "数据字典",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "数据字典",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 398,
+          "skeletons": 0,
+          "title": "数据字典",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/currencies",
+      "label": "货币",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "货币",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "货币",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/leadgen/candidates",
+      "label": "Lead candidates",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "获客候选",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "获客候选",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/exchange-rates",
+      "label": "汇率",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Exchange Rates",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Exchange Rates",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/leadgen/suppressions",
+      "label": "Suppression list",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "抑制名单",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "抑制名单",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/currency-fetching",
+      "label": "汇率抓取",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "汇率抓取",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "汇率抓取",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/wms",
+      "label": "仓储配置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "WMS 配置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "WMS 配置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/inbox-ops/settings",
+      "label": "收件箱设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Inbox Settings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Inbox Settings",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/customers/deals",
+      "label": "商机设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "商机设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "商机设置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/warranty_claims/settings",
+      "label": "保修工单设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Claim settings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Claim settings",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/staff/time-tracking/settings",
+      "label": "工时设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Module settings",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Module settings",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/workflows",
+      "label": "工作流命令",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流命令",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流命令",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/definitions",
+      "label": "工作流定义",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流定义",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流定义",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/rules",
+      "label": "业务规则",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "业务规则",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "业务规则",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/sets",
+      "label": "规则集",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Rule Sets",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Rule Sets",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/customer_accounts/users",
+      "label": "客户用户",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "用户",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "用户",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/customer_accounts/roles",
+      "label": "客户角色",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "角色",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "角色",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/customer_accounts/settings",
+      "label": "门户设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "门户设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "门户设置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/customer_accounts/settings/domain",
+      "label": "自定义域名",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "自定义域名",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "自定义域名",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/devices",
+      "label": "设备",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Devices",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Devices",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/notifications/user-preferences",
+      "label": "用户通知偏好",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "用户通知偏好",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "用户通知偏好",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/notifications",
+      "label": "通知投递",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "通知投递",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "通知投递",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/push_notifications",
+      "label": "推送投递记录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "推送投递",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "推送投递",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/push_notifications/send",
+      "label": "发送推送",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "发送推送",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "发送推送",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/system-status",
+      "label": "系统状态",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "系统状态",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "系统状态",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/module-telemetry",
+      "label": "模块遥测",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "模块遥测",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "模块遥测",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/query-indexes",
+      "label": "查询索引",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "查询索引",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "查询索引",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/cache",
+      "label": "缓存",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "缓存概览",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "缓存概览",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/modules",
+      "label": "模块应用",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "模块应用",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "模块应用",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/translations",
+      "label": "翻译管理",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "翻译管理",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "翻译管理",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/attachments",
+      "label": "存储",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "附件分区",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "附件分区",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/system-update",
+      "label": "系统升级",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "系统升级",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "系统升级",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/search",
+      "label": "搜索设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "搜索设置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "搜索设置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/instances/failure-queue",
+      "label": "失败队列",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Grouped by error",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Grouped by error",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/events",
+      "label": "工作流事件",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "工作流事件",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "工作流事件",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/logs",
+      "label": "执行日志",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Execution Logs",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Execution Logs",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/audit-logs",
+      "label": "审计日志",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "审计日志",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "审计日志",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/inbox-ops/log",
+      "label": "处理日志",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "处理日志",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "处理日志",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/feature-toggles/global",
+      "label": "全局开关",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Feature Toggles",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Feature Toggles",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/entities/system",
+      "label": "系统实体",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "System Entities",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "System Entities",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/directory/tenants",
+      "label": "租户",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "Tenants",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "Tenants",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/entities/user",
+      "label": "自定义实体",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "自定义实体",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "自定义实体",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/feature-toggles/overrides",
+      "label": "覆盖项",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "功能开关覆盖",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "功能开关覆盖",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/api-keys",
+      "label": "API 密钥",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "API Keys",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "API Keys",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/settings",
+      "label": "自定义实体设置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/config/encryption",
+      "label": "加密",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "加密",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "加密",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/docs",
+      "label": "API 文档",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "API resources",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "API resources",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/profile/change-password",
+      "label": "修改密码",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "修改密码",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "修改密码",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/sidebar-customization",
+      "label": "自定义侧边栏",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 3,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 400,
+          "skeletons": 3,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [],
+      "blockedWrites": [],
+      "errorAttribution": "not-determined"
+    },
+    {
+      "route": "/backend/profile/communication-channels",
+      "label": "我的通信渠道",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "我的通信渠道",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "我的通信渠道",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    },
+    {
+      "route": "/backend/profile/notification-preferences",
+      "label": "通知偏好",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "skeletons": 0,
+          "title": "通知偏好",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 390,
+          "skeletons": 0,
+          "title": "通知偏好",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "readiness": "dom-quiet-not-business-ready",
+      "pageErrors": [
+        {
+          "name": "TypeError",
+          "category": "network-or-blocked-request"
+        }
+      ],
+      "blockedWrites": [
+        {
+          "method": "PUT",
+          "path": "/api/workspace_settings/preferences"
+        }
+      ],
+      "errorAttribution": "possibly-caused-by-readonly-write-blocking-not-confirmed-app-defect"
+    }
+  ]
+}

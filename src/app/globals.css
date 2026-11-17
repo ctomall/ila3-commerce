@@ -1325,3 +1325,23 @@ header [data-ai-launcher-trigger-mobile] {
     overflow-x: auto;
   }
 }
+
+/* Grid cards: an item's automatic minimum width is its content's min-content
+   size, so a card holding a wide table forced its one-column track to 827px on
+   a 390px screen (prototype lists) and a two-column create form pushed its
+   settings column 57px past a 1440px viewport (checkout create). Letting items
+   shrink is the standard grid behaviour; wide tables get their own local scroll
+   port below so they scroll instead of widening the page. */
+#main-content .grid > * {
+  min-width: 0;
+}
+
+/* The `position: relative` keeps any absolutely positioned table cell inside
+   the wrapper instead of resolving against the page. */
+@media (width < 48rem) {
+  #main-content div:has(> table) {
+    max-width: 100%;
+    overflow-x: auto;
+    position: relative;
+  }
+}
