@@ -1,0 +1,24 @@
+{
+  "base": "http://127.0.0.1:3000",
+  "scope": "navigation-search-authorization",
+  "probes": 67,
+  "steps": 2,
+  "results": [
+    {
+      "role": "superadmin",
+      "own": 137,
+      "found": 137,
+      "missing": [],
+      "leaks": [],
+      "emptyState": true
+    },
+    {
+      "role": "employee",
+      "own": 70,
+      "found": 70,
+      "missing": [],
+      "leaks": [],
+      "emptyState": true
+    }
+  ]
+}

@@ -37,6 +37,7 @@ const sources = {
   permission: path.join(repo, '.ai/analysis/enterprise-permission-audit.json'),
   apiAuth: path.join(repo, '.ai/analysis/enterprise-api-auth-probe.json'),
   breadcrumb: path.join(repo, '.ai/analysis/enterprise-breadcrumb-audit.json'),
+  navSearch: path.join(repo, '.ai/analysis/enterprise-nav-search-audit.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -191,6 +192,7 @@ const emptyState = read(sources.emptyState)
 const permissionAudit = read(sources.permission)
 const apiAuth = read(sources.apiAuth)
 const breadcrumbAudit = read(sources.breadcrumb)
+const navSearch = read(sources.navSearch)
 const breadcrumbByRoute = new Map((breadcrumbAudit?.results ?? []).map((entry) => [normalize(entry.route), {
   verdict: entry.verdict,
   navLabel: entry.navLabel ?? null,
@@ -329,6 +331,9 @@ const summary = {
     breadcrumbMismatch: [...breadcrumbByRoute.values()].filter((entry) => entry.verdict === 'mismatch').length,
     breadcrumbNoCrumb: [...breadcrumbByRoute.values()].filter((entry) => entry.verdict === 'no-breadcrumb').length,
     breadcrumbUnauthorizedAncestors: [...breadcrumbByRoute.values()].reduce((sum, entry) => sum + entry.unauthorizedAncestors.length, 0),
+    navSearchFound: (navSearch?.results ?? []).reduce((sum, entry) => sum + entry.found, 0),
+    navSearchOwn: (navSearch?.results ?? []).reduce((sum, entry) => sum + entry.own, 0),
+    navSearchLeaks: (navSearch?.results ?? []).reduce((sum, entry) => sum + entry.leaks.length, 0),
     permissionAudited: permissionAudited.length,
     permissionRendered: permissionAudited.filter((row) => row.permission.verdict === 'rendered').length,
     permissionDenied: permissionDenied.length,
@@ -392,6 +397,8 @@ Inventory commit: \`${summary.sourceCommit ?? 'unknown'}\`
 | ... label mismatch | ${summary.totals.breadcrumbMismatch ?? 'n/a'} |
 | ... no current crumb (dashboard root) | ${summary.totals.breadcrumbNoCrumb ?? 'n/a'} |
 | ... ancestor links outside the CRM catalogue | ${summary.totals.breadcrumbUnauthorizedAncestors ?? 'n/a'} |
+| Navigation-search entries found / own (both roles) | ${summary.totals.navSearchFound ?? 0} / ${summary.totals.navSearchOwn ?? 0} |
+| Navigation-search out-of-catalogue results | ${summary.totals.navSearchLeaks ?? 0} |
 | Gaps | ${summary.totals.gap} |
 | Backend module routes | ${summary.totals.backendApis} |
 | OpenAPI operations | ${summary.totals.openApiOperations} |

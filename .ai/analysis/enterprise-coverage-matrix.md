@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T15:43:01.848Z
+Generated: 2026-11-17T15:55:51.194Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -36,6 +36,8 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | ... label mismatch | 5 |
 | ... no current crumb (dashboard root) | 1 |
 | ... ancestor links outside the CRM catalogue | 4 |
+| Navigation-search entries found / own (both roles) | 207 / 207 |
+| Navigation-search out-of-catalogue results | 0 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
