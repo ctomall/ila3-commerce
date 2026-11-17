@@ -30,7 +30,7 @@ jest.mock('next/server', () => ({
 }))
 
 import { GET as getLayout, PUT as putLayout } from '../api/layout/route'
-import { PUT as putPreference } from '../api/preferences/route'
+import { GET as getPreference, PUT as putPreference } from '../api/preferences/route'
 
 function request(body?: unknown): NextRequest {
   return { json: async () => body, headers: { get: () => null } } as unknown as NextRequest
@@ -40,6 +40,7 @@ beforeEach(() => {
   mockAuth.mockClear()
   mockScope.mockClear()
   mockLoadLayout.mockClear()
+  mockLoadPreference.mockClear()
   mockSaveLayout.mockClear()
 })
 
@@ -82,6 +83,22 @@ describe('workspace layout API', () => {
 })
 
 describe('navigation preference API', () => {
+  it('reads an empty preference instead of failing without a single organization', async () => {
+    mockScope.mockResolvedValueOnce(null as never)
+    const res = await getPreference(request())
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Cache-Control')).toBe('no-store')
+    expect((await res.json()).preference).toMatchObject({ favorites: [] })
+    expect(mockLoadPreference).not.toHaveBeenCalled()
+  })
+
+  it('still refuses to write without a single organization', async () => {
+    mockScope.mockResolvedValueOnce(null as never)
+    const res = await putPreference(request({ favorites: [] }))
+    expect(res.status).toBe(400)
+    expect((await res.json()).code).toBe('organization_required')
+  })
+
   it('rejects a favorite that is not a backend path', async () => {
     const res = await putPreference(request({ favorites: ['https://evil.test'] }))
     expect(res.status).toBe(400)

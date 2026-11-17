@@ -4,7 +4,7 @@ import type { OpenApiRouteDoc } from '@open-mercato/shared/lib/openapi'
 import { getAuthFromRequest } from '@open-mercato/shared/lib/auth/server'
 import { createRequestContainer } from '@open-mercato/shared/lib/di/container'
 import type { EntityManager } from '@mikro-orm/postgresql'
-import { normalizePreference } from '../../lib/preferences'
+import { EMPTY_PREFERENCE, normalizePreference } from '../../lib/preferences'
 import { loadPreference, savePreference } from '../../lib/repository'
 import { resolveWorkspaceScope, type WorkspaceScope } from '../../lib/scope'
 
@@ -28,8 +28,7 @@ export const openApi: OpenApiRouteDoc = {
     GET: {
       summary: 'Read the caller’s navigation preference',
       responses: [
-        { status: 200, description: 'Stored preference, or empty when none was saved.', schema: responseSchema },
-        { status: 400, description: 'No single organization is selected.' },
+        { status: 200, description: 'Stored preference, or empty when none was saved or no single organization is selected.', schema: responseSchema },
         { status: 401, description: 'Unauthenticated.' },
       ],
     },
@@ -67,9 +66,22 @@ async function context(req: NextRequest): Promise<RouteContext> {
 }
 
 export async function GET(req: NextRequest) {
-  const ctx = await context(req)
-  if (ctx.error) return ctx.error
-  const stored = await loadPreference(ctx.em, ctx.scope)
+  // Reading a per-user preference must not fail just because the caller has no
+  // single organization selected (superadmin "all organizations", pages opened
+  // before a scope is chosen). There is nothing stored at that scope, so the
+  // answer is the empty preference; only writing needs a concrete scope.
+  const auth = await getAuthFromRequest(req)
+  if (!auth) return NextResponse.json({ error: 'Unauthorized', code: 'unauthorized' }, { status: 401 })
+  const scope = await resolveWorkspaceScope(req, auth)
+  if (!scope) {
+    return NextResponse.json(
+      { preference: EMPTY_PREFERENCE, updatedAt: null },
+      { headers: { 'Cache-Control': 'no-store' } },
+    )
+  }
+  const container = await createRequestContainer()
+  const em = container.resolve<EntityManager>('em').fork()
+  const stored = await loadPreference(em, scope)
   return NextResponse.json({ preference: stored.value, updatedAt: stored.updatedAt }, { headers: { 'Cache-Control': 'no-store' } })
 }
 
