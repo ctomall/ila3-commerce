@@ -1,6 +1,6 @@
 # Page coverage matrix
 
-Generated: 2026-11-17T13:24:33.676Z
+Generated: 2026-11-17T14:21:43.315Z
 Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 
 ## Totals
@@ -16,8 +16,8 @@ Inventory commit: `71c54aba96613d7b3d28061d6e809bbd4ef10215`
 | Unresolved references | 0 |
 | Not probed safely (POST-only / side effects) | 12 |
 | Return path audited (create/edit/detail/profile) | 130 |
-| Return path evidenced | 120 |
-| No contextual return | 10 |
+| Return path evidenced | 128 |
+| No contextual return | 2 |
 | Gaps | 0 |
 | Backend module routes | 290 |
 | OpenAPI operations | 1006 |
@@ -386,23 +386,15 @@ in-page back control.
 
 | Return path | Routes |
 | --- | --- |
-| no-return | 10 |
-| contextual-return | 88 |
-| breadcrumb-ancestor | 18 |
-| in-page-back | 14 |
+| no-return | 2 |
+| contextual-return | 123 |
+| in-page-back | 3 |
+| breadcrumb-ancestor | 2 |
 
 Routes with no contextual return (dashboard breadcrumb only):
 
 - `/backend/auth/profile`
-- `/backend/entities/system/[entityId]`
-- `/backend/sales/documents/create`
-- `/backend/sales/documents/[id]`
-- `/backend/rules/[id]`
-- `/backend/sets/[id]`
 - `/backend/staff/profile/create`
-- `/backend/communications/inbox/[thread]`
-- `/backend/checkout/templates/[id]/preview`
-- `/backend/shipping-carriers/create`
 
 ## Observations
 

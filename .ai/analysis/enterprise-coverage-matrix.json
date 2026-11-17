@@ -1,6 +1,6 @@
 {
   "summary": {
-    "generatedAt": "2026-11-17T13:24:33.676Z",
+    "generatedAt": "2026-11-17T14:21:43.315Z",
     "sourceCommit": "71c54aba96613d7b3d28061d6e809bbd4ef10215",
     "sources": {
       "baseline": "/home/pro/apps/mercato/.ai/analysis/enterprise-inventory-baseline.json",
@@ -11,7 +11,6 @@
       "direct": "/home/pro/apps/mercato/.ai/analysis/enterprise-direct-page-audit.json",
       "contractProbe": "/home/pro/apps/mercato/.ai/analysis/enterprise-api-contract-probe.json",
       "returnAudit": "/home/pro/apps/mercato/.ai/analysis/enterprise-return-path-audit.json",
-      "returnSupplement": "/home/pro/apps/mercato/.ai/analysis/enterprise-return-path-supplement.json",
       "openapi": "/home/pro/apps/mercato/.mercato/generated/openapi.generated.json"
     },
     "totals": {
@@ -24,8 +23,8 @@
       "contractUnresolved": 0,
       "contractUnverified": 12,
       "returnPathAudited": 130,
-      "returnPathEvidenced": 120,
-      "returnPathMissing": 10,
+      "returnPathEvidenced": 128,
+      "returnPathMissing": 2,
       "gap": 0,
       "backendApis": 290,
       "openApiOperations": 1006,
@@ -896,9 +895,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customers/companies/create",
-        "returnHref": null,
+        "returnHref": "/backend/customers/companies",
         "links": [
           "/backend",
           "/backend/customers/companies"
@@ -962,9 +961,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customers/deals/create",
-        "returnHref": null,
+        "returnHref": "/backend/customers/deals",
         "links": [
           "/backend",
           "/backend/customers/deals"
@@ -1086,9 +1085,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customers/people/create",
-        "returnHref": null,
+        "returnHref": "/backend/customers/people",
         "links": [
           "/backend",
           "/backend/customers/people"
@@ -1152,9 +1151,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/customers/companies-v2/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
-        "returnHref": null,
+        "returnHref": "/backend/customers/companies",
         "links": [
           "/backend"
         ]
@@ -1189,9 +1188,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/customers/companies/b026cb18-bf9c-45c6-8b14-805eede4ff4c",
-        "returnHref": null,
+        "returnHref": "/backend/customers/companies",
         "links": [
           "/backend"
         ]
@@ -1300,9 +1299,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/customers/people/1a961045-8606-4341-b8c1-dcd5de97c9f8",
-        "returnHref": null,
+        "returnHref": "/backend/customers/people",
         "links": [
           "/backend"
         ]
@@ -1490,9 +1489,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "contextual-return",
         "url": "/backend/entities/system/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/entities/system",
         "links": [
           "/backend"
         ]
@@ -2413,7 +2412,7 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "in-page-back",
         "url": "/backend/sales/documents/create",
         "returnHref": null,
         "links": [
@@ -2622,7 +2621,7 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "in-page-back",
         "url": "/backend/sales/documents/11111111-1111-4111-8111-111111111111",
         "returnHref": null,
         "links": [
@@ -2659,9 +2658,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/sales/orders/06708c7d-e6d9-47ed-844c-d51cc6819404",
-        "returnHref": null,
+        "returnHref": "/backend/sales/orders",
         "links": [
           "/backend"
         ]
@@ -2762,9 +2761,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/warranty_claims/create",
-        "returnHref": null,
+        "returnHref": "/backend/warranty_claims",
         "links": [
           "/backend",
           "/backend/warranty_claims"
@@ -2799,9 +2798,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/warranty_claims/registrations/create",
-        "returnHref": null,
+        "returnHref": "/backend/warranty_claims/registrations",
         "links": [
           "/backend",
           "/backend/warranty_claims",
@@ -2962,9 +2961,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/warranty_claims/vendor-policies/create",
-        "returnHref": null,
+        "returnHref": "/backend/warranty_claims/vendor-policies",
         "links": [
           "/backend",
           "/backend/warranty_claims",
@@ -3067,9 +3066,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/warranty_claims/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/warranty_claims",
         "links": [
           "/backend",
           "/backend/warranty_claims"
@@ -3522,9 +3521,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/wms/lot/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/wms",
         "links": [
           "/backend",
           "/backend/wms",
@@ -3561,9 +3560,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/wms/sku/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/wms",
         "links": [
           "/backend",
           "/backend/wms",
@@ -4025,9 +4024,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "contextual-return",
         "url": "/backend/rules/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/rules",
         "links": [
           "/backend"
         ]
@@ -4062,9 +4061,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "contextual-return",
         "url": "/backend/sets/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/sets",
         "links": [
           "/backend"
         ]
@@ -4299,9 +4298,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/definitions/create",
-        "returnHref": null,
+        "returnHref": "/backend/definitions",
         "links": [
           "/backend",
           "/backend/definitions"
@@ -5028,9 +5027,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/planner/availability-rulesets/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/planner/availability-rulesets",
         "links": []
       },
       "apiStatus": "source-literals-only",
@@ -5270,9 +5269,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/staff/leave-requests/create",
-        "returnHref": null,
+        "returnHref": "/backend/staff/leave-requests",
         "links": [
           "/backend"
         ]
@@ -5465,9 +5464,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/staff/team-members/create",
-        "returnHref": null,
+        "returnHref": "/backend/staff/team-members",
         "links": [
           "/backend",
           "/backend/staff/team-members"
@@ -5750,9 +5749,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/staff/time-tracking/projects/create",
-        "returnHref": null,
+        "returnHref": "/backend/staff/time-tracking/projects",
         "links": [
           "/backend",
           "/backend/staff/time-tracking",
@@ -6038,9 +6037,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/staff/leave-requests/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/staff/leave-requests",
         "links": [
           "/backend"
         ]
@@ -6112,9 +6111,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/staff/team-members/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/staff/team-members",
         "links": []
       },
       "apiStatus": "source-literals-only",
@@ -6959,9 +6958,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/push_notifications/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/push_notifications",
         "links": [
           "/backend"
         ]
@@ -7727,9 +7726,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "contextual-return",
         "url": "/backend/communications/inbox/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/communications/inbox",
         "links": []
       },
       "apiStatus": "unmapped",
@@ -8304,9 +8303,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/checkout/pay-links/create",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
       "apiStatus": "unmapped",
@@ -8367,9 +8366,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/checkout/templates/create",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/templates",
         "links": []
       },
       "apiStatus": "unmapped",
@@ -8488,9 +8487,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/checkout/pay-links/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/pay-links",
         "links": []
       },
       "apiStatus": "unmapped",
@@ -8523,9 +8522,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/templates",
         "links": []
       },
       "apiStatus": "unmapped",
@@ -8558,9 +8557,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "contextual-return",
         "url": "/backend/checkout/templates/11111111-1111-4111-8111-111111111111/preview",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/templates",
         "links": []
       },
       "apiStatus": "source-literals-only",
@@ -8593,9 +8592,9 @@
         "status": "resolved"
       },
       "returnPath": {
-        "status": "in-page-back",
+        "status": "contextual-return",
         "url": "/backend/checkout/transactions/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/checkout/transactions",
         "links": []
       },
       "apiStatus": "source-literals-only",
@@ -8724,7 +8723,7 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "no-return",
+        "status": "in-page-back",
         "url": "/backend/shipping-carriers/create",
         "returnHref": null,
         "links": []
@@ -9383,9 +9382,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/webhooks/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/webhooks",
         "links": [
           "/backend",
           "/backend/webhooks"
@@ -9421,9 +9420,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customer_accounts/roles/create",
-        "returnHref": null,
+        "returnHref": "/backend/customer_accounts/roles",
         "links": [
           "/backend",
           "/backend/customer_accounts/roles"
@@ -9576,9 +9575,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customer_accounts/roles/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/customer_accounts/roles",
         "links": [
           "/backend",
           "/backend/customer_accounts/roles"
@@ -9614,9 +9613,9 @@
         "status": "no-references"
       },
       "returnPath": {
-        "status": "breadcrumb-ancestor",
+        "status": "contextual-return",
         "url": "/backend/customer_accounts/users/11111111-1111-4111-8111-111111111111",
-        "returnHref": null,
+        "returnHref": "/backend/customer_accounts/users",
         "links": [
           "/backend",
           "/backend/customer_accounts/users"

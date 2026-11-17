@@ -97,29 +97,55 @@ try {
     try {
       await page.goto(base + url, { waitUntil: 'domcontentloaded', timeout: 25_000 })
       await page.locator('header').waitFor({ timeout: 15_000 })
-      // Chrome and the contextual return control can arrive after hydration.
+      // Chrome and a page-provided return control can arrive after hydration;
+      // give them a bounded window before deciding the page has none.
       await page
         .waitForFunction(
-          () => Boolean(document.querySelector('[data-navigation-return]')) || document.querySelectorAll('header nav a[href]').length > 1,
+          () =>
+            Boolean(document.querySelector('[data-navigation-return]')) ||
+            document.querySelectorAll('header nav a[href]').length > 1,
           { timeout: 8_000 },
         )
         .catch(() => {})
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(2_500)
       const view = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll('header nav a[href]')).map((anchor) => anchor.getAttribute('href')).filter(Boolean)
         const ret = document.querySelector('[data-navigation-return]')
         const path = `${location.pathname}${location.search}`
-        return { links, returnHref: ret?.getAttribute('href') ?? null, path }
+        const current = location.pathname
+        const isAncestor = (href) => {
+          try {
+            const target = new URL(href, location.origin).pathname
+            return target !== current && current.startsWith(`${target}/`)
+          } catch {
+            return false
+          }
+        }
+        // Page-provided back controls are not always marked with our data
+        // attribute: some render a plain "← 返回 / Back" link or button.
+        const mainAncestors = [...new Set([...document.querySelectorAll('#main-content a[href]')].map((anchor) => anchor.getAttribute('href')))]
+          .filter((href) => href && isAncestor(href))
+        // "← 返回", "Back", or a labelled link such as "返回报价单列表"; the
+        // element must be actionable (link/button/role) to count.
+        const actionables = [...document.querySelectorAll('#main-content a, #main-content button, #main-content [role="button"]')]
+        const backControls = actionables
+          .filter((element) => /^\s*[←<]?\s*(返回|Back)/i.test((element.textContent ?? '').trim()))
+          .map((element) => element.getAttribute('href') ?? 'button')
+        return { links, returnHref: ret?.getAttribute('href') ?? null, mainAncestors: mainAncestors.slice(0, 4), backControls: backControls.slice(0, 4), path }
       })
       record.links = [...new Set(view.links)]
       record.returnHref = view.returnHref
       const ancestors = record.links.filter((href) => href !== '/backend' && segmentPrefix(href.split('?')[0], view.path.split('?')[0]))
       record.ancestors = ancestors
+      record.mainAncestors = view.mainAncestors
+      record.backControls = view.backControls
       record.verdict = record.returnHref
         ? 'return-control'
         : ancestors.length > 0
           ? 'ancestor-breadcrumb'
-          : 'dashboard-only'
+          : view.mainAncestors.length > 0 || view.backControls.length > 0
+            ? 'in-page-back'
+            : 'no-return'
     } catch (error) {
       record.verdict = 'navigation-failure'
       record.failure = error.name

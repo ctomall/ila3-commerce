@@ -33,7 +33,6 @@ const sources = {
   direct: path.join(repo, '.ai/analysis/enterprise-direct-page-audit.json'),
   contractProbe: path.join(repo, '.ai/analysis/enterprise-api-contract-probe.json'),
   returnAudit: path.join(repo, '.ai/analysis/enterprise-return-path-audit.json'),
-  returnSupplement: path.join(repo, '.ai/analysis/enterprise-return-path-supplement.json'),
   openapi: path.join(repo, '.mercato/generated/openapi.generated.json'),
 }
 
@@ -184,17 +183,17 @@ function evidenceFor(page) {
 }
 
 const returnAudit = read(sources.returnAudit)
-const returnSupplement = read(sources.returnSupplement) ?? []
-const supplementByUrl = new Map(returnSupplement.map((entry) => [stripQuery(entry.route), entry]))
 const returnStatusByRoute = new Map(
   (returnAudit?.results ?? []).map((entry) => {
     const status = entry.verdict === 'return-control'
       ? 'contextual-return'
       : entry.verdict === 'ancestor-breadcrumb'
         ? 'breadcrumb-ancestor'
-        : entry.verdict === 'dashboard-only'
-          ? (supplementByUrl.get(stripQuery(entry.url))?.hasBack ? 'in-page-back' : 'no-return')
-          : entry.verdict
+        : entry.verdict === 'in-page-back'
+          ? 'in-page-back'
+          : entry.verdict === 'no-return'
+            ? 'no-return'
+            : entry.verdict
     return [normalize(entry.route), { status, url: entry.url, returnHref: entry.returnHref ?? null, links: (entry.links ?? []).slice(0, 4) }]
   }),
 )

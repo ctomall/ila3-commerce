@@ -114,29 +114,22 @@ run writes, so they are marked unverified instead of guessed. `/api/auth/feature
 is POST-only but already exercised by the read-only sweeps, so it counts as
 resolved.
 
-## Return-path evidence
+## Return-path evidence (corrected)
 
 `scripts/enterprise-return-path-audit.mjs` opens the 130 detail/create/edit/
-profile pages (real record ids resolved through the module list APIs where they
-exist) and checks three ways back: the contextual return control
-(`[data-navigation-return]`), an authorized ancestor breadcrumb, or an in-page
-back link/button. The dashboard-only verdicts were re-checked in the DOM, since
-several pages render the back control inside the page rather than the shell.
+profile pages (real record ids where a list API exists) and counts four ways
+back: the contextual return contract (`[data-navigation-return]`), an authorized
+ancestor breadcrumb, an actionable in-page `返回`/`Back` control, or nothing.
 
 | Return path | Routes |
 | --- | --- |
-| contextual return control | 88 |
-| ancestor breadcrumb | 18 |
-| in-page back control (supplement) | 14 |
-| no contextual return | 10 |
+| contextual return control | 123 |
+| in-page back control | 3 |
+| ancestor breadcrumb | 2 |
+| no contextual return | 2 |
 
-Routes with no contextual return (dashboard breadcrumb only):
-
-`/backend/auth/profile`, `/backend/entities/system/[entityId]`,
-`/backend/sales/documents/create`, `/backend/sales/documents/[id]`,
-`/backend/rules/[id]`, `/backend/sets/[id]`, `/backend/staff/profile/create`,
-`/backend/communications/inbox/[thread]`, `/backend/checkout/templates/[id]/preview`,
-`/backend/shipping-carriers/create`.
-
-These are recorded as the next UX slice (a shell-level contextual return that
-does not duplicate a page-provided control); nothing was changed in this round.
+The first run reported 10 missing returns; that was a classifier false negative
+(plain in-page back anchors without the data attribute). See
+`enterprise-return-path-findings.md`. The remaining two are
+`/backend/auth/profile` (personal hub, dashboard breadcrumb only) and
+`/backend/staff/profile/create` (no authorized parent in the catalogue).
