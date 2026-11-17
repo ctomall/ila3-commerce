@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "drill": "p6-rollback-vs-data-restore",
+  "startedAt": "2026-11-17T12:12:37.992Z",
+  "checks": {
+    "releaseBefore": {
+      "dir": "/home/pro/releases/mercato/55f4c48641817222905e947248a2d1a5238ec8f7",
+      "version": "0.2.9",
+      "sha": "55f4c48641817222905e947248a2d1a5238ec8f7"
+    },
+    "scratch": {
+      "entityId": "87ddd6b1-3966-406e-84be-ba43c0399ab7",
+      "companyId": "48dad162-91e8-4ee8-80b8-34df1f25db0a",
+      "marker": "Rollback Drill 2026-11-17T121237991Z"
+    },
+    "backup": "/home/pro/backups/2026-11-17T121237991Z-rollback-drill-data.json",
+    "visibleBeforeRollback": true,
+    "rollback": {
+      "command": "node scripts/crm-rollback.mjs --to previous --apply",
+      "exit": 0,
+      "ready": true,
+      "release": {
+        "dir": "/home/pro/releases/mercato/cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+        "version": "0.2.8",
+        "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e"
+      },
+      "dataSurvived": true
+    },
+    "forward": {
+      "exit": 0,
+      "release": {
+        "dir": "/home/pro/releases/mercato/55f4c48641817222905e947248a2d1a5238ec8f7",
+        "version": "0.2.9",
+        "sha": "55f4c48641817222905e947248a2d1a5238ec8f7"
+      },
+      "dataSurvived": true
+    },
+    "softDelete": {
+      "status": 200,
+      "hidden": true
+    },
+    "rowsAfterDelete": {
+      "entityExists": false,
+      "companyExists": false
+    },
+    "dataRestore": {
+      "backupFile": "/home/pro/backups/2026-11-17T121237991Z-rollback-drill-data.json",
+      "rowsPresent": true,
+      "visible": true,
+      "releaseUnchanged": true
+    },
+    "cleanup": {
+      "softDeleteStatus": 200
+    },
+    "distinction": {
+      "applicationRollback": "symlink swap + service restart; database untouched; scratch data survived",
+      "dataRestore": "row-level restore from backup; release untouched; scratch row restored and re-hidden"
+    }
+  },
+  "finishedAt": "2026-11-17T12:13:30.480Z",
+  "result": "passed"
+}
