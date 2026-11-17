@@ -1404,5 +1404,6 @@
   "crmNav.settings.levels": "Settings levels",
   "crmNav.settings.organization": "Organization & business",
   "crmNav.settings.platform": "Platform maintenance",
-  "crmNav.settings.additional": "Additional settings"
+  "crmNav.settings.additional": "Additional settings",
+  "crmNav.returnToList": "Back to {name}"
 }

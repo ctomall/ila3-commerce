@@ -14,6 +14,7 @@ import { SettingsButton } from '@open-mercato/ui/backend/SettingsButton'
 import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider'
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { NavigationPreferences } from '@/modules/crm_navigation/components/NavigationPreferences'
+import { NavigationReturn } from '@/modules/crm_navigation/components/NavigationReturn'
 import { NavigationSearch } from '@/modules/crm_navigation/components/NavigationSearch'
 import { WorkspaceSwitcher } from '@/modules/crm_navigation/components/WorkspaceSwitcher'
 import { readCrmCatalog } from '@/nav/crm-navigation'
@@ -172,6 +173,7 @@ export function BackendHeaderChrome({
       {userId ? <NavigationPreferences key={`${userId}:${tenantId}:${organizationId}`} userId={userId} tenantId={tenantId} organizationId={organizationId}>
         <WorkspaceSwitcher />
         <NavigationSearch />
+        <NavigationReturn />
       </NavigationPreferences> : null}
       {isReady && showAiAssistant ? (
         <AiAssistantShellIntegration tenantId={tenantId} organizationId={organizationId}>

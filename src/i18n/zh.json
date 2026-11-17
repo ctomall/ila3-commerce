@@ -13745,5 +13745,6 @@
   "crmNav.settings.levels": "设置层级",
   "crmNav.settings.organization": "组织与业务设置",
   "crmNav.settings.platform": "平台维护",
-  "crmNav.settings.additional": "扩展设置"
+  "crmNav.settings.additional": "扩展设置",
+  "crmNav.returnToList": "返回 {name}"
 }

@@ -156,3 +156,16 @@ test('organization label is shared by directory and search while hidden stays si
   await expect(page.locator('[data-nav-search-entry]').first()).toBeVisible()
  } finally { await context.unrouteAll({behavior:'wait'}) }
 })
+
+test('direct create-page navigation offers the authorized parent on desktop and mobile',async({page})=>{
+ for(const width of [1440,390]) {
+  await page.setViewportSize({width,height:900})
+  await page.goto('/backend/customers/companies/create')
+  const link=page.locator('[data-navigation-return]')
+  await expect(link).toBeVisible()
+  await expect(link).toHaveAttribute('href','/backend/customers/companies')
+  await link.click()
+  await expect(page).toHaveURL(/\/backend\/customers\/companies$/)
+  await expect(page.locator('[data-navigation-return]')).toHaveCount(0)
+ }
+})

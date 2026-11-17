@@ -182,3 +182,12 @@ P2Abuild2exit0, browser11/11pass inclorganizationlabelhiddenfixture. Firstrawpro
 Commit93c59c2684e21f6fbe507a60fc508311e14b0fb7,CI44016777672success,deploy-20261117043244-93c59c26 deployed. Fullgate/buildexit0,candidate11browserpass. Livefooter0.2.4(93c59c2),fixedmanagevisible; deployedorganizationlabel/hiddenfixture1passed(/tmp/enterprise-p2a-live-browser.log). NoDBwriteinthefixture. Previousreleaseebaf2dd. Allownedjobscollected/candidatestopped.
 
 P2Averified; P2overallstillin_progress: pageparents,searchcontext,workbenchshortcuts needtraceableevidence. P3-P6pending. Do notmarkwholegoalcomplete. Next chooseoneconcretenavigationparent/returnpathsliceorverifyexistingflowsbeforemodifying. Testsandversionsmustremainseparate.
+
+
+## P2B — safe contextual return link (0.2.5)
+
+Scope: app header gains shared Button/Link context affordance only on nested declared destinations. Derive longest segment-boundary parent from completeauthorized catalog groups/manage/personal,normalize documented shellHref aliases. Never usepathname splitting to invent destination,never use/backend ascatch-allparent,neverlinkunknownorunauthorizedroute. Exact listpage showsnolink; nested/create/editpage getsclosestauthorizedentry. preservequery/filters notyet supportedandnotclaimed. NoDB/API/permissionchanges. AC: boundarycollision,unknownpath,root,duplicateentries,settingsnested,alias,hiddenworkspaceentry andauthorizedonlyfixture; componentenabled/disabled/loading; realbrowserroute fixture; fullgates+0.2.5build/CIrelease. Existing breadcrumbs notoverwritten. SharedButton,semanticstyle,keyboardlink,labeli18n, narrowshortlabel. Changesadditive;rollbackoldartifact. Reviewerautonomousdecision readyP2Bonly.
+
+P2Bprogress: parentpure3tests/component2tests; fixturesinitiallymissingreadCrmCatalogrequiredarrays→fixed,thenTSmockbraceerror→fixed,latesttypeexit0. Fullgatespassedbeforecomponentaddition; currentpipeline152886lint/ds/fulltests/buildexplicitexit/tmp/enterprise-p2b-build.exit. Narrowviewiconvisiblewitharialabel; labeldesktoponly. NoAPI/DBwrites. Waitbuildthenbrowserfixturebefore0.2.5release.
+
+P2Bcandidatebuildexit0,12Playwrightpassed incldirectcreatepageparentdesktop/mobile. Browser157707collected,candidate157511stopped. Testbootstrap8.3minbutallcasespass;noextratimeoutalteration. NeedfinalgateafternewtestandCI0.2.5release. NoDBchanges/externalactions.
