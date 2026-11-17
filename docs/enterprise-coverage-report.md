@@ -140,3 +140,19 @@ The running site is identified by the footer (`vX.Y.Z (shortsha)`) and by
 `release.json`; both must name the same version/SHA as the CI artifact recorded
 above. At writing: `0.2.13 (54dcfa7)`, deployed by
 `deploy-20261117154923-54dcfa76`, rollback target `b225c34`.
+
+## Objective clause → evidence
+
+| Objective requirement | Evidence |
+| --- | --- |
+| Complete traceable function/route/permission/API inventory across public, portal, employee, create/edit/detail, personal and all settings pages | 319-page inventory + matrix; 290 backend/29 frontend/1006 operations; per-route render, contract, return, empty, permission rows |
+| Per-page layout/function/interaction/empty-error-conflict/return/backend contract made explicit | design brief per-page tables + render sweeps + empty-state sweep + conflict drill + return-path audit + contract resolution |
+| Keep existing module ids/routes/APIs/authorization; reuse declarations, discovery, org orchestration, shared navigation; no role branches or per-href menus | no renamed routes/APIs; navigation built from declarations/catalogue; employee permission sweep and nav-search leak test |
+| Unified workspace, breadcrumb, search, task context; management centre and personal account always reachable | workspace/return specs, breadcrumb audit, navigation-search audit, manage-centre audit (4/4+70/70 and 2/2+17/17) |
+| DSH via controlled bridge with real-time authorization, idempotent runs, precise approval, domain commands, recoverable events; no arbitrary DB writes | closed-loop, approval, concurrency drills; run store events contiguous; bridge write disabled by policy |
+| Dependency-ordered versions with independent version+SHA, tests, immutable CI artifact, candidate health, canary, live verification, rollback target; no unverified bundling | release table 0.2.7–0.2.13; each CI artifact + deploy record + rollback target |
+| Real OTA entry/version compatibility/artifact integrity/upgrade lock/failure recovery; distinguish app rollback from data restore; no zero-downtime or phone-OTA claim | p6 OTA verify, failure drills, rollback-vs-data drill, OTA UI check; boundaries stated |
+| Minimal reversible design with recorded decisions; gaps marked unverified, no invented internals | residual register; unresolved metadata explained per route; probes/limits stated |
+| Safety boundaries (no wipe, no destructive migration, no production credential change, no real payment/external message; data changes backed up/isolated/restored) | scratch-row drills with backups; DELETE cleanup; no credential/ACL/migration changes; no external calls |
+| All stages through generate/typecheck/lint/ds:check/test/build + contract/permission/concurrency/browser regressions | CI gate on each release; Playwright suites 9–12/12; unit/drill evidence |
+| Final proof by complete coverage matrix and the site's actual version | this report + matrix + live 0.2.13 (54dcfa7) footer/package/release.json |
