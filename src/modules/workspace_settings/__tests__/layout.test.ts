@@ -69,6 +69,7 @@ describe('workspace layout document', () => {
     })
     expect(ordered.map((s) => s.id)).toEqual(['trade', 'home', 'customers', 'compliance'])
     expect(ordered[0].label).toBe('销售与收款')
+    expect(ordered[0].labelKey).toBeUndefined()
     expect(visible.map((s) => s.id)).toEqual(['trade', 'home', 'customers'])
     // The input array is not mutated: other consumers keep the declared labels.
     expect(spaces[2].label).toBe('trade')

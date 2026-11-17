@@ -158,3 +158,20 @@ Commitebaf2dda326bfd575d318c3a406008665d035d64,CI44011650337success. Automaticde
 P1allgates:generate/typecheck/lint/ds539files/fullJest145suites1203tests; standaloneAST13tests; buildexit0; candidate10Playwrightpass. Inputs/inventoryknownlimits remainexplicit; phase completion is baseline delivery only, not runtimeproof ofall319pages. P2-P6pending.
 
 P1state:verified. Next: P2precisespec/runtimeevidence first, do notbulkmodifyUI. Currentrelease0.2.3,previousaeac83a. Noownedbackgroundjobsremain;CI/build/browser/deploycollected,candidatestopped.
+
+
+## P2 slice A — consistent organization workspace labels (0.2.4)
+
+Autonomous decision: keep installed AppShell/Card/Popover and existing routes. Use one organization-layout projection for switcher/sidebar-visible spaces and full directory/search. Defect: search/BusinessHome ignore organization labels/order; even switcher labels may be overwritten by labelKey translations. applyLayout must remove labelKey only for explicit organization label overrides, preserving localization of defaults. Search/business use ordered (including hidden) projection; switcher uses visible projection. No new permissions/storage/API, no user data fixtures required; synthetic browser nav response fixture proves rename/hidden behavior. AC: same custom label in allconsumers, hidden not offered in switcher but searchable, defaults remain localized, source arrays unchanged, rollbackflag preserves oldbehavior. Tests: purelayout,search/switcher/directorycomponents,realbrowserfixture,fullgates/build then independent0.2.4CIrelease. OtherP2slices/navigationparents remainpending. No new module contributions.
+
+P2A review verdict: Ready for implementation; additive shared helper only, no public identifiers removed.
+
+P2Aprogress: shared directorySpaces applies order/labels while retaininghidden spaces; override labels clearlabelKey toavoidtranslation overridingorganizationname. Search+BusinessHome wired,focusedtests pass. First chainedtypecheckoverranSSHbudget,typeslogemptyandnoDSevidence; don'tcountpass. Restartedboundedfullgate supervis119935 with explicitexit/tmp/enterprise-p2a-gates.exit,logs enterprise-p2a-*2; no concurrentbuild. Otherhostbuilds observed, never killed. No publishyet.
+
+P2Afullgate119935exit0 (generate/type/lint/ds/fullJest). Build121729nowrunning OM_DIST_DIR enterprise-p2a/2workers/timeout1200/nice15,log/tmp/enterprise-p2a-build.log/.exit. No duplicatebuild/runtimeedits untilfinished. Next browserpayloadfixture rename+hidden assertions and cleanup,version0.2.4CIrelease.
+
+P2Abrowserfixture caught BusinessHome translation fallback crmNav.group.customers overridingcustomnameevenafterlabelKeycleared. Fix directcustomlabeldisplaywhenlabelKeyabsent. Candidate125183muststop,oldbuildinvalid,newbuildrequired. NoDBwritesinfixture.
+
+P2A latestpipeline126066running types/lint/ds/fulltests→boundedbuild;logs/tmp/enterprise-p2a-*3 and build2.exit. No otherownedjobs;candidate125183stopped. Waitingnotblocked;continuecollectandfixturebeforeversion0.2.4release.
+
+P2Abuild2exit0, browser11/11pass inclorganizationlabelhiddenfixture. FirstrawprobeassertionspassedbutcleanupinflightcausedTargetClosedError (possibly verboseheaderdump); replacedcommittedspecwithcontext.unrouteAll(wait) andcleanexit. Noresponse/headerscopiedintorepo. Candidate133200stopped. Needfinaltypes/lintafternewtest,CIversion0.2.4release. RemainingP2-P6notcomplete.

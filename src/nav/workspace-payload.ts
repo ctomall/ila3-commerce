@@ -56,3 +56,8 @@ export function presetLanding(preset: PresetType, spaces: readonly Workspace[]):
 export function layoutSpaces(spaces: readonly Workspace[], layout: WorkspaceLayoutConfig): Workspace[] {
   return applyLayout(spaces, layout).visible
 }
+
+/** Full directory/search projection: hidden means sidebar-only, never revoked. */
+export function directorySpaces(spaces: readonly Workspace[], layout: WorkspaceLayoutConfig): Workspace[] {
+  return applyLayout(spaces, layout).ordered
+}

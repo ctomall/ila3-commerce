@@ -137,3 +137,22 @@ test('a stored preference is read back by a browser without local state', async 
   await expect(page.locator('[data-nav-search-entry]').first()).toBeVisible()
   await expect(page.getByRole('button', { name: '取消收藏', exact: true }).first()).toBeVisible()
 })
+
+test('organization label is shared by directory and search while hidden stays sidebar-only',async({page,context})=>{
+ await context.route('**/api/crm_navigation/navigation?**',async route=>{
+  const response=await route.fetch()
+  const payload=await response.json()
+  payload.workspaceLayout={version:1,order:['customers'],hidden:['customers'],labels:{customers:'组织客户专用'},presets:[],assignments:{}}
+  await route.fulfill({response,json:payload})
+ })
+ try {
+  await page.goto('/backend/business')
+  await expect(page.getByRole('heading',{name:'组织客户专用',exact:true})).toBeVisible()
+  await page.locator('[data-workspace-switcher]').click()
+  expect(await page.getByRole('option',{name:'组织客户专用',exact:true}).count()).toBe(0)
+  await page.keyboard.press('Escape')
+  await page.getByRole('button',{name:'查找功能入口',exact:true}).click()
+  await page.getByRole('textbox',{name:'查找功能入口',exact:true}).fill('组织客户专用')
+  await expect(page.locator('[data-nav-search-entry]').first()).toBeVisible()
+ } finally { await context.unrouteAll({behavior:'wait'}) }
+})

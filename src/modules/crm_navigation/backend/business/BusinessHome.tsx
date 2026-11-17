@@ -7,6 +7,7 @@ import { useBackendChrome } from '@open-mercato/ui/backend/BackendChromeProvider
 import { useT } from '@open-mercato/shared/lib/i18n/context'
 import { Badge } from '@open-mercato/ui/primitives/badge'
 import { EmptyState } from '@/components/states/EmptyState'
+import { directorySpaces, readWorkspaceLayout } from '@/nav/workspace-payload'
 import { buildWorkspaces, searchWorkspaceEntries } from '@/nav/workspaces'
 import { readCrmCatalog } from '@/nav/crm-navigation'
 
@@ -37,7 +38,7 @@ export default function BusinessHome() {
   }
 
   const enabled = (payload as unknown as {workspaceNavigationEnabled?:boolean}|null)?.workspaceNavigationEnabled !== false
-  const groups = enabled ? buildWorkspaces(catalog.groups).map(space => ({...space,items:searchWorkspaceEntries([space], '')})) : catalog.groups
+  const groups = enabled ? directorySpaces(buildWorkspaces(catalog.groups), readWorkspaceLayout(payload)).map(space => ({...space,items:searchWorkspaceEntries([space], '')})) : catalog.groups
   const total = groups.reduce((sum, group) => sum + group.items.length, 0)
 
   return (
@@ -72,7 +73,7 @@ export default function BusinessHome() {
             >
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h2 className="text-sm font-semibold">
-                  {t(group.labelKey ?? `crmNav.group.${group.id}`, group.label)}
+                  {group.labelKey ? t(group.labelKey, group.label) : group.label}
                 </h2>
                 <Badge variant="muted" size="sm">{group.items.length}</Badge>
               </div>

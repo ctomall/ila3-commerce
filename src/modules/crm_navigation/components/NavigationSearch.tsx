@@ -9,6 +9,7 @@ import { IconButton } from '@open-mercato/ui/primitives/icon-button'
 import { Input } from '@open-mercato/ui/primitives/input'
 import { useNavigationPreferences } from './NavigationPreferences'
 import { readCrmCatalog } from '@/nav/crm-navigation'
+import { directorySpaces, readWorkspaceLayout } from '@/nav/workspace-payload'
 import { buildWorkspaces, searchWorkspaceEntries } from '@/nav/workspaces'
 
 /** Navigation search is separate from the installed business-record/semantic search. */
@@ -21,7 +22,7 @@ export function NavigationSearch() {
   const { preference, toggleFavorite } = useNavigationPreferences()
   const items = React.useMemo(() => {
     if (!catalog || catalog.error) return []
-    const daily = searchWorkspaceEntries(buildWorkspaces(catalog.groups), query)
+    const daily = searchWorkspaceEntries(directorySpaces(buildWorkspaces(catalog.groups), readWorkspaceLayout(payload)), query)
     const needle = query.trim().toLocaleLowerCase()
     const settings = catalog.manage.categories.flatMap(category => category.items.map(item => ({
       ...item, workspaceId: category.id, workspaceLabel: category.label,
@@ -34,7 +35,7 @@ export function NavigationSearch() {
       seen.add(item.href)
     }
     return daily.sort((a,b) => Number(preference.favorites.includes(b.href))-Number(preference.favorites.includes(a.href)))
-  }, [catalog, query, t, preference.favorites])
+  }, [catalog, payload, query, t, preference.favorites])
   const workspaceEnabled = (payload as unknown as { workspaceNavigationEnabled?: boolean } | null)?.workspaceNavigationEnabled !== false
   if (!workspaceEnabled || !catalog || catalog.error) return null
   return <Popover open={open} onOpenChange={setOpen}>

@@ -143,7 +143,7 @@ export function applyLayout(
   config: WorkspaceLayoutConfig,
 ): { visible: Workspace[]; ordered: Workspace[] } {
   const labelled = spaces.map((space) =>
-    config.labels[space.id] ? { ...space, label: config.labels[space.id] } : space,
+    config.labels[space.id] ? { ...space, label: config.labels[space.id], labelKey: undefined } : space,
   )
   const rank = new Map(config.order.map((id, index) => [id, index]))
   const ordered = [...labelled].sort((a, b) => {

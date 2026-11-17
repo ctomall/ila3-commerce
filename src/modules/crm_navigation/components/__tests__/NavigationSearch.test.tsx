@@ -30,4 +30,12 @@ describe('complete directory search consumer',()=>{
   render(<NavigationSearch/>)
   expect(screen.queryByRole('textbox')).toBeNull()
  })
+ it('finds hidden workspace destinations by the organization label without widening authorization',()=>{
+  mockPayload={crm:catalog,workspaceLayout:{version:1,order:[],hidden:['customers'],labels:{customers:'Organization clients'},presets:[],assignments:{}}}
+  render(<NavigationSearch/>)
+  fireEvent.change(screen.getByRole('textbox'),{target:{value:'Organization clients'}})
+  expect(screen.getByRole('link',{name:/Organization clients/}).getAttribute('href')).toBe('/backend/customers')
+  expect(screen.queryByRole('link',{name:/System settings/})).toBeNull()
+ })
+
 })
