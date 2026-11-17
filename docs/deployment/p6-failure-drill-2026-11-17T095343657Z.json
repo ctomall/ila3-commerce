@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "drill": "p6-failure-drill",
+  "startedAt": "2026-11-17T09:53:43.658Z",
+  "checks": {
+    "source": {
+      "releaseDir": "/home/pro/releases/mercato/cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+      "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+      "prodCurrentBefore": "/home/pro/releases/mercato/cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e"
+    },
+    "seed": {
+      "dir": "/home/pro/releases/mercato/p6-failure-drill-2026-11-17T095343657Z/seed",
+      "port": 3210,
+      "healthy": true,
+      "pid": 330210
+    },
+    "drillA": {
+      "exitCode": 2,
+      "result": "refused",
+      "errorCode": "candidate-unhealthy",
+      "currentUnchanged": true,
+      "targetHealthy": true,
+      "runId": "drill-deploy-20261117095355-cdb05dff"
+    },
+    "drillB": {
+      "exitCode": 2,
+      "result": "rolled-back",
+      "errorCode": "post-switch-unhealthy",
+      "rollback": {
+        "attempted": true,
+        "at": "2026-11-17T09:55:42.879Z",
+        "to": "/home/pro/releases/mercato/p6-failure-drill-2026-11-17T095343657Z/seed",
+        "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+        "healthy": true,
+        "checks": [
+          {
+            "name": "process-alive",
+            "ok": true,
+            "detail": "pid=331453 exitCode=null"
+          },
+          {
+            "name": "login-200",
+            "ok": true,
+            "detail": "HTTP 200 in 3771ms"
+          },
+          {
+            "name": "backend-redirects-to-login",
+            "ok": true,
+            "detail": "{\"initial\":307,\"location\":\"/api/auth/session/refresh?redirect=/backend\",\"hops\":[\"307 http://127.0.0.1:3210/backend\",\"307 http://127.0.0.1:3210/api/auth/session/refresh?redirect=/backend\",\"200 http://127.0.0.1:3210/login?redirect=%2Fbackend\"],\"final\":{\"url\":\"http://127.0.0.1:3210/login?redirect=%2Fbackend\",\"status\":200}}"
+          },
+          {
+            "name": "build-stamp-commit",
+            "ok": true,
+            "detail": "commit=cdb05dff expected=cdb05dff status=ok buildId=true"
+          }
+        ]
+      },
+      "currentAfterB": "/home/pro/releases/mercato/p6-failure-drill-2026-11-17T095343657Z/seed",
+      "rolledBackToSeed": true,
+      "targetHealthy": true,
+      "runId": "drill-deploy-20261117095414-cdb05dff"
+    },
+    "prodCurrentAfter": "/home/pro/releases/mercato/cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+    "prodUntouched": true
+  },
+  "failures": [],
+  "finishedAt": "2026-11-17T09:55:55.338Z",
+  "result": "passed"
+}

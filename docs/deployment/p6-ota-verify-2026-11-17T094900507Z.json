@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "drill": "p6-ota-verify",
+  "startedAt": "2026-11-17T09:49:00.508Z",
+  "checks": {
+    "currentSymlink": "/home/pro/releases/mercato/cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+    "release": {
+      "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+      "version": "0.2.8",
+      "source": "ci-artifact",
+      "workflowRunId": 44053084354
+    },
+    "manifest": {
+      "sha256": "8bf497c47e91fdf82258f94606506ccdbc017fa33275b4bb6f617e20c83e10aa",
+      "commit": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+      "workflowRunId": 44053084354,
+      "archiveSha256": "234b3da23f6113996bce4204bf1857b2a69324dd83d95c81cf1b61670d46b2a6",
+      "archiveBytes": 268871808,
+      "files": 20392
+    },
+    "integrity": {
+      "filesChecked": 20359,
+      "mismatches": [],
+      "missing": [],
+      "buildIdPresent": true,
+      "runtimeNodeMajor": 24,
+      "manifestNodeMajor": 24
+    },
+    "lock": {
+      "lockPath": "/home/pro/.local/state/ila3-deploy/deploy.lock",
+      "blocked": {
+        "status": 75,
+        "stdout": "",
+        "stderr": "{\n  \"status\": \"locked-out\",\n  \"lock\": \"/home/pro/.local/state/ila3-deploy/deploy.lock\",\n  \"reason\": \"another deploy run (timer or manual) currently holds the lock\",\n  \"entry\": \"manual\",\n  \"at\": \"2026-11-17T09:49:07.312Z\"\n}\n"
+      },
+      "afterRelease": {
+        "status": 0,
+        "output": "usage: node scripts/auto-deploy/deploy.mjs (--auto|--manual) [--sha SHA] [--from-artifact|--build-locally] [--artifact-run-id N] [--drill --pid-mode --target-port 3200 ...]\n"
+      },
+      "runRecordsBefore": 838,
+      "runRecordsAfter": 838
+    },
+    "rollbackDryRun": {
+      "status": 0,
+      "output": "{\n  \"at\": \"2026-11-17T09:49:13.562Z\",\n  \"apply\": false,\n  \"target\": {\n    \"sha\": \"7132d186ddb51b4e9078b8fdc033dba5992c2c56\",\n    \"dir\": \"/home/pro/releases/mercato/7132d186ddb51b4e9078b8fdc033dba5992c2c56\",\n    \"via\": \"previous symlink\"\n  },\n  \"current\": \"cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e\",\n  \"service\": \"ila3-auto-deploy-app.service\",\n  \"timer\": \"ila3-auto-deploy.timer\",\n  \"problems\": [],\n  \"ok\": true,\n  \"note\": \"dry run only; pass --apply to execute\"\n}\n"
+    },
+    "previousSymlink": "/home/pro/releases/mercato/7132d186ddb51b4e9078b8fdc033dba5992c2c56",
+    "rollbackIsApplicationOnly": "symlink swap + restart; no database action, new data kept",
+    "otaEntryStatusHttp": 200,
+    "otaEntry": {
+      "enabled": true,
+      "canManage": true,
+      "runningVersion": "0.2.8",
+      "runningCommit": "cdb05dff",
+      "repoHead": "69513d0a7344bda4e3851168e0e0d027e5ff1b9a",
+      "branch": "main",
+      "dirtyCount": 2,
+      "relation": "same",
+      "candidate": {
+        "found": true,
+        "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e",
+        "gate": {
+          "allow": true,
+          "decision": "allow",
+          "reason": "successful-test-workflow-for-sha"
+        }
+      },
+      "latestRun": {
+        "runId": "deploy-20261117094308-cdb05dff",
+        "result": "already-current",
+        "sha": "cdb05dff2e8f6f8f6db23e952ef57b73b3bb850e"
+      }
+    }
+  },
+  "finishedAt": "2026-11-17T09:49:14.037Z",
+  "result": "passed"
+}
