@@ -1281,3 +1281,13 @@ header [data-ai-launcher-trigger],
 header [data-ai-launcher-trigger-mobile] {
   display: none;
 }
+
+/* Embedded DataTable intentionally omits the standalone card/scroll container.
+   Constrain only its existing table wrapper on narrow screens: keep full-width
+   columns and local horizontal scrolling, never crop the document or cells. */
+@media (width < 48rem) {
+  #main-content [data-component-handle^="data-table:"] .isolate:has(> table) {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}

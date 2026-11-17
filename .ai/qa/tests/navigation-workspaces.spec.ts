@@ -169,3 +169,14 @@ test('direct create-page navigation offers the authorized parent on desktop and 
   await expect(page.locator('[data-navigation-return]')).toHaveCount(0)
  }
 })
+
+test('embedded table scrolls locally without overflowing the narrow document',async({page,context,playwright,baseURL})=>{
+ const admin=await loginAs(playwright,baseURL,'superadmin@acme.com')
+ await context.clearCookies();await context.addCookies(admin)
+ await page.setViewportSize({width:390,height:900})
+ await page.goto('/backend/config/sales')
+ await expect(page.locator('main table').first()).toBeVisible()
+ const view=await page.evaluate(()=>({width:innerWidth,scroll:document.documentElement.scrollWidth,local:Array.from(document.querySelectorAll('main .isolate')).some(e=>e.scrollWidth>e.clientWidth&&getComputedStyle(e).overflowX==='auto')}))
+ expect(view.scroll).toBeLessThanOrEqual(view.width+1)
+ expect(view.local).toBe(true)
+})

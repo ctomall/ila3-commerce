@@ -1,0 +1,199 @@
+{
+  "scope": "authorized-navigation-static-destinations",
+  "count": 137,
+  "completed": 137,
+  "readOnly": true,
+  "limitations": [
+    "render-only",
+    "superadmin-only",
+    "no business-action validation",
+    "no dynamic detail fixtures",
+    "data readiness not guaranteed"
+  ],
+  "findings": [
+    {
+      "route": "/backend/wms/warehouses",
+      "label": "仓库",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 677,
+          "title": "仓库",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/wms/zones",
+      "label": "库区",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 677,
+          "title": "库区",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/wms/locations",
+      "label": "库位",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 677,
+          "title": "库位",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/messages",
+      "label": "消息",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 656,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/config/sales",
+      "label": "销售",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "订单状态",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 665,
+          "title": "订单状态",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/config/catalog",
+      "label": "商品目录",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "价格类型",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 665,
+          "title": "价格类型",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/config/wms",
+      "label": "仓储配置",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": "WMS 配置",
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 683,
+          "title": "WMS 配置",
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    },
+    {
+      "route": "/backend/sidebar-customization",
+      "label": "自定义侧边栏",
+      "verification": "readonly-render-only",
+      "viewports": [
+        {
+          "width": 1440,
+          "scrollWidth": 1440,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        },
+        {
+          "width": 390,
+          "scrollWidth": 400,
+          "title": null,
+          "denied": false,
+          "crashed": false
+        }
+      ],
+      "status": 200,
+      "pageErrors": []
+    }
+  ]
+}

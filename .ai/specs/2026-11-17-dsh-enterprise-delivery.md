@@ -196,3 +196,18 @@ P2Bcandidatebuildexit0,12Playwrightpassed incldirectcreatepageparentdesktop/mobi
 ## P2B release — 0.2.5
 
 9d4ad0009d825598a77986993c97c4e2e1bcaa76 CI44022184610success,deploy-20261117051759-9d4ad000deployed. Allgatespassed/buildexit0/candidate12Playwrightpassed/liveparentdesktop+mobile1passed(/tmp/enterprise-p2b-live.log). Sourcegate/browserbootstrap slow(sharedhost),no retriesorrelaxedassertions. Previous93c59c2. Noownedjobsremain;candidate157511stopped. P2Bverified,overallP2remainingfullbreadcrumb/unknownscopecoverage;P3-P6pending. Do notmarkwholegoalcomplete.
+
+
+## P3 coverage sweep (pre-implementation)
+Read-only authorized directory drives paths, no hand-maintained route array. Explicit loopback/testcredentialfile; blockallnonGETAPIrequests, no saves/send/pay/upgrade. Sequential1440/390renderaudit, results include status/overflow/denial/crash notbusinessacceptance. Failed pages are evidence not permissiontohidegate. Loginonlysideeffect; test scope superadmin meansnotemployee/portalproof. No runtimechange. Script must syntax/lintbeforeexecution, bounded navigation/onebrowser cleanup. New dependentP3UIworkrequiresseparatespec afterresults.
+
+
+## P3 readonly baseline result
+
+scripts/enterprise-readonly-page-audit.mjs sequential137authorizeddestinations1440/390,exit0. Scriptexit0meanssweepcompleted,notallpagespassed.8narrowoverflowfindings: wms warehouses/zones/locations,messages,config sales/catalog/wms,sidebar-customization. Noobservedpageerrors/denialininitialrender;notloadeddata/businessproof. Common7tablesminwidth640,ancestor.isolateoverflowvisible;requirelocalscrollwithoutclippingmenus. Installedcomponentseamneedsverificationbeforepatch;donotblankethideoverfloworpatchnode_modules. Syntheticresponsefixturesfirst. NoDBwrites/scriptsaveactions;POSTAPIblocked.
+
+
+## P3A — embedded table narrow containment (0.2.6)
+Evidence:7of8overflowpages use installedDataTable embedded wrapper `.isolate` with minwidth640 andoverflowvisible; rows must remain scrollable notshrunk/clipped. Exactcomponentoverrides collapse to data-table:unknown whenhostomitsextensionTableId, so overridewouldaffectunrelatedtables. Smallestapp-ownedthemeextension scoped `#main-content [data-component-handle^="data-table:"] .isolate:has(> table)` below48rem setsmax-width100%/overflow-xauto. Desktopunchanged; no displaynone, no globalbodyoverflowhidden. Preserveallcells/pinnedactions; openactionmenus/dialogs test required. Existing539stylegateunchanged. Hidden narrow sidebar customization10px debt separate notpatchedhere. AC sevenpagesdocumentwidth<=viewport,locallyscrollabletable retainscolumns,desktopunchanged,existingbrowser/regressionfullgates. NoAPI/DBchanges; independent0.2.6release. Choiceapprovedautonomous, reviewsmallestsupportedstylebeforepackageeject.
+
+P3Abuildexit0,7actualoverflowpagesnow390scrollWidth390withlocalscrolltrue,shared13Playwrightpassed. Candidate187352stopped,browser187784collected. Gate0.2.6requiresfinaltypes/lintafternewtest thenCI. Other8thsidebarcustomizationfindingremainspending. NoDBmutationorpackageedits.
